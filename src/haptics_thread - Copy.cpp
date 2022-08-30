@@ -1,0 +1,2662 @@
+#include "haptics_thread.h"
+
+haptics_thread::haptics_thread(QObject *parent) : QThread(parent)
+{
+
+}
+
+haptics_thread::~haptics_thread()
+{
+
+}
+
+void haptics_thread::initialize()
+{
+    InitGeneralChaiStuff();
+    InitFingerAndTool();
+    InitEnvironments();
+    InitDynamicBodies();
+
+    // GENERAL HAPTICS INITS=================================
+    // Ensure the device is not controlling to start
+    p_CommonData->wearableDelta0->TurnOffControl();
+    p_CommonData->wearableDelta1->TurnOffControl();
+
+    p_CommonData->wearableDelta0->SetDesiredPos(p_CommonData->wearableDelta0->neutralPos); // kinematic neutral position
+    p_CommonData->wearableDelta1->SetDesiredPos(p_CommonData->wearableDelta1->neutralPos); // kinematic neutral position
+
+    // set flag that says haptics thread is running
+    p_CommonData->hapticsThreadActive = true;
+    p_CommonData->environmentChange = false;
+
+    // set to provide feedback when running VR control mode
+    p_CommonData->tactileFeedback = true;
+
+    // set up palpation post trial clock
+    p_CommonData->palpPostTrialClock.reset();
+    p_CommonData->palpPostTrialClock.setTimeoutPeriodSeconds(2.0);
+
+    // Set the clock that controls haptic rate
+    //rateClock.reset();
+    rateClock.setTimeoutPeriodSeconds(0.000001);
+    rateClock.start(true);
+
+    // setup the clock that will enable display of the haptic rate
+    rateDisplayClock.reset();
+    rateDisplayClock.setTimeoutPeriodSeconds(1.0);
+    rateDisplayClock.start(true);
+
+    // setup the overall program time clock
+    p_CommonData->overallClock.reset();
+    p_CommonData->overallClock.start(true);
+
+    // setup the calibration clock
+    p_CommonData->calibClock.reset();
+
+    // init values for first time through on filter
+    lastFilteredDeviceForce0.set(0,0,0);
+    lastFilteredDeviceForce1.set(0,0,0);
+    p_CommonData->deviceComputedForce.set(0,0,0);
+    p_CommonData->filteredDeviceComputedForce.set(0,0,0);
+
+    //p_CommonData->workspaceScaleFactor = 1;
+
+    currTime = 0;
+    lastTime = 0;
+
+    //init counters to 0
+    rateDisplayCounter = 0;
+    recordDataCounter = 0;
+
+    //init bandwidth variables
+    p_CommonData->bandSinAmp = 0;
+    p_CommonData->bandSinFreq = 0;
+
+    // Start off not recording
+    p_CommonData->recordFlag = false;
+
+    p_CommonData->currentControlState = idleControl;
+
+    p_CommonData->fingerDisplayScale = 1;
+    p_CommonData->box1displayScale = 1;
+    p_CommonData->expCD = 1.0;
+
+    p_CommonData->fingerScalePoint.set(0,0,0);
+
+    fingerOffset.set(0,-0.006,.003); // finger axis are not at fingerpad, so we want a translation outward on fingertip
+    thumbOffset.set(0,-0.009,.003); // finger axis are not at fingerpad, so we want a translation outward on fingertip
+
+    // initial box positions
+    p_CommonData->box1InitPos.set(0,  0,  -0.0250);
+    p_CommonData->box2InitPos.set(1,   0,  0.0);
+    p_CommonData->box3InitPos.set(1, -.1,  0.0);
+
+    p_CommonData->box1PostInitCenter.set(0,0,-0.025);
+
+    p_CommonData->fingerTouching = false; //reset before we check
+    p_CommonData->thumbTouching = false;
+    p_CommonData->fingerTouchingLast = false;
+    p_CommonData->thumbTouchingLast = false;
+    p_CommonData->scaledDispTransp = 1;
+    p_CommonData->clutchedOffset.set(0,0,0);
+    p_CommonData->fingerDisplayScale = 1.0; //will get changed in dynsim if necessary
+    p_CommonData->show_forces = false;
+    p_CommonData->ImpulseAmp=0;
+    p_CommonData->SDVibAmp=0;
+    p_CommonData->SDVibFreq=5;
+    p_CommonData->SDVibBeta=10;
+
+}
+
+void haptics_thread::run()
+{
+    while(p_CommonData->hapticsThreadActive)
+    {
+        // if clock controlling haptic rate times out
+        if(rateClock.timeoutOccurred())
+        {
+            // stop clock while we perform haptic calcs
+            //rateClock.stop();
+
+            Eigen::Vector3d inputAxis(0,1,0); // input axis for sin control and circ control modes
+            switch(p_CommonData->currentControlState)
+            {
+            case initCalibControl:
+                UpdateVRGraphics();
+                SetInitJointAngles();
+                p_CommonData->wearableDelta0->IndivJointController(p_CommonData->desJointInits0, p_CommonData->jointKp, p_CommonData->jointKd);
+                p_CommonData->wearableDelta1->IndivJointController(p_CommonData->desJointInits1, p_CommonData->jointKp, p_CommonData->jointKd);
+                break;
+
+            case idleControl:
+
+                UpdateVRGraphics();
+                p_CommonData->wearableDelta0->TurnOffControl();
+                p_CommonData->wearableDelta1->TurnOffControl();
+                break;
+
+            case VRControlMode:
+                p_CommonData->sharedMutex.lock();
+                UpdateVRGraphics();
+                p_CommonData->sharedMutex.unlock();
+                ComputeVRDesiredDevicePos();
+                p_CommonData->wearableDelta0->JointController(p_CommonData->jointKp, p_CommonData->jointKd);
+                p_CommonData->wearableDelta1->JointController(p_CommonData->jointKp, p_CommonData->jointKd);
+                break;
+
+            case sliderControlMode:
+                UpdateVRGraphics();
+                p_CommonData->wearableDelta0->JointController(p_CommonData->jointKp, p_CommonData->jointKd);
+                p_CommonData->wearableDelta1->JointController(p_CommonData->jointKp, p_CommonData->jointKd);
+                break;
+
+            case sinControlMode:
+                UpdateVRGraphics();
+                CommandSinPos(inputAxis);
+                p_CommonData->wearableDelta0->JointController(p_CommonData->jointKp, p_CommonData->jointKd);
+                break;
+
+            case circControlMode:
+                UpdateVRGraphics();
+                CommandCircPos(inputAxis);
+                p_CommonData->wearableDelta0->JointController(p_CommonData->jointKp, p_CommonData->jointKd);
+                break;
+            }
+
+
+            // update our rate estimate every second
+            rateDisplayCounter++;
+            if(rateDisplayClock.timeoutOccurred())
+            {
+                //rateDisplayClock.stop();
+                p_CommonData->hapticRateEstimate = rateDisplayCounter;
+                rateDisplayCounter = 0;
+                rateDisplayClock.reset();
+                rateDisplayClock.start();
+            }
+
+            // record only on every 10 haptic loops
+            recordDataCounter++;
+            if(recordDataCounter == 5)
+            {
+                recordDataCounter = 0;
+                if(p_CommonData->recordFlag == true)
+                {
+                    RecordData();
+                }
+            }
+
+            // restart rateClock
+            rateClock.reset();
+            rateClock.start();
+        }
+    }
+
+    // If we are terminating, delete the haptic device to set outputs to 0
+    delete p_CommonData->wearableDelta0;
+    delete p_CommonData->wearableDelta1;
+}
+
+void haptics_thread::UpdateVRGraphics()
+{
+#ifndef OCULUS
+    // Update camera Pos
+    double xPos = p_CommonData->camRadius*cos(p_CommonData->azimuth*PI/180.0)*sin(p_CommonData->polar*PI/180.0);
+    double yPos = p_CommonData->camRadius*sin(p_CommonData->azimuth*PI/180.0)*sin(p_CommonData->polar*PI/180.0);
+    double zPos = p_CommonData->camRadius*cos(p_CommonData->polar*PI/180.0);
+    p_CommonData->cameraPos.set(xPos, yPos+.1, zPos);
+#endif
+
+#ifdef OCULUS
+    p_CommonData->lookatPos.set(0, 0, p_CommonData->cameraPos.z());
+#endif
+
+#ifndef OCULUS
+    p_CommonData->lookatPos.set(0, .1, 0);
+#endif
+    // update camera parameters
+    p_CommonData->p_camera->set( p_CommonData->cameraPos,
+                                 p_CommonData->lookatPos,
+                                 p_CommonData->upVector);
+
+    if(p_CommonData->environmentChange == true)
+    {
+        p_CommonData->environmentChange = false;
+        switch(p_CommonData->currentEnvironmentState)
+        {
+        case none:
+            p_CommonData->p_world->clearAllChildren();
+            p_CommonData->p_world->addChild(m_tool0);
+            p_CommonData->p_world->addChild(m_tool1);
+            p_CommonData->p_world->addChild(finger);
+            p_CommonData->p_world->addChild(thumb);
+            break;
+
+        case experimentFriction:
+            p_CommonData->p_world->clearAllChildren();
+            RenderExpFriction();
+            break;
+
+        case twoFriction:
+            p_CommonData->p_world->clearAllChildren();
+            RenderTwoFriction();
+            break;
+
+        case palpation:
+            p_CommonData->p_world->clearAllChildren();
+            RenderPalpation();
+            break;
+
+        case experimentPalpationLine:
+            p_CommonData->p_world->clearAllChildren();
+            RenderPalpation();
+            break;
+
+        case dynamicBodies:
+            p_CommonData->p_world->clearAllChildren();
+            //p_CommonData->Inertial_Scaling_Factor = 1.0;
+            //p_CommonData->Inertial_Scaling_Mass = 200;
+            qDebug()<<"Envirnment before change";
+            RenderDynamicBodies();
+            qDebug()<<"Envirnment after change";
+            Break0=false;
+            Break1=false;
+            break;
+        }
+    }
+
+    // compute global reference frames for each object
+    p_CommonData->p_world->computeGlobalPositions(true);
+
+    // update position and orientation of tool 0(and sphere that represents tool)
+    m_tool0->updateFromDevice();
+    position0 = m_tool0->m_hapticPoint->getGlobalPosGoal(); // get position and rotation of the haptic point (and delta mechanism) (already transformed from magTracker)
+    p_CommonData->chaiMagDevice0->getRotation(rotation0);
+
+    // update position and orientation of tool 1
+    m_tool1->updateFromDevice();
+    position1 = m_tool1->m_hapticPoint->getGlobalPosGoal();
+    p_CommonData->chaiMagDevice1->getRotation(rotation1);
+
+    // update position of finger to stay on proxy point
+    fingerRotation0 = rotation0;
+    fingerRotation0.rotateAboutLocalAxisDeg(0,0,1,90);
+    fingerRotation0.rotateAboutLocalAxisDeg(1,0,0,90);
+    finger->setLocalRot(fingerRotation0);
+    finger->setLocalPos(m_tool0->m_hapticPoint->getGlobalPosProxy() + fingerRotation0*fingerOffset); //this offset isn't for computation of forces, just to align finger model
+    m_curSphere0->setLocalPos(position0); // set the sphere visual representation to match
+    rotation0.rotateAboutLocalAxisDeg(0,0,1,180); // this is the rotation matrix deviceToWorld
+    m_curSphere0->setLocalRot(rotation0);
+    m_tool0->computeInteractionForces();
+
+    // update position of finger to stay on proxy  point
+    fingerRotation1 = rotation1;
+    fingerRotation1.rotateAboutLocalAxisDeg(0,0,1,90);
+    fingerRotation1.rotateAboutLocalAxisDeg(1,0,0,90);
+    fingerRotation1 = fingerRotation1;
+    thumb->setLocalRot(fingerRotation1);
+    thumb->setLocalPos(m_tool1->m_hapticPoint->getGlobalPosProxy() + fingerRotation1*thumbOffset);
+    m_curSphere1->setLocalPos(position1);
+    rotation1.rotateAboutLocalAxisDeg(0,0,1,180); // this is the rotation matrix deviceToWorld
+    m_curSphere1->setLocalRot(rotation1);
+    m_tool1->computeInteractionForces();
+
+    // update frames to show or not
+    if (p_CommonData->showCursorFrames)
+    {
+        m_curSphere0->setShowFrame(true);
+        m_curSphere1->setShowFrame(true);
+        p_CommonData->adjustBox->setShowFrame(true);
+    }
+    else
+    {
+        m_curSphere0->setShowFrame(false);
+        m_curSphere1->setShowFrame(false);
+        p_CommonData->adjustBox->setShowFrame(false);
+    }
+
+
+//    if ((p_CommonData->fingerTouchingLast==false) && (p_CommonData->fingerTouching))
+//            p_CommonData->playVib0=true;
+//    if ((p_CommonData->thumbTouchingLast==false) && (p_CommonData->thumbTouching))
+//            p_CommonData->playVib1=true;
+
+    //VIBRATION CHECK
+    if ((p_CommonData->fingerTouchingLast==false) && (p_CommonData->fingerTouching)){
+        p_CommonData->playVib0=true;
+        Impulse0=true;
+        SDVib0=true;
+        p_CommonData->Velocity0=m_tool0->getDeviceGlobalLinVel();
+    }
+    if ((p_CommonData->thumbTouchingLast==false) && (p_CommonData->thumbTouching)){
+        p_CommonData->playVib1=true;
+        Impulse1=true;
+        SDVib1=true;
+        p_CommonData->Velocity1=m_tool1->getDeviceGlobalLinVel();
+    }
+
+
+
+
+    //check for applying scaling based on whether we were touching last time
+    p_CommonData->fingerTouchingLast = p_CommonData->fingerTouching;
+    p_CommonData->thumbTouchingLast = p_CommonData->thumbTouching;
+
+
+
+
+    chai3d::cVector3d gravity_force(0,0,0);
+    if (p_CommonData->currentDynamicObjectState == dynamicInertiaExp){
+        if (p_CommonData->Displaying == 0){ //comp aka scaled mass
+            if (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false)
+            {
+                gravity_force.set(0,0,(p_CommonData->ReferenceMass/1000)*9.81);
+                p_CommonData->ODEBody1->setMass(p_CommonData->ReferenceMass/1000);
+            }else
+            {
+                p_CommonData->ODEBody1->setMass(p_CommonData->InertiaBlockMass);
+                gravity_force.set(0,0,p_CommonData->InertiaBlockMass*9.81/p_CommonData->Inertial_Scaling_Factor);
+            }
+        }else{
+            gravity_force.set(0,0,p_CommonData->InertiaBlockMass*9.81);
+        }
+        p_CommonData->ODEBody1->addExternalForce(gravity_force);
+        p_CommonData->gravity=gravity_force;
+
+    }
+
+
+    // set fingers to non initially touching
+    p_CommonData->fingerTouching = false;
+    p_CommonData->thumbTouching = false;
+
+    // find loop time interval
+    currTime = p_CommonData->overallClock.getCurrentTimeSeconds();
+    timeInterval = currTime - lastTime;
+    if(timeInterval > .001)
+        timeInterval = 0.001;
+
+    double forceLimit = 12;
+
+    // perform our dynamic body updates if we are in a dynamic environment
+    if(p_CommonData->currentEnvironmentState == dynamicBodies)
+    {
+        if(timeInterval > 0.01) timeInterval = 0.01;
+        //---------------------------------------------------
+        // Implement Dynamic simulation
+        //---------------------------------------------------
+        // for each interaction point of the tool we look for any contact events
+        // with the environment and apply forces accordingly
+        int numInteractionPoints = m_tool0->getNumHapticPoints();
+        for (int j=0; j<numInteractionPoints; j++)
+        {
+            // get pointer to next interaction point of tool
+            chai3d::cHapticPoint* interactionPoint = m_tool0->getHapticPoint(j);
+
+            // check all contact points
+            int numContacts = interactionPoint->getNumCollisionEvents();
+            for (int k=0; k<numContacts; k++)
+            {
+                chai3d::cCollisionEvent* collisionEvent = interactionPoint->getCollisionEvent(k);
+
+                // given the mesh object we may be touching, we search for its owner which
+                // could be the mesh itself or a multi-mesh object. Once the owner found, we
+                // look for the parent that will point to the ODE object itself.
+                chai3d::cGenericObject* object = collisionEvent->m_object->getOwner()->getOwner();
+
+                //if finger touching box, note it
+                p_CommonData->fingerTouching = true;
+
+                // cast to ODE object
+                cODEGenericBody* ODEobject = dynamic_cast<cODEGenericBody*>(object);
+
+
+                // if ODE object, we apply interaction forces
+                if (ODEobject != NULL){
+
+                    ODEobject->addExternalForceAtPoint(-p_CommonData->adjustedDynamicForceReduction * interactionPoint->getLastComputedForce(),
+                                                       collisionEvent->m_globalPos);
+
+                    if((interactionPoint->getLastComputedForce().length() > forceLimit) & (computedForce0.length() > forceLimit))
+                         p_CommonData->resetBoxPosFlag = true;
+
+                    if (ODEobject==p_CommonData->ODEBody1){
+                        if(p_CommonData->adjustedDynamicForceReduction * interactionPoint->getLastComputedForce().length()>2.5){ //force limit to break
+                            Break0=true;
+                            //qDebug()<<"Break";
+                        }else{
+                            Break0=false;
+
+                        }
+                    }
+                }
+            }
+        }
+        numInteractionPoints = m_tool1->getNumHapticPoints();
+        for (int j=0; j<numInteractionPoints; j++)
+        {
+            // get pointer to next interaction point of tool
+            chai3d::cHapticPoint* interactionPoint = m_tool1->getHapticPoint(j);
+
+            // check all contact points
+            int numContacts = interactionPoint->getNumCollisionEvents();
+            for (int k=0; k<numContacts; k++)
+            {
+                chai3d::cCollisionEvent* collisionEvent = interactionPoint->getCollisionEvent(k);
+
+                // given the mesh object we may be touching, we search for its owner which
+                // could be the mesh itself or a multi-mesh object. Once the owner found, we
+                // look for the parent that will point to the ODE object itself.
+                chai3d::cGenericObject* object = collisionEvent->m_object->getOwner()->getOwner();
+
+                //if thumb touching box, note it
+                p_CommonData->thumbTouching = true;
+
+                // cast to ODE object
+                cODEGenericBody* ODEobject = dynamic_cast<cODEGenericBody*>(object);
+
+                if (ODEobject==p_CommonData->ODEBody1){
+
+                }
+
+                // if ODE object, we apply interaction forces
+                if (ODEobject != NULL)
+                {                              
+                    ODEobject->addExternalForceAtPoint(-p_CommonData->adjustedDynamicForceReduction * interactionPoint->getLastComputedForce(),
+                                                       collisionEvent->m_globalPos);
+                    if((interactionPoint->getLastComputedForce().length() > forceLimit) & (computedForce1.length() > forceLimit))
+                         p_CommonData->resetBoxPosFlag = true;
+
+                    if (ODEobject==p_CommonData->ODEBody1){
+                        if(p_CommonData->adjustedDynamicForceReduction * interactionPoint->getLastComputedForce().length()>2.5){//force limit to break
+                            Break1=true;
+                            //qDebug()<<"Break";
+                        }else{
+                            Break1=false;
+
+                        }
+                    }
+                }
+            }
+        }
+
+                if (Break0 && Break1){  //Object Breaking
+                    mat11.setRedCrimson();
+                    p_CommonData->p_dynamicBox1->setMaterial(mat11);
+                    //p_CommonData->p_dynamicBox1->setUseMaterial(true);
+                    //qDebug()<<"ObjectBreaking";
+
+                }
+//qDebug()<<p_CommonData->ODEBody1->getLocalPos().x()<<" "<<p_CommonData->ODEBody1->getLocalPos().y()<<" "<<p_CommonData->ODEBody1->getLocalPos().z();
+
+        //If we are in subjective inertia exp
+ double subjective_mass=.2;
+        if (p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp){
+            if(p_CommonData->Subjective_Pair_Num==1){
+                if (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false)
+                {
+                    //gravity_force.set(0,0,(subjective_mass*9.81));
+                    p_CommonData->ODEBody1->setMass(subjective_mass);
+
+                }else
+                {
+                   // gravity_force.set(0,0,subjective_mass*9.81);
+                    p_CommonData->ODEBody1->setMass(5*subjective_mass);
+
+                }
+            }
+            else{
+                // gravity_force.set(0,0,.subjective_mass*9.81);
+                p_CommonData->ODEBody1->setMass(subjective_mass);
+            }
+            gravity_force.set(0,0,subjective_mass*9.81);
+            p_CommonData->ODEBody1->addExternalForce(gravity_force);
+
+
+        }
+
+//        if(p_CommonData->currentDynamicObjectState==standard && p_CommonData->currentEnvironmentState==dynamicBodies){
+//qDebug()<<"here";
+//            p_CommonData->ODEBody2->setPosition(p_CommonData->ODEBody1->getPosition());
+//            p_CommonData->ODEBody2->setPosition(p_CommonData->ODEBody1->getPosition());
+//        }
+
+
+        if(p_CommonData->show_forces){
+            //qDebug()<<"Showing Forces";
+            if(m_tool1->getDeviceGlobalForce().length()>0){
+
+                force1_show->m_pointA = m_tool1->m_hapticPoint->getGlobalPosProxy();
+                force1_show->m_pointB = m_tool1->m_hapticPoint->getGlobalPosProxy()+(((lastforce1*.95)+(m_tool1->getDeviceGlobalForce()*.05))*.05);
+                force2_show->m_pointA = m_tool0->m_hapticPoint->getGlobalPosProxy();
+                force2_show->m_pointB = m_tool0->m_hapticPoint->getGlobalPosProxy()+(((lastforce2*.95)+(m_tool0->getDeviceGlobalForce()*.05))*.05);
+
+                lastforce1=(lastforce1*.95)+(m_tool1->getDeviceGlobalForce()*.05);
+                lastforce2=(lastforce2*.95)+(m_tool0->getDeviceGlobalForce()*.05);
+
+            }else{
+                force1_show->m_pointA = m_tool1->m_hapticPoint->getGlobalPosProxy();
+                force1_show->m_pointB = m_tool1->m_hapticPoint->getGlobalPosProxy();
+                force2_show->m_pointA = m_tool0->m_hapticPoint->getGlobalPosProxy();
+                force2_show->m_pointB = m_tool0->m_hapticPoint->getGlobalPosProxy();
+                lastforce1=chai3d::cVector3d(0,0,0);
+                lastforce2=chai3d::cVector3d(0,0,0);
+            }
+        }else{
+          //qDebug()<<"Not Showing Forces";
+            force1_show->m_pointA = chai3d::cVector3d(0,0,0);
+            force1_show->m_pointB = chai3d::cVector3d(0,0,0);
+            force2_show->m_pointA = chai3d::cVector3d(0,0,0);
+            force2_show->m_pointB = chai3d::cVector3d(0,0,0);
+        }
+
+
+
+
+
+        // update simulation
+        ODEWorld->updateDynamics(timeInterval);
+
+        // update display scaling and scaling center if we just grabbed a box or are pushing and need to scale and center
+        if (p_CommonData->fingerTouching | p_CommonData->thumbTouching)
+        {
+            // need this to only run the first time they're both touching
+            if(!p_CommonData->fingerTouchingLast & !p_CommonData->thumbTouchingLast)
+            {
+                p_CommonData->fingerScalePoint = curCenter;
+                p_CommonData->fingerDisplayScale = 1.0;
+            }
+        }
+
+        // update display scaling center if we just dropped a box
+        if (!p_CommonData->fingerTouching & !p_CommonData->thumbTouching)
+        {
+            if (p_CommonData->fingerTouchingLast | p_CommonData->thumbTouchingLast)
+            {
+                p_CommonData->clutchedOffset = (scaledCurCenter - curCenter);
+                p_CommonData->fingerDisplayScale = 1.0;
+            }
+        }
+    }
+
+
+    lastTime = currTime;
+
+    // update scaled positions
+    UpdateScaledCursors();
+    UpdateScaledFingers();
+    UpdateScaledBoxes();
+
+    // if fingers reset in box, fix it and reset the environment again
+    if(p_CommonData->resetBoxPosFlag)
+    {
+        qDebug() << "resetting";
+        p_CommonData->p_world->computeGlobalPositions(true);
+        // set position of box back to starting point
+        chai3d::cMatrix3d eyeMat(1,0,0,0,1,0,0,0,1);
+        p_CommonData->ODEBody1->setLocalPos(0,0,-.25);
+        p_CommonData->ODEBody1->setLocalRot(eyeMat);
+        p_CommonData->p_world->removeChild(m_tool0);
+        p_CommonData->p_world->removeChild(m_tool1);
+        ODEWorld->updateDynamics(timeInterval);
+
+        p_CommonData->p_world->addChild(m_tool0);
+        p_CommonData->p_world->addChild(m_tool1);
+        m_tool0->updateFromDevice();
+        m_tool1->updateFromDevice();
+        p_CommonData->p_world->computeGlobalPositions(true);
+        m_tool0->updateFromDevice();
+        m_tool1->updateFromDevice();
+
+        p_CommonData->p_world->removeChild(force1_show);
+        p_CommonData->p_world->removeChild(force2_show);
+        p_CommonData->p_world->addChild(force1_show);
+        p_CommonData->p_world->addChild(force2_show);
+
+
+        p_CommonData->p_world->computeGlobalPositions(true);
+        p_CommonData->ODEBody1->setLocalPos(p_CommonData->box1InitPos);
+        p_CommonData->ODEBody1->setLocalRot(eyeMat);
+        ODEWorld->updateDynamics(timeInterval);
+
+        p_CommonData->fingerTouching = false; //reset before we check
+        p_CommonData->thumbTouching = false;
+        p_CommonData->fingerTouchingLast = false;
+        p_CommonData->thumbTouchingLast = false;
+        p_CommonData->scaledDispTransp = 1;
+        p_CommonData->clutchedOffset.set(0,0,0);
+        p_CommonData->fingerDisplayScale = 1.0;
+
+        p_CommonData->resetBoxPosFlag = false;
+    }
+
+    // set scaled stuff to show or not show
+    UpdateScaledTransparency();
+
+    // Remove environment if experiments done
+    if(p_CommonData->expDone)
+    {
+        p_CommonData->environmentChange = true;
+        p_CommonData->currentEnvironmentState = none;
+        p_CommonData->expDone = false;
+    }
+}
+
+
+void haptics_thread::UpdateScaledTransparency()
+{
+    // case invisible scaled display
+    if ((p_CommonData->scaledDispTransp % 3) == 0)
+    {
+        scaledFinger->setTransparencyLevel(0.0);
+        scaledThumb->setTransparencyLevel(0.0);
+        p_CommonData->p_dynamicScaledBox1->setTransparencyLevel(0.0);
+
+        finger->setTransparencyLevel(1.0);
+        thumb->setTransparencyLevel(1.0);
+        p_CommonData->p_dynamicBox1->setTransparencyLevel(1);
+    }
+    if ((p_CommonData->scaledDispTransp % 3) == 1)
+    {
+        scaledFinger->setTransparencyLevel(1.0);
+        scaledThumb->setTransparencyLevel(1.0);
+        p_CommonData->p_dynamicScaledBox1->setTransparencyLevel(1.0);
+
+        finger->setTransparencyLevel(0);
+        thumb->setTransparencyLevel(0);
+        p_CommonData->p_dynamicBox1->setTransparencyLevel(1);
+    }
+    if ((p_CommonData->scaledDispTransp % 3) == 2)
+    {
+        scaledFinger->setTransparencyLevel(1);
+        scaledThumb->setTransparencyLevel(1);
+        p_CommonData->p_dynamicScaledBox1->setTransparencyLevel(1);
+
+        finger->setTransparencyLevel(0.5);
+        thumb->setTransparencyLevel(0.5);
+        p_CommonData->p_dynamicBox1->setTransparencyLevel(1);
+    }
+}
+
+void haptics_thread::UpdateScaledCursors()
+{
+    curCenter = (m_tool0->m_hapticPoint->getGlobalPosProxy() + m_tool1->m_hapticPoint->getGlobalPosProxy())/2.0;
+    centToFingCur = m_tool0->m_hapticPoint->getGlobalPosProxy() - curCenter;
+    centToThumbCur = m_tool1->m_hapticPoint->getGlobalPosProxy() - curCenter;
+
+    scaledCurCenter = p_CommonData->fingerDisplayScale*(curCenter - p_CommonData->fingerScalePoint) + p_CommonData->fingerScalePoint + p_CommonData->clutchedOffset;
+    m_dispScaleCurSphere0->setLocalPos(scaledCurCenter + centToFingCur);
+    m_dispScaleCurSphere1->setLocalPos(scaledCurCenter + centToThumbCur);
+}
+
+void haptics_thread::UpdateScaledFingers()
+{
+    // update position of finger to stay on scaled cursor (which is scaled relative to proxy point)
+    scaledFinger->setLocalRot(fingerRotation0);
+    scaledFinger->setLocalPos(m_dispScaleCurSphere0->getLocalPos() + fingerRotation0*fingerOffset);
+
+    // update position of thumb to stay on scaled cursor (which is scaled relative to proxy point)
+    scaledThumb->setLocalRot(fingerRotation1);
+    scaledThumb->setLocalPos(m_dispScaleCurSphere1->getLocalPos() + fingerRotation1*thumbOffset);
+ }
+
+void haptics_thread::UpdateScaledBoxes()
+{
+    p_CommonData->box1displayScale = 1.0/p_CommonData->expCD;
+
+    chai3d::cVector3d scaledBox1Pos; scaledBox1Pos = p_CommonData->box1PostInitCenter + (p_CommonData->ODEBody1->getLocalPos()-p_CommonData->box1PostInitCenter)*p_CommonData->box1displayScale;
+
+    p_CommonData->p_dynamicScaledBox1->setLocalPos(scaledBox1Pos);
+    p_CommonData->p_dynamicScaledBox1->setLocalRot(p_CommonData->ODEBody1->getLocalRot());
+}
+
+void haptics_thread::ComputeVRDesiredDevicePos()
+{
+    // perform transformation to get "device forces"
+    computedForce0 = m_tool0->getDeviceGlobalForce();
+    computedForce1 = m_tool1->getDeviceGlobalForce();
+
+    // rotation of delta mechanism in world frame from cursor updates(originally from mag tracker, but already rotated the small bend angle of finger)
+    rotation0.trans(); //from deviceToWorld to worldToDevice
+    rotation1.trans();
+
+    // this are the forces in the device frames
+    deviceComputedForce0 = rotation0*computedForce0; // rotation between force in world and delta frames
+    deviceComputedForce1 = rotation1*computedForce1; // rotation between force in world and delta frames
+
+    if(p_CommonData->jakeRender)
+    {
+        chai3d::cMatrix3d boxRot_boxToWorld;
+        if(p_CommonData->currentDynamicObjectState == dynamicCDExp)
+            boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
+        else if(p_CommonData->currentDynamicObjectState == standard)
+            boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
+        else if(p_CommonData->currentDynamicObjectState == dynamicInertiaExp)
+            boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
+        else if(p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp)
+            boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
+
+        // get current rotation of adjust box
+        chai3d::cMatrix3d boxRot_worldToBox; boxRot_boxToWorld.transr(boxRot_worldToBox);
+        chai3d::cMatrix3d rotation0_deviceToWorld; rotation0.transr(rotation0_deviceToWorld); // find rotation of index delta device in world coordinates
+        chai3d::cMatrix3d rotation1_deviceToWorld; rotation1.transr(rotation1_deviceToWorld); // find rotation of thumb delta device in world coordinates
+
+        // compute angle between box back normal and index normal
+        chai3d::cVector3d boxIndexSideNorm(-1,0,0); // index side vector normal to surface (in box frame)
+        chai3d::cVector3d boxThumbSideNorm(1,0,0); // thumb side vector normalto surface(in box frame)
+        chai3d::cVector3d fingerpadNorm(0,0,-1); // vector normal to surface of fingerpad (in finger frame)
+        chai3d::cVector3d thumbpadNorm(0,0,-1); // vector normal to surface of fingerpad (in thumb frame)
+
+        chai3d::cVector3d boxIndexSideNormGlobal = boxRot_boxToWorld*boxIndexSideNorm; // index side normal to surface expressed in world coords
+        chai3d::cVector3d boxThumbSideNormGlobal = boxRot_boxToWorld*boxThumbSideNorm; // thumb side normal to surface expressed in world coords
+        chai3d::cVector3d fingerpadNormGlobal = rotation0_deviceToWorld*fingerpadNorm; // fingerpad normal vector expressed in world coords
+        chai3d::cVector3d thumbpadNormGlobal = rotation1_deviceToWorld*thumbpadNorm; // thumbpad normal vector expressed in world coords
+
+        chai3d::cVector3d crossAxis0; boxIndexSideNormGlobal.crossr(fingerpadNormGlobal, crossAxis0); //cross axis is global frames
+        chai3d::cVector3d crossAxis1; boxThumbSideNormGlobal.crossr(thumbpadNormGlobal, crossAxis1);// cross axis in global frames
+        crossAxis0.normalize(); crossAxis1.normalize();
+
+        // find dot product of box norm and finger norm expressed in global coords (for finding angle)
+        double dotProduct0 = boxIndexSideNormGlobal.dot(fingerpadNormGlobal);
+        double magBoxIndexSideNormGlobal = boxIndexSideNormGlobal.length();
+        double magFingerpadNormGlobal = fingerpadNormGlobal.length();
+        double angle0 = acos(dotProduct0/(magBoxIndexSideNormGlobal*magFingerpadNormGlobal));
+
+        double dotProduct1 = boxThumbSideNormGlobal.dot(thumbpadNormGlobal);
+        double magBoxThumbSideNormGlobal = boxThumbSideNormGlobal.length();
+        double magThumbpadNormGlobal = thumbpadNormGlobal.length();
+        double angle1 = acos(dotProduct1/(magBoxThumbSideNormGlobal*magThumbpadNormGlobal));
+
+
+        chai3d::cMatrix3d angleRotationMatrix0; double ux=crossAxis0.x(); double uy=crossAxis0.y(); double uz=crossAxis0.z();
+        angleRotationMatrix0.set( cos(angle0)+pow(ux,2)*(1-cos(angle0)), ux*uy*(1-cos(angle0))-uz*sin(angle0), ux*uz*(1-cos(angle0))+uy*sin(angle0),
+                                  uy*ux*(1-cos(angle0))+uz*sin(angle0), cos(angle0)+pow(uy,2)*(1-cos(angle0)), uy*uz*(1-cos(angle0))-ux*sin(angle0),
+                                  uz*ux*(1-cos(angle0))-uy*sin(angle0), uz*uy*(1-cos(angle0))+ux*sin(angle0), cos(angle0)+pow(uz,2)*(1-cos(angle0)) );
+
+        chai3d::cVector3d forceToIndexGlobal = angleRotationMatrix0*computedForce0; // rotate global force by angle about crossAxis
+        chai3d::cVector3d forceToIndexLocal = rotation0*forceToIndexGlobal; // express that in the device frame
+
+        chai3d::cMatrix3d angleRotationMatrix1; ux=crossAxis1.x(); uy=crossAxis1.y(); uz=crossAxis1.z();
+        angleRotationMatrix1.set( cos(angle1)+pow(ux,2)*(1-cos(angle1)), ux*uy*(1-cos(angle1))-uz*sin(angle1), ux*uz*(1-cos(angle1))+uy*sin(angle1),
+                                  uy*ux*(1-cos(angle1))+uz*sin(angle1), cos(angle1)+pow(uy,2)*(1-cos(angle1)), uy*uz*(1-cos(angle1))-ux*sin(angle1),
+                                  uz*ux*(1-cos(angle1))-uy*sin(angle1), uz*uy*(1-cos(angle1))+ux*sin(angle1), cos(angle1)+pow(uz,2)*(1-cos(angle1)) );
+
+        chai3d::cVector3d forceToThumbGlobal = angleRotationMatrix1*computedForce1; // rotate global force by angle about crossAxis
+        chai3d::cVector3d forceToThumbLocal = rotation1*forceToThumbGlobal; // express that in the device frame
+
+
+//        if(CAP_NORMAL_FORCE){ //caps normal force at 1 N
+//            if(abs(forceToIndexLocal.z())>2){
+//                forceToIndexLocal.set(forceToIndexLocal.x(),forceToIndexLocal.y(),((0.0 < forceToIndexLocal.z()) - (forceToIndexLocal.z() < 0.0))*2.0);
+//            }
+//            if(abs(forceToThumbLocal.z())>2){
+//                forceToThumbLocal.set(forceToThumbLocal.x(),forceToThumbLocal.y(),((0.0 < forceToThumbLocal.z()) - (forceToThumbLocal.z() < 0.0))*2.0);
+//            }
+//        }
+
+//        if(CAP_LATERAL_DIRECTION){ //caps normal force at 0 N
+//            if(forceToIndexLocal.y()<0){
+//                forceToIndexLocal.set(forceToIndexLocal.x(),0, forceToIndexLocal.z());
+//            }
+//            if(forceToThumbLocal.y()>0){
+//                forceToThumbLocal.set(forceToThumbLocal.x(),0, forceToThumbLocal.z());
+//            }
+//        }
+        //qDebug() << " Index " << forceToIndexLocal.x() << forceToIndexLocal.y() << forceToIndexLocal.z();
+        //qDebug() << " Thumb " << forceToThumbLocal.x() << forceToThumbLocal.y() << forceToThumbLocal.z();
+
+        deviceComputedForce0 = forceToIndexLocal;
+        deviceComputedForce1 = forceToThumbLocal;
+
+
+
+//        if(rateDisplayCounter == 0)
+//        {
+//            qDebug() << "forceInGlobalCoord: " << computedForce0.x() << computedForce0.y() << computedForce0.z();
+//            qDebug() << "crossAxis: " << crossAxis.x() << crossAxis.y() << crossAxis.z();
+//            qDebug() << "angleRot: " << angle*180/3.14;
+//            qDebug() << "forceToIndexGlobal: " << forceToIndexGlobal.x() << forceToIndexGlobal.y() << forceToIndexGlobal.z();
+//            qDebug() << "forceToIndexLocal: " << forceToIndexLocal.x() << forceToIndexLocal.y() << forceToIndexLocal.z();
+//        }
+    }
+    //qDebug() << "index" << deviceComputedForce0.length();
+    //qDebug() << deviceComputedForce1.length();
+
+    chai3d::cVector3d Zero(0,0,-.25);
+
+    if(p_CommonData->JustVib){
+        deviceComputedForce0=Zero;
+        deviceComputedForce1=Zero;
+    }
+    if(p_CommonData->flagNormal == false)
+    {
+        deviceComputedForce0.z(0);
+        deviceComputedForce1.z(0);
+    }
+
+    if(p_CommonData->flagLateral == false)
+    {
+        deviceComputedForce0.x(0);
+        deviceComputedForce0.y(0);
+        deviceComputedForce1.x(0);
+        deviceComputedForce1.y(0);
+    }
+
+    //IMPULSE VIB CODE HERE
+
+    chai3d::cVector3d Contact_Impulse(0,0,-5 *p_CommonData->ImpulseAmp);
+    chai3d::cVector3d Impulse_V0;
+    chai3d::cVector3d Impulse_V1;
+    if (p_CommonData->ImpulseVib){
+        //playing 0
+        if (Impulse0 && (Playing_Impulse0==false)){
+            Impulse0=false;
+            Playing_Impulse0=true;
+            Impulse_Counter0=0;
+
+        }
+
+        if (Playing_Impulse0){
+            if (Impulse_Counter0==Impulse_Max0)
+                Playing_Impulse0=false;
+                Impulse_V0 = (Contact_Impulse*p_CommonData->Velocity0.length());
+                if (Impulse_V0.length() > 3){
+                    Impulse_V0=chai3d::cVector3d(0,0,-3);
+                }
+                deviceComputedForce0=deviceComputedForce0 + Impulse_V0;
+                qDebug()<<"Device 0 contact velocity: "<<p_CommonData->Velocity0.length()<<"Force is : "<<deviceComputedForce0.z();
+            Impulse_Counter0++;
+
+        }
+        //playing 1
+        if (Impulse1 && (Playing_Impulse1==false)){
+            Impulse1=false;
+            Playing_Impulse1=true;
+            Impulse_Counter1=0;
+            p_CommonData->Velocity1=m_tool1->getDeviceGlobalLinVel();
+            //qDebug()<<p_CommonData->Velocity1.length();
+
+        }
+
+        if (Playing_Impulse1){
+            if (Impulse_Counter1==Impulse_Max1)
+                Playing_Impulse1=false;
+                Impulse_V1 = (Contact_Impulse*p_CommonData->Velocity1.length());
+                if (Impulse_V1.length() > 3){
+                    Impulse_V1=chai3d::cVector3d(0,0,-3);
+                }
+                deviceComputedForce1=deviceComputedForce1 + Impulse_V1;
+                qDebug()<<"Device 1 contact velocity: "<<p_CommonData->Velocity1.length()<<"Force is : "<<deviceComputedForce1.z();
+            Impulse_Counter1++;
+
+        }
+    }
+//SD Vibration Code
+        chai3d::cVector3d Unit(0,0,-1);
+        double A=p_CommonData->SDVibAmp; //V
+        double Omega=p_CommonData->SDVibFreq; //Hz
+        double Beta=-1*p_CommonData->SDVibBeta; //decay
+    if (p_CommonData->SDVib){
+        //playing 0
+        if (SDVib0 && (Playing_SDVib0==false)){
+            SDVib0=false;
+            Playing_SDVib0=true;
+            SDVib_Counter0=0;
+            SDVib_StartTime0=p_CommonData->overallClock.getCurrentTimeSeconds();
+        }
+        SDVib_CurrentTime0=p_CommonData->overallClock.getCurrentTimeSeconds()-SDVib_StartTime0;
+
+        if (Playing_SDVib0){
+            if (SDVib_CurrentTime0>.3)
+                Playing_SDVib0=false;
+            deviceComputedForce0=deviceComputedForce0+A*sin(2*pi*Omega*SDVib_CurrentTime0)*exp(Beta*SDVib_CurrentTime0)*Unit;
+
+            SDVib_Counter0++;
+
+        }
+
+        // playing 1
+        if (SDVib1 && (Playing_SDVib1==false)){
+            SDVib1=false;
+            Playing_SDVib1=true;
+            SDVib_Counter1=0;
+            SDVib_StartTime1=p_CommonData->overallClock.getCurrentTimeSeconds();
+        }
+        SDVib_CurrentTime1=p_CommonData->overallClock.getCurrentTimeSeconds()-SDVib_StartTime1;
+
+
+        if (Playing_SDVib1){
+            if (SDVib_CurrentTime1>.1)
+                Playing_SDVib1=false;
+                deviceComputedForce1=deviceComputedForce1+A*sin(2*pi*Omega*SDVib_CurrentTime1)*exp(Beta*SDVib_CurrentTime1)*Unit;
+
+            SDVib_Counter1++;
+
+        }
+    }
+
+    if(deviceComputedForce0.length() > 12)
+        deviceComputedForce0.set(0,0,0);
+    if(deviceComputedForce1.length() > 12)
+        deviceComputedForce1.set(0,0,0);
+
+    // write down the most recent device and world forces for recording
+    deviceForceRecord0 << deviceComputedForce0.x(),deviceComputedForce0.y(),deviceComputedForce0.z();
+    globalForceRecord0 << computedForce0.x(), computedForce0.y(), computedForce0.z();
+    deviceForceRecord1 << deviceComputedForce1.x(),deviceComputedForce1.y(),deviceComputedForce1.z();
+    globalForceRecord1 << computedForce1.x(), computedForce1.y(), computedForce1.z();
+
+    // filter param
+    double fc = 5.0;
+    double RC = 1.0/(fc*2.0*PI);
+    double alpha = (timeInterval)/(RC + timeInterval);
+
+    // get filtered force
+    filteredDeviceForce0 = alpha*deviceComputedForce0 + (1-alpha)*lastFilteredDeviceForce0;
+    filteredDeviceForce1 = alpha*deviceComputedForce1 + (1-alpha)*lastFilteredDeviceForce1;
+
+//    // assign to the shared data structure to allow plotting from window thread
+//    p_CommonData->deviceComputedForce = deviceComputedForce0;
+//    p_CommonData->filteredDeviceComputedForce = filteredDeviceForce0;
+
+    // add impulses here so as not to affect filter
+    AddImpulseDisp(indexImpulse, thumbImpulse);
+    AddImpulseTorqueDisp(indexTorqueImpulse, thumbTorqueImpulse);
+
+    // rotate impulse into device frames
+    indexImpulse = deviceRotation0*rotation0*indexImpulse;
+    thumbImpulse = deviceRotation1*rotation1*thumbImpulse;
+    indexTorqueImpulse = deviceRotation0*rotation0*indexTorqueImpulse;
+    thumbTorqueImpulse = deviceRotation1*rotation1*thumbTorqueImpulse;
+
+    //convert device "force" to a mapped position
+    double forceToPosMult = p_CommonData->adjustedForceToPosMult; // based on lateral stiffness of finger (averaged directions from Gleeson paper) (1.588 N/mm)
+    double forceToPosMultThumb = forceToPosMult;
+
+    // Pos movements in delta mechanism frame (index)
+    chai3d::cVector3d desiredPosMovement0 = forceToPosMult*(filteredDeviceForce0 + indexImpulse + indexTorqueImpulse); //this is only for lateral if we override normal later
+    chai3d::cVector3d desiredPosMovement1 = forceToPosMultThumb*(filteredDeviceForce1 + thumbImpulse + thumbTorqueImpulse); //this is only for lateral if we override normal later
+
+    // check to see if we are rendering only normal or only lateral
+//    if(p_CommonData->flagNormal == false)
+//    {
+//        desiredPosMovement0.z(0);
+//        desiredPosMovement1.z(0);
+//    }
+
+//    if(p_CommonData->flagLateral == false)
+//    {
+//        desiredPosMovement0.x(0);
+//        desiredPosMovement0.y(0);
+//        desiredPosMovement1.x(0);
+//        desiredPosMovement1.y(0);
+//    }
+
+    // don't allow the tactor to move away from finger when computing VR interaction
+    double vertPosMovement0 = desiredPosMovement0.z();
+    double vertPosMovement1 = desiredPosMovement1.z();
+    if(vertPosMovement0 > 0)
+        vertPosMovement0 = 0;
+    if(vertPosMovement1 > 0)
+        vertPosMovement1 = 0;
+
+    Eigen::Vector3d neutralPos0 = p_CommonData->wearableDelta0->neutralPos;
+    Eigen::Vector3d desiredPos0(3);
+    desiredPos0 << desiredPosMovement0.x()+neutralPos0[0], desiredPosMovement0.y()+neutralPos0[1], vertPosMovement0+neutralPos0[2];
+    Eigen::Vector3d neutralPos1 = p_CommonData->wearableDelta1->neutralPos;
+    Eigen::Vector3d desiredPos1(3);
+    desiredPos1 << desiredPosMovement1.x()+neutralPos1[0], desiredPosMovement1.y()+neutralPos1[1], vertPosMovement1+neutralPos1[2];
+
+    // if the experimental condition is no feedback, tell it to move to neutral pos
+    if(p_CommonData->tactileFeedback == 0)
+    {
+        desiredPos0 << neutralPos0[0], neutralPos0[1], neutralPos0[2];
+        desiredPos1 << neutralPos1[0], neutralPos1[1], neutralPos1[2];
+    }
+
+    // Perform control based on desired position
+    p_CommonData->wearableDelta0->SetDesiredPos(desiredPos0);
+    p_CommonData->wearableDelta1->SetDesiredPos(desiredPos1);
+
+    lastFilteredDeviceForce0 = filteredDeviceForce0;
+    lastFilteredDeviceForce1 = filteredDeviceForce1;
+}
+
+void haptics_thread::RecordData() // DATA RECORD DATA
+{
+    p_CommonData->dataRecordMutex.lock();
+
+    // modified for new experiment, now with both devices
+    recordDataCounter = 0;
+    p_CommonData->dataRecorder.time = p_CommonData->overallClock.getCurrentTimeSeconds();
+
+    p_CommonData->dataRecorder.jointAngles0 = p_CommonData->wearableDelta0->GetJointAngles();
+    p_CommonData->dataRecorder.motorAngles0 = p_CommonData->wearableDelta0->GetMotorAngles();
+    p_CommonData->dataRecorder.pos0 = p_CommonData->wearableDelta0->GetCartesianPos();
+    p_CommonData->dataRecorder.desiredPos0 = p_CommonData->wearableDelta0->ReadDesiredPos();
+    p_CommonData->dataRecorder.voltageOut0 = p_CommonData->wearableDelta0->ReadVoltageOutput();
+    p_CommonData->dataRecorder.VRInteractionForce0 = deviceForceRecord0; // last force on tool0
+    p_CommonData->dataRecorder.VRInteractionForceGlobal0 = globalForceRecord0; // last force on tool0 in global coords
+    p_CommonData->dataRecorder.motorTorque0 = p_CommonData->wearableDelta0->motorTorques;
+    p_CommonData->dataRecorder.magTrackerPos0 = position0;
+
+    p_CommonData->dataRecorder.jointAngles1 = p_CommonData->wearableDelta1->GetJointAngles();
+    p_CommonData->dataRecorder.motorAngles1 = p_CommonData->wearableDelta1->GetMotorAngles();
+    p_CommonData->dataRecorder.pos1 = p_CommonData->wearableDelta1->GetCartesianPos();
+    p_CommonData->dataRecorder.desiredPos1 = p_CommonData->wearableDelta1->ReadDesiredPos();
+    p_CommonData->dataRecorder.voltageOut1 = p_CommonData->wearableDelta1->ReadVoltageOutput();
+    p_CommonData->dataRecorder.VRInteractionForce1 = deviceForceRecord1; // last force on tool0
+    p_CommonData->dataRecorder.VRInteractionForceGlobal1 = globalForceRecord1; // last force on tool0 in global coords
+    p_CommonData->dataRecorder.motorTorque1 = p_CommonData->wearableDelta1->motorTorques;
+    p_CommonData->dataRecorder.magTrackerPos1 = position1;
+
+    p_CommonData->dataRecorder.deviceRotation0 = rotation0;
+    p_CommonData->dataRecorder.deviceRotation1 = rotation1;
+
+    p_CommonData->dataRecorder.box1Pos = p_CommonData->ODEBody1->getLocalPos();
+    p_CommonData->dataRecorder.scaledBox1Pos = p_CommonData->p_dynamicScaledBox1->getLocalPos();
+
+    p_CommonData->dataRecorder.pairNo = p_CommonData->pairNo;
+    p_CommonData->dataRecorder.boxMass = p_CommonData->InertiaBlockMass;
+    p_CommonData->dataRecorder.ReferenceMass = p_CommonData->ReferenceMass;
+    p_CommonData->dataRecorder.ComparisonMass = p_CommonData->ComparisonMass;
+    p_CommonData->dataRecorder.InertiaScalingFactor = 10*p_CommonData->Inertial_Scaling_Factor;
+    p_CommonData->dataRecorder.isRef = p_CommonData->Displaying;
+    p_CommonData->dataRecorder.subjResponse = 0;//fill in right before recording in mainwindow thread
+    p_CommonData->dataRecorder.isUpperCurve = p_CommonData->isUpperCurve;
+    p_CommonData->dataRecorder.blockNo = p_CommonData->blockNo;
+    p_CommonData->dataRecorder.gravity = p_CommonData->gravity;
+    p_CommonData->dataRecorder.boxrotation = p_CommonData->ODEBody1->getGlobalRot();
+
+
+
+    //p_CommonData->dataRecorder.isReversal handled by mainwindow thread manually at end of each trial
+
+    p_CommonData->dataRecorderVector.push_back(p_CommonData->dataRecorder);
+    p_CommonData->dataRecordMutex.unlock();
+}
+
+void haptics_thread::InitGeneralChaiStuff()
+{
+    //--------------------------------------------------------------------------
+    // WORLD - CAMERA - LIGHTING
+    //--------------------------------------------------------------------------
+    // Create a new world
+    p_CommonData->p_world = new chai3d::cWorld();
+
+    // create a camera and insert it into the virtual world
+    p_CommonData->p_world->setBackgroundColor(0, 0, 0);
+    p_CommonData->p_world->m_backgroundColor.setWhite();
+
+    // create a camera and insert it into the virtual world
+    p_CommonData->p_camera = new chai3d::cCamera(p_CommonData->p_world);
+    p_CommonData->p_world->addChild(p_CommonData->p_camera);
+
+    // Position and orientate the camera
+    // X is toward camera, pos y is to right, pos z is up
+
+    p_CommonData->cameraPos.set(0.320, 0, -.400);
+    //p_CommonData->cameraPos.set(0.3, -.3, -.400);
+    p_CommonData->lookatPos.set(0.0, 0, 0.0);
+    p_CommonData->upVector.set(0.0, 0.0, -1.0);
+    p_CommonData->p_camera->set( p_CommonData->cameraPos,    //(0.25, 0, -.25),    // camera position (eye)
+                                 p_CommonData->lookatPos,    // lookat position (target)
+                                 p_CommonData->upVector);    // direction of the "up" vector
+
+    // set the near and far clipping planes of the camera
+    // anything in front/behind these clipping planes will not be rendered
+    p_CommonData->p_camera->setClippingPlanes(0.01, 20.0);
+
+#ifndef OCULUS
+    // the camera is updated to a position based on these params
+    p_CommonData->azimuth = 0.0;
+    p_CommonData->polar = 135.0; //higher number puts us higher in the air
+    p_CommonData->camRadius = 0.45;
+#endif
+
+    // create a light source and attach it to the camera
+    light = new chai3d::cSpotLight(p_CommonData->p_world);
+    p_CommonData->p_world->addChild(light);   // insert light source inside world
+    light->setEnabled(true);                   // enable light source
+    light->setDir(-.2, -0.2, .5);  // define the direction of the light beam
+    light->setLocalPos(.2, 0.2, -.5);
+    light->setCutOffAngleDeg(120);
+
+}
+
+void haptics_thread::InitFingerAndTool()
+{
+    //--------------------------------------------------------------------------
+    // HAPTIC DEVICES / TOOLS
+    //--------------------------------------------------------------------------
+    m_tool0 = new chai3d::cToolCursor(p_CommonData->p_world); // create a 3D tool
+    p_CommonData->p_world->addChild(m_tool0); //insert the tool into the world
+    toolRadius = 0.002; // set tool radius
+    m_tool0->setRadius(toolRadius);
+    m_tool0->setHapticDevice(p_CommonData->chaiMagDevice0); // connect the haptic device to the tool
+    m_tool0->setShowContactPoints(false, false, chai3d::cColorf(0,0,0)); // show proxy and device position of finger-proxy algorithm
+    m_tool0->enableDynamicObjects(true);
+    m_tool0->setWaitForSmallForce(true);
+    m_tool0->start();
+
+    //uncomment this if we want to use 2 tools
+    m_tool1 = new chai3d::cToolCursor(p_CommonData->p_world); // create a 3D tool
+    p_CommonData->p_world->addChild(m_tool1); //insert the tool into the world
+    m_tool1->setRadius(toolRadius);
+    m_tool1->setHapticDevice(p_CommonData->chaiMagDevice1); // connect the haptic device to the tool
+    m_tool1->setShowContactPoints(false, false, chai3d::cColorf(0,0,0)); // show proxy and device position of finger-proxy algorithm
+    m_tool1->enableDynamicObjects(true);
+    m_tool1->setWaitForSmallForce(true);
+    m_tool1->start();
+
+    // Can use this to show frames on tool if so desired
+    //create a sphere to represent the tool
+    m_curSphere0 = new chai3d::cShapeSphere(toolRadius);
+    p_CommonData->p_world->addChild(m_curSphere0);
+    m_curSphere0->m_material->setGrayDarkSlate();
+    m_curSphere0->setShowFrame(true);
+    m_curSphere0->setFrameSize(0.05);
+
+    m_curSphere1 = new chai3d::cShapeSphere(toolRadius);
+    p_CommonData->p_world->addChild(m_curSphere1);
+    m_curSphere1->m_material->setBlueAqua();
+    m_curSphere1->setShowFrame(true);
+    m_curSphere1->setFrameSize(0.05);
+
+    // add display scaled visual representations
+    m_dispScaleCurSphere0 = new chai3d::cShapeSphere(toolRadius);
+    p_CommonData->p_world->addChild(m_dispScaleCurSphere0);
+    m_dispScaleCurSphere0->m_material->setGrayDarkSlate();
+    m_dispScaleCurSphere0->setShowFrame(false);
+    m_dispScaleCurSphere0->setFrameSize(0.05);
+
+    m_dispScaleCurSphere1 = new chai3d::cShapeSphere(toolRadius);
+    p_CommonData->p_world->addChild(m_dispScaleCurSphere1);
+    m_dispScaleCurSphere1->m_material->setBlueAqua();
+    m_dispScaleCurSphere1->setShowFrame(false);
+    m_dispScaleCurSphere1->setFrameSize(0.05);
+
+
+    //--------------------------------------------------------------------------
+    // CREATING OBJECTS
+    //--------------------------------------------------------------------------
+    // create a finger object
+    finger = new chai3d::cMultiMesh(); // create a virtual mesh
+    p_CommonData->p_world->addChild(finger); // add object to world
+    finger->setShowFrame(false);
+    finger->setFrameSize(0.05);
+    finger->setLocalPos(0.0, 0.0, 0.0);
+
+    thumb = new chai3d::cMultiMesh(); //create the thumb
+    p_CommonData->p_world->addChild(thumb);
+    thumb->setShowFrame(false);
+    thumb->setFrameSize(0.05);
+    thumb->setLocalPos(0,0,0);
+
+    // load an object file
+    if(cLoadFileOBJ(finger, "./Resources/FingerModel.obj")){
+        qDebug() << "finger file loaded";
+    }
+    if(cLoadFileOBJ(thumb, "./Resources/FingerModelThumb.obj")){
+        qDebug() << "thumb file loaded";
+    }
+
+    // set params for finger
+    finger->setShowEnabled(true);
+    finger->setUseVertexColors(true);
+    chai3d::cColorf fingerColor;
+    fingerColor.setBrownSandy();
+    finger->setVertexColor(fingerColor);
+    finger->m_material->m_ambient.set(0.1, 0.1, 0.1);
+    finger->m_material->m_diffuse.set(0.3, 0.3, 0.3);
+    finger->m_material->m_specular.set(1.0, 1.0, 1.0);
+    finger->setUseMaterial(true);
+    finger->setHapticEnabled(false);
+
+    // set params for thumb
+    thumb->setShowEnabled(true);
+    thumb->setUseVertexColors(true);
+    chai3d::cColorf thumbColor;
+    thumbColor.setBrownSandy();
+    thumb->setVertexColor(thumbColor);
+    thumb->m_material->m_ambient.set(0.1, 0.1, 0.1);
+    thumb->m_material->m_diffuse.set(0.3, 0.3, 0.3);
+    thumb->m_material->m_specular.set(1.0, 1.0, 1.0);
+    thumb->setUseMaterial(true);
+    thumb->setHapticEnabled(false);
+
+    ////////////////////////////////////////////
+    // CREATE POSITION SCALED OBJECTS
+    /////////////////////////////////////////////
+    scaledFinger = new chai3d::cMultiMesh(); // create a virtual mesh
+    p_CommonData->p_world->addChild(scaledFinger); // add object to world
+    scaledFinger->setShowFrame(false);
+    scaledFinger->setFrameSize(0.05);
+    scaledFinger->setLocalPos(0.0, 0.0, 0.0);
+
+    scaledThumb = new chai3d::cMultiMesh(); //create the scaledThumb
+    p_CommonData->p_world->addChild(scaledThumb);
+    scaledThumb->setShowFrame(false);
+    scaledThumb->setFrameSize(0.05);
+    scaledThumb->setLocalPos(0,0,0);
+
+    if(cLoadFileOBJ(scaledFinger, "./Resources/FingerModel.obj")){
+        qDebug() << "finger file loaded";
+    }
+    if(cLoadFileOBJ(scaledThumb, "./Resources/FingerModelThumb.obj")){
+        qDebug() << "thumb file loaded";
+    }
+
+    // set params for scaledFinger
+    scaledFinger->setShowEnabled(true);
+    scaledFinger->setUseVertexColors(true);
+    chai3d::cColorf scaledFingerColor;
+    scaledFingerColor.setBrownSandy();
+    scaledFinger->setVertexColor(scaledFingerColor);
+    scaledFinger->m_material->m_ambient.set(0.1, 0.1, 0.1);
+    scaledFinger->m_material->m_diffuse.set(0.3, 0.3, 0.3);
+    scaledFinger->m_material->m_specular.set(1.0, 1.0, 1.0);
+    scaledFinger->setUseMaterial(true);
+    scaledFinger->setHapticEnabled(false);
+
+    // set params for scaledThumb
+    scaledThumb->setShowEnabled(true);
+    scaledThumb->setUseVertexColors(true);
+    chai3d::cColorf scaledThumbColor;
+    scaledThumbColor.setBrownSandy();
+    scaledThumb->setVertexColor(scaledThumbColor);
+    scaledThumb->m_material->m_ambient.set(0.1, 0.1, 0.1);
+    scaledThumb->m_material->m_diffuse.set(0.3, 0.3, 0.3);
+    scaledThumb->m_material->m_specular.set(1.0, 1.0, 1.0);
+    scaledThumb->setUseMaterial(true);
+    scaledThumb->setHapticEnabled(false);
+
+}
+
+void haptics_thread::InitEnvironments()
+{
+    p_CommonData->p_frictionBox1 = new chai3d::cMesh();
+    p_CommonData->p_frictionBox2 = new chai3d::cMesh();
+    p_CommonData->p_textureBox = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueOne = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueTwo = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueThree = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueFour = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueFive = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueSix = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueSeven = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueEight = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueNine = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueTen = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueEleven = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueTwelve = new chai3d::cMultiMesh();
+    p_CommonData->p_indicator = new chai3d::cMultiMesh();
+    p_CommonData->p_tissueOne->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueTwo->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueThree->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueFour->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueFive->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueSix->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueSeven->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueEight->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueNine->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueTen->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueEleven->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_tissueTwelve->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_indicator->rotateAboutLocalAxisDeg(1,0,0,180);
+    p_CommonData->p_expFrictionBox = new chai3d::cMesh();
+}
+
+void haptics_thread::InitDynamicBodies()
+{
+    //--------------------------------------------------------------------------
+    // CREATING ODE World and Objects
+    //--------------------------------------------------------------------------
+    // create an ODE world to simulate dynamic bodies
+    ODEWorld = new cODEWorld(p_CommonData->p_world);
+
+    // Create the ODE objects for the blocks and cup
+    p_CommonData->ODEBody1 = new cODEGenericBody(ODEWorld);
+    p_CommonData->ODEAdjustBody = new cODEGenericBody(ODEWorld);
+    p_CommonData->ODEAdjustBody1 = new cODEGenericBody(ODEWorld);
+    p_CommonData->ODEBody2 = new cODEGenericBody(ODEWorld);
+    p_CommonData->ODEBody3 = new cODEGenericBody(ODEWorld);
+//    p_CommonData->ODEBody4 = new cODEGenericBody(ODEWorld);
+
+    // create a virtual mesh that will be used for the geometry representation of the dynamic body
+    p_CommonData->p_dynamicBox1 = new chai3d::cMesh();
+    p_CommonData->adjustBox = new chai3d::cMesh();
+    p_CommonData->adjustBox1 = new chai3d::cMesh();
+    p_CommonData->p_dynamicBox2 = new chai3d::cMesh();
+    p_CommonData->p_dynamicBox3 = new chai3d::cMesh();
+//    p_CommonData->p_dynamicBox4 = new chai3d::cMesh();
+
+    // create the scaled virtual objects
+     p_CommonData->p_dynamicScaledBox1 = new chai3d::cMesh();
+//    p_CommonData->p_dynamicScaledBox2 = new chai3d::cMesh();
+//    p_CommonData->p_dynamicScaledBox3 = new chai3d::cMesh();
+//    p_CommonData->p_dynamicScaledBox4 = new chai3d::cMesh();
+
+    //--------------------------------------------------------------------------
+    // CREATING ODE INVISIBLE WALLS
+    //--------------------------------------------------------------------------
+    ODEGPlane0 = new cODEGenericBody(ODEWorld);
+
+    //create ground
+    ground = new chai3d::cMesh();
+    MiddleBar = new chai3d::cMesh();
+
+    //create background mesh
+    globe = new chai3d::cMesh();
+
+    ////////////////////////////////////////////
+    // CREATE 1 and 2 MODELS FOR EXPERIMENT DISPLAY
+    /////////////////////////////////////////////
+    //init one and two meshes
+    p_CommonData->oneModel = new chai3d::cMultiMesh();
+    p_CommonData->twoModel = new chai3d::cMultiMesh();
+    p_CommonData->p_world->addChild(p_CommonData->oneModel); // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->twoModel); // add object to world
+    p_CommonData->oneModel->setShowEnabled(false);
+    p_CommonData->twoModel->setShowEnabled(false);
+
+    // load an object file
+    if(cLoadFileOBJ(p_CommonData->oneModel, "./Resources/One.obj")){
+        //qDebug() << "'One' loaded";
+    }
+    if(cLoadFileOBJ(p_CommonData->twoModel, "./Resources/Two.obj")){
+        //qDebug() << "'Two' loaded";
+    }
+
+    p_CommonData->oneModel->setUseVertexColors(true);
+    chai3d::cColorf oneColor;
+    oneColor.setRedCrimson();
+    p_CommonData->oneModel->setVertexColor(oneColor);
+
+    p_CommonData->twoModel->setUseVertexColors(true);
+    chai3d::cColorf twoColor;
+    twoColor.setRedCrimson();
+    p_CommonData->twoModel->setVertexColor(twoColor);
+
+    p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(0,0,1), -90);
+    p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(0,0,1), -90);
+    p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
+    p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
+
+    chai3d::cColorf LineColor;
+    LineColor.setGreenLawn();
+    force1_show = new chai3d::cShapeLine(chai3d::cVector3d(0,0,0),
+                              chai3d::cVector3d(0,0,0));
+    force2_show = new chai3d::cShapeLine(chai3d::cVector3d(0,0,0),
+                              chai3d::cVector3d(0,0,0));
+    lastforce1 = chai3d::cVector3d(0,0,0);
+    lastforce2 = chai3d::cVector3d(0,0,0);
+    force1_show->setLineWidth(5);
+    force2_show->setLineWidth(5);
+
+    force1_show->m_colorPointA=LineColor;
+    force1_show->m_colorPointB=LineColor;
+    LineColor.setBlueSky();
+    force2_show->m_colorPointA=LineColor;
+    force2_show->m_colorPointB=LineColor;
+    p_CommonData->p_world->addChild(force1_show);
+    p_CommonData->p_world->addChild(force2_show);
+
+}
+void haptics_thread::DeleteDynamicBodies()
+{
+    delete ODEWorld;
+    delete p_CommonData->oneModel;
+    delete p_CommonData->twoModel;
+    delete p_CommonData->ODEAdjustBody;
+    delete p_CommonData->ODEAdjustBody1;
+    delete p_CommonData->ODEBody1;
+    delete p_CommonData->ODEBody2;
+    delete p_CommonData->ODEBody3;
+    delete p_CommonData->ODEBody4;
+    delete p_CommonData->adjustBox;
+    delete p_CommonData->adjustBox1;
+    delete p_CommonData->p_dynamicBox1;
+    delete p_CommonData->p_dynamicScaledBox1;
+    delete p_CommonData->p_dynamicBox2;
+    delete p_CommonData->p_dynamicBox3;
+    delete p_CommonData->p_dynamicBox4;
+    delete ODEGPlane0;
+    delete ground;
+    delete MiddleBar;
+    delete globe;
+
+    p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
+    p_CommonData->p_world->removeChild(p_CommonData->p_dynamicScaledBox1);
+    p_CommonData->p_world->removeChild(ODEWorld);
+    p_CommonData->p_world->removeChild(ground);
+    p_CommonData->p_world->removeChild(MiddleBar);
+    p_CommonData->p_world->removeChild(m_tool0);
+    p_CommonData->p_world->removeChild(m_tool1);
+    p_CommonData->p_world->removeChild(finger);
+    p_CommonData->p_world->removeChild(thumb);
+    p_CommonData->p_world->removeChild(globe);
+    p_CommonData->p_world->removeChild(force1_show);
+    p_CommonData->p_world->removeChild(force1_show);
+
+    // add scaled bodies for altering display ratio
+    p_CommonData->p_world->removeChild(m_dispScaleCurSphere0);
+    p_CommonData->p_world->removeChild(m_dispScaleCurSphere1);
+    p_CommonData->p_world->removeChild(scaledFinger);
+    p_CommonData->p_world->removeChild(scaledThumb);
+
+}
+
+void haptics_thread::RenderDynamicBodies()
+{
+    DeleteDynamicBodies();
+    InitDynamicBodies();    
+    ODEWorld->deleteAllChildren();
+
+    //----------------------------- ---------------------------------------------
+    // CREATING ODE World and Objects
+    //--------------------------------------------------------------------------
+
+    // create an ODE world to simulate dynamic bodies
+    p_CommonData->p_world->addChild(ODEWorld);
+
+    // give world gravity
+    if (p_CommonData->currentDynamicObjectState == dynamicInertiaExp || p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp){
+        ODEWorld->setGravity(chai3d::cVector3d(0.0, 0.0, 0));
+    }
+    else {
+        ODEWorld->setGravity(chai3d::cVector3d(0.0, 0.0, 9.81));
+    }
+    // define damping properties
+    ODEWorld->setAngularDamping(.02);
+    ODEWorld->setLinearDamping(.007);
+
+    //create a plane
+    groundSize = .3;
+    groundThickness = 0.01;
+    //--------------------------------------------------------------------------
+    // CREATING ODE INVISIBLE WALLS
+    //--------------------------------------------------------------------------
+    ODEGPlane0->createStaticPlane(chai3d::cVector3d(0.0, 0.0, 0), chai3d::cVector3d(0.0, 0.0 ,-1.0));
+
+    chai3d::cCreateBox(ground, groundSize, 2*groundSize, groundThickness);
+    ground->setLocalPos(.1,.1,groundThickness*0.5);
+    chai3d::cCreateBox(MiddleBar, groundSize, .02, 10*groundThickness);
+    MiddleBar->setLocalPos(.1,.1,groundThickness*0.5-.01);
+
+    //create globe
+    chai3d::cCreateSphere(globe, 10, 30, 30);
+    globe->setUseDisplayList(true);
+    globe->deleteCollisionDetector();
+
+    // create a texture
+    textureSpace = chai3d::cTexture2d::create();
+    textureSpace->loadFromFile("./Resources/sky.jpg");
+
+    globe->setTexture(textureSpace, true); //apply texture to globe
+    globe->setUseCulling(false, true);     // Since we don't need to see our polygons from both sides, we enable culling.
+
+    // define some material properties for ground
+    chai3d::cMaterial matGround;
+    matGround.setBrownSandy();
+    ground->setMaterial(matGround);
+    chai3d::cMaterial matMiddleBar;
+    matMiddleBar.setWhiteGhost();
+    MiddleBar->setMaterial(matMiddleBar);
+
+    // choose which type of dynamic object environ to render
+    switch(p_CommonData->currentDynamicObjectState)
+    {
+    case standard: // susana change stiffnesses here
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
+        mass1 = .2; mass2 = 0.2; mass3 = 0.2;
+        stiffness1 = EXPERIMENTSTIFFNESS; stiffness2 = EXPERIMENTSTIFFNESS; stiffness3 = EXPERIMENTSTIFFNESS;
+        break;
+    case mass:
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = 2.0; friction2 = 2.0; friction3 = 2.0;
+        mass1 = .05; mass2 = 0.2; mass3 = 0.25;
+        stiffness1 = 500; stiffness2 = 500; stiffness3 = 500;
+        break;
+    case friction:
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = 0.5; friction2 = 2.0; friction3 = 4.0;
+        mass1 = 0.15; mass2 = 0.15; mass3 = 0.15;
+        stiffness1 = 500; stiffness2 = 500; stiffness3 = 500;
+        break;
+    case dimension:
+        boxSize1 = 0.03; boxSize2 = 0.045; boxSize3 = 0.06;
+        friction1 = 2.0; friction2 = 2.0; friction3 = 2.0;
+        mass1 = .1; mass2 = 0.1; mass3 = 0.1;
+        stiffness1 = 500; stiffness2 = 500; stiffness3 = 500;
+        break;
+    case stiffness:
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = 2.0; friction2 = 2.0; friction3 = 2.0;
+        mass1 = .15; mass2 = 0.15; mass3 = 0.15;
+        stiffness1 = 200; stiffness2 = 400; stiffness3 = 600;
+        break;
+    case dynamicExperiment:
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = 2.0; friction2 = 2.0; friction3 = 2.0;
+        mass1 = 0.2; mass2 = 0.2; mass3 = 0.2;
+        stiffness1 = 500; stiffness2 = 500; stiffness3 = 500;
+        break;
+    case dynamicCDExp:
+        boxSize1 = 0.05;
+        friction1 = 2.0;
+        mass1 = 0.2;
+        stiffness1 = 150;
+        break;
+    case dynamicInertiaExp:
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
+        mass1 = 0.2; mass2 = 0.2; mass3 = 0.2;
+        stiffness1 = EXPERIMENTSTIFFNESS; stiffness2 = 300; stiffness3 = 300;
+        break;
+    case dynamicSubjectiveExp:
+
+        boxSize1 = 0.05; boxSize2 = 0.05; boxSize3 = 0.05;
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
+        mass1 = 0.2; mass2 = 0.2; mass3 = 0.2;
+        stiffness1 = EXPERIMENTSTIFFNESS; stiffness2 = 300; stiffness3 = 300;
+        break;
+    }
+
+    //assign the params dependent on the others
+    latStiffness1 = stiffness1*1.5; latStiffness2 = stiffness2*1.5; latStiffness3 = stiffness3*1.5;
+    dynFriction1 = 0.9*friction1; dynFriction2 = 0.9*friction2; dynFriction3 = 0.9*friction3;
+
+    if (p_CommonData->currentDynamicObjectState == dynamicExperiment)
+    {
+        SetDynEnvironMassExp();
+    }
+
+    else if (p_CommonData->currentDynamicObjectState == dynamicCDExp)
+    {
+        SetDynEnvironCDExp();
+    }
+
+    else if (p_CommonData->currentDynamicObjectState == dynamicInertiaExp)
+    {
+        SetDynEnvironInertiaExp();
+
+    }
+
+    // if just rendering dynamic environments without an experiment
+    else if (p_CommonData->currentDynamicObjectState == standard)
+    {
+
+        SetDynEnvironAdjust();
+    }
+    else if (p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp)
+    {
+        SetDynEnvironSubjective();
+
+    }
+
+    //set position of backgroundObject
+    globe->setLocalPos(0,0,0);
+
+    // setup tools for dynamic interaction
+    m_tool0->enableDynamicObjects(true);
+    m_tool1->enableDynamicObjects(true);
+
+    //add objects to world
+    p_CommonData->p_world->addChild(ODEWorld);
+    p_CommonData->p_world->addChild(ground);
+    p_CommonData->p_world->addChild(MiddleBar);
+    p_CommonData->p_world->addChild(m_tool0);
+    p_CommonData->p_world->addChild(m_tool1);
+    p_CommonData->p_world->addChild(finger);
+    p_CommonData->p_world->addChild(thumb);
+    p_CommonData->p_world->addChild(globe);
+    p_CommonData->p_world->addChild(m_curSphere0);
+    p_CommonData->p_world->addChild(m_curSphere1);
+
+    // add scaled bodies for altering display ratio
+    m_dispScaleCurSphere0->setHapticEnabled(false);
+    m_dispScaleCurSphere1->setHapticEnabled(false);
+    scaledFinger->setHapticEnabled(false);
+    scaledThumb->setHapticEnabled(false);
+    p_CommonData->p_world->addChild(m_dispScaleCurSphere0);
+    p_CommonData->p_world->addChild(m_dispScaleCurSphere1);
+    p_CommonData->p_world->addChild(scaledFinger);
+    p_CommonData->p_world->addChild(scaledThumb);
+
+    p_CommonData->clutchedOffset.set(0,0,0);
+    p_CommonData->fingerScalePoint.set(0,0,0);
+
+    m_tool0->setTransparencyLevel(0);
+    m_tool1->setTransparencyLevel(0);
+    m_curSphere0->setTransparencyLevel(0);
+    m_curSphere1->setTransparencyLevel(0);
+    m_dispScaleCurSphere0->setTransparencyLevel(0);
+    m_dispScaleCurSphere1->setTransparencyLevel(0);
+
+}
+
+void haptics_thread::SetDynEnvironInertiaExp()
+{
+    // create the visual boxes on the dynamicbox meshes
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, 1.5*boxSize1, 1.5*boxSize1); // make mesh a box
+
+
+    // setup collision detectorsfor the dynamic objects
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+    //p_CommonData->p_dynamicBox1->setShowFrame(true);
+
+
+    // define material properties for box 1
+    chai3d::cMaterial mat1;
+    if (p_CommonData->pairNo==1){
+      mat1.setGreenLightSea();
+    }else{
+      mat1.setBlueDark();
+    }
+
+//    mat1.setStiffness(p_CommonData->adjustedStiffness);
+//    mat1.setLateralStiffness(p_CommonData->adjustedStiffness*1.5);
+//    mat1.setDynamicFriction(p_CommonData->adjustedDynamicFriction);
+//    mat1.setStaticFriction(p_CommonData->adjustedStaticFriction);
+    mat1.setStiffness(stiffness1);
+    mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+
+    // create a dynamic model of the ODE object
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, 1.5*boxSize1, 1.5*boxSize1);
+    // set mass of box
+    qDebug()<< "Inertial Block Mass" <<p_CommonData->InertiaBlockMass;
+    qDebug()<< "Inertial Scaling Factor" <<p_CommonData->Inertial_Scaling_Factor;
+    p_CommonData->ODEBody1->setMass(p_CommonData->InertiaBlockMass);
+
+
+    // set position of box
+    chai3d::cMatrix3d zeroRot; zeroRot.set(0,0,0,0,0,0,0,0,0);
+    p_CommonData->ODEBody1->setLocalRot(zeroRot);
+    p_CommonData->ODEBody1->setLocalPos(.1,0,-.05);
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
+
+}
+
+
+void haptics_thread::SetDynEnvironCDExp()
+{
+    // set part 1/2 indicators to be able to show
+    p_CommonData->oneModel->setShowEnabled(true);
+    p_CommonData->twoModel->setShowEnabled(true);
+
+    // create the visual boxes on the dynamicbox meshes
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+
+    // create the visual for the position scaled dynamic boxes
+    cCreateBox(p_CommonData->p_dynamicScaledBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+
+    // setup collision detectorsfor the dynamic objects
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+
+    // define material properties for box 1
+    chai3d::cMaterial mat1;
+    mat1.setRedCrimson();
+    mat1.setStiffness(stiffness1);
+    mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+    // define material properties for box 1
+    chai3d::cMaterial mat2;
+    mat2.setBlueRoyal();
+    p_CommonData->p_dynamicScaledBox1->setMaterial(mat2);
+    p_CommonData->p_dynamicScaledBox1->setUseMaterial(true);
+    p_CommonData->p_dynamicScaledBox1->setHapticEnabled(false);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+
+    // create a dynamic model of the ODE object
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
+
+    // set mass of box
+    p_CommonData->ODEBody1->setMass(p_CommonData->expMass);
+
+    // set position of box
+    p_CommonData->ODEBody1->setLocalPos(p_CommonData->box1InitPos);
+
+    //add one and two indicators
+    p_CommonData->p_world->addChild(p_CommonData->oneModel);
+    p_CommonData->p_world->addChild(p_CommonData->twoModel);
+
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicScaledBox1);
+
+    p_CommonData->oneModel->setLocalPos(0.07, 0.12, 0);
+    p_CommonData->twoModel->setLocalPos(0.07, -0.10, 0);
+    p_CommonData->oneModel->setTransparencyLevel(1.0);
+    p_CommonData->twoModel->setTransparencyLevel(0.0);
+}
+
+// was for sizeWeight CHI exp
+void haptics_thread::SetDynEnvironMassExp()
+{
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, 2*boxSize2); // make mesh a box
+    cCreateBox(p_CommonData->p_dynamicBox3, boxSize3, boxSize3, 3*boxSize3); // make mesh a box
+    cCreateBox(p_CommonData->p_dynamicBox4, boxSize3, boxSize3, 2*boxSize3); // make mesh a box
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_dynamicBox2->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_dynamicBox4->createAABBCollisionDetector(toolRadius);
+    // define material properties for box 1
+    chai3d::cMaterial mat1;
+    mat1.setRedCrimson();
+    mat1.setStiffness(stiffness1);
+    mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    // define material properties for box 2
+    chai3d::cMaterial mat2;
+    mat2.setBlueRoyal();
+    mat2.setStiffness(stiffness2);
+    mat2.setLateralStiffness(latStiffness2);
+    mat2.setDynamicFriction(dynFriction2);
+    mat2.setStaticFriction(friction2);
+    mat2.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat1);
+    p_CommonData->p_dynamicBox2->setUseMaterial(true);
+    p_CommonData->p_dynamicBox3->setMaterial(mat1);
+    p_CommonData->p_dynamicBox3->setUseMaterial(true);
+    p_CommonData->p_dynamicBox4->setMaterial(mat2);
+    p_CommonData->p_dynamicBox4->setUseMaterial(true);
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+    p_CommonData->ODEBody2->setImageModel(p_CommonData->p_dynamicBox2);
+    p_CommonData->ODEBody3->setImageModel(p_CommonData->p_dynamicBox3);
+    p_CommonData->ODEBody4->setImageModel(p_CommonData->p_dynamicBox4);
+    // create a dynamic model of the ODE object
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
+    p_CommonData->ODEBody2->createDynamicBox(boxSize2, boxSize2, 2*boxSize2);
+    p_CommonData->ODEBody3->createDynamicBox(boxSize3, boxSize3, 3*boxSize3);
+    p_CommonData->ODEBody4->createDynamicBox(boxSize3, boxSize3, 2*boxSize3);
+
+    chai3d::cMatrix3d zeroRot; zeroRot.set(0,0,0,0,0,0,0,0,0);
+    p_CommonData->ODEBody1->setLocalRot(zeroRot);
+    p_CommonData->ODEBody2->setLocalRot(zeroRot);
+    p_CommonData->ODEBody3->setLocalRot(zeroRot);
+    p_CommonData->ODEBody4->setLocalRot(zeroRot);
+
+    //put things where they go for start of experiment
+    // Put the other blocks out of view
+    p_CommonData->ODEBody1->setLocalPos(p_CommonData->box1InitPos);
+    p_CommonData->ODEBody2->setLocalPos(p_CommonData->box2InitPos);
+    p_CommonData->ODEBody3->setLocalPos(p_CommonData->box3InitPos);
+
+    // Put standard block on the table
+    p_CommonData->ODEBody4->setLocalPos(0.0,0,-0.03);
+    p_CommonData->ODEBody4->setLocalRot(zeroRot);
+    p_CommonData->sizeWeightStandardMass = mass2;
+    p_CommonData->ODEBody4->setMass(mass2);
+}
+
+void haptics_thread::SetDynEnvironSubjective()
+{
+// create the visual boxes on the dynamicbox meshes
+cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+
+// setup collision detectorsfor the dynamic objects
+p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+p_CommonData->p_dynamicBox1->setShowFrame(false);
+
+
+// define material properties for box 1
+
+chai3d::cMaterial mat1;
+mat1.setRedCrimson();
+mat1.setStiffness(stiffness1);
+mat1.setLateralStiffness(latStiffness1);
+mat1.setDynamicFriction(dynFriction1);
+mat1.setStaticFriction(friction1);
+mat1.setUseHapticFriction(true);
+p_CommonData->p_dynamicBox1->setMaterial(mat1);
+p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+
+// add mesh to ODE object
+p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+
+// create a dynamic model of the ODE object
+p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
+
+// set mass of box
+p_CommonData->ODEBody1->setMass(.2);
+
+
+
+chai3d::cMatrix3d zeroRot; zeroRot.set(0,0,0,0,0,0,0,0,0);
+p_CommonData->ODEBody1->setLocalRot(zeroRot);
+
+// set position of box
+p_CommonData->ODEBody1->setLocalPos(.1,0,-.025);
+p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
+
+}
+
+// general mass demo with adjustable parameters
+void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
+{ 
+
+    // create the visual boxes on the dynamicbox meshes
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    cCreateBox(p_CommonData->p_dynamicBox2, boxSize1*.9, boxSize1*1.05, boxSize1*.9); // make mesh a box
+    //cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
+
+    //cCreateBox(p_CommonData->p_dynamicBox3, boxSize2, boxSize2, boxSize2); // make mesh a box
+
+
+
+    // setup collision detectorsfor the dynamic objects
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+    //p_CommonData->p_dynamicBox2->createAABBCollisionDetector(toolRadius);
+    //p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
+
+    // define material properties for box 1
+    //chai3d::cMaterial mat11;
+    mat11.setGreenLawn();
+    mat11.setStiffness(stiffness1);
+    mat11.setLateralStiffness(latStiffness1);
+    mat11.setDynamicFriction(dynFriction1);
+    mat11.setStaticFriction(friction1);
+    mat11.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat11);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+    // define material properties for box 2
+    //chai3d::cMaterial mat22;
+    mat22.setBlueRoyal();
+    mat22.setStiffness(stiffness2);
+    mat22.setLateralStiffness(latStiffness2);
+    mat22.setDynamicFriction(dynFriction2);
+    mat22.setStaticFriction(friction2);
+    mat22.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat22);
+    p_CommonData->p_dynamicBox2->setUseMaterial(true);
+
+    // define material properties for box 3
+    //chai3d::cMaterial mat33;
+    mat33.setGreenLawn();
+    mat33.setStiffness(stiffness3);
+    mat33.setLateralStiffness(latStiffness3);
+    mat33.setDynamicFriction(dynFriction3);
+    mat33.setStaticFriction(friction3);
+    mat33.setUseHapticFriction(true);
+    //p_CommonData->p_dynamicBox3->setMaterial(mat33);
+    //p_CommonData->p_dynamicBox3->setUseMaterial(true);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+    p_CommonData->ODEBody2->setImageModel(p_CommonData->p_dynamicBox2);
+    //p_CommonData->ODEBody3->setImageModel(p_CommonData->p_dynamicBox3);
+
+    // create a dynamic model of the ODE object
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
+    p_CommonData->ODEBody2->createDynamicBox(boxSize2, boxSize2, boxSize2);
+    //p_CommonData->ODEBody3->createDynamicBox(boxSize3, boxSize3, boxSize3);
+
+    // set mass of box
+    p_CommonData->ODEBody1->setMass(mass1);
+    p_CommonData->ODEBody2->setMass(mass2);
+    //p_CommonData->ODEBody3->setMass(mass3);
+
+    // set position of box
+    p_CommonData->ODEBody1->setLocalPos(.1,.2,-.2);
+    p_CommonData->ODEBody2->setLocalPos(0.2,.1,-.2);
+    //p_CommonData->ODEBody3->setLocalPos(.1,0,-.4);
+
+
+}
+
+// was for general mass demo and subjective CHI exp
+//void haptics_thread::SetDynEnvironSubjective()
+//{
+    //    // create the visual boxes on the dynamicbox meshes
+    //    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    //    cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
+    //    cCreateBox(p_CommonData->p_dynamicBox3, boxSize3, boxSize3, boxSize3); // make mesh a box
+
+    //    // create the visual for the position scaled dynamic boxes
+    //    cCreateBox(p_CommonData->p_dynamicScaledBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    //    cCreateBox(p_CommonData->p_dynamicScaledBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
+    //    cCreateBox(p_CommonData->p_dynamicScaledBox3, boxSize3, boxSize3, boxSize3); // make mesh a box
+
+    //    // setup collision detectorsfor the dynamic objects
+    //    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+    //    p_CommonData->p_dynamicBox2->createAABBCollisionDetector(toolRadius);
+    //    p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
+
+    //    // define material properties for box 1
+    //    chai3d::cMaterial mat1;
+    //    mat1.setRedCrimson();
+    //    mat1.setStiffness(stiffness1);
+    //    mat1.setLateralStiffness(latStiffness1);
+    //    mat1.setDynamicFriction(dynFriction1);
+    //    mat1.setStaticFriction(friction1);
+    //    mat1.setUseHapticFriction(true);
+    //    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    //    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+    //    // define material properties for box 2
+    //    chai3d::cMaterial mat2;
+    //    mat2.setBlueRoyal();
+    //    mat2.setStiffness(stiffness2);
+    //    mat2.setLateralStiffness(latStiffness2);
+    //    mat2.setDynamicFriction(dynFriction2);
+    //    mat2.setStaticFriction(friction2);
+    //    mat2.setUseHapticFriction(true);
+    //    p_CommonData->p_dynamicBox2->setMaterial(mat2);
+    //    p_CommonData->p_dynamicBox2->setUseMaterial(true);
+
+    //    // define material properties for box 3
+    //    chai3d::cMaterial mat3;
+    //    mat3.setGreenLawn();
+    //    mat3.setStiffness(stiffness3);
+    //    mat3.setLateralStiffness(latStiffness3);
+    //    mat3.setDynamicFriction(dynFriction3);
+    //    mat3.setStaticFriction(friction3);
+    //    mat3.setUseHapticFriction(true);
+    //    p_CommonData->p_dynamicBox3->setMaterial(mat3);
+    //    p_CommonData->p_dynamicBox3->setUseMaterial(true);
+
+    //    // add mesh to ODE object
+    //    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+    //    p_CommonData->ODEBody2->setImageModel(p_CommonData->p_dynamicBox2);
+    //    p_CommonData->ODEBody3->setImageModel(p_CommonData->p_dynamicBox3);
+
+    //    // create a dynamic model of the ODE object
+    //    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
+    //    p_CommonData->ODEBody2->createDynamicBox(boxSize2, boxSize2, boxSize2);
+    //    p_CommonData->ODEBody3->createDynamicBox(boxSize3, boxSize3, boxSize3);
+
+    //    // set mass of box
+    //    p_CommonData->ODEBody1->setMass(p_CommonData->sliderWeight);
+    //    p_CommonData->ODEBody2->setMass(mass2);
+    //    p_CommonData->ODEBody3->setMass(mass3);
+
+    //    // set position of box
+    //    p_CommonData->ODEBody1->setLocalPos(p_CommonData->box1InitPos);
+    //    p_CommonData->ODEBody2->setLocalPos(p_CommonData->box2InitPos); //out of view
+    //    p_CommonData->ODEBody3->setLocalPos(p_CommonData->box3InitPos);
+//}
+
+
+
+void haptics_thread::RenderExpFriction()
+{
+    cCreateBox(p_CommonData->p_expFrictionBox, .09, .13, .01);
+    p_CommonData->p_expFrictionBox->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_expFrictionBox->setLocalPos(0,0,0);
+    p_CommonData->p_expFrictionBox->m_material->setStiffness(300);
+    p_CommonData->p_expFrictionBox->m_material->setLateralStiffness(1580);
+    p_CommonData->p_expFrictionBox->m_material->setStaticFriction(0.4);
+    p_CommonData->p_expFrictionBox->m_material->setDynamicFriction(0.4);
+    p_CommonData->p_world->addChild(p_CommonData->p_expFrictionBox);
+    p_CommonData->p_world->addChild(m_tool0);
+    p_CommonData->p_world->addChild(m_tool1);
+    p_CommonData->p_world->addChild(finger);
+}
+
+void haptics_thread::RenderTwoFriction()
+{
+    cCreateBox(p_CommonData->p_frictionBox1, .08, .08, .01); // make mesh a box
+    cCreateBox(p_CommonData->p_frictionBox2, .08, .08, .01); // make mesh a box
+    p_CommonData->p_frictionBox1->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_frictionBox2->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_frictionBox1->setLocalPos(0,.08, -0.07);
+    p_CommonData->p_frictionBox2->setLocalPos(0,-.08, -0.07);
+
+    p_CommonData->p_frictionBox1->m_material->setStiffness(120);
+    p_CommonData->p_frictionBox1->m_material->setLateralStiffness(3*120);
+    p_CommonData->p_frictionBox1->m_material->setStaticFriction(0.25);
+    p_CommonData->p_frictionBox1->m_material->setDynamicFriction(0.25*.9);
+
+    p_CommonData->p_frictionBox2->m_material->setStiffness(120);
+    p_CommonData->p_frictionBox2->m_material->setLateralStiffness(3*120);
+    p_CommonData->p_frictionBox2->m_material->setStaticFriction(0.8);
+    p_CommonData->p_frictionBox2->m_material->setDynamicFriction(0.8*.9);
+
+    p_CommonData->p_world->addChild(p_CommonData->p_frictionBox1);
+    p_CommonData->p_world->addChild(p_CommonData->p_frictionBox2);
+    p_CommonData->p_world->addChild(m_tool0);
+    p_CommonData->p_world->addChild(m_tool1);
+    p_CommonData->p_world->addChild(finger);
+    p_CommonData->p_world->addChild(scaledFinger);
+}
+
+void haptics_thread::CommandSinPos(Eigen::Vector3d inputMotionAxis)
+{
+    // ----------------- START SINUSOID -----------------------------------
+    // set the current time to "0"
+    // scale to avoid abrupt starting input
+    // make a dynamic ramp time of 2 periods
+    double stillTime = 0.5;
+    double rampTime = 6.0*1.0/p_CommonData->bandSinFreq;
+    double currTime = p_CommonData->overallClock.getCurrentTimeSeconds() - p_CommonData->sinStartTime;
+    double finalFreq = 40;
+
+    // start recording after centering oscillation dies out
+    if (currTime > 0.75*stillTime)
+        p_CommonData->recordFlag = true;
+
+    // case that we want to stay still at beginning
+    if (currTime < stillTime)
+    {
+        p_CommonData->wearableDelta0->SetDesiredPos(p_CommonData->wearableDelta0->neutralPos);
+    }
+
+    // case that we want to be ramping and th`en oscillating
+    else if (currTime < ((20.0*1.0/p_CommonData->bandSinFreq) + stillTime))
+    {
+        p_CommonData->recordFlag = true;
+        double scaledBandSinAmp = (currTime-stillTime)/rampTime*p_CommonData->bandSinAmp;
+        if ((currTime - stillTime) > rampTime)
+        {
+            scaledBandSinAmp = p_CommonData->bandSinAmp;
+        }
+
+        Eigen::Vector3d sinPos = (scaledBandSinAmp*sin(2*PI*p_CommonData->bandSinFreq*(currTime-stillTime)))*inputMotionAxis + p_CommonData->wearableDelta0->neutralPos;
+        p_CommonData->wearableDelta0->SetDesiredPos(sinPos);
+    }
+
+    // If time is greater than 20 periods + stillTime reset to neutral pos
+    else if (currTime > ((20.0*1.0/p_CommonData->bandSinFreq) + stillTime))
+    {
+        p_CommonData->wearableDelta0->SetDesiredPos(p_CommonData->wearableDelta0->neutralPos);
+        p_CommonData->recordFlag = false;
+    }
+
+    // If time is greater than 20 periods + 2*stillTime, pause and write to file
+    if (currTime > ((20.0*1.0/p_CommonData->bandSinFreq) + 2*stillTime))
+    {
+        p_CommonData->wearableDelta0->TurnOffControl();
+        WriteDataToFile();
+
+        p_CommonData->bandSinFreq = p_CommonData->bandSinFreq + 0.2;
+        p_CommonData->bandSinFreqDisp = p_CommonData->bandSinFreq;
+
+        if (p_CommonData->bandSinFreq > finalFreq)
+        {
+            p_CommonData->currentControlState = idleControl;
+        }
+
+        Sleep(1000);
+        p_CommonData->sinStartTime = p_CommonData->overallClock.getCurrentTimeSeconds();
+    }
+}
+
+void haptics_thread::CommandCircPos(Eigen::Vector3d inputMotionAxis)
+{
+    double currTime = p_CommonData->overallClock.getCurrentTimeSeconds() - p_CommonData->circStartTime;
+    double smallR = 1;
+    double medR = 2;
+    double largeR = 3;
+
+    double moveStartTime = 1;
+    double tactorSpeed = 5; // [mm/s]
+    double circTime = 2*PI*p_CommonData->circRadius/tactorSpeed;
+
+    double theta;
+    double X;
+    double Y;
+
+    Eigen::Vector3d desPos;
+
+    p_CommonData->recordFlag = false;
+    // move to start small circle
+    if (currTime < moveStartTime)
+    {
+        X = currTime/moveStartTime*p_CommonData->circRadius;
+        Y = 0;
+    }
+
+    // perform small circle
+    else if (currTime < (moveStartTime + 2*circTime))
+    {
+        p_CommonData->recordFlag = true;
+        theta = 2*PI*(currTime - moveStartTime)/circTime;
+        X = p_CommonData->circRadius*cos(theta);
+        Y = p_CommonData->circRadius*sin(theta);
+    }
+
+
+    if (inputMotionAxis.x() == 1)
+    {
+        desPos[0] = 0;
+        desPos[1] = X;
+        desPos[2] = p_CommonData->wearableDelta0->neutralPos.z()+Y;
+    }
+    else if (inputMotionAxis.y() == 1)
+    {
+        desPos[0] = Y;
+        desPos[1] = 0;
+        desPos[2] = p_CommonData->wearableDelta0->neutralPos.z()+X;
+    }
+    else if (inputMotionAxis.z() == 1)
+    {
+        desPos[0] = X;
+        desPos[1] = Y;
+        desPos[2] = p_CommonData->wearableDelta0->neutralPos.z();
+    }
+
+    p_CommonData->wearableDelta0->SetDesiredPos(desPos);
+
+
+    if (currTime > (moveStartTime + 2*circTime))
+    {
+        p_CommonData->wearableDelta0->TurnOffControl();
+        WriteDataToFile();
+        p_CommonData->currentControlState = idleControl;
+
+        Sleep(1000);
+    }
+}
+
+void haptics_thread::WriteDataToFile()
+{
+    p_CommonData->recordFlag = false;
+    QString tempFreq;
+    tempFreq.setNum(p_CommonData->bandSinFreq);
+    //write data to file when we are done
+    std::ofstream file;
+    file.open(p_CommonData->dir.toStdString() + "/" + p_CommonData->fileName.toStdString() + tempFreq.toStdString() + ".txt");
+    for (int i=0; i < p_CommonData->dataRecorderVector.size(); i++)
+    {
+        //[0] is distal finger, [1] is toward middle finger, [2] is away from finger pad
+        file << p_CommonData->dataRecorderVector[i].time << "," << " "
+
+        << p_CommonData->dataRecorderVector[i].pos0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].pos0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].pos0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].desiredPos0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].desiredPos0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].desiredPos0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForce0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForce0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForce0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForceGlobal0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForceGlobal0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForceGlobal0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorAngles0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorAngles0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorAngles0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].jointAngles0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].jointAngles0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].jointAngles0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorTorque0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorTorque0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorTorque0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].voltageOut0[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].voltageOut0[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].voltageOut0[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].magTrackerPos0.x() << "," << " "
+        << p_CommonData->dataRecorderVector[i].magTrackerPos0.y() << "," << " "
+        << p_CommonData->dataRecorderVector[i].magTrackerPos0.z() << "," << " "
+
+        << p_CommonData->dataRecorderVector[i].pos1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].pos1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].pos1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].desiredPos1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].desiredPos1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].desiredPos1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForce1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForce1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForce1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForceGlobal1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForceGlobal1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].VRInteractionForceGlobal1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorAngles1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorAngles1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorAngles1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].jointAngles1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].jointAngles1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].jointAngles1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorTorque1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorTorque1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].motorTorque1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].voltageOut1[0] << "," << " "
+        << p_CommonData->dataRecorderVector[i].voltageOut1[1] << "," << " "
+        << p_CommonData->dataRecorderVector[i].voltageOut1[2] << "," << " "
+        << p_CommonData->dataRecorderVector[i].magTrackerPos1.x() << "," << " "
+        << p_CommonData->dataRecorderVector[i].magTrackerPos1.y() << "," << " "
+        << p_CommonData->dataRecorderVector[i].magTrackerPos1.z() << "," << " "
+
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(0,0) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(0,1) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(0,2) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(1,0) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(1,1) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(1,2) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(2,0) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(2,1) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation0(2,2) << "," << " "
+
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(0,0) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(0,1) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(0,2) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(1,0) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(1,1) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(1,2) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(2,0) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(2,1) << "," << " "
+        << p_CommonData->dataRecorderVector[i].deviceRotation1(2,2) << "," << " "
+
+
+        << p_CommonData->dataRecorderVector[i].pairNo << "," << " "
+
+        << std::endl;
+    }
+    file.close();
+    p_CommonData->dataRecorderVector.clear();
+}
+
+void haptics_thread::rotateTissueLineDisp(double angle)
+{
+    p_CommonData->p_indicator->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->indicatorRot = p_CommonData->indicatorRot + angle;
+}
+
+void haptics_thread::rotateTissueLine(double angle)
+{
+    p_CommonData->p_tissueOne->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueTwo->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueThree->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueFour->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueFive->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueSix->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueSeven->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueEight->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueNine->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueTen->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueEleven->rotateAboutLocalAxisDeg(0,0,-1,angle);
+    p_CommonData->p_tissueTwelve->rotateAboutLocalAxisDeg(0,0,-1,angle);
+}
+
+void haptics_thread::SetInitJointAngles()
+{
+    double moveTime = 2.0;
+    if (p_CommonData->calibClock.getCurrentTimeSeconds() < moveTime)
+    {
+        double curr1, curr2, curr3, curr4, curr5, curr6;
+
+        // handle device 0
+        if (p_CommonData->device0Initing == true)
+        {
+            curr1 = 45*PI/180 - 50*p_CommonData->calibClock.getCurrentTimeSeconds()/moveTime*1*PI/180;
+            curr2 = 45*PI/180 - 50*p_CommonData->calibClock.getCurrentTimeSeconds()/moveTime*1*PI/180;
+            curr3 = 45*PI/180 - 50*p_CommonData->calibClock.getCurrentTimeSeconds()/moveTime*1*PI/180;
+        } else
+        {
+            curr1 = 45*PI/180;
+            curr2 = 45*PI/180;
+            curr3 = 45*PI/180;
+        }
+        p_CommonData->desJointInits0 << curr1, curr2, curr3;
+
+        // handle device 1
+        if (p_CommonData->device1Initing == true)
+        {
+            curr4 = 45*PI/180 - 43*p_CommonData->calibClock.getCurrentTimeSeconds()/moveTime*1*PI/180;
+            curr5 = 45*PI/180 - 45*p_CommonData->calibClock.getCurrentTimeSeconds()/moveTime*1*PI/180;
+            curr6 = 45*PI/180 - 45*p_CommonData->calibClock.getCurrentTimeSeconds()/moveTime*1*PI/180;
+        } else
+        {
+            curr4 = 45*PI/180;
+            curr5 = 45*PI/180;
+            curr6 = 45*PI/180;
+        }
+        p_CommonData->desJointInits1 << curr4, curr5, curr6;
+    } else
+    {
+        p_CommonData->device0Initing = false;
+        p_CommonData->device1Initing = false;
+    }
+}
+
+void haptics_thread::RenderPalpation()
+{
+    p_CommonData->p_world->addChild(m_tool0);
+    p_CommonData->p_world->addChild(m_tool1);
+    p_CommonData->p_world->addChild(finger);
+    p_CommonData->p_world->addChild(scaledFinger);
+
+    double tissueNomStiffness = 120;
+    double staticFriction = 0.6;
+    double dynamicFriction = staticFriction*0.9;
+    double vertOffset = -0.03;
+    //----------------------------------------------Create Tissue One---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueOne);
+
+    p_CommonData->p_tissueOne->setLocalPos(0,0,-.005+vertOffset);
+
+    //load the object from file
+    //cLoadFileOBJ(p_CommonData->p_tissueOne, "./Resources/tissue_1/tissue_1.obj");
+    p_CommonData->p_tissueOne->loadFromFile("./Resources/tissue_1 OBJ/tissue_1.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueOne->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueOne->createAABBCollisionDetector(toolRadius);
+
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueOne->setTransparencyLevel(0.4, true, true);
+
+    p_CommonData->p_tissueOne->setStiffness(tissueNomStiffness, true);
+    p_CommonData->p_tissueOne->setFriction(staticFriction, dynamicFriction, TRUE);
+
+//    p_CommonData->p_tissueOne->m_material->setStiffness(tissueNomStiffness);
+//    p_CommonData->p_tissueOne->m_material->setLateralStiffness(1.5*tissueNomStiffness);
+//    p_CommonData->p_tissueOne->m_material->setStaticFriction(staticFriction);
+//    p_CommonData->p_tissueOne->m_material->setDynamicFriction(dynamicFriction);
+    //----------------------------------------------Create Tissue Two---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueTwo);
+
+    p_CommonData->p_tissueTwo->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueTwo->loadFromFile("./Resources/tissue_2 OBJ/tissue_2.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueTwo->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueTwo->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueTwo->setStiffness(tissueNomStiffness*1.05, true);
+    p_CommonData->p_tissueTwo->setFriction(staticFriction, dynamicFriction, TRUE);
+    //----------------------------------------------Create Tissue Three---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueThree);
+
+    p_CommonData->p_tissueThree->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueThree->loadFromFile("./Resources/tissue_3 OBJ/tissue_3.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueThree->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueThree->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueThree->setStiffness(tissueNomStiffness*1.25, true);
+    p_CommonData->p_tissueThree->setFriction(staticFriction, dynamicFriction, TRUE);
+
+    //----------------------------------------------Create Tissue Four---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueFour);
+
+    p_CommonData->p_tissueFour->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueFour->loadFromFile("./Resources/tissue_4 OBJ/tissue_4.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueFour->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueFour->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueFour->setStiffness(tissueNomStiffness*1.1, true);
+    p_CommonData->p_tissueFour->setFriction(staticFriction, dynamicFriction, TRUE);
+
+    //----------------------------------------------Create Tissue Five---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueFive);
+
+    p_CommonData->p_tissueFive->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueFive->loadFromFile("./Resources/tissue_5 OBJ/tissue_5.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueFive->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueFive->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueFive->setStiffness(tissueNomStiffness*1.15, true);
+    p_CommonData->p_tissueFive->setFriction(staticFriction, dynamicFriction, TRUE);
+    //----------------------------------------------Create Tissue Six---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueSix);
+
+    p_CommonData->p_tissueSix->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueSix->loadFromFile("./Resources/tissue_6 OBJ/tissue_6.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueSix->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueSix->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueSix->setStiffness(tissueNomStiffness*1.2, true);
+    p_CommonData->p_tissueSix->setFriction(staticFriction, dynamicFriction, TRUE);
+    //----------------------------------------------Create Tissue Seven---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueSeven);
+
+    p_CommonData->p_tissueSeven->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueSeven->loadFromFile("./Resources/tissue_7 OBJ/tissue_7.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueSeven->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueSeven->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueSeven->setStiffness(tissueNomStiffness*1.25, true);
+    p_CommonData->p_tissueSeven->setFriction(staticFriction, dynamicFriction, TRUE);
+    //----------------------------------------------Create Tissue Eight---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueEight);
+
+    p_CommonData->p_tissueEight->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueEight->loadFromFile("./Resources/tissue_8 OBJ/tissue_8.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueEight->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueEight->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueEight->setStiffness(tissueNomStiffness*1.3, true);
+    p_CommonData->p_tissueEight->setFriction(staticFriction, dynamicFriction, TRUE);
+    //----------------------------------------------Create Tissue Nine---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueNine);
+
+    p_CommonData->p_tissueNine->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueNine->loadFromFile("./Resources/tissue_9 OBJ/tissue_9.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueNine->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueNine->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueNine->setStiffness(tissueNomStiffness*1.35, true);
+    p_CommonData->p_tissueNine->setFriction(staticFriction, dynamicFriction, TRUE);
+    //----------------------------------------------Create Tissue Ten---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueTen);
+
+    p_CommonData->p_tissueTen->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueTen->loadFromFile("./Resources/tissue_10 OBJ/tissue_10.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueTen->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueTen->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueTen->setStiffness(tissueNomStiffness*1.4, true);
+    p_CommonData->p_tissueTen->setFriction(staticFriction, dynamicFriction, TRUE);
+
+    //----------------------------------------------Create Tissue Eleven---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueEleven);
+
+    p_CommonData->p_tissueEleven->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueEleven->loadFromFile("./Resources/tissue_11 OBJ/tissue_11.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueEleven->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueEleven->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueEleven->setStiffness(tissueNomStiffness*1.45, true);
+    p_CommonData->p_tissueEleven->setFriction(staticFriction, dynamicFriction, TRUE);
+
+    //----------------------------------------------Create Tissue Twelve---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_tissueTwelve);
+
+    p_CommonData->p_tissueTwelve->setLocalPos(0,0,-.025+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_tissueTwelve->loadFromFile("./Resources/tissue_12 OBJ/tissue_12.obj");
+
+    // compute a boundary box
+    p_CommonData->p_tissueTwelve->computeBoundaryBox(true);
+
+    // compute collision detection algorithm
+    p_CommonData->p_tissueTwelve->createAABBCollisionDetector(toolRadius);
+
+    // define a default stiffness for the object
+    p_CommonData->p_tissueTwelve->setStiffness(tissueNomStiffness*1.5, true);
+    p_CommonData->p_tissueTwelve->setFriction(staticFriction, dynamicFriction, TRUE);
+
+    //----------------------------------------------Create Tissue Indicator---------------------------------------------------
+    // add object to world
+    p_CommonData->p_world->addChild(p_CommonData->p_indicator);
+
+    p_CommonData->p_indicator->setLocalPos(0,0,-.026+vertOffset);
+
+    //load the object from file
+    p_CommonData->p_indicator->loadFromFile("./Resources/tissue_indicator OBJ/tissue_indicator.obj");
+
+    p_CommonData->p_indicator->setHapticEnabled(false);
+    chai3d::cMaterial mat0;
+    mat0.setRed();
+    p_CommonData->p_indicator->setMaterial(mat0);
+    p_CommonData->p_indicator->setTransparencyLevel(1);
+}
+
+void haptics_thread::AddImpulseDisp(chai3d::cVector3d &indexForce, chai3d::cVector3d &thumbForce)
+{
+    // check delay since last impulse
+    double delay = p_CommonData->impulseDelayClock.getCurrentTimeSeconds();
+    if (delay > 0.5)
+    {
+        p_CommonData->impulseDelayClock.reset();
+        p_CommonData->impulseDelayClock.start();
+        p_CommonData->impulseClock.reset();
+        p_CommonData->impulseClock.start();
+    }
+
+    double t = p_CommonData->impulseClock.getCurrentTimeSeconds();
+    if (t > 1.5)
+        t = 0;
+    double desPeak = 3;
+    double c1 = 5.0;
+    double c2 = 50.0;
+    double tPeak = -log(c1/c2)/(c2-c1);
+    double rawMag = exp(-c1*tPeak) - exp(-c2*tPeak);
+    double A = desPeak/rawMag;
+    double impulse = A*(exp(-c1*t) - exp(-c2*t));
+
+
+    indexForce = impulse*p_CommonData->globalImpulseDir;
+    thumbForce = impulse*p_CommonData->globalImpulseDir;
+}
+
+void haptics_thread::AddImpulseTorqueDisp(chai3d::cVector3d &indexForce, chai3d::cVector3d &thumbForce)
+{
+    // check delay since last impulse
+    double delay = p_CommonData->impulseTorqueDelayClock.getCurrentTimeSeconds();
+    if (delay > 0.5)
+    {
+        p_CommonData->impulseTorqueDelayClock.reset();
+        p_CommonData->impulseTorqueDelayClock.start();
+        p_CommonData->impulseTorqueClock.reset();
+        p_CommonData->impulseTorqueClock.start();
+    }
+
+    // determine the pulse magnitude
+    double t = p_CommonData->impulseTorqueClock.getCurrentTimeSeconds();
+    if (t > 1.5)
+        t = 0;
+    double desPeak = 3;
+    double c1 = 5.0;
+    double c2 = 50.0;
+    double tPeak = -log(c1/c2)/(c2-c1);
+    double rawMag = exp(-c1*tPeak) - exp(-c2*tPeak);
+    double A = desPeak/rawMag;
+    double impulse = A*(exp(-c1*t) - exp(-c2*t));
+
+    // determine the direction of the torque impulse in world coordinates
+    chai3d::cVector3d vecIndexToCenter = position1 - position0; vecIndexToCenter.normalize();
+    chai3d::cVector3d vecThumbToCenter = position0 - position1; vecThumbToCenter.normalize();
+
+    chai3d::cVector3d crossIndex;
+    chai3d::cVector3d crossThumb;
+
+    // to determine torque displacements, take cross product with torque direction
+    vecIndexToCenter.crossr(p_CommonData->globalImpulseDir, crossIndex);
+    vecThumbToCenter.crossr(p_CommonData->globalImpulseDir, crossThumb);
+
+    indexForce = impulse*crossIndex;
+    thumbForce = impulse*crossThumb;
+}
+
+
+

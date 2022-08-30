@@ -1,0 +1,4 @@
+#ifndef VIBRATION_THREAD_H
+#define VIBRATION_THREAD_H
+
+#endif // VIBRATION_THREAD_H
