@@ -4,10 +4,9 @@
 #include "haptics_thread.h"
 #include "experiment_thread.h"
 #include "magTracker_thread.h"
+
 //#include "Vibrotactile_thread.h"
 #include <boost/random.hpp>
-
-
 
 
 // Variable Declarations ============================================
@@ -54,6 +53,9 @@ int main(int argc, char *argv[])
 
     magTrackerThread.initialize();
     qDebug()<<"magTrackerThread initialized";
+
+    //serialPort.initialize();
+    qDebug()<<"serialPort initialized";
 
     //VibrotactileThread.initialize();
     //qDebug()<<"VibrotactileThread initialized";

@@ -28,7 +28,8 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_grid.h>
 #include <Eigen/dense>
-
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 
 using namespace chai3d;
@@ -107,6 +108,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QSerialPort *serial;
 
     // a timer for updating the gui
     QTimer GraphicsTimer;
@@ -195,6 +197,14 @@ private slots:
     void on_StiffnMassCombined_clicked();
     void on_FingerMappingExp_clicked();
     void on_Manual_clicked();
+
+    //SERIAL:
+    void on_clearButton_clicked();
+    void on_sendButton_clicked();
+    void on_openButton_clicked();
+    void Read_Data();
+    void write_Data0_serial();
+    void write_Data1_serial();
 };
 
 #endif // MAINWINDOW_H

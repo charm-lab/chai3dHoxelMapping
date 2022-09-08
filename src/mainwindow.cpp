@@ -6,6 +6,8 @@
 #include <time.h>       /* time */
 #include <iomanip>
 #include <string>
+#include <QTime>
+
 
 //***Define directory/folder for Subjects' experiment info***
 //Make sure this directory exists before runtime or else the data will not save
@@ -16,19 +18,51 @@ QString subjectDirectory = "./FME_Subject_Data/";
 //Gloabal value to be shared with cMotorController
 int mappingVal;
 
+//Set Baud rate of the motor controller board and other default configs
+int myBaudRate = 115200;
+int defaultBitNum = 8;
+int defaultParity = 0;
+int defaultStopBit = 1;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
+
 {
     ui->setupUi(this);
 #ifndef OCULUS
     windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
-    windowGLDisplay->setObjectName(QStringLiteral("windowGLDisplay"));
+    //windowGLDisplay->setObjectName(QStringLiteral("windowGLDisplay"));
     //windowGLDisplay->setGeometry(QRect(10, 10, 1275, 1000));
     //windowGLDisplay->setGeometry(QRect(10, 10, 1275, 1500));
     //windowGLDisplay->setGeometry(QRect(10, 10, 701, 471));
     windowGLDisplay->setGeometry(QRect(10, 10, 1051, 706));
 #endif
+
+    //Find available serial ports
+    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        QSerialPort serial;
+        serial.setPort(info);
+        if(serial.open(QIODevice::ReadWrite))
+        {
+            //Set Options to the drop down boxes
+            ui->PortBox->addItem(serial.portName());
+            ui->BaudBox->addItem(QString::number(myBaudRate));
+            ui->BitNumBox->addItem(QString::number(defaultBitNum));
+            ui->ParityBox->addItem(QString::number(defaultParity));
+            ui->StopBox->addItem(QString::number(defaultStopBit));
+            serial.close();
+        }
+    }
+    //The setting drop-down menu displays the first (zero-index) item by default
+    ui->BaudBox->setCurrentIndex(0);
+    ui->BitNumBox->setCurrentIndex(0);
+    ui->ParityBox->setCurrentIndex(0);
+    ui->StopBox->setCurrentIndex(0);
+    //Turn off the enable of the send button
+    ui->sendButton->setEnabled(false);
+    qDebug() << tr("The interface is set successfully!");
 }
 
 MainWindow::~MainWindow()
@@ -38,6 +72,146 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//START SERIAL
+
+//Empty acceptance window
+void MainWindow::on_clearButton_clicked()
+{
+    ui->textEdit->clear();
+}
+//send data
+void MainWindow::on_sendButton_clicked()
+{
+    //serial->write(ui->textEdit_2->toPlainText().toLatin1());
+    //serial->write(data);
+
+//    QByteArray payload_buffer;
+//    QString Data = QString::number(localOutputStrokes0, 'f', 1);
+//    payload_buffer = payload_buffer.append(Data + "\r\n");
+//    if(serial->isWritable())
+//    {
+//        ui->textEdit_2->toPlainText().toLatin1();
+//        serial->write(payload_buffer,payload_buffer.size());
+//    }
+}
+
+void MainWindow::write_Data1_serial()
+{
+
+//    QByteArray payload_buffer1;
+//    payload_buffer1 = payload_buffer1.append("1" + Data1 + "\r\n");
+
+
+//    if(serial->isWritable())
+//    {
+//        ui->textEdit_2->toPlainText().toLatin1();
+//       serial->write(payload_buffer1,payload_buffer1.size());
+//    }
+}
+
+void MainWindow::write_Data0_serial()
+{
+    QByteArray payload_buffer0;
+    QString Data0 = QString::number(localOutputStrokes0, 'f', 1);
+    QString Data1 = QString::number(localOutputStrokes1, 'f', 1);
+    payload_buffer0 = payload_buffer0.append(Data0 + " " + Data1 + "\r\n");
+
+    if(serial->isWritable())
+    {
+        ui->textEdit_2->toPlainText().toLatin1();
+        serial->write(payload_buffer0,payload_buffer0.size());
+
+    }
+}
+//Read received data
+void MainWindow::Read_Data()
+{
+    QByteArray buf;
+    buf = serial->readAll();
+    if(!buf.isEmpty())
+    {
+        QString str = ui->textEdit->toPlainText();
+        str+=tr(buf);
+        ui->textEdit->clear();
+        ui->textEdit->append(str);
+    }
+    buf.clear();
+
+}
+void MainWindow::on_openButton_clicked()
+{
+    if(ui->openButton->text()==tr("Open Serial Port"))
+    {
+        serial = new QSerialPort;
+        //Set serial port name
+        serial->setPortName(ui->PortBox->currentText());
+        //serial->setPortName("COM7");
+
+        //Open serial port
+        serial->open(QIODevice::ReadWrite);
+
+        //set baud rate
+        serial->setBaudRate(ui->BaudBox->currentText().toInt());
+
+        //Set the number of data bits
+        switch(ui->BitNumBox->currentIndex())
+        {
+        case 8: serial->setDataBits(QSerialPort::Data8); break;
+        default: break;
+        }
+
+        //Set parity
+        switch(ui->ParityBox->currentIndex())
+        {
+        case 0: serial->setParity(QSerialPort::NoParity); break;
+        default: break;
+        }
+        //serial->setParity(QSerialPort::NoParity);
+
+        //Set stop bit
+        switch(ui->StopBox->currentIndex())
+        {
+        case 1: serial->setStopBits(QSerialPort::OneStop); break;
+        case 2: serial->setStopBits(QSerialPort::TwoStop); break;
+        default: break;
+        }
+        //serial->setStopBits(QSerialPort::OneStop);
+
+        //set flow control
+        serial->setFlowControl(QSerialPort::NoFlowControl);
+        //Turn off settings menu enable
+        ui->PortBox->setEnabled(false);
+        ui->BaudBox->setEnabled(false);
+        ui->BitNumBox->setEnabled(false);
+        ui->ParityBox->setEnabled(false);
+        ui->StopBox->setEnabled(false);
+        ui->openButton->setText(tr("Close the serial port"));
+        ui->sendButton->setEnabled(true);
+        //Connecting signal slot
+        QObject::connect(serial, &QSerialPort::readyRead, this, &MainWindow::Read_Data);
+
+        QTimer *timer0 = new QTimer(this);
+        connect(timer0, SIGNAL(timeout()), this, SLOT(write_Data0_serial()));
+        timer0->start(10);
+    }
+    else
+    {
+        //Close the serial port
+        serial->clear();
+        serial->close();
+        serial->deleteLater();
+        //Restore settings enable
+        ui->PortBox->setEnabled(true);
+        ui->BaudBox->setEnabled(true);
+        ui->BitNumBox->setEnabled(true);
+        ui->ParityBox->setEnabled(true);
+        ui->StopBox->setEnabled(true);
+        ui->openButton->setText(tr("Open serial port"));
+        ui->sendButton->setEnabled(false);
+    }
+}
+
+//END SERIAL
 void MainWindow::Initialize()
 {
     graphicsRateClock.reset();
@@ -1088,8 +1262,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                         labelText.append("</P></br>");
                         labelText.append("<P><FONT COLOR='#7abfe4' FONT SIZE = 2>");
                         labelText.append("Pick up the cube,\n"
-                                        "bring it through the hoop,\n"
-                                        "Place it in the target area");
+                                         "bring it through the hoop,\n"
+                                         "Place it in the target area");
                         labelText.append("</P></br>");
                         ui->text->setText(labelText);
                         qDebug()<<"TRAINING "<<p_CommonData->trialNo;
@@ -1165,8 +1339,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 labelText.append("</P></br>");
                                 labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
                                 labelText.append("Pick up the cube,\n"
-                                                "Bring it through the hoop,\n"
-                                                "Place it in the target area");
+                                                 "Bring it through the hoop,\n"
+                                                 "Place it in the target area");
                                 labelText.append("</P></br>");
                                 ui->text->setText(labelText);
                                 qDebug()<<"TRAINING "<<p_CommonData->trialNo;
@@ -1274,7 +1448,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 //p_CommonData->targetSuccess = 0;
                             }
 
-                           //p_CommonData->trialSuccess = 0;
+                            //p_CommonData->trialSuccess = 0;
                         }
                     }
 
@@ -1317,7 +1491,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                             labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
                             labelText.append("</b></P></br>");
                             ui->text->setText(labelText);
-                           // qDebug()<<"___"<<p_CommonData->trialNo;
+                            // qDebug()<<"___"<<p_CommonData->trialNo;
                         }
 
                         else if (p_CommonData->TrialType == "end"){
@@ -1325,7 +1499,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                             labelText.append("END OF THE EXPERIMENT -- back from break");
                             labelText.append("</b></P></br>");
                             ui->text->setText(labelText);
-                           //qDebug()<<"___"<<p_CommonData->trialNo;
+                            //qDebug()<<"___"<<p_CommonData->trialNo;
                         }
                         qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                         p_CommonData->environmentChange = true;
@@ -1512,12 +1686,12 @@ void MainWindow::WriteDataToFile()
         }
         else
         {
-        //Open file to write data:
-        file.open(directory.toStdString()
-                  +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                  + "_Trial" + trialNum.toStdString()
-                  + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                  + ".csv");
+            //Open file to write data:
+            file.open(directory.toStdString()
+                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                      + "_Trial" + trialNum.toStdString()
+                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                      + ".csv");
         }
     }
 
@@ -1545,12 +1719,12 @@ void MainWindow::WriteDataToFile()
 
             << "realVentralTactorPos" << "," << " " //in mm
 
-            //boxPos is a vector and will need 3 headers
+               //boxPos is a vector and will need 3 headers
             << "boxPosX" << "," << " " //in cm? - unsure
             << "boxPosY" << "," << " " //in cm? - unsure
             << "boxPosZ" << "," << " " //in cm? - unsure
 
-            //magTrackerPos vectors will need 3 headers each
+               //magTrackerPos vectors will need 3 headers each
             << "indexPosX" << "," << " " //in cm? - unsure
             << "indexPosY" << "," << " " //in cm? - unsure
             << "indexPosZ" << "," << " " //in cm? - unsure
@@ -1562,7 +1736,7 @@ void MainWindow::WriteDataToFile()
             << "indexForceGlobalY" << "," << " " //in N? - unsure
             << "indexForceGlobalZ" << "," << " " //in N? - unsure
 
-            //magTrackerPos vectors will need 3 headers each
+               //magTrackerPos vectors will need 3 headers each
             << "thumbPosX" << "," << " " //in cm? - unsure
             << "thumbPosY" << "," << " " //in cm? - unsure
             << "thumbPosZ" << "," << " " //in cm? - unsure
@@ -1654,48 +1828,48 @@ void MainWindow::WriteDataToFile()
                    //"des0 = "
                 << localDataRecorderVector[i].desiredStroke0 << "," << " "
                    //"real0 = "
-                //<< localDataRecorderVector[i].strokeOut0 << "," << " " //Giving motor angles N/A for FME
+                   //<< localDataRecorderVector[i].strokeOut0 << "," << " " //Giving motor angles N/A for FME
                    //"des1 = "
                 << localDataRecorderVector[i].desiredStroke1 << "," << " "
                    //"real1 = "
-                //<< localDataRecorderVector[i].strokeOut1 << "," << " "//Giving motor angles N/A for FME
+                   //<< localDataRecorderVector[i].strokeOut1 << "," << " "//Giving motor angles N/A for FME
 
                    //Cube position
                 <<localDataRecorderVector[i].box1Pos << "," << " "
 
-                   //"cond = "
-                //<< localDataRecorderVector[i].conditionNo<< "," << " "
+                  //"cond = "
+                  //<< localDataRecorderVector[i].conditionNo<< "," << " "
 
                   //INDEX:
-                << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
-                << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
-                // last force on tool0:
-                << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
-                << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
-                << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
-                // last force on tool0 in global coords
-                << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
-                << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
-                << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
+               << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
+               << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
+                  // last force on tool0:
+               << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
+                  // last force on tool0 in global coords
+               << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
 
-                   //THUMB
-                << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
-                << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
-                   // last force on tool1:
-                << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
-                << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
-                << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
-                   // last force on tool1 in global coords
-                << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
-                << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
-                << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
+                  //THUMB
+               << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
+               << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
+                  // last force on tool1:
+               << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
+                  // last force on tool1 in global coords
+               << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
 
-                //Touch hoop, target, trial success booleans
-                << localDataRecorderVector[i].hoopSuccess << "," << " "
-                << localDataRecorderVector[i].targetSuccess << "," << " "
-                << localDataRecorderVector[i].trialSuccess << "," << " "
+                  //Touch hoop, target, trial success booleans
+               << localDataRecorderVector[i].hoopSuccess << "," << " "
+               << localDataRecorderVector[i].targetSuccess << "," << " "
+               << localDataRecorderVector[i].trialSuccess << "," << " "
 
-                << std::endl;
+               << std::endl;
         }
 
 #endif

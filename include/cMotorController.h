@@ -10,10 +10,12 @@
 
 // List all includes ==========================================
 
-#include "826api.h"
+//#include "826api.h"
 #include <QMutex>
 #include <Eigen/dense>
 #include "windows.h"
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 // DEFINES =================================================================
 #define PCI_BOARD 0            // only 1 826board //0

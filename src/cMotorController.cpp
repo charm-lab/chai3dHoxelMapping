@@ -5,6 +5,9 @@
 */
 //===========================================================================
 #include "shared_data.h"
+#include "mainwindow.h"
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 //Servo Variables
 uint zeroPosOffTime = 750; //command to set motor angle such that we are at zero position
@@ -37,54 +40,62 @@ cMotorController::cMotorController(int inputMotorID)
 void cMotorController::InitDACOut()
 {
 #ifdef SENSORAY826
-    int fail = S826_DacRangeWrite(PCI_BOARD, channelNum, VOLTRANGE, 0);
+    int fail = 1;//S826_DacRangeWrite(PCI_BOARD, channelNum, VOLTRANGE, 0);
     if (fail == 0)
+    {
         qDebug() << "DAC channel #" << channelNum << "initialized";
+    }
+    else
+    {
+        qDebug() << "Sensoray disabled";
+    }
 #endif
 }
 
 //Route Counter Output to DIO Pins. See Sensoray826 Manual Sec. 7.4.7 & 7.4.10
 int RouteCounterOutput(uint board, uint ctr, uint dio)
 {
-    uint data[2]; // dio routing mask
-    if ((dio >= S826_NUM_DIO) || (ctr >= S826_NUM_COUNT))
-        return S826_ERR_VALUE; // bad channel number
-    if ((dio & 7) != ctr)
-        return S826_ERR_VALUE; // counter output can't be routed to dio
+//    uint data[2]; // dio routing mask
+//    if ((dio >= S826_NUM_DIO) || (ctr >= S826_NUM_COUNT))
+//        return S826_ERR_VALUE; // bad channel number
+//    if ((dio & 7) != ctr)
+//        return S826_ERR_VALUE; // counter output can't be routed to dio
 
-    // Route counter output to DIO pin:
-    S826_SafeWrenWrite(board, S826_SAFEN_SWE); // Enable writes to DIO signal router.
-    S826_DioOutputSourceRead(board, data); // Route counter output to DIO
-    data[dio > 23] |= (1 << (dio % 24)); // without altering other routes.
-    S826_DioOutputSourceWrite(board, data);
-    return S826_SafeWrenWrite(board, S826_SAFEN_SWD); // Disable writes to DIO signal router.
+//    // Route counter output to DIO pin:
+//    S826_SafeWrenWrite(board, S826_SAFEN_SWE); // Enable writes to DIO signal router.
+//    S826_DioOutputSourceRead(board, data); // Route counter output to DIO
+//    data[dio > 23] |= (1 << (dio % 24)); // without altering other routes.
+//    S826_DioOutputSourceWrite(board, data);
+//    return S826_SafeWrenWrite(board, S826_SAFEN_SWD); // Disable writes to DIO signal router.
+    return 1;
 }
 
 //Set PWM for PWM Generator. See Sensoray826 Manual Sec. 7.4.10
 int SetPWM(uint board, uint ctr, uint ontime, uint offtime)
 {
-    S826_CounterPreloadWrite(board, ctr, 0, ontime); // On time in us.
-    S826_CounterPreloadWrite(board, ctr, 1, offtime); // Off time in us.
+//    S826_CounterPreloadWrite(board, ctr, 0, ontime); // On time in us.
+//    S826_CounterPreloadWrite(board, ctr, 1, offtime); // Off time in us.
     return 1; // added to keep return type
 }
 
 //Create PWM for PWM Generator. See Sensoray826 Manual Sec. 7.4.10
 int CreatePWM(uint board, uint ctr, uint ontime, uint offtime)
 {
-    S826_CounterModeWrite(board, ctr, // Configure counter for PWM:
-                          S826_CM_K_1MHZ | // clock = internal 1 MHz
-                          S826_CM_UD_REVERSE | // count down
-                          S826_CM_PX_START | S826_CM_PX_ZERO | // preload @startup and counts==0
-                          S826_CM_BP_BOTH | // use both preloads (toggle)
-                          S826_CM_OM_PRELOAD); // assert ExtOut during preload0 interval
-    SetPWM(board, ctr, ontime, offtime); // Program initial on/off times.
+//    S826_CounterModeWrite(board, ctr, // Configure counter for PWM:
+//                          S826_CM_K_1MHZ | // clock = internal 1 MHz
+//                          S826_CM_UD_REVERSE | // count down
+//                          S826_CM_PX_START | S826_CM_PX_ZERO | // preload @startup and counts==0
+//                          S826_CM_BP_BOTH | // use both preloads (toggle)
+//                          S826_CM_OM_PRELOAD); // assert ExtOut during preload0 interval
+//    SetPWM(board, ctr, ontime, offtime); // Program initial on/off times.
     return 1; // added to keep return type
 }
 
 //Start PWM for PWM Generator.  See Sensoray826 Manual Sec. 7.4.10
 int StartPWM(uint board, uint ctr)
 {
-    return S826_CounterStateWrite(board, ctr, 1); // Start the PWM generator.
+//    return S826_CounterStateWrite(board, ctr, 1); // Start the PWM generator.
+    return 1; // Start the PWM generator.
 }
 
 void cMotorController::InitEncoder()
@@ -110,22 +121,22 @@ void cMotorController::InitEncoder()
         S826_AdcSlotConfigWrite(PCI_BOARD, 15, 7, 10, S826_ADC_GAIN_2);        //S826_AdcSlotConfigWrite(PCI_BOARD, 1, 6, 50, S826_ADC_GAIN_2);
 */
 
-    S826_AdcSlotlistWrite(PCI_BOARD, 0xFFFF, S826_BITWRITE); // Hardware triggered, source = counter 0 ExtOut
-    S826_AdcTrigModeWrite(PCI_BOARD, 0);
-    S826_AdcEnableWrite(PCI_BOARD, 1); //enable ADC conversions.
+//    S826_AdcSlotlistWrite(PCI_BOARD, 0xFFFF, S826_BITWRITE); // Hardware triggered, source = counter 0 ExtOut
+//    S826_AdcTrigModeWrite(PCI_BOARD, 0);
+//    S826_AdcEnableWrite(PCI_BOARD, 1); //enable ADC conversions.
 
-    //Initialize range of angles the servo can actuate -- Based on whatever values allow safe operation
-    angleRange = (MAX_TACTOR_EXTENSION / pitchRadius) * (180.0/PI);
-    qDebug()<<"angleRange"<< angleRange;
+//    //Initialize range of angles the servo can actuate -- Based on whatever values allow safe operation
+//    angleRange = (MAX_TACTOR_EXTENSION / pitchRadius) * (180.0/PI);
+//    qDebug()<<"angleRange"<< angleRange;
 
-    //Create initial onTime and offTime for DutyCycle
-    //uint initOffTime = zeroPosOffTime; //minVal = 750; maxVal = 2500;
-    //uint initOnTime = 20000 - initOffTime;
+//    //Create initial onTime and offTime for DutyCycle
+//    //uint initOffTime = zeroPosOffTime; //minVal = 750; maxVal = 2500;
+//    //uint initOnTime = 20000 - initOffTime;
 
-    //***Initialize PWM Generator, see Sensoray826 Manual Sec. 7.4.10***
-    CreatePWM(PCI_BOARD, counter, zeroPosOnTime, zeroPosOffTime); // Configure counter0 as PWM.
-    RouteCounterOutput(PCI_BOARD, counter, channelNum); // Route counter# output to dio# (see Section 7.4.7).
-    StartPWM(PCI_BOARD, counter); // Start the PWM running.
+//    //***Initialize PWM Generator, see Sensoray826 Manual Sec. 7.4.10***
+//    CreatePWM(PCI_BOARD, counter, zeroPosOnTime, zeroPosOffTime); // Configure counter0 as PWM.
+//    RouteCounterOutput(PCI_BOARD, counter, channelNum); // Route counter# output to dio# (see Section 7.4.7).
+//    StartPWM(PCI_BOARD, counter); // Start the PWM running.
 
     qDebug()<<"initialized PWM"<< channelNum <<" | " << "counter" << counter <<" | " <<"offTime: " <<zeroPosOffTime;
 
@@ -145,13 +156,13 @@ double cMotorController::GetMotorAngle()
     int errcode;
     int slotval[16];
 
-    while (1) {
-        uint slotlist = 0xFFFF;  // look at slots 0 through 2
-        errcode = S826_AdcRead(PCI_BOARD, slotval, NULL, &slotlist, 1000); // wait for IRQ
+//    while (1) {
+//        uint slotlist = 0xFFFF;  // look at slots 0 through 2
+//        errcode = S826_AdcRead(PCI_BOARD, slotval, NULL, &slotlist, 1000); // wait for IRQ
 
-        if (errcode == S826_ERR_OK)
-            break;
-    }
+//        if (errcode == S826_ERR_OK)
+//            break;
+//    }
 
     //       if (i == 0){
     if (channelNum == 6)
@@ -194,7 +205,7 @@ double cMotorController::GetMotorAngle()
 // Destructor of motor controller ================================
 cMotorController::~cMotorController()
 {
-    S826_AdcEnableWrite(PCI_BOARD, 0);
+    //S826_AdcEnableWrite(PCI_BOARD, 0);
     close();
 }
 
@@ -204,8 +215,8 @@ int cMotorController::close()
 #ifdef SENSORAY826
     //Set Servo to zero pos
     uint closeOnTime = 20000 - zeroPosOffTime;
-    SetPWM(PCI_BOARD, CHANNEL_NUM0, closeOnTime, zeroPosOffTime); //reset servo0
-    SetPWM(PCI_BOARD, CHANNEL_NUM1, closeOnTime, zeroPosOffTime); //reset servo1
+//    SetPWM(PCI_BOARD, CHANNEL_NUM0, closeOnTime, zeroPosOffTime); //reset servo0
+//    SetPWM(PCI_BOARD, CHANNEL_NUM1, closeOnTime, zeroPosOffTime); //reset servo1
 
     qDebug()<<"close offTime: "<<zeroPosOffTime;
 
@@ -241,7 +252,12 @@ void cMotorController::SetOutputStroke(double desiredStroke, bool equal, bool re
 
     //desiredStroke = MaxStroke; // Send constant desiredStroke
     //StrokeOut = (desiredStroke)*convertToCM; // desiredStroke [mm] turned into StrokeOut [cm] -- Not sure why, this was from Mine
-    StrokeOut = 0.40*desiredStroke;     //Scaled Down
+
+
+    //STROKE STUFF HEREERERERERERER !!!!!
+
+   // StrokeOut = 5.0;
+    StrokeOut = desiredStroke;     // no longer scaled Down - Jasmin's was scaled by 0.4
 
     if (std::isnan(StrokeOut))
     {
@@ -427,5 +443,7 @@ void cMotorController::SetOutputStroke(double desiredStroke, bool equal, bool re
 #endif
 
     this->strokeOutput = StrokeOut; // I want to see the Stroke in the mm format
+
+
     //qDebug()<<strokeOutput;
 }
