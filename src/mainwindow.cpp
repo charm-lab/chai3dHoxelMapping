@@ -23,6 +23,8 @@ int myBaudRate = 115200;
 int defaultBitNum = 8;
 int defaultParity = 0;
 int defaultStopBit = 1;
+//Boolean to determine wheter or not device single or multi-DoF control should be enabled
+bool deviceMultiDoF = true;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,13 +57,13 @@ MainWindow::MainWindow(QWidget *parent) :
             serial.close();
         }
     }
-    //The setting drop-down menu displays the first (zero-index) item by default
+    //The setting COM drop-down menu display the 2nd (first-index) item by default
+    ui->PortBox->setCurrentIndex(1);
+    //TAll other drop-down menu displays the first (zero-index) item by default
     ui->BaudBox->setCurrentIndex(0);
     ui->BitNumBox->setCurrentIndex(0);
     ui->ParityBox->setCurrentIndex(0);
     ui->StopBox->setCurrentIndex(0);
-    //Turn off the enable of the send button
-    ui->sendButton->setEnabled(false);
     qDebug() << tr("The interface is set successfully!");
 }
 
@@ -74,57 +76,46 @@ MainWindow::~MainWindow()
 
 //START SERIAL
 
-//Empty acceptance window
-void MainWindow::on_clearButton_clicked()
+//Serial data writing happens here:
+void MainWindow::writeSerialData()
 {
-    ui->textEdit->clear();
-}
-//send data
-void MainWindow::on_sendButton_clicked()
-{
-    //serial->write(ui->textEdit_2->toPlainText().toLatin1());
-    //serial->write(data);
+    QByteArray payloadBuffer;
 
-//    QByteArray payload_buffer;
-//    QString Data = QString::number(localOutputStrokes0, 'f', 1);
-//    payload_buffer = payload_buffer.append(Data + "\r\n");
-//    if(serial->isWritable())
-//    {
-//        ui->textEdit_2->toPlainText().toLatin1();
-//        serial->write(payload_buffer,payload_buffer.size());
-//    }
-}
-
-void MainWindow::write_Data1_serial()
-{
-
-//    QByteArray payload_buffer1;
-//    payload_buffer1 = payload_buffer1.append("1" + Data1 + "\r\n");
-
-
-//    if(serial->isWritable())
-//    {
-//        ui->textEdit_2->toPlainText().toLatin1();
-//       serial->write(payload_buffer1,payload_buffer1.size());
-//    }
-}
-
-void MainWindow::write_Data0_serial()
-{
-    QByteArray payload_buffer0;
-    QString Data0 = QString::number(localOutputStrokes0, 'f', 1);
-    QString Data1 = QString::number(localOutputStrokes1, 'f', 1);
-    payload_buffer0 = payload_buffer0.append(Data0 + " " + Data1 + "\r\n");
+    if (deviceMultiDoF == false)
+    {
+        //1-DoF Version for testing
+        QString data0 = QString::number(localOutputStrokes0, 'f', 1); //device0 --index default
+        QString data1 = QString::number(localOutputStrokes1, 'f', 1); //device1 --thumb default
+        payloadBuffer = payloadBuffer.append(data0 + " " + data1 + "\r\n");
+    }
+    else
+    {
+        //Multi-DoF:
+        //index desiered positions:
+        //localDesiredPos0[0] //X
+        //localDesiredPos0[1] //Y
+        QString device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
+        QString device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
+        QString device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
+        //thumb desiered positions:
+        //localDesiredPos1[0] //X
+        //localDesiredPos0[1] //Y
+        QString device1X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
+        QString device1Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
+        QString device1Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
+        payloadBuffer = payloadBuffer.append(device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n");
+    }
+    qDebug() << payloadBuffer << " " << serial->isWritable();
 
     if(serial->isWritable())
     {
         ui->textEdit_2->toPlainText().toLatin1();
-        serial->write(payload_buffer0,payload_buffer0.size());
+        serial->write(payloadBuffer, payloadBuffer.size());
 
     }
 }
 //Read received data
-void MainWindow::Read_Data()
+void MainWindow::readSerialData()
 {
     QByteArray buf;
     buf = serial->readAll();
@@ -186,12 +177,11 @@ void MainWindow::on_openButton_clicked()
         ui->ParityBox->setEnabled(false);
         ui->StopBox->setEnabled(false);
         ui->openButton->setText(tr("Close the serial port"));
-        ui->sendButton->setEnabled(true);
         //Connecting signal slot
-        QObject::connect(serial, &QSerialPort::readyRead, this, &MainWindow::Read_Data);
+        QObject::connect(serial, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
 
         QTimer *timer0 = new QTimer(this);
-        connect(timer0, SIGNAL(timeout()), this, SLOT(write_Data0_serial()));
+        connect(timer0, SIGNAL(timeout()), this, SLOT(writeSerialData()));
         timer0->start(10);
     }
     else
@@ -207,7 +197,6 @@ void MainWindow::on_openButton_clicked()
         ui->ParityBox->setEnabled(true);
         ui->StopBox->setEnabled(true);
         ui->openButton->setText(tr("Open serial port"));
-        ui->sendButton->setEnabled(false);
     }
 }
 

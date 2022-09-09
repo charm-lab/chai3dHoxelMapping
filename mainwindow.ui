@@ -63,19 +63,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="sendButton">
-    <property name="geometry">
-     <rect>
-      <x>1650</x>
-      <y>480</y>
-      <width>181</width>
-      <height>90</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Send Data</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_38">
     <property name="geometry">
      <rect>
@@ -96,16 +83,16 @@
     <property name="geometry">
      <rect>
       <x>1650</x>
-      <y>600</y>
+      <y>479</y>
       <width>181</width>
-      <height>90</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="text">
      <string>Open Serial Port</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1114</x>
@@ -472,7 +459,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1630</x>
@@ -834,7 +821,7 @@ Trial No.</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1850</x>
@@ -980,7 +967,7 @@ Trial No.</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1851</x>
@@ -1258,7 +1245,7 @@ Effective</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1470</x>
@@ -1296,7 +1283,7 @@ Effective</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1550</x>
@@ -1395,7 +1382,7 @@ Effective</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1850</x>

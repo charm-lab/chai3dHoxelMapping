@@ -199,12 +199,9 @@ private slots:
     void on_Manual_clicked();
 
     //SERIAL:
-    void on_clearButton_clicked();
-    void on_sendButton_clicked();
     void on_openButton_clicked();
-    void Read_Data();
-    void write_Data0_serial();
-    void write_Data1_serial();
+    void readSerialData();
+    void writeSerialData();
 };
 
 #endif // MAINWINDOW_H
