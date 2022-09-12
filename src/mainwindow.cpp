@@ -114,6 +114,7 @@ void MainWindow::writeSerialData()
 
     }
 }
+
 //Read received data
 void MainWindow::readSerialData()
 {
@@ -127,7 +128,6 @@ void MainWindow::readSerialData()
         ui->textEdit->append(str);
     }
     buf.clear();
-
 }
 void MainWindow::on_openButton_clicked()
 {
