@@ -42,10 +42,9 @@ public:
     QWidget *placeHolder;
     QTextBrowser *text;
     QTextBrowser *mappingTextBox;
-    QPushButton *sendButton;
     QLabel *label_38;
     QPushButton *openButton;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QGridLayout *gridLayout_3;
     QRadioButton *Condition1;
     QLCDNumber *ForX0;
@@ -93,7 +92,7 @@ public:
     QLCDNumber *ForZ0;
     QSpacerItem *horizontalSpacer_2;
     QSpacerItem *horizontalSpacer_3;
-    QWidget *widget1;
+    QWidget *layoutWidget1;
     QGridLayout *gridLayout_4;
     QLabel *label_23;
     QSpinBox *SetTrialNo;
@@ -108,7 +107,7 @@ public:
     QLabel *label_24;
     QLabel *label_51;
     QSpinBox *subject_no;
-    QWidget *widget2;
+    QWidget *layoutWidget2;
     QGridLayout *gridLayout_5;
     QLabel *label_16;
     QLabel *label_17;
@@ -121,7 +120,7 @@ public:
     QLCDNumber *mass2_show;
     QLabel *label_14;
     QSpacerItem *horizontalSpacer_6;
-    QWidget *widget3;
+    QWidget *layoutWidget3;
     QGridLayout *gridLayout_7;
     QLabel *label_55;
     QLineEdit *mass_set;
@@ -150,13 +149,13 @@ public:
     QLineEdit *inertiaValue;
     QSpacerItem *verticalSpacer_2;
     QCheckBox *equalBoxTouch;
-    QWidget *widget4;
+    QWidget *layoutWidget4;
     QGridLayout *gridLayout_6;
     QLabel *label_45;
     QLabel *label_44;
     QTextEdit *textEdit;
     QTextEdit *textEdit_2;
-    QWidget *widget5;
+    QWidget *layoutWidget5;
     QGridLayout *gridLayout_2;
     QComboBox *BitNumBox;
     QLabel *label_43;
@@ -168,7 +167,7 @@ public:
     QLabel *label_42;
     QComboBox *StopBox;
     QLabel *label_40;
-    QWidget *widget6;
+    QWidget *layoutWidget6;
     QGridLayout *gridLayout;
     QPushButton *StiffnessExp;
     QPushButton *Manual;
@@ -216,256 +215,253 @@ public:
         mappingTextBox = new QTextBrowser(centralWidget);
         mappingTextBox->setObjectName(QStringLiteral("mappingTextBox"));
         mappingTextBox->setGeometry(QRect(1110, 710, 260, 91));
-        sendButton = new QPushButton(centralWidget);
-        sendButton->setObjectName(QStringLiteral("sendButton"));
-        sendButton->setGeometry(QRect(1650, 480, 181, 90));
         label_38 = new QLabel(centralWidget);
         label_38->setObjectName(QStringLiteral("label_38"));
-        label_38->setGeometry(QRect(1470, 450, 105, 27));
+        label_38->setGeometry(QRect(1404, 450, 171, 27));
         label_38->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         openButton = new QPushButton(centralWidget);
         openButton->setObjectName(QStringLiteral("openButton"));
-        openButton->setGeometry(QRect(1650, 600, 181, 90));
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(1114, 10, 501, 423));
-        gridLayout_3 = new QGridLayout(widget);
+        openButton->setGeometry(QRect(1400, 700, 141, 211));
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(1114, 10, 501, 423));
+        gridLayout_3 = new QGridLayout(layoutWidget);
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setContentsMargins(0, 0, 0, 0);
-        Condition1 = new QRadioButton(widget);
+        Condition1 = new QRadioButton(layoutWidget);
         Condition1->setObjectName(QStringLiteral("Condition1"));
 
         gridLayout_3->addWidget(Condition1, 12, 6, 1, 2);
 
-        ForX0 = new QLCDNumber(widget);
+        ForX0 = new QLCDNumber(layoutWidget);
         ForX0->setObjectName(QStringLiteral("ForX0"));
         ForX0->setDigitCount(6);
 
         gridLayout_3->addWidget(ForX0, 2, 0, 1, 1);
 
-        label_53 = new QLabel(widget);
+        label_53 = new QLabel(layoutWidget);
         label_53->setObjectName(QStringLiteral("label_53"));
 
         gridLayout_3->addWidget(label_53, 3, 0, 1, 3);
 
-        DesZ1 = new QLCDNumber(widget);
+        DesZ1 = new QLCDNumber(layoutWidget);
         DesZ1->setObjectName(QStringLiteral("DesZ1"));
         DesZ1->setDigitCount(6);
 
         gridLayout_3->addWidget(DesZ1, 6, 7, 1, 1);
 
-        label_26 = new QLabel(widget);
+        label_26 = new QLabel(layoutWidget);
         label_26->setObjectName(QStringLiteral("label_26"));
 
         gridLayout_3->addWidget(label_26, 9, 0, 1, 2);
 
-        ForZ0_2 = new QLCDNumber(widget);
+        ForZ0_2 = new QLCDNumber(layoutWidget);
         ForZ0_2->setObjectName(QStringLiteral("ForZ0_2"));
         ForZ0_2->setDigitCount(6);
 
         gridLayout_3->addWidget(ForZ0_2, 4, 2, 1, 1);
 
-        DesY1 = new QLCDNumber(widget);
+        DesY1 = new QLCDNumber(layoutWidget);
         DesY1->setObjectName(QStringLiteral("DesY1"));
         DesY1->setDigitCount(6);
 
         gridLayout_3->addWidget(DesY1, 6, 5, 1, 2);
 
-        label_36 = new QLabel(widget);
+        label_36 = new QLabel(layoutWidget);
         label_36->setObjectName(QStringLiteral("label_36"));
         label_36->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_3->addWidget(label_36, 11, 0, 1, 2);
 
-        label_52 = new QLabel(widget);
+        label_52 = new QLabel(layoutWidget);
         label_52->setObjectName(QStringLiteral("label_52"));
 
         gridLayout_3->addWidget(label_52, 1, 0, 1, 3);
 
-        ForY0 = new QLCDNumber(widget);
+        ForY0 = new QLCDNumber(layoutWidget);
         ForY0->setObjectName(QStringLiteral("ForY0"));
         ForY0->setDigitCount(6);
 
         gridLayout_3->addWidget(ForY0, 2, 1, 1, 1);
 
-        ForX1 = new QLCDNumber(widget);
+        ForX1 = new QLCDNumber(layoutWidget);
         ForX1->setObjectName(QStringLiteral("ForX1"));
         ForX1->setDigitCount(6);
 
         gridLayout_3->addWidget(ForX1, 2, 4, 1, 1);
 
-        label_57 = new QLabel(widget);
+        label_57 = new QLabel(layoutWidget);
         label_57->setObjectName(QStringLiteral("label_57"));
 
         gridLayout_3->addWidget(label_57, 1, 4, 1, 4);
 
-        label_59 = new QLabel(widget);
+        label_59 = new QLabel(layoutWidget);
         label_59->setObjectName(QStringLiteral("label_59"));
 
         gridLayout_3->addWidget(label_59, 7, 4, 1, 3);
 
-        ForZ1 = new QLCDNumber(widget);
+        ForZ1 = new QLCDNumber(layoutWidget);
         ForZ1->setObjectName(QStringLiteral("ForZ1"));
         ForZ1->setDigitCount(6);
 
         gridLayout_3->addWidget(ForZ1, 2, 7, 1, 1);
 
-        label_21 = new QLabel(widget);
+        label_21 = new QLabel(layoutWidget);
         label_21->setObjectName(QStringLiteral("label_21"));
 
         gridLayout_3->addWidget(label_21, 5, 2, 1, 1);
 
-        DesX0 = new QLCDNumber(widget);
+        DesX0 = new QLCDNumber(layoutWidget);
         DesX0->setObjectName(QStringLiteral("DesX0"));
         DesX0->setDigitCount(6);
 
         gridLayout_3->addWidget(DesX0, 6, 0, 1, 1);
 
-        DesZ0 = new QLCDNumber(widget);
+        DesZ0 = new QLCDNumber(layoutWidget);
         DesZ0->setObjectName(QStringLiteral("DesZ0"));
         DesZ0->setDigitCount(6);
 
         gridLayout_3->addWidget(DesZ0, 6, 2, 1, 1);
 
-        direction = new QLCDNumber(widget);
+        direction = new QLCDNumber(layoutWidget);
         direction->setObjectName(QStringLiteral("direction"));
         direction->setDigitCount(6);
 
         gridLayout_3->addWidget(direction, 12, 0, 1, 2);
 
-        label = new QLabel(widget);
+        label = new QLabel(layoutWidget);
         label->setObjectName(QStringLiteral("label"));
 
         gridLayout_3->addWidget(label, 7, 0, 1, 2);
 
-        label_19 = new QLabel(widget);
+        label_19 = new QLabel(layoutWidget);
         label_19->setObjectName(QStringLiteral("label_19"));
 
         gridLayout_3->addWidget(label_19, 5, 0, 1, 1);
 
-        label_64 = new QLabel(widget);
+        label_64 = new QLabel(layoutWidget);
         label_64->setObjectName(QStringLiteral("label_64"));
 
         gridLayout_3->addWidget(label_64, 5, 4, 1, 1);
 
-        MotorLCD_1 = new QLCDNumber(widget);
+        MotorLCD_1 = new QLCDNumber(layoutWidget);
         MotorLCD_1->setObjectName(QStringLiteral("MotorLCD_1"));
         MotorLCD_1->setDigitCount(6);
 
         gridLayout_3->addWidget(MotorLCD_1, 8, 4, 1, 3);
 
-        DesX1 = new QLCDNumber(widget);
+        DesX1 = new QLCDNumber(layoutWidget);
         DesX1->setObjectName(QStringLiteral("DesX1"));
         DesX1->setDigitCount(6);
 
         gridLayout_3->addWidget(DesX1, 6, 4, 1, 1);
 
-        ForX0_2 = new QLCDNumber(widget);
+        ForX0_2 = new QLCDNumber(layoutWidget);
         ForX0_2->setObjectName(QStringLiteral("ForX0_2"));
         ForX0_2->setDigitCount(6);
 
         gridLayout_3->addWidget(ForX0_2, 4, 0, 1, 1);
 
-        label_69 = new QLabel(widget);
+        label_69 = new QLabel(layoutWidget);
         label_69->setObjectName(QStringLiteral("label_69"));
 
         gridLayout_3->addWidget(label_69, 5, 7, 1, 1);
 
-        ForY1_2 = new QLCDNumber(widget);
+        ForY1_2 = new QLCDNumber(layoutWidget);
         ForY1_2->setObjectName(QStringLiteral("ForY1_2"));
         ForY1_2->setDigitCount(6);
 
         gridLayout_3->addWidget(ForY1_2, 4, 5, 1, 2);
 
-        ForX1_2 = new QLCDNumber(widget);
+        ForX1_2 = new QLCDNumber(layoutWidget);
         ForX1_2->setObjectName(QStringLiteral("ForX1_2"));
         ForX1_2->setDigitCount(6);
 
         gridLayout_3->addWidget(ForX1_2, 4, 4, 1, 1);
 
-        ForY0_2 = new QLCDNumber(widget);
+        ForY0_2 = new QLCDNumber(layoutWidget);
         ForY0_2->setObjectName(QStringLiteral("ForY0_2"));
         ForY0_2->setDigitCount(6);
 
         gridLayout_3->addWidget(ForY0_2, 4, 1, 1, 1);
 
-        MotorLCD_0 = new QLCDNumber(widget);
+        MotorLCD_0 = new QLCDNumber(layoutWidget);
         MotorLCD_0->setObjectName(QStringLiteral("MotorLCD_0"));
         MotorLCD_0->setDigitCount(6);
 
         gridLayout_3->addWidget(MotorLCD_0, 8, 0, 1, 2);
 
-        label_50 = new QLabel(widget);
+        label_50 = new QLabel(layoutWidget);
         label_50->setObjectName(QStringLiteral("label_50"));
         label_50->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(label_50, 0, 4, 1, 4);
 
-        label_27 = new QLabel(widget);
+        label_27 = new QLabel(layoutWidget);
         label_27->setObjectName(QStringLiteral("label_27"));
 
         gridLayout_3->addWidget(label_27, 9, 4, 1, 3);
 
-        condition = new QLCDNumber(widget);
+        condition = new QLCDNumber(layoutWidget);
         condition->setObjectName(QStringLiteral("condition"));
         condition->setDigitCount(6);
 
         gridLayout_3->addWidget(condition, 12, 4, 1, 2);
 
-        label_20 = new QLabel(widget);
+        label_20 = new QLabel(layoutWidget);
         label_20->setObjectName(QStringLiteral("label_20"));
 
         gridLayout_3->addWidget(label_20, 5, 1, 1, 1);
 
-        label_37 = new QLabel(widget);
+        label_37 = new QLabel(layoutWidget);
         label_37->setObjectName(QStringLiteral("label_37"));
         label_37->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_3->addWidget(label_37, 11, 4, 1, 4);
 
-        StrokeLCD1_0 = new QLCDNumber(widget);
+        StrokeLCD1_0 = new QLCDNumber(layoutWidget);
         StrokeLCD1_0->setObjectName(QStringLiteral("StrokeLCD1_0"));
         StrokeLCD1_0->setDigitCount(6);
 
         gridLayout_3->addWidget(StrokeLCD1_0, 10, 0, 1, 2);
 
-        ForZ1_2 = new QLCDNumber(widget);
+        ForZ1_2 = new QLCDNumber(layoutWidget);
         ForZ1_2->setObjectName(QStringLiteral("ForZ1_2"));
         ForZ1_2->setDigitCount(6);
 
         gridLayout_3->addWidget(ForZ1_2, 4, 7, 1, 1);
 
-        DesY0 = new QLCDNumber(widget);
+        DesY0 = new QLCDNumber(layoutWidget);
         DesY0->setObjectName(QStringLiteral("DesY0"));
         DesY0->setDigitCount(6);
 
         gridLayout_3->addWidget(DesY0, 6, 1, 1, 1);
 
-        label_49 = new QLabel(widget);
+        label_49 = new QLabel(layoutWidget);
         label_49->setObjectName(QStringLiteral("label_49"));
         label_49->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(label_49, 0, 0, 1, 3);
 
-        ForY1 = new QLCDNumber(widget);
+        ForY1 = new QLCDNumber(layoutWidget);
         ForY1->setObjectName(QStringLiteral("ForY1"));
         ForY1->setDigitCount(6);
 
         gridLayout_3->addWidget(ForY1, 2, 5, 1, 2);
 
-        label_58 = new QLabel(widget);
+        label_58 = new QLabel(layoutWidget);
         label_58->setObjectName(QStringLiteral("label_58"));
 
         gridLayout_3->addWidget(label_58, 3, 4, 1, 4);
 
-        label_67 = new QLabel(widget);
+        label_67 = new QLabel(layoutWidget);
         label_67->setObjectName(QStringLiteral("label_67"));
 
         gridLayout_3->addWidget(label_67, 5, 5, 1, 2);
 
-        StrokeLCD1_1 = new QLCDNumber(widget);
+        StrokeLCD1_1 = new QLCDNumber(layoutWidget);
         StrokeLCD1_1->setObjectName(QStringLiteral("StrokeLCD1_1"));
         StrokeLCD1_1->setDigitCount(6);
 
@@ -475,7 +471,7 @@ public:
 
         gridLayout_3->addItem(horizontalSpacer, 4, 3, 1, 1);
 
-        ForZ0 = new QLCDNumber(widget);
+        ForZ0 = new QLCDNumber(layoutWidget);
         ForZ0->setObjectName(QStringLiteral("ForZ0"));
         ForZ0->setDigitCount(6);
 
@@ -489,20 +485,20 @@ public:
 
         gridLayout_3->addItem(horizontalSpacer_3, 6, 3, 1, 1);
 
-        widget1 = new QWidget(centralWidget);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        widget1->setGeometry(QRect(1630, 10, 211, 421));
-        gridLayout_4 = new QGridLayout(widget1);
+        layoutWidget1 = new QWidget(centralWidget);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        layoutWidget1->setGeometry(QRect(1630, 10, 211, 421));
+        gridLayout_4 = new QGridLayout(layoutWidget1);
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
         gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
         gridLayout_4->setContentsMargins(0, 0, 0, 0);
-        label_23 = new QLabel(widget1);
+        label_23 = new QLabel(layoutWidget1);
         label_23->setObjectName(QStringLiteral("label_23"));
 
         gridLayout_4->addWidget(label_23, 4, 0, 2, 2);
 
-        SetTrialNo = new QSpinBox(widget1);
+        SetTrialNo = new QSpinBox(layoutWidget1);
         SetTrialNo->setObjectName(QStringLiteral("SetTrialNo"));
         QFont font1;
         font1.setPointSize(18);
@@ -513,34 +509,34 @@ public:
 
         gridLayout_4->addWidget(SetTrialNo, 8, 0, 1, 2);
 
-        lcdNumberGraphicsRate = new QLCDNumber(widget1);
+        lcdNumberGraphicsRate = new QLCDNumber(layoutWidget1);
         lcdNumberGraphicsRate->setObjectName(QStringLiteral("lcdNumberGraphicsRate"));
         lcdNumberGraphicsRate->setDigitCount(7);
 
         gridLayout_4->addWidget(lcdNumberGraphicsRate, 1, 0, 1, 2);
 
-        label_56 = new QLabel(widget1);
+        label_56 = new QLabel(layoutWidget1);
         label_56->setObjectName(QStringLiteral("label_56"));
 
         gridLayout_4->addWidget(label_56, 7, 0, 1, 2);
 
-        label_31 = new QLabel(widget1);
+        label_31 = new QLabel(layoutWidget1);
         label_31->setObjectName(QStringLiteral("label_31"));
 
         gridLayout_4->addWidget(label_31, 0, 0, 1, 2);
 
-        label_22 = new QLabel(widget1);
+        label_22 = new QLabel(layoutWidget1);
         label_22->setObjectName(QStringLiteral("label_22"));
 
         gridLayout_4->addWidget(label_22, 0, 2, 1, 1);
 
-        lcdNumberHapticRate = new QLCDNumber(widget1);
+        lcdNumberHapticRate = new QLCDNumber(layoutWidget1);
         lcdNumberHapticRate->setObjectName(QStringLiteral("lcdNumberHapticRate"));
         lcdNumberHapticRate->setDigitCount(7);
 
         gridLayout_4->addWidget(lcdNumberHapticRate, 1, 2, 1, 1);
 
-        pairNo = new QLCDNumber(widget1);
+        pairNo = new QLCDNumber(layoutWidget1);
         pairNo->setObjectName(QStringLiteral("pairNo"));
         QPalette palette1;
         QBrush brush(QColor(0, 0, 0, 255));
@@ -567,12 +563,12 @@ public:
 
         gridLayout_4->addWidget(pairNo, 6, 2, 1, 1);
 
-        AdjustTrialNo = new QCheckBox(widget1);
+        AdjustTrialNo = new QCheckBox(layoutWidget1);
         AdjustTrialNo->setObjectName(QStringLiteral("AdjustTrialNo"));
 
         gridLayout_4->addWidget(AdjustTrialNo, 8, 2, 1, 1);
 
-        trialNo = new QLCDNumber(widget1);
+        trialNo = new QLCDNumber(layoutWidget1);
         trialNo->setObjectName(QStringLiteral("trialNo"));
         QPalette palette2;
         palette2.setBrush(QPalette::Active, QPalette::Light, brush);
@@ -601,17 +597,17 @@ public:
 
         gridLayout_4->addWidget(trialNo, 6, 0, 1, 2);
 
-        label_24 = new QLabel(widget1);
+        label_24 = new QLabel(layoutWidget1);
         label_24->setObjectName(QStringLiteral("label_24"));
 
         gridLayout_4->addWidget(label_24, 4, 2, 2, 1);
 
-        label_51 = new QLabel(widget1);
+        label_51 = new QLabel(layoutWidget1);
         label_51->setObjectName(QStringLiteral("label_51"));
 
         gridLayout_4->addWidget(label_51, 2, 0, 1, 2);
 
-        subject_no = new QSpinBox(widget1);
+        subject_no = new QSpinBox(layoutWidget1);
         subject_no->setObjectName(QStringLiteral("subject_no"));
         subject_no->setFont(font1);
         subject_no->setMaximum(99);
@@ -620,15 +616,15 @@ public:
 
         gridLayout_4->addWidget(subject_no, 3, 0, 1, 2);
 
-        widget2 = new QWidget(centralWidget);
-        widget2->setObjectName(QStringLiteral("widget2"));
-        widget2->setGeometry(QRect(1850, 354, 431, 111));
-        gridLayout_5 = new QGridLayout(widget2);
+        layoutWidget2 = new QWidget(centralWidget);
+        layoutWidget2->setObjectName(QStringLiteral("layoutWidget2"));
+        layoutWidget2->setGeometry(QRect(1850, 354, 431, 111));
+        gridLayout_5 = new QGridLayout(layoutWidget2);
         gridLayout_5->setSpacing(6);
         gridLayout_5->setContentsMargins(11, 11, 11, 11);
         gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
         gridLayout_5->setContentsMargins(0, 0, 0, 0);
-        label_16 = new QLabel(widget2);
+        label_16 = new QLabel(layoutWidget2);
         label_16->setObjectName(QStringLiteral("label_16"));
         QFont font4;
         font4.setPointSize(10);
@@ -637,59 +633,59 @@ public:
 
         gridLayout_5->addWidget(label_16, 1, 0, 1, 1);
 
-        label_17 = new QLabel(widget2);
+        label_17 = new QLabel(layoutWidget2);
         label_17->setObjectName(QStringLiteral("label_17"));
         label_17->setFont(font4);
         label_17->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_17, 1, 1, 1, 1);
 
-        mass1_show = new QLCDNumber(widget2);
+        mass1_show = new QLCDNumber(layoutWidget2);
         mass1_show->setObjectName(QStringLiteral("mass1_show"));
         mass1_show->setDigitCount(6);
 
         gridLayout_5->addWidget(mass1_show, 2, 0, 1, 1);
 
-        label_15 = new QLabel(widget2);
+        label_15 = new QLabel(layoutWidget2);
         label_15->setObjectName(QStringLiteral("label_15"));
         label_15->setFont(font);
         label_15->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_15, 0, 3, 1, 2);
 
-        stiff1Scale_show = new QLCDNumber(widget2);
+        stiff1Scale_show = new QLCDNumber(layoutWidget2);
         stiff1Scale_show->setObjectName(QStringLiteral("stiff1Scale_show"));
         stiff1Scale_show->setDigitCount(6);
 
         gridLayout_5->addWidget(stiff1Scale_show, 2, 1, 1, 1);
 
-        label_25 = new QLabel(widget2);
+        label_25 = new QLabel(layoutWidget2);
         label_25->setObjectName(QStringLiteral("label_25"));
         label_25->setFont(font4);
         label_25->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_25, 1, 3, 1, 1);
 
-        stiff2Scale_show = new QLCDNumber(widget2);
+        stiff2Scale_show = new QLCDNumber(layoutWidget2);
         stiff2Scale_show->setObjectName(QStringLiteral("stiff2Scale_show"));
         stiff2Scale_show->setDigitCount(6);
 
         gridLayout_5->addWidget(stiff2Scale_show, 2, 4, 1, 1);
 
-        label_18 = new QLabel(widget2);
+        label_18 = new QLabel(layoutWidget2);
         label_18->setObjectName(QStringLiteral("label_18"));
         label_18->setFont(font4);
         label_18->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_18, 1, 4, 1, 1);
 
-        mass2_show = new QLCDNumber(widget2);
+        mass2_show = new QLCDNumber(layoutWidget2);
         mass2_show->setObjectName(QStringLiteral("mass2_show"));
         mass2_show->setDigitCount(6);
 
         gridLayout_5->addWidget(mass2_show, 2, 3, 1, 1);
 
-        label_14 = new QLabel(widget2);
+        label_14 = new QLabel(layoutWidget2);
         label_14->setObjectName(QStringLiteral("label_14"));
         label_14->setFont(font);
         label_14->setAlignment(Qt::AlignCenter);
@@ -700,48 +696,48 @@ public:
 
         gridLayout_5->addItem(horizontalSpacer_6, 1, 2, 1, 1);
 
-        widget3 = new QWidget(centralWidget);
-        widget3->setObjectName(QStringLiteral("widget3"));
-        widget3->setGeometry(QRect(1851, 481, 431, 431));
-        gridLayout_7 = new QGridLayout(widget3);
+        layoutWidget3 = new QWidget(centralWidget);
+        layoutWidget3->setObjectName(QStringLiteral("layoutWidget3"));
+        layoutWidget3->setGeometry(QRect(1851, 481, 431, 431));
+        gridLayout_7 = new QGridLayout(layoutWidget3);
         gridLayout_7->setSpacing(6);
         gridLayout_7->setContentsMargins(11, 11, 11, 11);
         gridLayout_7->setObjectName(QStringLiteral("gridLayout_7"));
         gridLayout_7->setContentsMargins(0, 0, 0, 0);
-        label_55 = new QLabel(widget3);
+        label_55 = new QLabel(layoutWidget3);
         label_55->setObjectName(QStringLiteral("label_55"));
         label_55->setAlignment(Qt::AlignCenter);
 
         gridLayout_7->addWidget(label_55, 13, 0, 1, 1);
 
-        mass_set = new QLineEdit(widget3);
+        mass_set = new QLineEdit(layoutWidget3);
         mass_set->setObjectName(QStringLiteral("mass_set"));
 
         gridLayout_7->addWidget(mass_set, 4, 3, 2, 1);
 
-        Act1_show = new QLCDNumber(widget3);
+        Act1_show = new QLCDNumber(layoutWidget3);
         Act1_show->setObjectName(QStringLiteral("Act1_show"));
         Act1_show->setDigitCount(6);
 
         gridLayout_7->addWidget(Act1_show, 12, 1, 1, 1);
 
-        label_60 = new QLabel(widget3);
+        label_60 = new QLabel(layoutWidget3);
         label_60->setObjectName(QStringLiteral("label_60"));
         label_60->setAlignment(Qt::AlignCenter);
 
         gridLayout_7->addWidget(label_60, 0, 2, 1, 1);
 
-        label_11 = new QLabel(widget3);
+        label_11 = new QLabel(layoutWidget3);
         label_11->setObjectName(QStringLiteral("label_11"));
 
         gridLayout_7->addWidget(label_11, 8, 3, 2, 1);
 
-        label_32 = new QLabel(widget3);
+        label_32 = new QLabel(layoutWidget3);
         label_32->setObjectName(QStringLiteral("label_32"));
 
         gridLayout_7->addWidget(label_32, 6, 3, 1, 1);
 
-        equalBox = new QRadioButton(widget3);
+        equalBox = new QRadioButton(layoutWidget3);
         equalBox->setObjectName(QStringLiteral("equalBox"));
         QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
@@ -751,12 +747,12 @@ public:
 
         gridLayout_7->addWidget(equalBox, 5, 2, 2, 1);
 
-        JakeRenderCheckBox = new QCheckBox(widget3);
+        JakeRenderCheckBox = new QCheckBox(layoutWidget3);
         JakeRenderCheckBox->setObjectName(QStringLiteral("JakeRenderCheckBox"));
 
         gridLayout_7->addWidget(JakeRenderCheckBox, 5, 0, 2, 2);
 
-        Act1 = new QSlider(widget3);
+        Act1 = new QSlider(layoutWidget3);
         Act1->setObjectName(QStringLiteral("Act1"));
         Act1->setMinimum(0);
         Act1->setMaximum(90);
@@ -769,29 +765,29 @@ public:
 
         gridLayout_7->addWidget(Act1, 12, 2, 1, 1);
 
-        CD_Vertical_Box = new QCheckBox(widget3);
+        CD_Vertical_Box = new QCheckBox(layoutWidget3);
         CD_Vertical_Box->setObjectName(QStringLiteral("CD_Vertical_Box"));
 
         gridLayout_7->addWidget(CD_Vertical_Box, 8, 0, 2, 2);
 
-        label_35 = new QLabel(widget3);
+        label_35 = new QLabel(layoutWidget3);
         label_35->setObjectName(QStringLiteral("label_35"));
 
         gridLayout_7->addWidget(label_35, 3, 3, 1, 1);
 
-        Act2_show = new QLCDNumber(widget3);
+        Act2_show = new QLCDNumber(layoutWidget3);
         Act2_show->setObjectName(QStringLiteral("Act2_show"));
         Act2_show->setDigitCount(6);
 
         gridLayout_7->addWidget(Act2_show, 13, 1, 1, 1);
 
-        label_54 = new QLabel(widget3);
+        label_54 = new QLabel(layoutWidget3);
         label_54->setObjectName(QStringLiteral("label_54"));
         label_54->setAlignment(Qt::AlignCenter);
 
         gridLayout_7->addWidget(label_54, 12, 0, 1, 1);
 
-        Inertia_Val = new QLCDNumber(widget3);
+        Inertia_Val = new QLCDNumber(layoutWidget3);
         Inertia_Val->setObjectName(QStringLiteral("Inertia_Val"));
         Inertia_Val->setDigitCount(3);
 
@@ -801,24 +797,24 @@ public:
 
         gridLayout_7->addItem(verticalSpacer, 11, 2, 1, 1);
 
-        cd_ratio = new QLineEdit(widget3);
+        cd_ratio = new QLineEdit(layoutWidget3);
         cd_ratio->setObjectName(QStringLiteral("cd_ratio"));
 
         gridLayout_7->addWidget(cd_ratio, 7, 3, 1, 1);
 
-        turnOff = new QPushButton(widget3);
+        turnOff = new QPushButton(layoutWidget3);
         turnOff->setObjectName(QStringLiteral("turnOff"));
 
         gridLayout_7->addWidget(turnOff, 3, 0, 2, 2);
 
-        VRControl = new QRadioButton(widget3);
+        VRControl = new QRadioButton(layoutWidget3);
         VRControl->setObjectName(QStringLiteral("VRControl"));
         sizePolicy.setHeightForWidth(VRControl->sizePolicy().hasHeightForWidth());
         VRControl->setSizePolicy(sizePolicy);
 
         gridLayout_7->addWidget(VRControl, 3, 2, 2, 1);
 
-        Act2 = new QSlider(widget3);
+        Act2 = new QSlider(layoutWidget3);
         Act2->setObjectName(QStringLiteral("Act2"));
         Act2->setMinimum(0);
         Act2->setMaximum(9);
@@ -831,36 +827,36 @@ public:
 
         gridLayout_7->addWidget(Act2, 13, 2, 1, 1);
 
-        Mass_Val = new QLCDNumber(widget3);
+        Mass_Val = new QLCDNumber(layoutWidget3);
         Mass_Val->setObjectName(QStringLiteral("Mass_Val"));
         Mass_Val->setDigitCount(5);
 
         gridLayout_7->addWidget(Mass_Val, 1, 3, 1, 1);
 
-        reverseBox = new QRadioButton(widget3);
+        reverseBox = new QRadioButton(layoutWidget3);
         reverseBox->setObjectName(QStringLiteral("reverseBox"));
 
         gridLayout_7->addWidget(reverseBox, 7, 0, 1, 2);
 
-        label_48 = new QLabel(widget3);
+        label_48 = new QLabel(layoutWidget3);
         label_48->setObjectName(QStringLiteral("label_48"));
         label_48->setAlignment(Qt::AlignCenter);
 
         gridLayout_7->addWidget(label_48, 0, 0, 1, 2);
 
-        CD_Val = new QLCDNumber(widget3);
+        CD_Val = new QLCDNumber(layoutWidget3);
         CD_Val->setObjectName(QStringLiteral("CD_Val"));
         CD_Val->setDigitCount(3);
 
         gridLayout_7->addWidget(CD_Val, 1, 2, 1, 1);
 
-        label_28 = new QLabel(widget3);
+        label_28 = new QLabel(layoutWidget3);
         label_28->setObjectName(QStringLiteral("label_28"));
         label_28->setAlignment(Qt::AlignCenter);
 
         gridLayout_7->addWidget(label_28, 0, 3, 1, 1);
 
-        inertiaValue = new QLineEdit(widget3);
+        inertiaValue = new QLineEdit(layoutWidget3);
         inertiaValue->setObjectName(QStringLiteral("inertiaValue"));
 
         gridLayout_7->addWidget(inertiaValue, 10, 3, 1, 1);
@@ -869,119 +865,119 @@ public:
 
         gridLayout_7->addItem(verticalSpacer_2, 2, 2, 1, 1);
 
-        equalBoxTouch = new QCheckBox(widget3);
+        equalBoxTouch = new QCheckBox(layoutWidget3);
         equalBoxTouch->setObjectName(QStringLiteral("equalBoxTouch"));
         sizePolicy.setHeightForWidth(equalBoxTouch->sizePolicy().hasHeightForWidth());
         equalBoxTouch->setSizePolicy(sizePolicy);
 
         gridLayout_7->addWidget(equalBoxTouch, 7, 2, 3, 1);
 
-        widget4 = new QWidget(centralWidget);
-        widget4->setObjectName(QStringLiteral("widget4"));
-        widget4->setGeometry(QRect(1470, 480, 171, 213));
-        gridLayout_6 = new QGridLayout(widget4);
+        layoutWidget4 = new QWidget(centralWidget);
+        layoutWidget4->setObjectName(QStringLiteral("layoutWidget4"));
+        layoutWidget4->setGeometry(QRect(1400, 480, 431, 213));
+        gridLayout_6 = new QGridLayout(layoutWidget4);
         gridLayout_6->setSpacing(6);
         gridLayout_6->setContentsMargins(11, 11, 11, 11);
         gridLayout_6->setObjectName(QStringLiteral("gridLayout_6"));
         gridLayout_6->setContentsMargins(0, 0, 0, 0);
-        label_45 = new QLabel(widget4);
+        label_45 = new QLabel(layoutWidget4);
         label_45->setObjectName(QStringLiteral("label_45"));
-        label_45->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        label_45->setAlignment(Qt::AlignCenter);
 
         gridLayout_6->addWidget(label_45, 1, 0, 1, 1);
 
-        label_44 = new QLabel(widget4);
+        label_44 = new QLabel(layoutWidget4);
         label_44->setObjectName(QStringLiteral("label_44"));
-        label_44->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        label_44->setAlignment(Qt::AlignCenter);
 
         gridLayout_6->addWidget(label_44, 0, 0, 1, 1);
 
-        textEdit = new QTextEdit(widget4);
+        textEdit = new QTextEdit(layoutWidget4);
         textEdit->setObjectName(QStringLiteral("textEdit"));
 
         gridLayout_6->addWidget(textEdit, 0, 1, 1, 1);
 
-        textEdit_2 = new QTextEdit(widget4);
+        textEdit_2 = new QTextEdit(layoutWidget4);
         textEdit_2->setObjectName(QStringLiteral("textEdit_2"));
 
         gridLayout_6->addWidget(textEdit_2, 1, 1, 1, 1);
 
-        widget5 = new QWidget(centralWidget);
-        widget5->setObjectName(QStringLiteral("widget5"));
-        widget5->setGeometry(QRect(1550, 710, 281, 205));
-        gridLayout_2 = new QGridLayout(widget5);
+        layoutWidget5 = new QWidget(centralWidget);
+        layoutWidget5->setObjectName(QStringLiteral("layoutWidget5"));
+        layoutWidget5->setGeometry(QRect(1550, 710, 281, 205));
+        gridLayout_2 = new QGridLayout(layoutWidget5);
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
         gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
         gridLayout_2->setContentsMargins(0, 0, 0, 0);
-        BitNumBox = new QComboBox(widget5);
+        BitNumBox = new QComboBox(layoutWidget5);
         BitNumBox->setObjectName(QStringLiteral("BitNumBox"));
         BitNumBox->setEditable(true);
 
         gridLayout_2->addWidget(BitNumBox, 2, 1, 1, 1);
 
-        label_43 = new QLabel(widget5);
+        label_43 = new QLabel(layoutWidget5);
         label_43->setObjectName(QStringLiteral("label_43"));
         label_43->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_2->addWidget(label_43, 4, 0, 1, 1);
 
-        ParityBox = new QComboBox(widget5);
+        ParityBox = new QComboBox(layoutWidget5);
         ParityBox->setObjectName(QStringLiteral("ParityBox"));
         ParityBox->setEditable(true);
 
         gridLayout_2->addWidget(ParityBox, 3, 1, 1, 1);
 
-        label_41 = new QLabel(widget5);
+        label_41 = new QLabel(layoutWidget5);
         label_41->setObjectName(QStringLiteral("label_41"));
         label_41->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_2->addWidget(label_41, 2, 0, 1, 1);
 
-        label_39 = new QLabel(widget5);
+        label_39 = new QLabel(layoutWidget5);
         label_39->setObjectName(QStringLiteral("label_39"));
         label_39->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_2->addWidget(label_39, 0, 0, 1, 1);
 
-        BaudBox = new QComboBox(widget5);
+        BaudBox = new QComboBox(layoutWidget5);
         BaudBox->setObjectName(QStringLiteral("BaudBox"));
         BaudBox->setEditable(true);
 
         gridLayout_2->addWidget(BaudBox, 1, 1, 1, 1);
 
-        PortBox = new QComboBox(widget5);
+        PortBox = new QComboBox(layoutWidget5);
         PortBox->setObjectName(QStringLiteral("PortBox"));
 
         gridLayout_2->addWidget(PortBox, 0, 1, 1, 1);
 
-        label_42 = new QLabel(widget5);
+        label_42 = new QLabel(layoutWidget5);
         label_42->setObjectName(QStringLiteral("label_42"));
         label_42->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_2->addWidget(label_42, 3, 0, 1, 1);
 
-        StopBox = new QComboBox(widget5);
+        StopBox = new QComboBox(layoutWidget5);
         StopBox->setObjectName(QStringLiteral("StopBox"));
         StopBox->setEditable(true);
 
         gridLayout_2->addWidget(StopBox, 4, 1, 1, 1);
 
-        label_40 = new QLabel(widget5);
+        label_40 = new QLabel(layoutWidget5);
         label_40->setObjectName(QStringLiteral("label_40"));
         label_40->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_2->addWidget(label_40, 1, 0, 1, 1);
 
-        widget6 = new QWidget(centralWidget);
-        widget6->setObjectName(QStringLiteral("widget6"));
-        widget6->setGeometry(QRect(1850, 10, 431, 335));
-        gridLayout = new QGridLayout(widget6);
+        layoutWidget6 = new QWidget(centralWidget);
+        layoutWidget6->setObjectName(QStringLiteral("layoutWidget6"));
+        layoutWidget6->setGeometry(QRect(1850, 10, 431, 335));
+        gridLayout = new QGridLayout(layoutWidget6);
         gridLayout->setSpacing(10);
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(10, 10, 10, 10);
-        StiffnessExp = new QPushButton(widget6);
+        StiffnessExp = new QPushButton(layoutWidget6);
         StiffnessExp->setObjectName(QStringLiteral("StiffnessExp"));
         QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy1.setHorizontalStretch(0);
@@ -991,7 +987,7 @@ public:
 
         gridLayout->addWidget(StiffnessExp, 8, 0, 1, 1);
 
-        Manual = new QPushButton(widget6);
+        Manual = new QPushButton(layoutWidget6);
         Manual->setObjectName(QStringLiteral("Manual"));
         sizePolicy1.setHeightForWidth(Manual->sizePolicy().hasHeightForWidth());
         Manual->setSizePolicy(sizePolicy1);
@@ -1022,7 +1018,7 @@ public:
 
         gridLayout->addItem(verticalSpacer_3, 7, 0, 1, 1);
 
-        StiffnMassCombined = new QPushButton(widget6);
+        StiffnMassCombined = new QPushButton(layoutWidget6);
         StiffnMassCombined->setObjectName(QStringLiteral("StiffnMassCombined"));
         QSizePolicy sizePolicy2(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy2.setHorizontalStretch(0);
@@ -1044,21 +1040,21 @@ public:
 
         gridLayout->addItem(horizontalSpacer_7, 5, 1, 1, 1);
 
-        dynamicEnvironment = new QPushButton(widget6);
+        dynamicEnvironment = new QPushButton(layoutWidget6);
         dynamicEnvironment->setObjectName(QStringLiteral("dynamicEnvironment"));
         sizePolicy1.setHeightForWidth(dynamicEnvironment->sizePolicy().hasHeightForWidth());
         dynamicEnvironment->setSizePolicy(sizePolicy1);
 
         gridLayout->addWidget(dynamicEnvironment, 2, 0, 3, 3);
 
-        FingerMappingExp = new QPushButton(widget6);
+        FingerMappingExp = new QPushButton(layoutWidget6);
         FingerMappingExp->setObjectName(QStringLiteral("FingerMappingExp"));
         sizePolicy2.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
         FingerMappingExp->setSizePolicy(sizePolicy2);
 
         gridLayout->addWidget(FingerMappingExp, 6, 0, 1, 1);
 
-        HoxelMappingExp = new QPushButton(widget6);
+        HoxelMappingExp = new QPushButton(layoutWidget6);
         HoxelMappingExp->setObjectName(QStringLiteral("HoxelMappingExp"));
         sizePolicy2.setHeightForWidth(HoxelMappingExp->sizePolicy().hasHeightForWidth());
         HoxelMappingExp->setSizePolicy(sizePolicy2);
@@ -1076,7 +1072,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 2300, 32));
+        menuBar->setGeometry(QRect(0, 0, 2300, 27));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -1093,7 +1089,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "CHAI3D Haptics Environment", 0));
-        sendButton->setText(QApplication::translate("MainWindow", "Send Data", 0));
         label_38->setText(QApplication::translate("MainWindow", "SERIAL", 0));
         openButton->setText(QApplication::translate("MainWindow", "Open Serial Port", 0));
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));
@@ -1148,8 +1143,8 @@ public:
         label_28->setText(QApplication::translate("MainWindow", "Mass", 0));
         equalBoxTouch->setText(QApplication::translate("MainWindow", "Touch\n"
 "Effective", 0));
-        label_45->setText(QApplication::translate("MainWindow", "TEXT2:", 0));
-        label_44->setText(QApplication::translate("MainWindow", "TEXT1:", 0));
+        label_45->setText(QApplication::translate("MainWindow", "X1 | Y1 | Z1", 0));
+        label_44->setText(QApplication::translate("MainWindow", "X0 | Y0 | Z0", 0));
         BitNumBox->setCurrentText(QApplication::translate("MainWindow", "8", 0));
         label_43->setText(QApplication::translate("MainWindow", "STOP BITS", 0));
         label_41->setText(QApplication::translate("MainWindow", "BITNUM", 0));

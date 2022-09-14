@@ -15,6 +15,12 @@
 #include "chai3d.h"
 #include <QMutex>
 
+//SERIAL STUFF
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
+#include <QList>
+
+
 #define PI 3.14159265
 
 //// Physical parameters of build agnostic [mm] =======================================
@@ -93,6 +99,16 @@ public:
 private:
     cMotorController* motor_1;
     int finger;
+
+    //SERIAL STUFF
+    QSerialPort *serial;
+
+private slots:
+//    //SERIAL STUFF
+//    void open_serial_port();
+//    void close_serial_port();
+//    void Read_Data();
+//    void Write_Data();
 };
 
 #endif // C3DOFDEVICE_H

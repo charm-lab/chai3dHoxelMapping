@@ -707,6 +707,7 @@ release\moc_mainwindow.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMainWi
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QGenericMatrix \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qgenericmatrix.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QMatrix \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -1284,6 +1285,7 @@ release\moc_haptics_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QObjec
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -1828,6 +1830,7 @@ release\moc_Widget_OpenGLDisplay.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QGenericMatrix \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qgenericmatrix.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QMatrix \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -2296,6 +2299,7 @@ release\moc_experiment_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTh
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -2791,6 +2795,7 @@ release\moc_magTracker_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QOb
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -3288,6 +3293,7 @@ release\moc_Vibrotactile_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\Q
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -4536,6 +4542,7 @@ release\main.obj: src\main.cpp C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QApp
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QGenericMatrix \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qgenericmatrix.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QMatrix \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -5831,6 +5838,7 @@ release\mainwindow.obj: src\mainwindow.cpp include/mainwindow.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QGenericMatrix \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qgenericmatrix.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QMatrix \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -5980,69 +5988,6 @@ release\mainwindow.obj: src\mainwindow.cpp include/mainwindow.h \
 		External\Qwt-6.1.3\include\qwt_series_store.h \
 		External\Qwt-6.1.3\include\qwt_plot_grid.h \
 		ui_mainwindow.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QVariant \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QAction \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qaction.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qactiongroup.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QApplication \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qapplication.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcoreapplication.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qeventloop.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qdesktopwidget.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qguiapplication.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qinputmethod.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QButtonGroup \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qbuttongroup.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QCheckBox \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qcheckbox.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractbutton.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QGridLayout \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qgridlayout.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlayout.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlayoutitem.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qboxlayout.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QHBoxLayout \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QHeaderView \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qheaderview.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractitemview.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractscrollarea.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qabstractitemmodel.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qitemselectionmodel.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractitemdelegate.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstyleoption.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractspinbox.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qvalidator.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qregularexpression.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qslider.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractslider.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstyle.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtabbar.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qrubberband.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLCDNumber \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlcdnumber.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLabel \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlabel.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLineEdit \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMenuBar \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmenubar.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmenu.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QPushButton \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qpushbutton.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QRadioButton \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qradiobutton.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QSlider \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QSpinBox \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qspinbox.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QStatusBar \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstatusbar.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QTextBrowser \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtextbrowser.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtextedit.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qtextdocument.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QTextEdit \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QToolBar \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtoolbar.h \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QWidget \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTime \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdatetime.h
 
@@ -6468,6 +6413,7 @@ release\cMotorController.obj: src\cMotorController.cpp include/shared_data.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -6532,7 +6478,120 @@ release\cMotorController.obj: src\cMotorController.cpp include/shared_data.h \
 		External\chai3d-3.1.1\modules\ODE\external\ODE\include\ode\odecpp_collision.h \
 		External\chai3d-3.1.1\modules\ODE\external\ODE\include\ode\export-dif.h \
 		External\chai3d-3.1.1\modules\ODE\src\CODEWorld.h \
-		External\chai3d-3.1.1\modules\ODE\src\CODEGenericBody.h
+		External\chai3d-3.1.1\modules\ODE\src\CODEGenericBody.h \
+		include/mainwindow.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMainWindow \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmainwindow.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtabwidget.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qicon.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTimer \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtimer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbasictimer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QDialog \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QFileDialog \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMessageBox \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmessagebox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QKeyEvent \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QThread \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qthread.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_main.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_stdinc.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_config.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_platform.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\begin_code.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\close_code.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_config_windows.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_assert.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_atomic.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_audio.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_error.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_endian.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_mutex.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_thread.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_rwops.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_clipboard.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_cpuinfo.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_events.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_video.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_pixels.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_rect.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_surface.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_blendmode.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_keyboard.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_keycode.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_scancode.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_mouse.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_joystick.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_gamecontroller.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_quit.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_gesture.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_touch.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_filesystem.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_haptic.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_hints.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_loadso.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_log.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_messagebox.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_power.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_render.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_system.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_timer.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_version.h \
+		External\chai3d-3.1.1\modules\OCULUS\src\OVRRenderContext.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\SDL\include\SDL_syswm.h \
+		External\chai3d-3.1.1\modules\OCULUS\src\OVRDevice.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\Extras\OVR_Math.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\OVR_CAPI.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\OVR_CAPI_0_8_0.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\OVR_CAPI_Keys.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\OVR_Version.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\OVR_ErrorCode.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\Extras\OVR_CAPI_Util.h \
+		External\chai3d-3.1.1\modules\OCULUS\external\oculusSDK\LibOVR\Include\OVR_CAPI_GL.h \
+		include/Widget_OpenGLDisplay.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtOpenGL\QGLWidget \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtOpenGL\qgl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qopengl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qt_windows.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtANGLE\GLES3\gl3.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtANGLE\GLES3\gl3platform.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtANGLE\KHR\khrplatform.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtANGLE\GLES2\gl2.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtANGLE\GLES2\gl2platform.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qopengles2ext.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qopenglext.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpaintengine.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpainter.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtOpenGL\qglcolormap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtOpenGL\qtopenglglobal.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QSurfaceFormat \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qsurfaceformat.h \
+		include\Shared_Data.h \
+		External\chai3d-3.1.1\extras\freeglut\include\GL\glut.h \
+		External\chai3d-3.1.1\extras\freeglut\include\GL\freeglut_std.h \
+		External\Qwt-6.1.3\include\qwt_plot.h \
+		External\Qwt-6.1.3\include\qwt_global.h \
+		External\Qwt-6.1.3\include\qwt_text.h \
+		External\Qwt-6.1.3\include\qwt_plot_dict.h \
+		External\Qwt-6.1.3\include\qwt_plot_item.h \
+		External\Qwt-6.1.3\include\qwt_legend_data.h \
+		External\Qwt-6.1.3\include\qwt_graphic.h \
+		External\Qwt-6.1.3\include\qwt_null_paintdevice.h \
+		External\Qwt-6.1.3\include\qwt_scale_map.h \
+		External\Qwt-6.1.3\include\qwt_transform.h \
+		External\Qwt-6.1.3\include\qwt_interval.h \
+		External\Qwt-6.1.3\include\qwt_plot_curve.h \
+		External\Qwt-6.1.3\include\qwt_plot_seriesitem.h \
+		External\Qwt-6.1.3\include\qwt_scale_div.h \
+		External\Qwt-6.1.3\include\qwt_series_data.h \
+		External\Qwt-6.1.3\include\qwt_samples.h \
+		External\Qwt-6.1.3\include\qwt_point_3d.h \
+		External\Qwt-6.1.3\include\qwt_point_polar.h \
+		External\Qwt-6.1.3\include\qwt_math.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmath.h \
+		External\Qwt-6.1.3\include\qwt_series_store.h \
+		External\Qwt-6.1.3\include\qwt_plot_grid.h
 
 release\haptics_thread.obj: src\haptics_thread.cpp include/haptics_thread.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QObject \
@@ -6960,6 +7019,7 @@ release\haptics_thread.obj: src\haptics_thread.cpp include/haptics_thread.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -7447,6 +7507,7 @@ release\c3DOFdevice.obj: src\c3DOFdevice.cpp include/c3DOFdevice.h \
 		External\chai3d-3.1.1\src\resources\CShaderIsosurfaceColor-RGBA8.h \
 		External\chai3d-3.1.1\src\resources\CShaderIsosurface-L8.h \
 		External\chai3d-3.1.1\src\resources\CShaderIsosurface-RGBA8.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include\Shared_Data.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qDebug \
 		include/c3dofChaiDevice.h \
@@ -7519,7 +7580,8 @@ release\c3DOFdevice.obj: src\c3DOFdevice.cpp include/c3DOFdevice.h \
 		External\chai3d-3.1.1\modules\ODE\external\ODE\include\ode\odecpp_collision.h \
 		External\chai3d-3.1.1\modules\ODE\external\ODE\include\ode\export-dif.h \
 		External\chai3d-3.1.1\modules\ODE\src\CODEWorld.h \
-		External\chai3d-3.1.1\modules\ODE\src\CODEGenericBody.h
+		External\chai3d-3.1.1\modules\ODE\src\CODEGenericBody.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QLatin1Char
 
 release\Widget_OpenGLDisplay.obj: src\Widget_OpenGLDisplay.cpp include/Widget_OpenGLDisplay.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QThread \
@@ -7991,6 +8053,7 @@ release\Widget_OpenGLDisplay.obj: src\Widget_OpenGLDisplay.cpp include/Widget_Op
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QGenericMatrix \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qgenericmatrix.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\QMatrix \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -8454,6 +8517,7 @@ release\c3dofChaiDevice.obj: src\c3dofChaiDevice.cpp External\chai3d-3.1.1\src\s
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -9407,6 +9471,7 @@ release\experiment_thread.obj: src\experiment_thread.cpp include/experiment_thre
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -9900,6 +9965,7 @@ release\magTracker_thread.obj: src\magTracker_thread.cpp include/magTracker_thre
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \
@@ -10938,6 +11004,7 @@ release\Vibrotactile_thread.obj: src\Vibrotactile_thread.cpp include/Vibrotactil
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QList \
 		include/SimpleIni.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QMetaType \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QString \

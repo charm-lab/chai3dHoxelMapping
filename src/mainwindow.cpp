@@ -77,6 +77,9 @@ MainWindow::~MainWindow()
 //START SERIAL
 
 //Serial data writing happens here:
+Eigen::Vector3d localDesiredPos0_last;
+Eigen::Vector3d localDesiredPos1_last;
+
 void MainWindow::writeSerialData()
 {
     QByteArray payloadBuffer;
@@ -94,6 +97,9 @@ void MainWindow::writeSerialData()
         //index desiered positions:
         //localDesiredPos0[0] //X
         //localDesiredPos0[1] //Y
+
+        localDesiredPos0 = localDesiredPos0*0.5 + 0.5*localDesiredPos0_last;
+        localDesiredPos1 = localDesiredPos1*0.5 + 0.5*localDesiredPos1_last;
         QString device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
         QString device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
         QString device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
@@ -103,15 +109,22 @@ void MainWindow::writeSerialData()
         QString device1X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
         QString device1Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
         QString device1Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
-        payloadBuffer = payloadBuffer.append(device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n");
+        QString positionData = device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n";
+
+        payloadBuffer = payloadBuffer.append(positionData);
+        //Dispay in GUI:
+        ui->textEdit->setText(device0X + " | " + device0Y + " | " + device0Z); //device 0
+        ui->textEdit_2->setText(device1X + " | " + device1Y + " | " + device1Z); //device 1
+
+        localDesiredPos0_last = localDesiredPos0;
+        localDesiredPos1_last = localDesiredPos1;
     }
-    qDebug() << payloadBuffer << " " << serial->isWritable();
+    //qDebug() << payloadBuffer << " " << serial->isWritable();
 
     if(serial->isWritable())
     {
-        ui->textEdit_2->toPlainText().toLatin1();
+        //ui->textEdit_2->toPlainText().toLatin1();
         serial->write(payloadBuffer, payloadBuffer.size());
-
     }
 }
 
