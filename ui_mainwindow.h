@@ -15,6 +15,7 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLCDNumber>
@@ -151,9 +152,9 @@ public:
     QCheckBox *equalBoxTouch;
     QWidget *layoutWidget4;
     QGridLayout *gridLayout_6;
-    QLabel *label_45;
     QLabel *label_44;
     QTextEdit *textEdit;
+    QLabel *label_45;
     QTextEdit *textEdit_2;
     QWidget *layoutWidget5;
     QGridLayout *gridLayout_2;
@@ -186,6 +187,11 @@ public:
     QPushButton *HoxelMappingExp;
     QSpacerItem *horizontalSpacer_8;
     QSpacerItem *horizontalSpacer_9;
+    QWidget *widget;
+    QGridLayout *gridLayout_8;
+    QLabel *label_47;
+    QLabel *label_46;
+    QDoubleSpinBox *alphaBox;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -880,12 +886,6 @@ public:
         gridLayout_6->setContentsMargins(11, 11, 11, 11);
         gridLayout_6->setObjectName(QStringLiteral("gridLayout_6"));
         gridLayout_6->setContentsMargins(0, 0, 0, 0);
-        label_45 = new QLabel(layoutWidget4);
-        label_45->setObjectName(QStringLiteral("label_45"));
-        label_45->setAlignment(Qt::AlignCenter);
-
-        gridLayout_6->addWidget(label_45, 1, 0, 1, 1);
-
         label_44 = new QLabel(layoutWidget4);
         label_44->setObjectName(QStringLiteral("label_44"));
         label_44->setAlignment(Qt::AlignCenter);
@@ -896,6 +896,12 @@ public:
         textEdit->setObjectName(QStringLiteral("textEdit"));
 
         gridLayout_6->addWidget(textEdit, 0, 1, 1, 1);
+
+        label_45 = new QLabel(layoutWidget4);
+        label_45->setObjectName(QStringLiteral("label_45"));
+        label_45->setAlignment(Qt::AlignCenter);
+
+        gridLayout_6->addWidget(label_45, 1, 0, 1, 1);
 
         textEdit_2 = new QTextEdit(layoutWidget4);
         textEdit_2->setObjectName(QStringLiteral("textEdit_2"));
@@ -1069,10 +1075,39 @@ public:
 
         gridLayout->addItem(horizontalSpacer_9, 9, 1, 1, 1);
 
+        widget = new QWidget(centralWidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(1110, 810, 261, 101));
+        gridLayout_8 = new QGridLayout(widget);
+        gridLayout_8->setSpacing(6);
+        gridLayout_8->setContentsMargins(11, 11, 11, 11);
+        gridLayout_8->setObjectName(QStringLiteral("gridLayout_8"));
+        gridLayout_8->setContentsMargins(0, 0, 0, 0);
+        label_47 = new QLabel(widget);
+        label_47->setObjectName(QStringLiteral("label_47"));
+        label_47->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_8->addWidget(label_47, 0, 0, 1, 2);
+
+        label_46 = new QLabel(widget);
+        label_46->setObjectName(QStringLiteral("label_46"));
+        label_46->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_8->addWidget(label_46, 1, 0, 1, 1);
+
+        alphaBox = new QDoubleSpinBox(widget);
+        alphaBox->setObjectName(QStringLiteral("alphaBox"));
+        alphaBox->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        alphaBox->setMaximum(1);
+        alphaBox->setSingleStep(0.01);
+        alphaBox->setValue(0);
+
+        gridLayout_8->addWidget(alphaBox, 1, 1, 1, 1);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 2300, 27));
+        menuBar->setGeometry(QRect(0, 0, 2300, 32));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -1143,8 +1178,8 @@ public:
         label_28->setText(QApplication::translate("MainWindow", "Mass", 0));
         equalBoxTouch->setText(QApplication::translate("MainWindow", "Touch\n"
 "Effective", 0));
-        label_45->setText(QApplication::translate("MainWindow", "X1 | Y1 | Z1", 0));
         label_44->setText(QApplication::translate("MainWindow", "X0 | Y0 | Z0", 0));
+        label_45->setText(QApplication::translate("MainWindow", "X1 | Y1 | Z1", 0));
         BitNumBox->setCurrentText(QApplication::translate("MainWindow", "8", 0));
         label_43->setText(QApplication::translate("MainWindow", "STOP BITS", 0));
         label_41->setText(QApplication::translate("MainWindow", "BITNUM", 0));
@@ -1163,6 +1198,8 @@ public:
 "Experiment", 0));
         HoxelMappingExp->setText(QApplication::translate("MainWindow", "Hoxel Mapping\n"
 "Experiment", 0));
+        label_47->setText(QApplication::translate("MainWindow", "IIR Filter:", 0));
+        label_46->setText(QApplication::translate("MainWindow", "Alpha = ", 0));
     } // retranslateUi
 
 };

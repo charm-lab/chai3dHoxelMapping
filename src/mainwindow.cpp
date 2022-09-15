@@ -58,12 +58,14 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
     //The setting COM drop-down menu display the 2nd (first-index) item by default
-    ui->PortBox->setCurrentIndex(1);
-    //TAll other drop-down menu displays the first (zero-index) item by default
+    ui->PortBox->setCurrentIndex(0);
+    //All other drop-down menu displays the first (zero-index) item by default
     ui->BaudBox->setCurrentIndex(0);
     ui->BitNumBox->setCurrentIndex(0);
     ui->ParityBox->setCurrentIndex(0);
     ui->StopBox->setCurrentIndex(0);
+    //Sett IIR Filter tunaable aplha value:
+    ui->alphaBox->setValue(0.23);
     qDebug() << tr("The interface is set successfully!");
 }
 
@@ -91,36 +93,39 @@ void MainWindow::writeSerialData()
         QString data1 = QString::number(localOutputStrokes1, 'f', 1); //device1 --thumb default
         payloadBuffer = payloadBuffer.append(data0 + " " + data1 + "\r\n");
     }
+    //Multi-DoF:
     else
     {
-        //Multi-DoF:
+        //IIR Filter:
+        double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
+        //qDebug() << alpha;
+        localDesiredPos0 = alpha*localDesiredPos0 + (1.0-alpha)*localDesiredPos0_prev;
+        localDesiredPos1 = alpha*localDesiredPos1 + (1.0-alpha)*localDesiredPos1_prev;
+        //Set Device Desired Pos:
         //index desiered positions:
-        //localDesiredPos0[0] //X
-        //localDesiredPos0[1] //Y
-
-        localDesiredPos0 = localDesiredPos0*0.5 + 0.5*localDesiredPos0_prev;
-        localDesiredPos1 = localDesiredPos1*0.5 + 0.5*localDesiredPos1_prev;
         QString device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
         QString device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
         QString device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
+        QString device0X_prev = QString::number(localDesiredPos0_prev[0], 'f', 1); //localDesiredPos0_prev[0] //X
+        QString device0Y_prev = QString::number(localDesiredPos0_prev[1], 'f', 1); //localDesiredPos0_prev[1] //Y
+        QString device0Z_prev = QString::number(localDesiredPos0_prev[2], 'f', 1); //localDesiredPos0_prev[2] //Z
         //thumb desiered positions:
-        //localDesiredPos1[0] //X
-        //localDesiredPos0[1] //Y
         QString device1X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
         QString device1Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
         QString device1Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
+        QString device1X_prev = QString::number(localDesiredPos1_prev[0], 'f', 1); //localDesiredPos1_prev[0] //X
+        QString device1Y_prev = QString::number(localDesiredPos1_prev[1], 'f', 1); //localDesiredPos1_prev[1] //Y
+        QString device1Z_prev = QString::number(localDesiredPos1_prev[2], 'f', 1); //localDesiredPos1_prev[2] //Z
         QString positionData = device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n";
 
         payloadBuffer = payloadBuffer.append(positionData);
         //Dispay in GUI:
-        ui->textEdit->setText(device0X + " | " + device0Y + " | " + device0Z); //device 0
-        ui->textEdit_2->setText(device1X + " | " + device1Y + " | " + device1Z); //device 1
+        ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev); //device 0//device 0 _prev
+        ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev);//device 1 //device 1_prev
 
+        //Update:
         localDesiredPos0_prev = localDesiredPos0;
         localDesiredPos1_prev = localDesiredPos1;
-
-        //Print to check if the values are updating
-
     }
     //qDebug() << payloadBuffer << " " << serial->isWritable();
 
@@ -145,6 +150,7 @@ void MainWindow::readSerialData()
     }
     buf.clear();
 }
+
 void MainWindow::on_openButton_clicked()
 {
     if(ui->openButton->text()==tr("Open Serial Port"))
@@ -2493,7 +2499,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
 void MainWindow::on_FingerMappingExp_clicked()
 {
     QString protocolFolder = "./FingerMappingProtocols/";
-
+    qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
     //QString temp = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
     //                                                 "C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/");//click desired protocol ini file when file explorer opens
@@ -2540,11 +2546,14 @@ void MainWindow::on_FingerMappingExp_clicked()
 void MainWindow::on_HoxelMappingExp_clicked()
 {
     QString protocolFolder = "./HoxelMappingProtocols/";
-
+    qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
+    //QString temp = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    //                                                 "C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/");//click desired protocol ini file when file explorer opens
+    //"C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/"
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
-    //qDebug() << "error" << error << p_CommonData->protocolFileLocation;
+    qDebug() << "error" << error << p_CommonData->protocolFileLocation;
 
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {

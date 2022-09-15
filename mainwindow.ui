@@ -1255,16 +1255,6 @@ Effective</string>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_6">
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_45">
-       <property name="text">
-        <string>X1 | Y1 | Z1</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_44">
        <property name="text">
@@ -1277,6 +1267,16 @@ Effective</string>
      </item>
      <item row="0" column="1">
       <widget class="QTextEdit" name="textEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_45">
+       <property name="text">
+        <string>X1 | Y1 | Z1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
      <item row="1" column="1">
       <widget class="QTextEdit" name="textEdit_2"/>
@@ -1668,6 +1668,54 @@ Experiment</string>
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>1110</x>
+      <y>810</y>
+      <width>261</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_8">
+     <item row="0" column="0" colspan="2">
+      <widget class="QLabel" name="label_47">
+       <property name="text">
+        <string>IIR Filter:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_46">
+       <property name="text">
+        <string>Alpha = </string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="alphaBox">
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::PlusMinus</enum>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -1675,7 +1723,7 @@ Experiment</string>
      <x>0</x>
      <y>0</y>
      <width>2300</width>
-     <height>27</height>
+     <height>32</height>
     </rect>
    </property>
   </widget>
