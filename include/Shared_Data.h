@@ -216,6 +216,7 @@ typedef enum
     StiffnessExperiment,
     StiffnessMassExperiment,
     FingerMappingExperiment,
+    HoxelMappingExperiment,
     dynamicMagnitudeExp,
 } dynamicObject_states;
 

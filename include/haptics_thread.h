@@ -73,6 +73,7 @@ public:
     void SetDynEnvironCDInertiaExp();
     void SetDynEnvironStiffMassExp();
     void SetDynEnvironFingerMappingExp();
+    void SetDynEnvironHoxelMappingExp();
     void SetDynEnvironAdjust();
     void SetManualAdjust();
     //    void SetDynEnvironVtExp();

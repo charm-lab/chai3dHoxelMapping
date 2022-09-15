@@ -128,6 +128,7 @@ private slots:
     //void on_startCircle_clicked();
     //void on_loadProtocol_clicked();
     //void on_startExperiment_clicked();
+    QString getSubjectDirectory();
     void WriteDataToFile();
     //void on_setNeutral_clicked();
     //void on_setTrial_clicked();
@@ -196,6 +197,7 @@ private slots:
     void on_StiffnessExp_clicked();
     void on_StiffnMassCombined_clicked();
     void on_FingerMappingExp_clicked();
+    void on_HoxelMappingExp_clicked();
     void on_Manual_clicked();
 
     //SERIAL:

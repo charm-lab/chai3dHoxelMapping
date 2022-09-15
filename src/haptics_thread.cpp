@@ -401,7 +401,8 @@ void haptics_thread::UpdateVRGraphics()
         }
 
         //For Jasmin's Experiments - Only 1 box
-        if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment){
+        if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+                p_CommonData->currentDynamicObjectState == HoxelMappingExperiment){
 
             p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
 
@@ -690,7 +691,8 @@ void haptics_thread::UpdateVRGraphics()
     }
 
     //VR Updates for Jasmin's FingerMapping Experiment
-    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //If netiher the target or hoop are completed
         if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete)
@@ -929,7 +931,8 @@ void haptics_thread::ComputeVRDesiredDevicePos()
             boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
         else if(p_CommonData->currentDynamicObjectState == StiffnessExperiment
                 || p_CommonData->currentDynamicObjectState == StiffnessMassExperiment
-                || p_CommonData->currentDynamicObjectState == FingerMappingExperiment) // || p_CommonData->currentDynamicObjectState == dynamicMagnitudeExp)
+                || p_CommonData->currentDynamicObjectState == FingerMappingExperiment
+                || p_CommonData->currentDynamicObjectState == HoxelMappingExperiment) // || p_CommonData->currentDynamicObjectState == dynamicMagnitudeExp)
             boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
         //        else if(p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp)
         //            boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
@@ -1165,7 +1168,8 @@ void haptics_thread::RecordData()
         //p_CommonData->dataRecorder.expInertia       = p_CommonData->expInertia;
     }
 
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //For sensor0/finger0
         p_CommonData->dataRecorder.desiredPos0      = p_CommonData->wearableDelta0->ReadDesiredPos(); // desired vector for index
@@ -1642,7 +1646,8 @@ void haptics_thread::DeleteDynamicBodies()
         //    qDebug("it just happened!");
     }
     //For Jasmin's Experiments
-    else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+              p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         delete ODEWorld;
         //delete p_CommonData->oneModel;
@@ -1703,8 +1708,6 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(force1_show);
         p_CommonData->p_world->removeChild(force1_show);
 
-
-
         // add scaled bodies for altering display ratio
         p_CommonData->p_world->removeChild(m_dispScaleCurSphere0);
         p_CommonData->p_world->removeChild(m_dispScaleCurSphere1);
@@ -1758,7 +1761,8 @@ void haptics_thread::RenderDynamicBodies()
         wall->setLocalPos(0.05, 0.05, -.05);
     }
 
-    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         wallHeight = .1;
         wallThickness = 0.01;
@@ -1820,6 +1824,12 @@ void haptics_thread::RenderDynamicBodies()
         mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
         stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = 500;
         break;
+    case HoxelMappingExperiment:  // Jasmin HoxelMapping Experiment
+        boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
+        mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
+        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = 500;
+        break;
     }
 
     //assign the params dependent on the others
@@ -1845,6 +1855,11 @@ void haptics_thread::RenderDynamicBodies()
     else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         SetDynEnvironFingerMappingExp();
+    }
+
+    else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    {
+        SetDynEnvironHoxelMappingExp();
     }
 
     // if just rendering dynamic environments without an experiment
@@ -1895,14 +1910,12 @@ void haptics_thread::RenderDynamicBodies()
     m_curSphere1->setTransparencyLevel(0);
     m_dispScaleCurSphere0->setTransparencyLevel(0);
     m_dispScaleCurSphere1->setTransparencyLevel(0);
-
 }
 
 /*Change Environment for each particular setup*/
 //tiger cd inertia function
 void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
 {
-
     // set part 1/2 indicators to be able to show
     //    p_CommonData->oneModel->setShowEnabled(false);
     //    p_CommonData->twoModel->setShowEnabled(false);
@@ -1917,7 +1930,6 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     // setup collision detectorsfor the dynamic objects
     p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
 
-
     // define material properties for box 1 - invisible
     chai3d::cMaterial mat1;
     mat1.setBlueMediumTurquoise();
@@ -1928,7 +1940,6 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     mat1.setUseHapticFriction(true);
     p_CommonData->p_dynamicBox1->setMaterial(mat1);
     p_CommonData->p_dynamicBox1->setUseMaterial(true);
-
 
 
     // define material properties for box 2 - visible
@@ -1949,19 +1960,15 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     p_CommonData->p_dynamicScaledBox1->setUseMaterial(true);
     p_CommonData->p_dynamicScaledBox1->setHapticEnabled(false);
 
-
     // add mesh to ODE object
     p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
-
 
     // create a dynamic model of the ODE object
     p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
 
-
     // set mass of box
     //p_CommonData->ODEBody1->setMass(p_CommonData->expMass);
     p_CommonData->ODEBody1->setMass(mass1);
-
 
     //qDebug()<<"ugh"<<p_CommonData->expMass<<" "<< p_CommonData->tempCD << " " << p_CommonData->expInertia<< p_CommonData->cdVertScaleOn;
     //qDebug()<<"further ugh" << mat1.getStiffness()<< mat1.getLateralStiffness()<< mat1.getDynamicFriction()<<mat1.getStaticFriction();
@@ -2025,7 +2032,6 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     p_CommonData->ODEBody1->setLocalPos(0.2,.05,-.02);
     p_CommonData->ODEBody2->setLocalPos(0.2,-.05,-.02);
     //p_CommonData->ODEBody3->setLocalPos(0.25,0,-.1);
-
 
     double hoopX = 0.35;
     double hoopY = 0.65;
@@ -2376,6 +2382,104 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
     //p_CommonData->oneModel->setLocalPos(0.22, 0.2, 0);
     //p_CommonData->twoModel->setLocalPos(0.22, 0.2, 0);
     qDebug()<<"Finished FME Setup";
+}
+
+void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Experiment
+{
+    // create the visual boxes on the dynamic box meshes
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+
+    // setup collision detectorsfor the dynamic objects
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+
+    // define material properties for box 1 - invisible
+    chai3d::cMaterial mat1;
+    mat1.setRed();
+    mat1.setStiffness(stiffness1);
+    //mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+
+    // create a dynamic model of the ODE object - box1
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
+
+    // set mass of box1
+    p_CommonData->ODEBody1->setMass(mass1);
+
+    // set position of box
+    p_CommonData->ODEBody1->setLocalPos(0.15, -0.2, -.02); //(0.1,-0.1,-.02);
+
+    //Set orientation of box
+    p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
+
+    targetRadius = 0.05;
+
+    //Create box1 hoop
+    hoop1 = new chai3d::cMesh();
+    chai3d::cCreateRing(hoop1, 0.005, targetRadius);
+    hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);
+    hoop1Pos = chai3d::cVector3d(0.1, 0.05, -0.2);
+    hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
+    matHoop1.setRed();
+    hoop1->setMaterial(matHoop1);
+    hoop1->setTransparencyLevel(0.2, true);
+    p_CommonData->p_world->addChild(hoop1);
+
+
+    /*
+    //wall = new chai3d::cMesh();
+    ////create a plane
+    //wallHeight = .1;
+    //wallThickness = 0.01;
+
+    //chai3d::cCreateBox(wall, 1.75*.3, wallThickness, wallHeight);
+    //wall->setLocalPos(0.05, 0.05, -.05);
+    */
+    //Add vertical Wall to world
+    p_CommonData->p_world->addChild(wall);
+
+    //Create Box1 Target Area
+    target1 = new chai3d::cMesh();
+    chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
+    target1Pos = chai3d::cVector3d(0.1, 0.2, 0.0); //(0.05, 0, -0.24);  (0.1,-.05,-.02)
+    target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
+    matTarget1.setRed();
+    target1->setMaterial(matTarget1);
+    target1->setUseCulling(true);
+    target1->setUseTransparency(true);
+    target1->setTransparencyLevel(0.2, true);
+    p_CommonData->p_world->addChild(target1);
+
+    p_CommonData->target1Complete = false;
+    p_CommonData->hoop1Complete = false;
+
+    p_CommonData->explorationComplete = false;
+
+    p_CommonData->answer1 = false;
+    p_CommonData->answerComplete = false;
+
+    //Reset trial succes markers whenever environment is created
+    p_CommonData->targetSuccess = 0;
+    p_CommonData->hoopSuccess = 0;
+    p_CommonData->trialSuccess = 0;
+
+    //add one and two indicators
+    //p_CommonData->p_world->addChild(p_CommonData->oneModel);
+    //p_CommonData->p_world->addChild(p_CommonData->twoModel);
+
+    //Add dynamic boxes to the world
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
+
+    //p_CommonData->oneModel->setLocalPos(1.0, 0.5, 0);
+    //p_CommonData->oneModel->setLocalPos(0.22, 0.2, 0);
+    //p_CommonData->twoModel->setLocalPos(0.22, 0.2, 0);
+    qDebug()<<"Finished HME Setup";
 }
 
 // general mass demo with adjustable parameters

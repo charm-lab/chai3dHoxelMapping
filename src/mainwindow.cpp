@@ -13,7 +13,7 @@
 //Make sure this directory exists before runtime or else the data will not save
 //QString subjectDirectory = "C:/Users/Sam/Desktop/chai3dFingerMapping/Subjects/";
 //QString subjectDirectory = "F:/FME_Subjects/";
-QString subjectDirectory = "./FME_Subject_Data/";
+//QString subjectDirectory = "./FME_Subject_Data/";
 
 //Gloabal value to be shared with cMotorController
 int mappingVal;
@@ -77,8 +77,8 @@ MainWindow::~MainWindow()
 //START SERIAL
 
 //Serial data writing happens here:
-Eigen::Vector3d localDesiredPos0_last;
-Eigen::Vector3d localDesiredPos1_last;
+Eigen::Vector3d localDesiredPos0_prev;
+Eigen::Vector3d localDesiredPos1_prev;
 
 void MainWindow::writeSerialData()
 {
@@ -98,8 +98,8 @@ void MainWindow::writeSerialData()
         //localDesiredPos0[0] //X
         //localDesiredPos0[1] //Y
 
-        localDesiredPos0 = localDesiredPos0*0.5 + 0.5*localDesiredPos0_last;
-        localDesiredPos1 = localDesiredPos1*0.5 + 0.5*localDesiredPos1_last;
+        localDesiredPos0 = localDesiredPos0*0.5 + 0.5*localDesiredPos0_prev;
+        localDesiredPos1 = localDesiredPos1*0.5 + 0.5*localDesiredPos1_prev;
         QString device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
         QString device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
         QString device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
@@ -116,8 +116,11 @@ void MainWindow::writeSerialData()
         ui->textEdit->setText(device0X + " | " + device0Y + " | " + device0Z); //device 0
         ui->textEdit_2->setText(device1X + " | " + device1Y + " | " + device1Z); //device 1
 
-        localDesiredPos0_last = localDesiredPos0;
-        localDesiredPos1_last = localDesiredPos1;
+        localDesiredPos0_prev = localDesiredPos0;
+        localDesiredPos1_prev = localDesiredPos1;
+
+        //Print to check if the values are updating
+
     }
     //qDebug() << payloadBuffer << " " << serial->isWritable();
 
@@ -552,12 +555,14 @@ bool MainWindow::readExpStuffIn(){
     {
         p_CommonData->TrialType = p_CommonData->MineProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
-    //For Jasmin's FingerMapping Experiment
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    //For Jasmin's FingerMapping and HoxelMapping Experiment
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
     qDebug()<<"TrialType"<< p_CommonData->TrialType;
+
 
     //Stiffness Experiment
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment)
@@ -712,7 +717,7 @@ bool MainWindow::readExpStuffIn(){
     }
 
     //For Jasmin's FingerMapping Experiment
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         qDebug() << "Reading In FingerMappingExperiment Protocol";
         //Training trials
@@ -802,6 +807,99 @@ bool MainWindow::readExpStuffIn(){
             qDebug()<<"THIS IS BROKEN -- YOU SHOULD NEVER BE HERE -- bad protocol file read";
         }
     }
+
+    //For Jasmin's HoxelMapping Experiment
+    else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    {
+        qDebug() << "Reading In HoxelMappingExperiment Protocol";
+        //Training trials
+        if (p_CommonData->TrialType=="training")
+        {
+            if (p_CommonData->trialNo > 0)
+            {
+                p_CommonData->currentExperimentState = idleExperiment;
+                qDebug()<<"idleExperiment";
+            }
+            else
+            {
+                p_CommonData->currentExperimentState = trialBreak;
+                p_CommonData->recordFlag = false;
+                qDebug()<<"trialBreak";
+            }
+
+            //Read protocal ini file info into the experiment environment
+            //for TrialMode, 1 means mass 2 means stiffness
+            p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
+            p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
+            p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
+            p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
+            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+            p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+
+
+            if(p_CommonData->TrialMode == 1){
+                if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
+                if(p_CommonData->mass1 == 0.2) p_CommonData->lev1 = 2;
+                if(p_CommonData->mass1 == 0.3) p_CommonData->lev1 = 3;
+                if(p_CommonData->mass1 == 0.4) p_CommonData->lev1 = 4;
+                if(p_CommonData->mass1 == 0.5) p_CommonData->lev1 = 5;
+                qDebug()<<"TrialMode == 1";
+            }
+            else if(p_CommonData->TrialMode == 2){
+                if(p_CommonData->stiffness1 == 100) p_CommonData->lev1 = 1;
+                if(p_CommonData->stiffness1 == 200) p_CommonData->lev1 = 2;
+                if(p_CommonData->stiffness1 == 300) p_CommonData->lev1 = 3;
+                if(p_CommonData->stiffness1 == 400) p_CommonData->lev1 = 4;
+                if(p_CommonData->stiffness1 == 500) p_CommonData->lev1 = 5;
+                qDebug()<<"TrialMode == 2";
+            }
+            onGUIchanged();
+        }
+        //Testing trials
+        else if (p_CommonData->TrialType=="testing"){
+            p_CommonData->currentExperimentState = idleExperiment;
+            p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
+            p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
+            p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
+            p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
+            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+            p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+
+            if(p_CommonData->TrialMode == 1){
+                if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
+                if(p_CommonData->mass1 == 0.2) p_CommonData->lev1 = 2;
+                if(p_CommonData->mass1 == 0.3) p_CommonData->lev1 = 3;
+                if(p_CommonData->mass1 == 0.4) p_CommonData->lev1 = 4;
+                if(p_CommonData->mass1 == 0.5) p_CommonData->lev1 = 5;
+            }
+            else if(p_CommonData->TrialMode == 2){
+                if(p_CommonData->stiffness1 == 100) p_CommonData->lev1 = 1;
+                if(p_CommonData->stiffness1 == 200) p_CommonData->lev1 = 2;
+                if(p_CommonData->stiffness1 == 300) p_CommonData->lev1 = 3;
+                if(p_CommonData->stiffness1 == 400) p_CommonData->lev1 = 4;
+                if(p_CommonData->stiffness1 == 500) p_CommonData->lev1 = 5;
+            }
+            //qDebug() << "test" << "st1" << p_CommonData->stiffness1<< "st2" << p_CommonData->stiffness2 << "cond" << p_CommonData->cond;
+            onGUIchanged();
+        }
+        //Trial Break
+        else if (p_CommonData->TrialType=="break"){
+            p_CommonData->currentExperimentState = trialBreak;
+        }
+        else if (p_CommonData->TrialType=="breakbreak"){
+            p_CommonData->currentExperimentState = trialBreak;
+        }
+        //Trial Over
+        else if (p_CommonData->TrialType=="end"){
+            p_CommonData->currentExperimentState = endExperiment;
+            qDebug()<<"StiffnessMassExperiment DONE!!";
+            return false;
+        }
+        else if (p_CommonData->TrialType==""){
+            qDebug()<<"THIS IS BROKEN -- YOU SHOULD NEVER BE HERE -- bad protocol file read";
+        }
+    }
+
 }
 
 //Mataches text to mapping type to be displayed for FingerMapping Experiment
@@ -1233,7 +1331,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             }
         }
 
-        else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+        if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
         {
             bool mistake = false;
             p_CommonData->flagMassExp = false;
@@ -1523,6 +1621,299 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             }
 
         }
+
+        else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        {
+            bool mistake = false;
+            p_CommonData->flagMassExp = false;
+
+            qDebug("advance HoxelMappingExp");
+            if(CheckFingers()&& (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
+            {
+                //PRE-TRIAL******
+                if(p_CommonData->trialNo < 1)
+                {
+                    qDebug()<<"Trial# < 1";
+                    p_CommonData->trialNo = 1;
+                    p_CommonData->recordFlag == true;
+
+                    //Read in protocol file and check if the read is successful
+                    if (readExpStuffIn())
+                    {
+                        qDebug()<<"readExpStuffIn() SUCCESS -- Pre-Trials";
+                    }
+
+                    //GUI Stuff for each trial type transitioning from pre-trial to trial 1
+                    //GUI should show in light blue to distinguish that these
+                    //are for the trial that transitioned from pre-trial
+                    if (p_CommonData->TrialType == "training")
+                    {
+                        QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                        labelText.append("TRAINING\n");
+                        labelText.append("</P></br>");
+                        labelText.append("<P><FONT COLOR='#7abfe4' FONT SIZE = 2>");
+                        labelText.append("Pick up the cube,\n"
+                                         "bring it through the hoop,\n"
+                                         "Place it in the target area");
+                        labelText.append("</P></br>");
+                        ui->text->setText(labelText);
+                        qDebug()<<"TRAINING "<<p_CommonData->trialNo;
+                    }
+                    else if (p_CommonData->TrialType == "testing")
+                    {
+                        QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                        labelText .append("TRIAL -- ");
+                        labelText .append("</P></br>");
+                        ui->text->setText(labelText);
+                        qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
+                    }
+                    else if (p_CommonData->TrialType == "break")
+                    {
+                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                        labelText .append("PRESS NEXT AFTER THE BREAK --");
+                        labelText .append("</b></P></br>");
+                        ui->text->setText(labelText);
+                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                    }
+                    else if (p_CommonData->TrialType == "breakbreak")
+                    {
+                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                        labelText .append("TIME TO CHANGE THE GROUNDING --");
+                        labelText .append("</b></P></br>");
+                        ui->text->setText(labelText);
+                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                    }
+                    else if (p_CommonData->TrialType == "end")
+                    {
+                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                        labelText .append("END OF THE EXPERIMENT --");
+                        labelText .append("</b></P></br>");
+                        ui->text->setText(labelText);
+                        qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
+                    }
+                    p_CommonData->environmentChange = true;
+
+                    qDebug()<<"Recorded Pre-Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                }
+                //ACTUAL TRIAL*******************************
+                else
+                {
+                    qDebug()<<"Trial# >= 1";
+                    if(p_CommonData->recordFlag)
+                    {
+                        p_CommonData->dataRecordMutex.lock();
+                        localDataRecorderVector = p_CommonData->dataRecorderVector;
+                        p_CommonData->dataRecorderVector.clear();
+                        p_CommonData->dataRecordMutex.unlock();
+                        WriteDataToFile();
+                        p_CommonData->recordFlag = false;
+                    }
+
+                    //if in training or testing trials
+                    if(p_CommonData->TrialType=="training" || p_CommonData->TrialType=="testing")
+                    {
+                        //If cube passed hoop and target, advance trial
+                        if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
+                        {
+                            //ADVANCE to next trial
+                            p_CommonData->trialNo++;
+                            if (readExpStuffIn())
+                            {
+                                qDebug()<<"_readExpStuffIn() SUCCESS 2_";
+                            }
+
+                            //GUI Indication of completed trial
+                            if (p_CommonData->TrialType == "training")
+                            {
+                                QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+                                labelText.append("TRAINING...\n");
+                                labelText.append("</P></br>");
+                                labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
+                                labelText.append("Pick up the cube,\n"
+                                                 "Bring it through the hoop,\n"
+                                                 "Place it in the target area");
+                                labelText.append("</P></br>");
+                                ui->text->setText(labelText);
+                                qDebug()<<"TRAINING "<<p_CommonData->trialNo;
+                            }
+                            else if (p_CommonData->TrialType == "testing")
+                            {
+                                QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+                                labelText .append("TESTING...");
+                                labelText .append("</P></br>");
+                                ui->text->setText(labelText);
+                                qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
+                            }
+                            else if (p_CommonData->TrialType == "break")
+                            {
+                                QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
+                                labelText .append("PRESS NEXT AFTER THE BREAK --");
+                                labelText .append("</b></P></br>");
+                                ui->text->setText(labelText);
+                                qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                            }
+                            else if (p_CommonData->TrialType == "breakbreak")
+                            {
+                                QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
+                                labelText .append("TIME TO CHANGE THE GROUNDING --");
+                                labelText .append("</b></P></br>");
+                                ui->text->setText(labelText);
+                                qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                            }
+                            else if (p_CommonData->TrialType == "end")
+                            {
+                                QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
+                                labelText.append("END OF THE EXPERIMENT");
+                                labelText.append("</b></P></br>");
+                                labelText.append("<P><b><FONT COLOR='#b00be5' FONT SIZE = 2>");
+                                labelText.append("~~Thanks :)");
+                                labelText.append("</b></P></br>");
+                                ui->text->setText(labelText);
+                                qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
+                            }
+                            qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                            p_CommonData->environmentChange = true;
+
+
+                            //p_CommonData->hoopSuccess = 1;
+                            //p_CommonData->targetSuccess = 1;
+                            //p_CommonData->trialSuccess = 1;
+                        }
+
+                        //If cube has not passed *both* hoop and target
+                        else
+                        {
+                            if(p_CommonData->target1Complete){//REVALUATE THIS CONDITION
+
+                                qDebug()<< "TrialComplete!!";
+
+                                QString labelText = "<P><b><FONT COLOR='#4f0080' FONT SIZE = 5>";
+                                labelText.append("DONE w/ move!! for:  ");
+                                labelText.append("</b></P></br>");
+                                ui->text->setText(labelText);
+                                mistake = true;
+                                //qDebug()<<"___"<<p_CommonData->trialNo;
+
+                                //p_CommonData->targetSuccess = 1;
+
+                            }
+                            //If object is not in the final area
+                            else if(!p_CommonData->target1Complete)
+                            {
+                                //If the object has gone through the hoop but not target
+                                if(p_CommonData->hoop1Complete)
+                                {
+                                    //qDebug()<< "Through the Blue Hoop but not in target area yet";
+                                    QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
+                                    labelText1.append("CANNOT ADVANCE");
+                                    labelText1.append("</b></P></br>");
+                                    labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
+                                    labelText1.append("Pick up the cube, "
+                                                      "Place it in the target area");
+                                    labelText1.append("</b></P></br>");
+                                    ui->text->setText(labelText1);
+                                    mistake = true;
+                                    //qDebug()<<"___"<<p_CommonData->trialNo;
+
+                                    //p_CommonData->hoopSuccess = 1;
+                                }
+                                //If the object hit neither the target or hoop
+                                else if(!p_CommonData->hoop1Complete)
+                                {
+                                    //qDebug()<< "Did not hit target area and did not pass through Blue Hoop";
+                                    QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
+                                    labelText1.append("CANNOT ADVANCE");
+                                    labelText1.append("</b></P></br>");
+                                    labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
+                                    labelText1.append("Pick up the cube, "
+                                                      "Bring it through the hoop, "
+                                                      "Place it in the target area");
+                                    labelText1.append("</b></P></br>");
+                                    ui->text->setText(labelText1);
+                                    mistake = true;
+                                    //qDebug()<<"___"<<p_CommonData->trialNo;
+
+                                    //p_CommonData->hoopSuccess = 0;
+                                }
+
+                                //p_CommonData->targetSuccess = 0;
+                            }
+
+                            //p_CommonData->trialSuccess = 0;
+                        }
+                    }
+
+                    //if not in training or testing trials
+                    //This area is called when coming back from break
+                    else
+                    {
+                        p_CommonData->trialNo++;
+                        //GUI Stuff
+                        if (readExpStuffIn())
+                        {
+                            qDebug()<<"successful read -- back from break";
+                        }
+                        if (p_CommonData->TrialType == "training")
+                        {
+                            QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+                            labelText.append("Training -- back from break");
+                            labelText.append("</P></br>");
+                            ui->text->setText(labelText);
+                            //qDebug()<<"___"<<p_CommonData->trialNo;
+                        }
+
+                        else if (p_CommonData->TrialType == "testing"){
+                            QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+                            labelText.append("Testing -- back from break");
+                            labelText.append("</P></br>");
+                            ui->text->setText(labelText);
+                            //qDebug()<<"___"<<p_CommonData->trialNo;
+                        }
+
+                        else if (p_CommonData->TrialType == "break"){
+                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
+                            labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
+                            labelText.append("</b></P></br>");
+                            ui->text->setText(labelText);
+                        }
+
+                        else if (p_CommonData->TrialType == "breakbreak"){
+                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
+                            labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
+                            labelText.append("</b></P></br>");
+                            ui->text->setText(labelText);
+                            // qDebug()<<"___"<<p_CommonData->trialNo;
+                        }
+
+                        else if (p_CommonData->TrialType == "end"){
+                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
+                            labelText.append("END OF THE EXPERIMENT -- back from break");
+                            labelText.append("</b></P></br>");
+                            ui->text->setText(labelText);
+                            //qDebug()<<"___"<<p_CommonData->trialNo;
+                        }
+                        qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                        p_CommonData->environmentChange = true;
+                    }
+                }
+            }
+
+            //Set Mapping Text
+            if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+            {
+                mappingVal = p_CommonData->mapping;
+                QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+                //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
+                //mappingText.append("</P></br>");
+                //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
+                mappingText.append(getMappingText(p_CommonData->mapping));
+                mappingText.append("</P></br>");
+                ui->mappingTextBox->setText(mappingText);
+            }
+
+        }
+
+
     }
 
     if(a_event->key() == Qt::Key_Y)
@@ -1601,6 +1992,24 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
     }
 }
 
+//Determine the folder for subject data depending on the experiment being run
+QString MainWindow::getSubjectDirectory()
+{
+    if(p_CommonData->currentDynamicObjectState == StiffnessExperiment ||
+            p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
+    {
+        return "./Subjects";
+    }
+    if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    {
+        return "./FME_Subject_Data/";
+    }
+    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    {
+        return  "./HME_Subject_Data/";
+    }
+}
+
 //Writes the experiment data to txt File in Subject Directory
 void MainWindow::WriteDataToFile()
 {
@@ -1618,24 +2027,36 @@ void MainWindow::WriteDataToFile()
     //itoa((int)(p_CommonData->compCD*10),cdBuffer,10);
     //itoa((int)(p_CommonData->compInertia*10),inertiaBuffer,10);
 
-    QString directory = subjectDirectory + QString::number(p_CommonData->subjectNo);
+    QString directory = getSubjectDirectory() + QString::number(p_CommonData->subjectNo);
 
     //Create folder for data
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment){
-        directory = subjectDirectory + "StiffnessExperiment" + QString::number(p_CommonData->subjectNo);
+        directory = getSubjectDirectory() + "StiffnessExperiment" + QString::number(p_CommonData->subjectNo);
     }
     if(p_CommonData->currentDynamicObjectState == StiffnessMassExperiment){
-        directory = subjectDirectory + "StiffnessMassExperiment" + QString::number(p_CommonData->subjectNo);
+        directory = getSubjectDirectory() + "StiffnessMassExperiment" + QString::number(p_CommonData->subjectNo);
     }
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment){
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment){
         if(p_CommonData->TrialType == "training")
         {
-            directory = subjectDirectory + "TrainingTrialData";
+            directory = getSubjectDirectory() + "TrainingTrialData";
             qDebug()<<"Saved data to: "<<directory;
         }
         else
         {
-            directory = subjectDirectory;
+            directory = getSubjectDirectory();
+            qDebug()<<"Saved data to: "<<directory;
+        }
+    }
+    else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment){
+        if(p_CommonData->TrialType == "training")
+        {
+            directory = getSubjectDirectory() + "TrainingTrialData";
+            qDebug()<<"Saved data to: "<<directory;
+        }
+        else
+        {
+            directory = getSubjectDirectory();
             qDebug()<<"Saved data to: "<<directory;
         }
     }
@@ -1669,7 +2090,35 @@ void MainWindow::WriteDataToFile()
         file.open(directory.toStdString() + "/" + trialName.toStdString() + trialMode.toStdString() + trialBuffer + "trialRun.csv");
     }
     //File names for Jasmin's Experiments
-    else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    {
+        //Sort data by trialName
+        QString trialNum = QString::number(p_CommonData->trialNo);
+
+        //std::ofstream file;
+
+        //Formatting to help with post-processing
+        if (p_CommonData->trialNo < 10)
+        {
+            //Open file to write data:
+            file.open(directory.toStdString()
+                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                      + "_Trial0" + trialNum.toStdString()
+                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                      + ".csv");
+        }
+        else
+        {
+            //Open file to write data:
+            file.open(directory.toStdString()
+                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                      + "_Trial" + trialNum.toStdString()
+                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                      + ".csv");
+        }
+    }
+    //File names for Jasmin's Experiments
+    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //Sort data by trialName
         QString trialNum = QString::number(p_CommonData->trialNo);
@@ -1697,6 +2146,7 @@ void MainWindow::WriteDataToFile()
         }
     }
 
+
     //write data to file when we are done
 
 #ifdef ACC
@@ -1711,7 +2161,8 @@ void MainWindow::WriteDataToFile()
     {
         //none for now
     }
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
@@ -1756,7 +2207,6 @@ void MainWindow::WriteDataToFile()
 
             << std::endl;
     }
-
 
     //Parse through localDataVector to more easily readable form in .txt or .csv file
     for (int i = 0; i < localDataRecorderVector.size(); i++)
@@ -1821,7 +2271,8 @@ void MainWindow::WriteDataToFile()
 
                 << std::endl;
         }
-        else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+        else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+                p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                    //"time = "
@@ -1873,6 +2324,7 @@ void MainWindow::WriteDataToFile()
 
                << std::endl;
         }
+
 
 #endif
 #ifdef ACC
@@ -2037,7 +2489,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
     onGUIchanged();
 }
 
-//Jasmin Finger Mapping Experiment
+//Jasmin Finger Mapping Experiment -- 1DoF Servo Device
 void MainWindow::on_FingerMappingExp_clicked()
 {
     QString protocolFolder = "./FingerMappingProtocols/";
@@ -2083,6 +2535,51 @@ void MainWindow::on_FingerMappingExp_clicked()
     QThread::msleep(200);
     onGUIchanged();
 }
+
+//Jasmin Hoxel Mapping Experiment
+void MainWindow::on_HoxelMappingExp_clicked()
+{
+    QString protocolFolder = "./HoxelMappingProtocols/";
+
+    QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
+    p_CommonData->protocolFileLocation = temp;
+    int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
+    //qDebug() << "error" << error << p_CommonData->protocolFileLocation;
+
+    if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
+    {
+        qDebug() << "AdjustTrial";
+        p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
+    }
+    else
+    {
+        qDebug() << "DONTAdjustTrial";
+        p_CommonData->trialNo = -1;
+    }
+
+    p_CommonData->environmentChange         = true;
+    p_CommonData->currentDynamicObjectState = HoxelMappingExperiment;
+    p_CommonData->currentExperimentState    = idleExperiment;
+    p_CommonData->currentEnvironmentState   = dynamicBodies;
+    p_CommonData->recordFlag                = false;
+    ui->VRControl->setChecked(true);
+    ui->JakeRenderCheckBox->setChecked(true);
+    qDebug()<<"HoxelMapping Button finished";
+
+    //**GUI Prompt****
+    QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+    labelText.append("Pre-Training Stage\n");
+    labelText.append("</P></br>");
+    labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
+    labelText.append("Press the 'Next' button");
+    labelText.append("</P></br>");
+    ui->text->setText(labelText);
+    //****************
+
+    QThread::msleep(200);
+    onGUIchanged();
+}
+
 
 //for creating manually adjusted environment parameters during runtime
 void MainWindow::on_Manual_clicked()
