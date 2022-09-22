@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
     // Initialize and set the window thread data pointer to the shared data
     window.p_CommonData = &shared;
     window.Initialize();
-    window.show();
+    //window.show();
+    window.showMaximized();
     qDebug()<<"window";
 
 

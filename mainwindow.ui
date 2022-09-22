@@ -88,8 +88,16 @@
       <height>211</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <property name="text">
-     <string>Open Serial Port</string>
+     <string>Open
+Serial
+Smarty</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -1668,7 +1676,7 @@ Experiment</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1110</x>
@@ -1723,7 +1731,7 @@ Experiment</string>
      <x>0</x>
      <y>0</y>
      <width>2300</width>
-     <height>32</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //windowGLDisplay->setGeometry(QRect(10, 10, 1275, 1000));
     //windowGLDisplay->setGeometry(QRect(10, 10, 1275, 1500));
     //windowGLDisplay->setGeometry(QRect(10, 10, 701, 471));
+    //Changes position and size of CHAI3D window:
     windowGLDisplay->setGeometry(QRect(10, 10, 1051, 706));
 #endif
 
@@ -48,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
         serial.setPort(info);
         if(serial.open(QIODevice::ReadWrite))
         {
+            ui->openButton->setText(tr("Open\nSerial\nPort"));
             //Set Options to the drop down boxes
             ui->PortBox->addItem(serial.portName());
             ui->BaudBox->addItem(QString::number(myBaudRate));
@@ -55,6 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->ParityBox->addItem(QString::number(defaultParity));
             ui->StopBox->addItem(QString::number(defaultStopBit));
             serial.close();
+        }
+        else
+        {
+            ui->openButton->setText(tr("Serial\nPort\nUnavailable"));
         }
     }
     //The setting COM drop-down menu display the 2nd (first-index) item by default
@@ -153,7 +159,7 @@ void MainWindow::readSerialData()
 
 void MainWindow::on_openButton_clicked()
 {
-    if(ui->openButton->text()==tr("Open Serial Port"))
+    if(ui->openButton->text()==tr("Open\nSerial\nPort"))
     {
         serial = new QSerialPort;
         //Set serial port name
@@ -198,7 +204,7 @@ void MainWindow::on_openButton_clicked()
         ui->BitNumBox->setEnabled(false);
         ui->ParityBox->setEnabled(false);
         ui->StopBox->setEnabled(false);
-        ui->openButton->setText(tr("Close the serial port"));
+        ui->openButton->setText(tr("Close\nSerial\nPort"));
         //Connecting signal slot
         QObject::connect(serial, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
 
@@ -218,7 +224,7 @@ void MainWindow::on_openButton_clicked()
         ui->BitNumBox->setEnabled(true);
         ui->ParityBox->setEnabled(true);
         ui->StopBox->setEnabled(true);
-        ui->openButton->setText(tr("Open serial port"));
+        ui->openButton->setText(tr("Bye!\nBye!\n（っ＾▿＾）"));
     }
 }
 
