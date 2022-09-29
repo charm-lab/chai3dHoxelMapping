@@ -1145,7 +1145,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 }
 
                 else {
-                    if(p_CommonData->recordFlag){
+                    if(p_CommonData->recordFlag)
+                    {
                         p_CommonData->dataRecordMutex.lock();
                         localDataRecorderVector = p_CommonData->dataRecorderVector;
                         p_CommonData->dataRecorderVector.clear();
@@ -1287,7 +1288,6 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 }
                             }
                         }
-
                     }
 
                     else {
@@ -1337,9 +1337,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
                         p_CommonData->environmentChange = true;
                     }
-
                 }
-
             }
         }
 
