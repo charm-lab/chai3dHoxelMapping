@@ -1801,7 +1801,8 @@ void haptics_thread::RenderDynamicBodies()
         boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
         friction1 = 2; friction2 = 2; friction3 = 2; //EXPERIMENTFRICTION;
         mass1 = 0.2; mass2 = 0.2; mass3 = 0.2;
-        stiffness1 = 100; stiffness2 =300; stiffness3 = 700;
+        //stiffness1 = 100; stiffness2 = 300; stiffness3 = 700;
+        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
 
     case StiffnessExperiment:  // Mine Stiffness Experiment
@@ -1822,13 +1823,13 @@ void haptics_thread::RenderDynamicBodies()
         boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
         friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
         mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
-        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = 500;
+        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
     case HoxelMappingExperiment:  // Jasmin HoxelMapping Experiment
         boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
         friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
         mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
-        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = 500;
+        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
     }
 
@@ -2487,7 +2488,6 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 {
     // create the visual boxes on the dynamicbox meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
-    //cCreateBox(p_CommonData->p_dynamicBox2, boxSize1*.9, boxSize1*1.05, boxSize1*.9); // make mesh a box
     cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
     cCreateBox(p_CommonData->p_dynamicBox3, boxSize3, boxSize3, boxSize3); // make mesh a box
 
@@ -2511,7 +2511,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     //chai3d::cMaterial mat22;
     mat22.setBlueRoyal();
     mat22.setStiffness(stiffness2);
-    //    mat22.setLateralStiffness(latStiffness2);
+    //mat22.setLateralStiffness(latStiffness2);
     mat22.setDynamicFriction(dynFriction2);
     mat22.setStaticFriction(friction2);
     mat22.setUseHapticFriction(true);
@@ -2522,7 +2522,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     //chai3d::cMaterial mat33;
     mat33.setRedSalmon();
     mat33.setStiffness(stiffness3);
-    //    mat33.setLateralStiffness(latStiffness3);
+    //mat33.setLateralStiffness(latStiffness3);
     mat33.setDynamicFriction(dynFriction3);
     mat33.setStaticFriction(friction3);
     mat33.setUseHapticFriction(true);

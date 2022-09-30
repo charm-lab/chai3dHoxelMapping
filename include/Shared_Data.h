@@ -56,8 +56,6 @@
 typedef struct
 {
     double time;
-    Eigen::Vector3d pos0;
-    Eigen::Vector3d desiredPos0;
     double motorAngles0; //Eigen::Vector3d motorAngles0; //Eigen::Vector3d motorAngles0;
     double jointAngles0; //Eigen::Vector3d jointAngles0;
     double motorTorque0;//Eigen::Vector3d motorTorque0;
@@ -68,7 +66,9 @@ typedef struct
     Eigen::Vector3d VRIntForce0;
     //    Eigen::Vector3d VRInteractionForceGlobal0;
     Eigen::Vector3d VRIntForceGlo0;
+    Eigen::Vector3d pos0;
     Eigen::Vector3d pos1;
+    Eigen::Vector3d desiredPos0;
     Eigen::Vector3d desiredPos1;
     Eigen::Vector3d desiredFor0;
     Eigen::Vector3d desiredFor1;
@@ -91,6 +91,7 @@ typedef struct
     double box1Mass;
     double stiffness1;
     double stiffness2;
+    double stiffness3;
     double box2Stiffness;
     double box2Mass;
     double mass1;
@@ -159,8 +160,6 @@ typedef struct
     bool hoopSuccess;
     bool targetSuccess;
     bool trialSuccess;
-
-
 } DataRecordStruct;
 
 typedef enum
@@ -554,6 +553,7 @@ typedef struct
     //double stiffness;
     double stiffness1;
     double stiffness2;
+    double stiffness3;
     double mass1;
     double mass2;
     double mass3;
@@ -604,7 +604,6 @@ typedef struct
     //int currChoice;
     double subjCDArr[3];
     double subjInertiaArr[3];
-
 
     int    randList[36];
     double magCDArr[144];

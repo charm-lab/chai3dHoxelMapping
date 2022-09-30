@@ -23,8 +23,6 @@ int myBaudRate = 115200;
 int defaultBitNum = 8;
 int defaultParity = 0;
 int defaultStopBit = 1;
-//Boolean to determine wheter or not device single or multi-DoF control should be enabled
-bool deviceMultiDoF = true;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,13 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 #ifndef OCULUS
-    windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
-    //windowGLDisplay->setObjectName(QStringLiteral("windowGLDisplay"));
-    //windowGLDisplay->setGeometry(QRect(10, 10, 1275, 1000));
-    //windowGLDisplay->setGeometry(QRect(10, 10, 1275, 1500));
-    //windowGLDisplay->setGeometry(QRect(10, 10, 701, 471));
+    //windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
+    //Make the window that the environment appears the one that is editable in mainwindow.ui
+    windowGLDisplay = new Widget_OpenGLDisplay(ui->openGLWidget);
     //Changes position and size of CHAI3D window:
-    windowGLDisplay->setGeometry(QRect(10, 10, 1051, 706));
+    windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
 #endif
 
     //Find available serial ports
@@ -85,28 +81,24 @@ MainWindow::~MainWindow()
 //START SERIAL
 
 //Serial data writing happens here:
+/*
 Eigen::Vector3d localDesiredPos0_prev;
 Eigen::Vector3d localDesiredPos1_prev;
+*/
+Eigen::Vector3d localForce0_prev;
+Eigen::Vector3d localForce1_prev;
 
 void MainWindow::writeSerialData()
 {
     QByteArray payloadBuffer;
 
-    if (deviceMultiDoF == false)
-    {
-        //1-DoF Version for testing
-        QString data0 = QString::number(localOutputStrokes0, 'f', 1); //device0 --index default
-        QString data1 = QString::number(localOutputStrokes1, 'f', 1); //device1 --thumb default
-        payloadBuffer = payloadBuffer.append(data0 + " " + data1 + "\r\n");
-    }
-    //Multi-DoF:
-    else
-    {
-        //IIR Filter:
-        double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
-        //qDebug() << alpha;
+    //IIR Filter:
+    double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
+    //qDebug() << alpha;
+    /*
         localDesiredPos0 = alpha*localDesiredPos0 + (1.0-alpha)*localDesiredPos0_prev;
         localDesiredPos1 = alpha*localDesiredPos1 + (1.0-alpha)*localDesiredPos1_prev;
+
         //Set Device Desired Pos:
         //index desiered positions:
         QString device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
@@ -132,7 +124,35 @@ void MainWindow::writeSerialData()
         //Update:
         localDesiredPos0_prev = localDesiredPos0;
         localDesiredPos1_prev = localDesiredPos1;
-    }
+        */
+
+    localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
+    localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
+
+    //Set Device Desired Forces:
+    //index desiered forces:
+    QString device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+    QString device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+    QString device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+    QString device0X_prev = QString::number(localForce0_prev[0], 'f', 1); //localForce0_prev[0] //X
+    QString device0Y_prev = QString::number(localForce0_prev[1], 'f', 1); //localForce0_prev[1] //Y
+    QString device0Z_prev = QString::number(localForce0_prev[2], 'f', 1); //localForce0_prev[2] //Z
+    QString dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+    //thumb desiered forces:
+    QString device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+    QString device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+    QString device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+    QString device1X_prev = QString::number(localForce1_prev[0], 'f', 1); //localForce1_prev[0] //X
+    QString device1Y_prev = QString::number(localForce1_prev[1], 'f', 1); //localForce1_prev[1] //Y
+    QString device1Z_prev = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
+    QString dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    QString forceData = device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n";
+
+    payloadBuffer = payloadBuffer.append(forceData);
+    //Dispay in GUI:
+    ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "\r\nMag: " + dev0Mag); //device 0//device 0 _prev
+    ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "\r\nMag: " + dev1Mag);//device 1 //device 1_prev
+
     //qDebug() << payloadBuffer << " " << serial->isWritable();
 
     if(serial->isWritable())
@@ -164,7 +184,6 @@ void MainWindow::on_openButton_clicked()
         serial = new QSerialPort;
         //Set serial port name
         serial->setPortName(ui->PortBox->currentText());
-        //serial->setPortName("COM7");
 
         //Open serial port
         serial->open(QIODevice::ReadWrite);
@@ -185,7 +204,6 @@ void MainWindow::on_openButton_clicked()
         case 0: serial->setParity(QSerialPort::NoParity); break;
         default: break;
         }
-        //serial->setParity(QSerialPort::NoParity);
 
         //Set stop bit
         switch(ui->StopBox->currentIndex())
@@ -194,7 +212,6 @@ void MainWindow::on_openButton_clicked()
         case 2: serial->setStopBits(QSerialPort::TwoStop); break;
         default: break;
         }
-        //serial->setStopBits(QSerialPort::OneStop);
 
         //set flow control
         serial->setFlowControl(QSerialPort::NoFlowControl);
@@ -215,6 +232,7 @@ void MainWindow::on_openButton_clicked()
     else
     {
         //Close the serial port
+        ui->openButton->setText(tr("Bye!\nBye!\n（っ＾▿＾）"));
         serial->clear();
         serial->close();
         serial->deleteLater();
@@ -224,7 +242,9 @@ void MainWindow::on_openButton_clicked()
         ui->BitNumBox->setEnabled(true);
         ui->ParityBox->setEnabled(true);
         ui->StopBox->setEnabled(true);
-        ui->openButton->setText(tr("Bye!\nBye!\n（っ＾▿＾）"));
+        //Shutdown app gracefully lol
+        //QThread::msleep(1500);
+        //exit(EXIT_FAILURE);
     }
 }
 
@@ -303,12 +323,13 @@ void MainWindow::Initialize()
     p_CommonData->adjustedForceToPosMult_Normal = 2.0; // this means 0.5 N/mm
     p_CommonData->adjustedForceToPosMult_Shear  = 5.0; // this means 0.2 N/mm
 
-    p_CommonData->stiffness1 = 300;
-    p_CommonData->stiffness2 = 100;
+    p_CommonData->stiffness1 = 100;
+    p_CommonData->stiffness2 = 300;
+    p_CommonData->stiffness3 = 700;
 
     p_CommonData->mass1 = 0.3;
     p_CommonData->mass2 = 0.3;
-    p_CommonData->mass3 = 0.05;
+    p_CommonData->mass3 = 0.3;
     p_CommonData->cond = 1;
     p_CommonData->direct = 1;
     p_CommonData->mapping = 1;
@@ -476,9 +497,11 @@ void MainWindow::UpdateGUIInfo()
 
     ui->stiff1Scale_show->display(p_CommonData->stiffness1);
     ui->stiff2Scale_show->display(p_CommonData->stiffness2);
+    ui->stiff3Scale_show->display(p_CommonData->stiffness3);
 
     ui->mass1_show->display(p_CommonData->mass1);
     ui->mass2_show->display(p_CommonData->mass2);
+    ui->mass3_show->display(p_CommonData->mass3);
 
     ui->condition->display(p_CommonData->cond);
     ui->direction->display(p_CommonData->direct);
@@ -2012,11 +2035,11 @@ QString MainWindow::getSubjectDirectory()
     }
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
-        return "./FME_Subject_Data/";
+        return "../chai3dFingerMapping/FME_Subject_Data/";
     }
     else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-        return  "./HME_Subject_Data/";
+        return  "../chai3dHoxelMapping/HME_Subject_Data/";
     }
 }
 
@@ -2502,15 +2525,12 @@ void MainWindow::on_StiffnMassCombined_clicked()
 //Jasmin Finger Mapping Experiment -- 1DoF Servo Device
 void MainWindow::on_FingerMappingExp_clicked()
 {
-    QString protocolFolder = "./FingerMappingProtocols/";
+    QString protocolFolder = "../chai3dFingerMapping/FingerMappingProtocols/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
-    //QString temp = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-    //                                                 "C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/");//click desired protocol ini file when file explorer opens
-    //"C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/"
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
-    //qDebug() << "error" << error << p_CommonData->protocolFileLocation;
+    qDebug() << "error" << error << p_CommonData->protocolFileLocation;
 
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
@@ -2549,15 +2569,12 @@ void MainWindow::on_FingerMappingExp_clicked()
 //Jasmin Hoxel Mapping Experiment
 void MainWindow::on_HoxelMappingExp_clicked()
 {
-    QString protocolFolder = "./HoxelMappingProtocols/";
+    QString protocolFolder = "../chai3dHoxelMapping/HoxelMappingProtocols/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
-    //QString temp = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-    //                                                 "C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/");//click desired protocol ini file when file explorer opens
-    //"C:/Users/Sam/Desktop/chai3dFingerMapping/FingerMappingProtocols/"
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
-    qDebug() << "error" << error << p_CommonData->protocolFileLocation;
+    //qDebug() << "error" << error << p_CommonData->protocolFileLocation;
 
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
@@ -2592,7 +2609,6 @@ void MainWindow::on_HoxelMappingExp_clicked()
     QThread::msleep(200);
     onGUIchanged();
 }
-
 
 //for creating manually adjusted environment parameters during runtime
 void MainWindow::on_Manual_clicked()

@@ -6,9 +6,7 @@ from digitalio import DigitalInOut, Direction
 import supervisor
 from analogio import AnalogIn
 # importing required libraries
-# import numpy
-# import math
-# import math
+import math
 
 # Define Pump
 pres_0 = AnalogIn(board.A0)
@@ -297,12 +295,12 @@ while True:
         Z1 = float(data_list[5])
 
         # Change Z0 and Z1 depending on rendering choice
-        #if renderChoice == 1:
-            #Z0 =  math.sqrt(X0*X0 + Y0*Y0 + Z0*Z0)
-            #Z1 =  math.sqrt(X1*X1 + Y1*Y1 + Z1*Z1)
-        #else:
-        #    Z0 = Z0
-        #    Z1 = Z1
+        if renderChoice == 1:
+            Z0 = math.sqrt(X0*X0 + Y0*Y0 + Z0*Z0)
+            Z1 = math.sqrt(X1*X1 + Y1*Y1 + Z1*Z1)
+        else:
+            Z0 = Z0
+            Z1 = Z1
 
         # Hoxel 0:
         moveHoxel0(X0, X0_prev, Y0, Y0_prev, Z0, Z0_prev)

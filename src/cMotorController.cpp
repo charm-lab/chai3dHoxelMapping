@@ -360,7 +360,7 @@ void cMotorController::SetOutputStroke(double desiredStroke, bool equal, bool re
             SetPWM(PCI_BOARD, counter, zeroPosOnTime, zeroPosOffTime);
         }
     }
-    //Averaged -- NOT FINISHED
+    //Averaged
     if(mappingVal == 4)
     {
         //only send to dorsal servo
