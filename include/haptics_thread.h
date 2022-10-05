@@ -134,7 +134,9 @@ public:
 
 
     chai3d::cMesh* dynamicHoop1; // -- addedd for HME
-    chai3d::cMaterial matDynamicHoop1; // -- addedd for HME
+    chai3d::cMaterial matDynamicHoop1; // -- addedd for HME    
+    chai3d::cMesh* dynamicHoop2; // -- addedd for HME
+    chai3d::cMaterial matDynamicHoop2; // -- addedd for HME
 
     double targetRadius;
 
@@ -149,7 +151,8 @@ public:
     chai3d::cVector3d hoop1Pos;
     chai3d::cVector3d hoop2Pos;
 
-    chai3d::cVector3d dynamicHoop1Pos; // -- addedd for HME
+    chai3d::cVector3d dynamicHoop1Pos; // -- addedd for HME    
+    chai3d::cVector3d dynamicHoop2Pos; // -- addedd for HME
 
     chai3d::cVector3d target1Dist;
     chai3d::cVector3d target2Dist;

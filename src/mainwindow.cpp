@@ -2194,8 +2194,7 @@ void MainWindow::WriteDataToFile()
     {
         //none for now
     }
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
@@ -2206,33 +2205,33 @@ void MainWindow::WriteDataToFile()
             << "realVentralTactorPos" << "," << " " //in mm
 
                //boxPos is a vector and will need 3 headers
-            << "boxPosX" << "," << " " //in cm? - unsure
-            << "boxPosY" << "," << " " //in cm? - unsure
-            << "boxPosZ" << "," << " " //in cm? - unsure
+            << "boxPosX" << "," << " " //in m
+            << "boxPosY" << "," << " " //in m
+            << "boxPosZ" << "," << " " //in m
 
                //magTrackerPos vectors will need 3 headers each
-            << "indexPosX" << "," << " " //in cm? - unsure
-            << "indexPosY" << "," << " " //in cm? - unsure
-            << "indexPosZ" << "," << " " //in cm? - unsure
+            << "indexPosX" << "," << " " //in m
+            << "indexPosY" << "," << " " //in m
+            << "indexPosZ" << "," << " " //in m
             << "indexContact" << "," << " " //bool
-            << "indexForceX" << "," << " " //in N? - unsure
-            << "indexForceY" << "," << " " //in N? - unsure
-            << "indexForceZ" << "," << " " //in N? - unsure
-            << "indexForceGlobalX" << "," << " " //in N? - unsure
-            << "indexForceGlobalY" << "," << " " //in N? - unsure
-            << "indexForceGlobalZ" << "," << " " //in N? - unsure
+            << "indexForceX" << "," << " " //in N
+            << "indexForceY" << "," << " " //in N
+            << "indexForceZ" << "," << " " //in N
+            << "indexForceGlobalX" << "," << " " //in N
+            << "indexForceGlobalY" << "," << " " //in N
+            << "indexForceGlobalZ" << "," << " " //in N
 
                //magTrackerPos vectors will need 3 headers each
-            << "thumbPosX" << "," << " " //in cm? - unsure
-            << "thumbPosY" << "," << " " //in cm? - unsure
-            << "thumbPosZ" << "," << " " //in cm? - unsure
+            << "thumbPosX" << "," << " " //in m
+            << "thumbPosY" << "," << " " //in m
+            << "thumbPosZ" << "," << " " //in m
             << "thumbContact" << "," << " " //bool
-            << "thumbForceX" << "," << " " //in N? - unsure
-            << "thumbForceY" << "," << " " //in N? - unsure
-            << "thumbForceZ" << "," << " " //in N? - unsure
-            << "thumbForceGlobalX" << "," << " " //in N? - unsure
-            << "thumbForceGlobalY" << "," << " " //in N? - unsure
-            << "thumbForceGlobalZ" << "," << " " //in N? - unsure
+            << "thumbForceX" << "," << " " //in N
+            << "thumbForceY" << "," << " " //in N
+            << "thumbForceZ" << "," << " " //in N
+            << "thumbForceGlobalX" << "," << " " //in N
+            << "thumbForceGlobalY" << "," << " " //in N
+            << "thumbForceGlobalZ" << "," << " " //in N
 
             << "hoopSuccess" << "," << " " //bool
             << "targetSuccess" << "," << " " //bool
@@ -2240,6 +2239,73 @@ void MainWindow::WriteDataToFile()
 
             << std::endl;
     }
+    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    {
+        //These *MUST* match the order of variables saved below:
+        file <<std::setprecision(9)
+            << "time" << "," << " " //time in seconds
+
+            << "realDorsalTactorPos" << "," << " "//in mm
+
+            << "realVentralTactorPos" << "," << " " //in mm
+
+               //boxPos is a vector and will need 3 headers
+            << "boxPosX" << "," << " " //in m
+            << "boxPosY" << "," << " " //in m
+            << "boxPosZ" << "," << " " //in m
+
+               //box local rotation Matrix
+            << "boxLocalRot_11" << "," << " "
+            << "boxLocalRot_12" << "," << " "
+            << "boxLocalRot_13" << "," << " "
+            << "boxLocalRot_21" << "," << " "
+            << "boxLocalRot_22" << "," << " "
+            << "boxLocalRot_23" << "," << " "
+            << "boxLocalRot_31" << "," << " "
+            << "boxLocalRot_32" << "," << " "
+            << "boxLocalRot_33" << "," << " "
+               //box global rotation Matrix
+            << "boxGlobalRot_11" << "," << " "
+            << "boxGlobalRot_12" << "," << " "
+            << "boxGlobalRot_13]" << "," << " "
+            << "boxGlobalRot_21" << "," << " "
+            << "boxGlobalRot_22" << "," << " "
+            << "boxGlobalRot_23" << "," << " "
+            << "boxGlobalRot_31" << "," << " "
+            << "boxGlobalRot_32" << "," << " "
+            << "boxGlobalRot_33" << "," << " "
+
+               //magTrackerPos vectors will need 3 headers each
+            << "indexPosX" << "," << " " //in m
+            << "indexPosY" << "," << " " //in m
+            << "indexPosZ" << "," << " " //in m
+            << "indexContact" << "," << " " //bool
+            << "indexForceX" << "," << " " //in N
+            << "indexForceY" << "," << " " //in N
+            << "indexForceZ" << "," << " " //in N
+            << "indexForceGlobalX" << "," << " " //in N
+            << "indexForceGlobalY" << "," << " " //in N
+            << "indexForceGlobalZ" << "," << " " //in N
+
+               //magTrackerPos vectors will need 3 headers each
+            << "thumbPosX" << "," << " " //in m
+            << "thumbPosY" << "," << " " //in m
+            << "thumbPosZ" << "," << " " //in m
+            << "thumbContact" << "," << " " //bool
+            << "thumbForceX" << "," << " " //in N
+            << "thumbForceY" << "," << " " //in N
+            << "thumbForceZ" << "," << " " //in N
+            << "thumbForceGlobalX" << "," << " " //in N
+            << "thumbForceGlobalY" << "," << " " //in N
+            << "thumbForceGlobalZ" << "," << " " //in N
+
+            << "hoopSuccess" << "," << " " //bool
+            << "targetSuccess" << "," << " " //bool
+            << "trialSuccess" << "," << " " //bool
+
+            << std::endl;
+    }
+
 
     //Parse through localDataVector to more easily readable form in .txt or .csv file
     for (int i = 0; i < localDataRecorderVector.size(); i++)
@@ -2304,8 +2370,7 @@ void MainWindow::WriteDataToFile()
 
                 << std::endl;
         }
-        else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-                p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                    //"time = "
@@ -2322,6 +2387,81 @@ void MainWindow::WriteDataToFile()
 
                    //Cube position
                 <<localDataRecorderVector[i].box1Pos << "," << " "
+
+                  //"cond = "
+                  //<< localDataRecorderVector[i].conditionNo<< "," << " "
+
+                  //INDEX:
+               << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
+               << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
+                  // last force on tool0:
+               << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
+                  // last force on tool0 in global coords
+               << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
+
+                  //THUMB
+               << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
+               << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
+                  // last force on tool1:
+               << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
+                  // last force on tool1 in global coords
+               << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
+               << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
+
+                  //Touch hoop, target, trial success booleans
+               << localDataRecorderVector[i].hoopSuccess << "," << " "
+               << localDataRecorderVector[i].targetSuccess << "," << " "
+               << localDataRecorderVector[i].trialSuccess << "," << " "
+
+               << std::endl;
+        }
+        else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        {
+            file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
+                   //"time = "
+                << localDataRecorderVector[i].time << "," << " "
+
+                   //"des0 = "
+                << localDataRecorderVector[i].desiredStroke0 << "," << " "
+                   //"real0 = "
+                   //<< localDataRecorderVector[i].strokeOut0 << "," << " " //Giving motor angles N/A for FME
+                   //"des1 = "
+                << localDataRecorderVector[i].desiredStroke1 << "," << " "
+                   //"real1 = "
+                   //<< localDataRecorderVector[i].strokeOut1 << "," << " "//Giving motor angles N/A for FME
+
+                   //Cube position
+                <<localDataRecorderVector[i].box1Pos << "," << " "
+
+                  //Cube local orientation
+                <<localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
+                <<localDataRecorderVector[i].box1LocalRotMat(0,1) << "," << " "
+                <<localDataRecorderVector[i].box1LocalRotMat(0,2) << "," << " "
+                <<localDataRecorderVector[i].box1LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
+                <<localDataRecorderVector[i].box1LocalRotMat(1,1) << "," << " "
+                <<localDataRecorderVector[i].box1LocalRotMat(1,2) << "," << " "
+                <<localDataRecorderVector[i].box1LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
+                <<localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
+                <<localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
+
+
+                 //Cube Global orientation
+                <<localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
+                <<localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
+                <<localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
+                <<localDataRecorderVector[i].box1GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
+                <<localDataRecorderVector[i].box1GlobalRotMat(1,1) << "," << " "
+                <<localDataRecorderVector[i].box1GlobalRotMat(1,2) << "," << " "
+                <<localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
+                <<localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
+                <<localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
 
                   //"cond = "
                   //<< localDataRecorderVector[i].conditionNo<< "," << " "

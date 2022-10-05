@@ -101,9 +101,9 @@
      </sizepolicy>
     </property>
     <property name="text">
-     <string>Open
-Serial
-Smarty</string>
+     <string>Serial
+Not
+Found</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -1603,7 +1603,7 @@ Experiment</string>
      </font>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>1850</x>

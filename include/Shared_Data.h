@@ -144,7 +144,8 @@ typedef struct
     int referenceFirst;
 
     chai3d::cVector3d gravity;
-    chai3d::cMatrix3d boxrotation;
+    chai3d::cMatrix3d box1GlobalRotMat; //Modified for HME
+    chai3d::cMatrix3d box1LocalRotMat; //Added for HME
     int Break_num;
     int ThroughHoop_num;
     int StartTime;
@@ -195,10 +196,10 @@ typedef enum
 typedef enum
 {
     none,
-    //    palpation,
-    //    twoFriction,
-    //    experimentFriction,
-    //    experimentPalpationLine,
+    //palpation,
+    //twoFriction,
+    //experimentFriction,
+    //experimentPalpationLine,
     dynamicBodies,
     experimentInertia,
     experimentVt
@@ -210,7 +211,7 @@ typedef enum
     standard,
     manual,
     dimension,
-    //    dynamicExperiment,
+    //dynamicExperiment,
     dynamicInertiaExp,
     StiffnessExperiment,
     StiffnessMassExperiment,
@@ -471,7 +472,8 @@ typedef struct
     cODEGenericBody* ODEBody2; //ODE body for box 2
     cODEGenericBody* ODEBody3; //ODE body for box 3
     cODEGenericBody* ODEBody4; //ODE body for box 4
-    cODEGenericBody* ODEHoop1; //ODE body for dynamic hoop 1 -- added ofr HME
+    cODEGenericBody* ODEHoop1; //ODE body for dynamic hoop 1 -- added for HME
+    cODEGenericBody* ODEHoop2; //ODE body for dynamic hoop 1 -- added for HME
 
     // haptics thread objects for visual representation of dynamic objects
     chai3d::cMesh* p_dynamicBox1; // mesh for box 1
@@ -479,6 +481,7 @@ typedef struct
     chai3d::cMesh* p_dynamicBox3; // mesh for box 3
     chai3d::cMesh* p_dynamicBox4; // mesh for box 4
     chai3d::cMesh* p_dynamicHoop1; // mesh for hoop 1 --  added for HME
+    chai3d::cMesh* p_dynamicHoop2; // mesh for hoop 1 --  added for HME
 
     chai3d::cMesh* p_wall; // mesh for wall
 

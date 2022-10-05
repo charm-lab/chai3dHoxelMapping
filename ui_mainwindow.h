@@ -181,7 +181,7 @@ public:
     QLabel *label_46;
     QDoubleSpinBox *alphaBox;
     QOpenGLWidget *openGLWidget;
-    QWidget *widget;
+    QWidget *layoutWidget7;
     QGridLayout *gridLayout_5;
     QLabel *label_16;
     QLabel *label_17;
@@ -1038,15 +1038,15 @@ public:
         font4.setPointSize(12);
         font4.setKerning(true);
         openGLWidget->setFont(font4);
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(1850, 350, 431, 211));
-        gridLayout_5 = new QGridLayout(widget);
+        layoutWidget7 = new QWidget(centralWidget);
+        layoutWidget7->setObjectName(QStringLiteral("layoutWidget7"));
+        layoutWidget7->setGeometry(QRect(1850, 350, 431, 211));
+        gridLayout_5 = new QGridLayout(layoutWidget7);
         gridLayout_5->setSpacing(6);
         gridLayout_5->setContentsMargins(11, 11, 11, 11);
         gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
         gridLayout_5->setContentsMargins(0, 0, 0, 0);
-        label_16 = new QLabel(widget);
+        label_16 = new QLabel(layoutWidget7);
         label_16->setObjectName(QStringLiteral("label_16"));
         QFont font5;
         font5.setPointSize(10);
@@ -1055,65 +1055,65 @@ public:
 
         gridLayout_5->addWidget(label_16, 0, 1, 1, 1);
 
-        label_17 = new QLabel(widget);
+        label_17 = new QLabel(layoutWidget7);
         label_17->setObjectName(QStringLiteral("label_17"));
         label_17->setFont(font5);
         label_17->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_17, 0, 2, 1, 1);
 
-        label_14 = new QLabel(widget);
+        label_14 = new QLabel(layoutWidget7);
         label_14->setObjectName(QStringLiteral("label_14"));
         label_14->setFont(font);
         label_14->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_14, 1, 0, 1, 1);
 
-        mass1_show = new QLCDNumber(widget);
+        mass1_show = new QLCDNumber(layoutWidget7);
         mass1_show->setObjectName(QStringLiteral("mass1_show"));
         mass1_show->setDigitCount(6);
 
         gridLayout_5->addWidget(mass1_show, 1, 1, 1, 1);
 
-        stiff1Scale_show = new QLCDNumber(widget);
+        stiff1Scale_show = new QLCDNumber(layoutWidget7);
         stiff1Scale_show->setObjectName(QStringLiteral("stiff1Scale_show"));
         stiff1Scale_show->setDigitCount(6);
 
         gridLayout_5->addWidget(stiff1Scale_show, 1, 2, 1, 1);
 
-        label_15 = new QLabel(widget);
+        label_15 = new QLabel(layoutWidget7);
         label_15->setObjectName(QStringLiteral("label_15"));
         label_15->setFont(font);
         label_15->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_15, 2, 0, 1, 1);
 
-        mass2_show = new QLCDNumber(widget);
+        mass2_show = new QLCDNumber(layoutWidget7);
         mass2_show->setObjectName(QStringLiteral("mass2_show"));
         mass2_show->setDigitCount(6);
 
         gridLayout_5->addWidget(mass2_show, 2, 1, 1, 1);
 
-        stiff2Scale_show = new QLCDNumber(widget);
+        stiff2Scale_show = new QLCDNumber(layoutWidget7);
         stiff2Scale_show->setObjectName(QStringLiteral("stiff2Scale_show"));
         stiff2Scale_show->setDigitCount(6);
 
         gridLayout_5->addWidget(stiff2Scale_show, 2, 2, 1, 1);
 
-        label_30 = new QLabel(widget);
+        label_30 = new QLabel(layoutWidget7);
         label_30->setObjectName(QStringLiteral("label_30"));
         label_30->setFont(font);
         label_30->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_30, 3, 0, 1, 1);
 
-        mass3_show = new QLCDNumber(widget);
+        mass3_show = new QLCDNumber(layoutWidget7);
         mass3_show->setObjectName(QStringLiteral("mass3_show"));
         mass3_show->setDigitCount(6);
 
         gridLayout_5->addWidget(mass3_show, 3, 1, 1, 1);
 
-        stiff3Scale_show = new QLCDNumber(widget);
+        stiff3Scale_show = new QLCDNumber(layoutWidget7);
         stiff3Scale_show->setObjectName(QStringLiteral("stiff3Scale_show"));
         stiff3Scale_show->setDigitCount(6);
 
@@ -1140,9 +1140,9 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "CHAI3D Haptics Environment", 0));
         label_38->setText(QApplication::translate("MainWindow", "SERIAL", 0));
-        openButton->setText(QApplication::translate("MainWindow", "Open\n"
-"Serial\n"
-"Smarty", 0));
+        openButton->setText(QApplication::translate("MainWindow", "Serial\n"
+"Not\n"
+"Found", 0));
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));
         label_53->setText(QApplication::translate("MainWindow", "Mass Forces:", 0));
         label_26->setText(QApplication::translate("MainWindow", "Desired Index", 0));
