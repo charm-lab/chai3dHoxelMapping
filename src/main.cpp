@@ -54,9 +54,6 @@ int main(int argc, char *argv[])
     magTrackerThread.initialize();
     qDebug()<<"magTrackerThread initialized";
 
-    //serialPort.initialize();
-    qDebug()<<"serialPort initialized";
-
     //VibrotactileThread.initialize();
     //qDebug()<<"VibrotactileThread initialized";
 
@@ -66,7 +63,6 @@ int main(int argc, char *argv[])
     //window.show();
     window.showMaximized();
     qDebug()<<"window";
-
 
     hapticsThread.start();
     experimentThread.start();
