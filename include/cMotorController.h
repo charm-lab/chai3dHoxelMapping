@@ -10,7 +10,7 @@
 
 // List all includes ==========================================
 
-//#include "826api.h"
+#include "826api.h"
 #include <QMutex>
 #include <Eigen/dense>
 #include "windows.h"

@@ -30,13 +30,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 {
     ui->setupUi(this);
-#ifndef OCULUS
-    //windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
-    //Make the window that the environment appears the one that is editable in mainwindow.ui
-    windowGLDisplay = new Widget_OpenGLDisplay(ui->openGLWidget);
-    //Changes position and size of CHAI3D window:
-    windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
-#endif
+//#ifndef OCULUS
+//    //windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
+//    //Make the window that the environment appears the one that is editable in mainwindow.ui
+//    windowGLDisplay = new Widget_OpenGLDisplay(ui->openGLWidget);
+//    //Changes position and size of CHAI3D window:
+//    windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
+//#endif
 
     //Find available serial ports
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -228,6 +228,13 @@ void MainWindow::on_openButton_clicked()
         QTimer *timer0 = new QTimer(this);
         connect(timer0, SIGNAL(timeout()), this, SLOT(writeSerialData()));
         timer0->start(10);
+      //close PCI control:
+#ifdef SENSORAY826
+        S826_SystemClose();
+        qDebug()<<"Closing PCI Control -- S826_SystemClose()";
+#endif
+
+        qDebug()<<"Open Serial Port Success~~";
     }
     else
     {
@@ -298,9 +305,9 @@ void MainWindow::Initialize()
     //    p_CommonData->currentControlState = VRControlMode;
     
     
-#ifndef OCULUS
-    windowGLDisplay->p_CommonData = p_CommonData;
-#endif
+//#ifndef OCULUS
+//    windowGLDisplay->p_CommonData = p_CommonData;
+//#endif
 
     connect(this->ui->Act1, SIGNAL(valueChanged(int)), this, SLOT(onGUIchanged()));
     connect(this->ui->Act2, SIGNAL(valueChanged(int)), this, SLOT(onGUIchanged()));

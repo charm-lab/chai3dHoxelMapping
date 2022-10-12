@@ -31,8 +31,7 @@ SOURCES += #./src/digitalFilter.cpp
 SOURCES += ./External/chai3d-3.1.1/modules/OCULUS/src/OVRDevice.cpp
 SOURCES += ./External/chai3d-3.1.1/modules/OCULUS/src/OVRRenderContext.cpp
 SOURCES += ./src/Vibrotactile_thread.cpp
-
-
+SOURCES += ./src/mychai3dwindow.cpp
 
 HEADERS  += ./include/mainwindow.h
 HEADERS  += ./include/haptics_thread.h
@@ -47,6 +46,7 @@ HEADERS  += ./include/magtracker.h
 HEADERS  += ./include/SimpleIni.h
 HEADERS  += ./include/experiment_thread.h
 HEADERS  += ./include/magTracker_thread.h
+HEADERS  += ./include/mychai3dwindow.h
 
 # Heathers Vibration
 HEADERS  += ./include/TappingParameters.h
@@ -60,6 +60,7 @@ HEADERS  += ./include/Vibrotactile_thread.h
 
 
 FORMS    += ./mainwindow.ui
+FORMS    += ./mychai3dwindow.ui
 
 #include path for Eigen
 INCLUDEPATH += "./External"

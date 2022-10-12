@@ -1584,25 +1584,6 @@ Experiment</string>
      </item>
     </layout>
    </widget>
-   <widget class="QOpenGLWidget" name="openGLWidget">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1056</width>
-      <height>706</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <kerning>true</kerning>
-     </font>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>

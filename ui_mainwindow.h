@@ -23,7 +23,6 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QOpenGLWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSlider>
@@ -180,7 +179,6 @@ public:
     QLabel *label_47;
     QLabel *label_46;
     QDoubleSpinBox *alphaBox;
-    QOpenGLWidget *openGLWidget;
     QWidget *layoutWidget7;
     QGridLayout *gridLayout_5;
     QLabel *label_16;
@@ -1030,14 +1028,6 @@ public:
 
         gridLayout_8->addWidget(alphaBox, 1, 1, 1, 1);
 
-        openGLWidget = new QOpenGLWidget(centralWidget);
-        openGLWidget->setObjectName(QStringLiteral("openGLWidget"));
-        openGLWidget->setEnabled(true);
-        openGLWidget->setGeometry(QRect(10, 10, 1056, 706));
-        QFont font4;
-        font4.setPointSize(12);
-        font4.setKerning(true);
-        openGLWidget->setFont(font4);
         layoutWidget7 = new QWidget(centralWidget);
         layoutWidget7->setObjectName(QStringLiteral("layoutWidget7"));
         layoutWidget7->setGeometry(QRect(1850, 350, 431, 211));
@@ -1048,16 +1038,16 @@ public:
         gridLayout_5->setContentsMargins(0, 0, 0, 0);
         label_16 = new QLabel(layoutWidget7);
         label_16->setObjectName(QStringLiteral("label_16"));
-        QFont font5;
-        font5.setPointSize(10);
-        label_16->setFont(font5);
+        QFont font4;
+        font4.setPointSize(10);
+        label_16->setFont(font4);
         label_16->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_16, 0, 1, 1, 1);
 
         label_17 = new QLabel(layoutWidget7);
         label_17->setObjectName(QStringLiteral("label_17"));
-        label_17->setFont(font5);
+        label_17->setFont(font4);
         label_17->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(label_17, 0, 2, 1, 1);

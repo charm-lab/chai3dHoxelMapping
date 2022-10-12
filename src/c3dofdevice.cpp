@@ -1,5 +1,5 @@
 #include "c3DOFdevice.h"
-#include "Shared_Data.h"
+#include "shared_data.h"
 #include <QLatin1Char>
 
 
@@ -14,7 +14,7 @@ c3DOFDevice::~c3DOFDevice()
     Sleep(100);
 
 #ifdef SENSORAY826
-    //S826_SystemClose();
+    S826_SystemClose();
     qDebug()<<"S826_SystemClose()";
 #endif
 }
@@ -22,22 +22,20 @@ c3DOFDevice::~c3DOFDevice()
 int c3DOFDevice::Init3DOFDeviceEnc()
 {
 #ifdef SENSORAY826
-    //S826_SystemOpen();  //open connection to the sensoray
+    S826_SystemOpen();  //open connection to the sensoray
     qDebug()<<"S826_SystemOpen()";
 #endif
 
     if(this->finger == 0)
     {
-//SENSORAY
+        //SENSORAY
         motor_1 = new cMotorController(CHANNEL_NUM0);
         //motor_1 = new cMotorController(6);
         motor_1->InitEncoder();
         motor_1->InitDACOut();
-//////HOXEL
-
+        //////HOXEL
 
     }
-
 
     else if(this->finger == 1)
     {
@@ -57,7 +55,7 @@ int c3DOFDevice::Init3DOFDeviceEnc()
 
 double c3DOFDevice::GetJointAngles() // Eigen::Vector3d
 {
-    //    double offset = 0;
+    //double offset = 0;
     double jointAngles = motor_1->GetMotorAngle();
     return jointAngles;
 }

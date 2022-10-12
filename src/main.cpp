@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
+#include "mychai3dwindow.h"
 #include "shared_data.h"
 #include "haptics_thread.h"
 #include "experiment_thread.h"
@@ -26,7 +27,8 @@ magTracker_thread magTrackerThread;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow window;
+    MainWindow controlWindow;
+    myCHAI3DWindow chai3DWindow;
     // Create a chai device for mag tracker
     shared.chaiMagDevice0 = chai3d::cGenericHapticDevicePtr((chai3d::cGenericHapticDevice *)(new chai3d::c3dofChaiDevice(0)));
     shared.chaiMagDevice1 = chai3d::cGenericHapticDevicePtr((chai3d::cGenericHapticDevice *)(new chai3d::c3dofChaiDevice(1)));
@@ -57,12 +59,19 @@ int main(int argc, char *argv[])
     //VibrotactileThread.initialize();
     //qDebug()<<"VibrotactileThread initialized";
 
-    // Initialize and set the window thread data pointer to the shared data
-    window.p_CommonData = &shared;
-    window.Initialize();
-    //window.show();
-    window.showMaximized();
-    qDebug()<<"window";
+    // Initialize and set the controlWindow thread data pointer to the shared data
+    controlWindow.p_CommonData = &shared;
+    controlWindow.Initialize();
+    //controlWindow.show();
+    controlWindow.showMaximized();
+    qDebug()<<"controlWindow Initialized";
+
+    // Initialize and set the chai3DWindow thread data pointer to the shared data
+    chai3DWindow.p_CommonData = &shared;
+    chai3DWindow.Initialize();
+    //chai3DWindow.show();
+    chai3DWindow.showMaximized();
+    qDebug()<<"CHAI3D Window Initialized";
 
     hapticsThread.start();
     experimentThread.start();

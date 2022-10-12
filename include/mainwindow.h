@@ -53,7 +53,7 @@ public:
     void processEvents();
 
     // vars
-    Widget_OpenGLDisplay* windowGLDisplay;
+    //Widget_OpenGLDisplay* windowGLDisplay;
     shared_data* p_CommonData;
 
     double updateHz = 100;
