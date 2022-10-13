@@ -200,7 +200,12 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(2472, 1200);
+        MainWindow->resize(2540, 1419);
+        QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
+        MainWindow->setSizePolicy(sizePolicy);
         QPalette palette;
         MainWindow->setPalette(palette);
         QFont font;
@@ -212,9 +217,6 @@ public:
         MainWindow->setAutoFillBackground(true);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
         centralWidget->setSizePolicy(sizePolicy);
         placeHolder = new QWidget(centralWidget);
@@ -953,8 +955,11 @@ public:
 
         StiffnMassCombined = new QPushButton(layoutWidget5);
         StiffnMassCombined->setObjectName(QStringLiteral("StiffnMassCombined"));
-        sizePolicy.setHeightForWidth(StiffnMassCombined->sizePolicy().hasHeightForWidth());
-        StiffnMassCombined->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(StiffnMassCombined->sizePolicy().hasHeightForWidth());
+        StiffnMassCombined->setSizePolicy(sizePolicy3);
 
         gridLayout->addWidget(StiffnMassCombined, 8, 2, 1, 1);
 
@@ -979,15 +984,15 @@ public:
 
         FingerMappingExp = new QPushButton(layoutWidget5);
         FingerMappingExp->setObjectName(QStringLiteral("FingerMappingExp"));
-        sizePolicy.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
-        FingerMappingExp->setSizePolicy(sizePolicy);
+        sizePolicy3.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
+        FingerMappingExp->setSizePolicy(sizePolicy3);
 
         gridLayout->addWidget(FingerMappingExp, 6, 0, 1, 1);
 
         HoxelMappingExp = new QPushButton(layoutWidget5);
         HoxelMappingExp->setObjectName(QStringLiteral("HoxelMappingExp"));
-        sizePolicy.setHeightForWidth(HoxelMappingExp->sizePolicy().hasHeightForWidth());
-        HoxelMappingExp->setSizePolicy(sizePolicy);
+        sizePolicy3.setHeightForWidth(HoxelMappingExp->sizePolicy().hasHeightForWidth());
+        HoxelMappingExp->setSizePolicy(sizePolicy3);
 
         gridLayout->addWidget(HoxelMappingExp, 6, 2, 1, 1);
 
@@ -1112,7 +1117,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 2472, 21));
+        menuBar->setGeometry(QRect(0, 0, 2540, 21));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -1128,7 +1133,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "CHAI3D Haptics Environment", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Control Window", 0));
         label_38->setText(QApplication::translate("MainWindow", "SERIAL", 0));
         openButton->setText(QApplication::translate("MainWindow", "Serial\n"
 "Not\n"

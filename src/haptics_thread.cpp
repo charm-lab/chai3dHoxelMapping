@@ -2464,6 +2464,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     // setup collision detectors for the dynamic objects
     p_CommonData->p_dynamicHoop1->createAABBCollisionDetector(toolRadius);
 
+    /*
     //Create dynamic hoop1
     chai3d::cMaterial matDynamicHoop1;
     matDynamicHoop1.setBlack();
@@ -2485,7 +2486,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->ODEHoop1->setLocalPos(0.1, -0.2, -.02); //(0.1,-0.1,-.02);
     //Set orientation of dynamic hoop 1
     p_CommonData->ODEHoop1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
-
 
     // create the visual hoops on the dynamic box and hoop meshes
     cCreateRing(p_CommonData->p_dynamicHoop2, 0.01, 0.2); //ring
@@ -2517,7 +2517,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->ODEHoop2->setLocalPos(0.1, 0.05, 0.05); //(0.1,-0.1,-.02);
     //Set orientation of dynamic hoop 2
     p_CommonData->ODEHoop2->rotateAboutLocalAxisDeg(0, 1, 0, 90);
-
+    */
 
     p_CommonData->target1Complete = false;
     p_CommonData->hoop1Complete = false;
@@ -2537,8 +2537,8 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->p_world->addChild(hoop1);
     //Add dynamic objects to the world
     p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
-    p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop1);
-    p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop2);
+    //p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop1);
+    //p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop2);
 
     qDebug()<<"Finished HME Setup";
 }
@@ -2605,18 +2605,21 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     p_CommonData->ODEBody3->setMass(mass3);
 
     // set position of box
-    p_CommonData->ODEBody1->setLocalPos(0.15,-.2,-.3);
-    p_CommonData->ODEBody2->setLocalPos(0.2,-.1,-.2);
-    p_CommonData->ODEBody3->setLocalPos(0.25,0,-.1);
+    p_CommonData->ODEBody1->setLocalPos(0.15,-0.2,-0.3);
+    p_CommonData->ODEBody2->setLocalPos(0.20,-0.1,-0.2);
+    p_CommonData->ODEBody3->setLocalPos(0.25,0.0,-0.1);
 
+    // define some material properties for wall
     wall = new chai3d::cMesh();
-    wall2 = new chai3d::cMesh();
+    chai3d::cMaterial matWall;
+    matWall.setBrownSandy();
+    wall->setMaterial(matWall);
     //create a plane
-    wallHeight = .1;
+    wallHeight = 0.1;
     wallThickness = 0.01;
 
-    chai3d::cCreateBox(wall, 1.75*.3, wallThickness, wallHeight);
-    wall->setLocalPos(0.05, 0.085, -.05);
+    chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
+    wall->setLocalPos(0.05, 0.085, -0.05);
 
     p_CommonData->p_world->addChild(wall);
 
@@ -2645,7 +2648,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     hoop2->setMaterial(matHoop2);
     p_CommonData->p_world->addChild(hoop2);
 
-    hoop3 =new chai3d::cMesh();
+    hoop3 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop3, 0.06, 0.01, 0.06);
     hoop3->setLocalPos(hoopX, hoopY - 0.0025, hoopZ);
     chai3d::cMaterial matHoop3;
@@ -2653,7 +2656,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     hoop3->setMaterial(matHoop3);
     p_CommonData->p_world->addChild(hoop3);
 
-    hoop4 =new chai3d::cMesh();
+    hoop4 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop4, 0.055, 0.01, 0.055);
     hoop4->setLocalPos(hoopX, hoopY - 0.0028, hoopZ);
     chai3d::cMaterial matHoop4;
@@ -2663,8 +2666,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 
     targetRadius = 0.08;
 
-
-    target3 =new chai3d::cMesh();
+    target3 = new chai3d::cMesh();
     double sc = 0.6;
     chai3d::cCreateEllipsoid(target3, targetRadius*sc, targetRadius*sc, targetRadius*sc);
     target3Pos = chai3d::cVector3d(0.05, 0.18, 0);
@@ -2677,10 +2679,10 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     p_CommonData->p_world->addChild(target3);
 
 
-    target2 =new chai3d::cMesh();
+    target2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target2Pos = chai3d::cVector3d(0.05, 0.18, 0);
-    target2->setLocalPos(0.1,-0.1,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    target2Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    target2->setLocalPos(0.1 ,-0.1, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
     matTarget2.setRed();
     target2->setMaterial(matTarget2);
     target2->setUseCulling(true);
@@ -2688,18 +2690,16 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     target2->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target2);
 
-    target1 =new chai3d::cMesh();
+    target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target1Pos = chai3d::cVector3d(0.05, 0.18, 0);
-    target1->setLocalPos(0,-0.2,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    target1Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    target1->setLocalPos(0.0 ,-0.2, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
     matTarget1.setRed();
     target1->setMaterial(matTarget1);
     target1->setUseCulling(true);
     target1->setUseTransparency(true);
     target1->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target1);
-
-
 
     //p_CommonData->target1Complete = false;
     p_CommonData->target2Complete = false;
@@ -2708,7 +2708,6 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     //add one and two indicators
     //p_CommonData->p_world->addChild(p_CommonData->oneModel);
     //p_CommonData->p_world->addChild(p_CommonData->twoModel);
-
 }
 
 // general mass demo with adjustable parameters
@@ -2736,27 +2735,29 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     p_CommonData->p_dynamicBox1->setMaterial(mat11);
     p_CommonData->p_dynamicBox1->setUseMaterial(true);
 
-    //    // define material properties for box 2
-    //    //chai3d::cMaterial mat22;
-    //    mat22.setBlueRoyal();
-    //    mat22.setStiffness(stiffness2);
-    //    mat22.setLateralStiffness(latStiffness2);
-    //    mat22.setDynamicFriction(dynFriction2);
-    //    mat22.setStaticFriction(friction2);
-    //    mat22.setUseHapticFriction(true);
-    //    p_CommonData->p_dynamicBox2->setMaterial(mat22);
-    //    p_CommonData->p_dynamicBox2->setUseMaterial(true);
+    /*
+    // define material properties for box 2
+    //chai3d::cMaterial mat22;
+    mat22.setBlueRoyal();
+    mat22.setStiffness(stiffness2);
+    mat22.setLateralStiffness(latStiffness2);
+    mat22.setDynamicFriction(dynFriction2);
+    mat22.setStaticFriction(friction2);
+    mat22.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat22);
+    p_CommonData->p_dynamicBox2->setUseMaterial(true);
 
-    //    // define material properties for box 3
-    //    //chai3d::cMaterial mat33;
-    //    mat33.setRedSalmon();
-    //    mat33.setStiffness(stiffness3);
-    //    mat33.setLateralStiffness(latStiffness3);
-    //    mat33.setDynamicFriction(dynFriction3);
-    //    mat33.setStaticFriction(friction3);
-    //    mat33.setUseHapticFriction(true);
-    //    p_CommonData->p_dynamicBox3->setMaterial(mat33);
-    //    p_CommonData->p_dynamicBox3->setUseMaterial(true);
+    // define material properties for box 3
+    //chai3d::cMaterial mat33;
+    mat33.setRedSalmon();
+    mat33.setStiffness(stiffness3);
+    mat33.setLateralStiffness(latStiffness3);
+    mat33.setDynamicFriction(dynFriction3);
+    mat33.setStaticFriction(friction3);
+    mat33.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox3->setMaterial(mat33);
+    p_CommonData->p_dynamicBox3->setUseMaterial(true);
+    */
 
     // add mesh to ODE object
     p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
@@ -2779,10 +2780,13 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     //    p_CommonData->ODEBody3->setLocalPos(0.25,0,-.1);
 
 
+    // define some material properties for wall
     wall = new chai3d::cMesh();
-    wall2 = new chai3d::cMesh();
+    chai3d::cMaterial matWall;
+    matWall.setBrownSandy();
+    wall->setMaterial(matWall);
     //create a plane
-    wallHeight = .1;
+    wallHeight = 0.1;
     wallThickness = 0.01;
 
     chai3d::cCreateBox(wall, 1.75*.3, wallThickness, wallHeight);
@@ -2790,12 +2794,11 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
 
     p_CommonData->p_world->addChild(wall);
 
-
     double hoopX = 0.35;
     double hoopY = 0.65;
     double hoopZ = -0.35;
 
-    hoop1 =new chai3d::cMesh();
+    hoop1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop1, 0.08, 0.01, 0.08);
     //    hoop1->setLocalPos(hoopX, hoopY, hoopZ);
     hoop1->setLocalPos(hoopX, hoopY, hoopZ);
@@ -2808,7 +2811,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
 
     p_CommonData->p_world->addChild(hoop1);
 
-    hoop2 =new chai3d::cMesh();
+    hoop2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop2, 0.07, 0.01, 0.07);
     hoop2->setLocalPos(hoopX, hoopY - 0.0015, hoopZ);
     chai3d::cMaterial matHoop2;
@@ -2816,7 +2819,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     hoop2->setMaterial(matHoop2);
     p_CommonData->p_world->addChild(hoop2);
 
-    hoop3 =new chai3d::cMesh();
+    hoop3 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop3, 0.06, 0.01, 0.06);
     hoop3->setLocalPos(hoopX, hoopY - 0.0025, hoopZ);
     chai3d::cMaterial matHoop3;
@@ -2824,7 +2827,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     hoop3->setMaterial(matHoop3);
     p_CommonData->p_world->addChild(hoop3);
 
-    hoop4 =new chai3d::cMesh();
+    hoop4 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop4, 0.055, 0.01, 0.055);
     hoop4->setLocalPos(hoopX, hoopY - 0.0028, hoopZ);
     chai3d::cMaterial matHoop4;
@@ -2834,8 +2837,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
 
     targetRadius = 0.08;
 
-
-    target3 =new chai3d::cMesh();
+    target3 = new chai3d::cMesh();
     double sc = 0.6;
     chai3d::cCreateEllipsoid(target3, targetRadius*sc, targetRadius*sc, targetRadius*sc);
     target3Pos = chai3d::cVector3d(0.05, 0.18, 0);
@@ -2847,8 +2849,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     target3->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target3);
 
-
-    target2 =new chai3d::cMesh();
+    target2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);
     target2Pos = chai3d::cVector3d(0.05, 0.18, 0);
     target2->setLocalPos(0.1,-0.1,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
@@ -2859,7 +2860,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     target2->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target2);
 
-    target1 =new chai3d::cMesh();
+    target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius*sc, targetRadius*sc, targetRadius*sc);
     target1Pos = chai3d::cVector3d(0.05, 0.18, 0);
     target1->setLocalPos(0,-0.2,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
@@ -2870,8 +2871,6 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     target1->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target1);
 
-
-
     //p_CommonData->target1Complete = false;
     p_CommonData->target2Complete = false;
     p_CommonData->target3Complete = false;
@@ -2879,5 +2878,4 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     //add one and two indicators
     p_CommonData->p_world->addChild(p_CommonData->oneModel);
     p_CommonData->p_world->addChild(p_CommonData->twoModel);
-
 }

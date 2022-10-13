@@ -28,11 +28,14 @@ public:
     {
         if (myCHAI3DWindow->objectName().isEmpty())
             myCHAI3DWindow->setObjectName(QStringLiteral("myCHAI3DWindow"));
-        myCHAI3DWindow->resize(1071, 900);
+        myCHAI3DWindow->resize(2560, 1419);
+        QIcon icon;
+        icon.addFile(QStringLiteral("../../My Publications/IROS 2022 Conference Paper/Presentation/Video/Finger Grasp.PNG"), QSize(), QIcon::Normal, QIcon::Off);
+        myCHAI3DWindow->setWindowIcon(icon);
         openGLWidget = new QOpenGLWidget(myCHAI3DWindow);
         openGLWidget->setObjectName(QStringLiteral("openGLWidget"));
         openGLWidget->setEnabled(false);
-        openGLWidget->setGeometry(QRect(10, 10, 1056, 706));
+        openGLWidget->setGeometry(QRect(10, 10, 2540, 1420));
         QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -50,7 +53,7 @@ public:
 
     void retranslateUi(QWidget *myCHAI3DWindow)
     {
-        myCHAI3DWindow->setWindowTitle(QApplication::translate("myCHAI3DWindow", "Form", 0));
+        myCHAI3DWindow->setWindowTitle(QApplication::translate("myCHAI3DWindow", "CHAI3D Haptics Environment", 0));
     } // retranslateUi
 
 };

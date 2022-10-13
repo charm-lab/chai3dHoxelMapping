@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2472</width>
-    <height>1200</height>
+    <width>2540</width>
+    <height>1419</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="palette">
    <palette>
@@ -23,7 +29,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>CHAI3D Haptics Environment</string>
+   <string>Control Window</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -34,7 +40,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -1719,7 +1725,7 @@ Experiment</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2472</width>
+     <width>2540</width>
      <height>21</height>
     </rect>
    </property>

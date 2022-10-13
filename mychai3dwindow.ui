@@ -6,12 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1071</width>
-    <height>900</height>
+    <width>2560</width>
+    <height>1419</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>CHAI3D Haptics Environment</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../My Publications/IROS 2022 Conference Paper/Presentation/Video/Finger Grasp.PNG</normaloff>../../My Publications/IROS 2022 Conference Paper/Presentation/Video/Finger Grasp.PNG</iconset>
   </property>
   <widget class="QOpenGLWidget" name="openGLWidget">
    <property name="enabled">
@@ -21,8 +25,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>1056</width>
-     <height>706</height>
+     <width>2540</width>
+     <height>1420</height>
     </rect>
    </property>
    <property name="sizePolicy">

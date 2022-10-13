@@ -14,6 +14,7 @@ myCHAI3DWindow::myCHAI3DWindow(QWidget *parent) :
     windowGLDisplay = new Widget_OpenGLDisplay(ui->openGLWidget);
     //Changes position and size of CHAI3D window:
     windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
+    //windowGLDisplay->setGeometry(QRect(0, 0, 1700, 1200));
 #endif
 
 }

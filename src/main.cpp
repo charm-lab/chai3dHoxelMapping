@@ -26,7 +26,7 @@ magTracker_thread magTrackerThread;
 // MAIN FUNCTION ====================================================
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     MainWindow controlWindow;
     myCHAI3DWindow chai3DWindow;
     // Create a chai device for mag tracker
@@ -62,15 +62,21 @@ int main(int argc, char *argv[])
     // Initialize and set the controlWindow thread data pointer to the shared data
     controlWindow.p_CommonData = &shared;
     controlWindow.Initialize();
+    //Move control screen over, then maximze to guarantee control window is on screen2
+    controlWindow.move(2540,0);
     //controlWindow.show();
     controlWindow.showMaximized();
+
+    //controlWindow.setScreen(screen1);
+
     qDebug()<<"controlWindow Initialized";
 
     // Initialize and set the chai3DWindow thread data pointer to the shared data
     chai3DWindow.p_CommonData = &shared;
     chai3DWindow.Initialize();
     //chai3DWindow.show();
-    chai3DWindow.showMaximized();
+    //chai3DWindow.showMaximized();
+    chai3DWindow.showFullScreen();
     qDebug()<<"CHAI3D Window Initialized";
 
     hapticsThread.start();
@@ -78,7 +84,7 @@ int main(int argc, char *argv[])
     magTrackerThread.start();
     //VibrotactileThread.start();
 
-    return a.exec();
+    return app.exec();
 }
 
 
