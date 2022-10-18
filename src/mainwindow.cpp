@@ -67,7 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ParityBox->setCurrentIndex(0);
     ui->StopBox->setCurrentIndex(0);
     //Sett IIR Filter tunaable aplha value:
-    ui->alphaBox->setValue(0.23);
+    //ui->alphaBox->setValue(0.23);
+    ui->alphaBox->setValue(1.00);
     qDebug() << tr("The interface is set successfully!");
 }
 
@@ -87,6 +88,24 @@ Eigen::Vector3d localDesiredPos1_prev;
 */
 Eigen::Vector3d localForce0_prev;
 Eigen::Vector3d localForce1_prev;
+
+//Set Device Desired Forces:
+//Dorsal desiered forces:
+QString device0X;// = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+QString device0Y;// = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+QString device0Z;// = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+QString device0X_prev;// = QString::number(localForce0_prev[0], 'f', 1); //localForce0_prev[0] //X
+QString device0Y_prev;// = QString::number(localForce0_prev[1], 'f', 1); //localForce0_prev[1] //Y
+QString device0Z_prev;// = QString::number(localForce0_prev[2], 'f', 1); //localForce0_prev[2] //Z
+QString dev0Mag;// = QString::number(localForce0.norm(), 'f', 1);
+//Ventral desiered forces:
+QString device1X;// = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+QString device1Y;// = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+QString device1Z;// = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+QString device1X_prev;// = QString::number(localForce1_prev[0], 'f', 1); //localForce1_prev[0] //X
+QString device1Y_prev;// = QString::number(localForce1_prev[1], 'f', 1); //localForce1_prev[1] //Y
+QString device1Z_prev;// = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
+QString dev1Mag;// = QString::number(localForce1.norm(), 'f', 1);
 
 void MainWindow::writeSerialData()
 {
@@ -129,6 +148,7 @@ void MainWindow::writeSerialData()
     localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
     localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
 
+    /*
     //Set Device Desired Forces:
     //index desiered forces:
     QString device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
@@ -146,6 +166,89 @@ void MainWindow::writeSerialData()
     QString device1Y_prev = QString::number(localForce1_prev[1], 'f', 1); //localForce1_prev[1] //Y
     QString device1Z_prev = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
     QString dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    */
+
+
+    //Mappings:
+    //Normal Mapping
+    if(p_CommonData->mapping == 1)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        //Ventral - thumb desired forces:
+        device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+        device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+        device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    }
+    //Reverse Mapping
+    else if(p_CommonData->mapping == 2)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - thumb desired forces:
+        device0X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+        device0Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+        device0Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+        dev0Mag = QString::number(localForce1.norm(), 'f', 1);
+        //Ventral - index desired forces:
+        device1X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+        device1Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+        device1Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+        dev1Mag = QString::number(localForce0.norm(), 'f', 1);
+    }
+    //Single Mapping
+    if(p_CommonData->mapping == 3)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        //Ventral - thumb desired forces:
+        //localForce1[0] = 0.0;
+        //localForce1[1] = 0.0;
+        //localForce1[2] = 0.0;
+        device1X = QString::number(0.0); //localForce1[0] //X
+        device1Y = QString::number(0.0); //localForce1[1] //Y
+        device1Z = QString::number(0.0); //localForce1[2] //Z
+        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    }
+    //Averaged
+    if(p_CommonData->mapping == 4)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(0.5*(localForce0[0] + localForce0[0]), 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(0.5*(localForce0[1] + localForce0[1]), 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(0.5*(localForce0[2] + localForce0[2]), 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        //Ventral - thumb desired forces:
+        device1X = QString::number(0.0); //localForce1[0] //X
+        device1Y = QString::number(0.0); //localForce1[1] //Y
+        device1Z = QString::number(0.0); //localForce1[2] //Z
+        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    }
+    //Control - No Haptic Feedback
+    else if(p_CommonData->mapping == 5)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(0.0); //localForce0[0] //X
+        device0Y = QString::number(0.0); //localForce0[1] //Y
+        device0Z = QString::number(0.0); //localForce0[2] //Z
+        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        //Ventral - thumb desired forces:
+        device1X = QString::number(0.0); //localForce1[0] //X
+        device1Y = QString::number(0.0); //localForce1[1] //Y
+        device1Z = QString::number(0.0); //localForce1[2] //Z
+        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    }
+
     QString forceData = device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n";
 
     payloadBuffer = payloadBuffer.append(forceData);
@@ -155,11 +258,24 @@ void MainWindow::writeSerialData()
 
     //qDebug() << payloadBuffer << " " << serial->isWritable();
 
+    //qDebug() << p_CommonData->mapping;
+
     if(serial->isWritable())
     {
         //ui->textEdit_2->toPlainText().toLatin1();
+        //Write data to board
         serial->write(payloadBuffer, payloadBuffer.size());
     }
+
+    //Set previous values:
+    device0X_prev = device0X;
+    device0Y_prev = device0Y;
+    device0Z_prev = device0Z;
+    device1X_prev = device1X;
+    device1Y_prev = device1Y;
+    device1Z_prev = device1Z;
+    localForce0_prev = localForce0;
+    localForce1_prev = localForce1;
 }
 
 //Read received data
@@ -598,8 +714,11 @@ bool MainWindow::readExpStuffIn(){
         p_CommonData->TrialType = p_CommonData->MineProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
     //For Jasmin's FingerMapping and HoxelMapping Experiment
-    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    {
+        p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
+    }
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
@@ -941,7 +1060,6 @@ bool MainWindow::readExpStuffIn(){
             qDebug()<<"THIS IS BROKEN -- YOU SHOULD NEVER BE HERE -- bad protocol file read";
         }
     }
-
 }
 
 //Mataches text to mapping type to be displayed for FingerMapping Experiment
@@ -2042,11 +2160,11 @@ QString MainWindow::getSubjectDirectory()
     }
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
-        return "../chai3dFingerMapping/FME_Subject_Data/";
+        return "./FME_Subject_Data_v2/";
     }
     else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-        return  "../chai3dHoxelMapping/HME_Subject_Data/";
+        return  "./HME_Subject_Data/";
     }
 }
 
@@ -2190,7 +2308,7 @@ void MainWindow::WriteDataToFile()
     //write data to file when we are done
 
 #ifdef ACC
-    p_CommonData->dir="C:/Users/Sam/Desktop/Subjects/VTExp/Subjects/VTACC";
+    p_CommonData->dir= "./VTACC_Subject_Data/VTExp/Subjects/VTACC";//"C:/Users/Sam/Desktop/Subjects/VTExp/Subjects/VTACC";
     p_CommonData->fileName = "VTACC_CAL";
 #endif
 
@@ -2672,7 +2790,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
 //Jasmin Finger Mapping Experiment -- 1DoF Servo Device
 void MainWindow::on_FingerMappingExp_clicked()
 {
-    QString protocolFolder = "../chai3dFingerMapping/FingerMappingProtocols/";
+    QString protocolFolder = "./FingerMappingProtocols/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
     p_CommonData->protocolFileLocation = temp;
@@ -2716,12 +2834,12 @@ void MainWindow::on_FingerMappingExp_clicked()
 //Jasmin Hoxel Mapping Experiment
 void MainWindow::on_HoxelMappingExp_clicked()
 {
-    QString protocolFolder = "../chai3dHoxelMapping/HoxelMappingProtocols/";
+    QString protocolFolder = "./HoxelMappingProtocols/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
-    //qDebug() << "error" << error << p_CommonData->protocolFileLocation;
+    qDebug() << "error" << error << p_CommonData->protocolFileLocation;
 
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {

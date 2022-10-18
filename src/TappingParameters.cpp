@@ -61,7 +61,7 @@ string imFilename;
 //string::size_type pos2 = exeFilepath.find_last_of( "\\/" );
 
 //Find filepath of XML model files
-string baseFilename = "C:\\Users\\Sam\\Desktop\\chai3dFingerMapping\\build\\XML\\Models_";
+string baseFilename = "./build/XML/Models_" ; //"C:\\Users\\Sam\\Desktop\\chai3dFingerMapping\\build\\XML\\Models_";
 string myFilename;
 
 /********* Fill array with known texture names ***********/
@@ -327,7 +327,7 @@ TappingParametersMatrix generateTapMatrix(char (*texArray)[50])
     //string baseFilename = exeFilepath.substr(0,pos2) + "\\build\\XML\\Taps_";
     //string baseFilename = exeFilepath.substr(0,pos2) + "\\build\\TappingOrig\\Taps_";
    // string baseFilename = exeFilepath.substr(0,pos2) + "\\build\\TappingShift\\Taps_";
-    string baseFilename = "C:\\Users\\Sam\\Desktop\\chai3dFingerMapping\\build\\TappingShift\\Taps_";
+    string baseFilename = "./build/TappingShift/Taps_"; //"C:\\Users\\Sam\\Desktop\\chai3dFingerMapping\\build\\TappingShift\\Taps_";
 
     string myFilename;
 

@@ -106,6 +106,7 @@ void haptics_thread::run()
 {
     while(p_CommonData->hapticsThreadActive)
     {
+        //qDebug() << p_CommonData->mapping;
         // if clock controlling haptic rate times out
         if(rateClock.timeoutOccurred())
         {
@@ -417,7 +418,7 @@ void haptics_thread::UpdateVRGraphics()
             gravity_force1.set(0,0,original_mass1*9.81);
 
             p_CommonData->ODEBody1->addExternalForce(gravity_force1);
-            p_CommonData->ODEHoop1->addExternalForce(gravity_force1); //added for HME
+            //p_CommonData->ODEHoop1->addExternalForce(gravity_force1); //added for HME
         }
 
 
@@ -1780,11 +1781,11 @@ void haptics_thread::RenderDynamicBodies()
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-        wallHeight = .1;
+        wallHeight = 0.1;
         wallThickness = 0.01;
 
-        chai3d::cCreateBox(wall, 1.75*.3, wallThickness, wallHeight);
-        wall->setLocalPos(0.05, 0.05, -.05);
+        chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
+        wall->setLocalPos(0.05, 0.05, -0.05);
     }
 
     //create globe
@@ -1869,18 +1870,18 @@ void haptics_thread::RenderDynamicBodies()
         SetDynEnvironStiffMassExp();
     }
 
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         SetDynEnvironFingerMappingExp();
     }
 
-    else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         SetDynEnvironHoxelMappingExp();
     }
 
     // if just rendering dynamic environments without an experiment
-    else if (p_CommonData->currentDynamicObjectState == standard)
+    if (p_CommonData->currentDynamicObjectState == standard)
     {
         SetDynEnvironAdjust();
     }
@@ -2305,6 +2306,7 @@ void haptics_thread::SetDynEnvironStiffMassExp()   // Mine Stiffness-Mass Experi
 
 void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping Experiment
 {
+    qDebug() << "start SetDynEnvironFingerMappingExp()";
     // create the visual boxes on the dynamic box meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
 
@@ -2403,6 +2405,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
 
 void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Experiment
 {   
+    qDebug() << "start SetDynEnvironHoxelMappingExp()";
     targetRadius = 0.05;
 
     // create the visual boxes on the dynamic box meshes
@@ -2428,7 +2431,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
     // set position of box
-    p_CommonData->ODEBody1->setLocalPos(-0.15, -0.2, -.02); //(0.15, -0.2, -.02)
+    p_CommonData->ODEBody1->setLocalPos(0.15, -0.2, -.02); //(0.15, -0.2, -.02)
     //Set orientation of box
     p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
 

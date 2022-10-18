@@ -984,6 +984,7 @@ public:
 
         FingerMappingExp = new QPushButton(layoutWidget5);
         FingerMappingExp->setObjectName(QStringLiteral("FingerMappingExp"));
+        FingerMappingExp->setEnabled(true);
         sizePolicy3.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
         FingerMappingExp->setSizePolicy(sizePolicy3);
 
@@ -1029,7 +1030,7 @@ public:
         alphaBox->setButtonSymbols(QAbstractSpinBox::PlusMinus);
         alphaBox->setMaximum(1);
         alphaBox->setSingleStep(0.01);
-        alphaBox->setValue(0);
+        alphaBox->setValue(1);
 
         gridLayout_8->addWidget(alphaBox, 1, 1, 1, 1);
 
