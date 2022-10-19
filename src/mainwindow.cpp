@@ -998,7 +998,8 @@ bool MainWindow::readExpStuffIn(){
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
 
 
-            if(p_CommonData->TrialMode == 1){
+            if(p_CommonData->TrialMode == 1)
+            {
                 if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
                 if(p_CommonData->mass1 == 0.2) p_CommonData->lev1 = 2;
                 if(p_CommonData->mass1 == 0.3) p_CommonData->lev1 = 3;
@@ -1006,7 +1007,8 @@ bool MainWindow::readExpStuffIn(){
                 if(p_CommonData->mass1 == 0.5) p_CommonData->lev1 = 5;
                 qDebug()<<"TrialMode == 1";
             }
-            else if(p_CommonData->TrialMode == 2){
+            else if(p_CommonData->TrialMode == 2)
+            {
                 if(p_CommonData->stiffness1 == 100) p_CommonData->lev1 = 1;
                 if(p_CommonData->stiffness1 == 200) p_CommonData->lev1 = 2;
                 if(p_CommonData->stiffness1 == 300) p_CommonData->lev1 = 3;
@@ -1015,9 +1017,11 @@ bool MainWindow::readExpStuffIn(){
                 qDebug()<<"TrialMode == 2";
             }
             onGUIchanged();
+            return true;
         }
         //Testing trials
-        else if (p_CommonData->TrialType=="testing"){
+        else if (p_CommonData->TrialType=="testing")
+        {
             p_CommonData->currentExperimentState = idleExperiment;
             p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
             p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
@@ -1026,14 +1030,16 @@ bool MainWindow::readExpStuffIn(){
             p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
 
-            if(p_CommonData->TrialMode == 1){
+            if(p_CommonData->TrialMode == 1)
+            {
                 if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
                 if(p_CommonData->mass1 == 0.2) p_CommonData->lev1 = 2;
                 if(p_CommonData->mass1 == 0.3) p_CommonData->lev1 = 3;
                 if(p_CommonData->mass1 == 0.4) p_CommonData->lev1 = 4;
                 if(p_CommonData->mass1 == 0.5) p_CommonData->lev1 = 5;
             }
-            else if(p_CommonData->TrialMode == 2){
+            else if(p_CommonData->TrialMode == 2)
+            {
                 if(p_CommonData->stiffness1 == 100) p_CommonData->lev1 = 1;
                 if(p_CommonData->stiffness1 == 200) p_CommonData->lev1 = 2;
                 if(p_CommonData->stiffness1 == 300) p_CommonData->lev1 = 3;
@@ -1042,22 +1048,26 @@ bool MainWindow::readExpStuffIn(){
             }
             //qDebug() << "test" << "st1" << p_CommonData->stiffness1<< "st2" << p_CommonData->stiffness2 << "cond" << p_CommonData->cond;
             onGUIchanged();
+            return true;
         }
         //Trial Break
         else if (p_CommonData->TrialType=="break"){
             p_CommonData->currentExperimentState = trialBreak;
+            return true;
         }
         else if (p_CommonData->TrialType=="breakbreak"){
             p_CommonData->currentExperimentState = trialBreak;
+            return true;
         }
         //Trial Over
         else if (p_CommonData->TrialType=="end"){
             p_CommonData->currentExperimentState = endExperiment;
-            qDebug()<<"StiffnessMassExperiment DONE!!";
+            qDebug()<<"HoxelMappingExperiment DONE!!";
             return false;
         }
         else if (p_CommonData->TrialType==""){
             qDebug()<<"THIS IS BROKEN -- YOU SHOULD NEVER BE HERE -- bad protocol file read";
+            return false;
         }
     }
 }
@@ -1793,12 +1803,16 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 {
                     qDebug()<<"Trial# < 1";
                     p_CommonData->trialNo = 1;
-                    p_CommonData->recordFlag == true;
+                    p_CommonData->recordFlag = true;
 
                     //Read in protocol file and check if the read is successful
                     if (readExpStuffIn())
                     {
                         qDebug()<<"readExpStuffIn() SUCCESS -- Pre-Trials";
+                    }
+                    else
+                    {
+                        qDebug()<<"readExpStuffIn() return false -- why???";
                     }
 
                     //GUI Stuff for each trial type transitioning from pre-trial to trial 1
@@ -2011,6 +2025,11 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                         {
                             qDebug()<<"successful read -- back from break";
                         }
+                        else
+                        {
+                            qDebug()<<"FAILED READ";
+                        }
+
                         if (p_CommonData->TrialType == "training")
                         {
                             QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
@@ -2068,10 +2087,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 mappingText.append("</P></br>");
                 ui->mappingTextBox->setText(mappingText);
             }
-
         }
-
-
     }
 
     if(a_event->key() == Qt::Key_Y)
@@ -2135,7 +2151,6 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
         }
     }
     //assuming this is switching between states without progressing trial
-
 
     double angle = 10.0;
     if (a_event->key() == Qt::Key_Z)
