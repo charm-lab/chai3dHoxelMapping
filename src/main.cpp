@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
     chai3DWindow.p_CommonData = &shared;
     chai3DWindow.Initialize();
     //chai3DWindow.show();
-    //chai3DWindow.showMaximized();
-    chai3DWindow.showFullScreen();
+    chai3DWindow.showMaximized();
+    //chai3DWindow.showFullScreen();
     qDebug()<<"CHAI3D Window Initialized";
 
     hapticsThread.start();

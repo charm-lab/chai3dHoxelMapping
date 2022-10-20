@@ -5,8 +5,6 @@ import pwmio
 from digitalio import DigitalInOut, Direction
 import supervisor
 from analogio import AnalogIn
-# importing required libraries
-import math
 
 # Define Pump
 pres_0 = AnalogIn(board.A0)
@@ -56,18 +54,20 @@ t2 = 0
 time_error = 0.05
 
 # Define range of pump speeds
-min_pump_speed = 30  # a
+min_pump_speed = 10  # a
 max_pump_speed = 100  # b
 
 # Set initial values
-min_stroke = 0.0  # min
-max_stroke = 12.5  # max
-X0_prev = min_stroke
-Y0_prev = min_stroke
-Z0_prev = min_stroke
-X1_prev = min_stroke
-Y1_prev = min_stroke
-Z1_prev = min_stroke
+min_force = 0.1  # min
+max_force = 150.0  # max
+X0_prev = min_force
+Y0_prev = min_force
+Z0_prev = min_force
+magF0_prev = 0.0
+X1_prev = min_force
+Y1_prev = min_force
+Z1_prev = min_force
+magF1_prev = 0.0
 
 pwm_pump0 = pwmio.PWMOut(board.D8, frequency=8000, duty_cycle=0)  # Big pump
 pwm_pump1 = pwmio.PWMOut(board.D13, frequency=8000, duty_cycle=0)  # Baby pump
@@ -81,13 +81,23 @@ def get_pressure(V):
 def duty2bits(duty):
     return int(duty * 65535 / 100)
 
-# calculate pump speed depending on commanded stroke
-def get_pump_Speed(stroke):
-    a = min_pump_speed
-    b = max_pump_speed
-    minVal = min_stroke
-    maxVal = max_stroke
-    return ((b-a)*(stroke-minVal) / (maxVal-minVal)) + a
+# calculate pump speed depending on commanded force
+def get_pump_Speed(force):
+    # a = min_pump_speed
+    # b = max_pump_speed
+    # minVal = 0  # min_force
+    # maxVal = 20  # max_force
+    # return ((b-a)*(force-minVal) / (maxVal-minVal)) + a
+
+    # pump_speed cannot exceed 100
+    force = 9.0*force
+    if force >= max_pump_speed:
+        pump_Speed = max_pump_speed
+    else:
+        pump_Speed = force
+
+    return pump_Speed
+
 
 def all_off():
     valve1.value = False
@@ -119,48 +129,6 @@ def Z0_axis_neg(pump_val):
     valve3.value = True
     valve4.value = True
 
-def X0_axis_pos(pump_val):
-    pwm_pump0.duty_cycle = duty2bits(pump_val)
-    valve1.value = True
-    valve2.value = True
-    valve3.value = False
-    valve4.value = False
-
-def X0_axis_neg(pump_val):
-    pwm_pump0.duty_cycle = duty2bits(pump_val)
-    valve1.value = False
-    valve2.value = False
-    valve3.value = True
-    valve4.value = True
-
-def Y0_axis_pos(pump_val):
-    pwm_pump0.duty_cycle = duty2bits(pump_val)
-    valve1.value = True
-    valve2.value = False
-    valve3.value = False
-    valve4.value = True
-
-def Y0_axis_neg(pump_val):
-    pwm_pump0.duty_cycle = duty2bits(pump_val)
-    valve1.value = False
-    valve2.value = True
-    valve3.value = True
-    valve4.value = False
-
-def Twist0_pos(pump_val):
-    pwm_pump0.duty_cycle = duty2bits(pump_val)
-    valve1.value = True
-    valve2.value = False
-    valve3.value = True
-    valve4.value = False
-
-def Twist0_neg(pump_val):
-    pwm_pump0.duty_cycle = duty2bits(pump_val)
-    valve1.value = False
-    valve2.value = True
-    valve3.value = False
-    valve4.value = True
-
 # ------ Hoxel 1 ------
 
 def Z1_axis_pos(pump_val):
@@ -177,51 +145,9 @@ def Z1_axis_neg(pump_val):
     valve7.value = True
     valve8.value = True
 
-def X1_axis_pos(pump_val):
-    pwm_pump1.duty_cycle = duty2bits(pump_val)
-    valve5.value = True
-    valve6.value = True
-    valve7.value = False
-    valve8.value = False
-
-def X1_axis_neg(pump_val):
-    pwm_pump1.duty_cycle = duty2bits(pump_val)
-    valve5.value = False
-    valve6.value = False
-    valve7.value = True
-    valve8.value = True
-
-def Y1_axis_pos(pump_val):
-    pwm_pump1.duty_cycle = duty2bits(pump_val)
-    valve5.value = True
-    valve6.value = False
-    valve7.value = False
-    valve8.value = True
-
-def Y1_axis_neg(pump_val):
-    pwm_pump1.duty_cycle = duty2bits(pump_val)
-    valve5.value = False
-    valve6.value = True
-    valve7.value = True
-    valve8.value = False
-
-def Twist1_pos():
-    pwm_pump1.duty_cycle = duty2bits(pump_val)
-    valve5.value = True
-    valve6.value = False
-    valve7.value = True
-    valve8.value = False
-
-def Twist1_neg():
-    pwm_pump1.duty_cycle = duty2bits(pump_val)
-    valve5.value = False
-    valve6.value = True
-    valve7.value = False
-    valve8.value = True
-
 # Turn off Hoxel0
 def hoxel0Off():
-    pwm_pump0.duty_cycle = duty2bits(min_pump_speed)
+    pwm_pump0.duty_cycle = duty2bits(0)  # duty2bits(min_pump_speed)
     valve1.value = False
     valve2.value = False
     valve3.value = False
@@ -230,35 +156,35 @@ def hoxel0Off():
 
 # Turn off Hoxel1
 def hoxel1Off():
-    pwm_pump1.duty_cycle = duty2bits(min_pump_speed)
+    pwm_pump1.duty_cycle = duty2bits(0)  # duty2bits(min_pump_speed)
     valve5.value = False
     valve6.value = False
     valve7.value = False
     valve8.value = False
     valve1c.value = False
 
-def moveHoxel0(X0, X0_prev, Y0, Y0_prev, Z0, Z0_prev):
+def moveHoxel0(current_val0, prev_val0):
     # if extending, use positive axes| if contracting, use negative axes
-    if Z0 <= min_stroke:
+    if current_val0 <= min_force:
         hoxel0Off()
-    elif Z0 >= max_stroke:
-        Z0_axis_pos(get_pump_Speed(max_stroke))
-    elif Z0 >= Z0_prev:
-        Z0_axis_pos(get_pump_Speed(Z0))
-    elif Z0 < Z0_prev:
-        Z0_axis_neg(get_pump_Speed(Z0))
+    elif current_val0 >= prev_val0:
+        Z0_axis_pos(get_pump_Speed(current_val0))
+    elif current_val0 < prev_val0:
+        Z0_axis_neg(get_pump_Speed(current_val0))
+    elif current_val0 >= max_force:
+        Z0_axis_pos(get_pump_Speed(max_force))
 
 
-def moveHoxel1(X1, X1_prev, Y1, Y1_prev, Z1, Z1_prev):
+def moveHoxel1(current_val1, prev_val1):
     # if extending, use positive axes | if contracting, use negative axes
-    if Z1 <= min_stroke:
+    if current_val1 <= min_force:
         hoxel1Off()
-    elif Z1 >= max_stroke:
-        Z1_axis_pos(get_pump_Speed(max_stroke))
-    elif Z1 >= Z1_prev:
-        Z1_axis_pos(get_pump_Speed(Z1))
-    elif Z1 < Z1_prev:
-        Z1_axis_neg(get_pump_Speed(Z1))
+    elif current_val1 >= prev_val1:
+        Z1_axis_pos(get_pump_Speed(current_val1))
+    elif current_val1 < prev_val1:
+        Z1_axis_neg(get_pump_Speed(current_val1))
+    elif current_val1 >= max_force:
+        Z1_axis_pos(get_pump_Speed(max_force))
 
 
 # Everything off
@@ -290,28 +216,36 @@ while True:
         X0 = float(data_list[0])
         Y0 = float(data_list[1])
         Z0 = float(data_list[2])
-        X1 = float(data_list[3])
-        Y1 = float(data_list[4])
-        Z1 = float(data_list[5])
+        magF0 = float(data_list[3])
+        X1 = float(data_list[4])
+        Y1 = float(data_list[5])
+        Z1 = float(data_list[6])
+        magF1 = float(data_list[7])
 
         # Change Z0 and Z1 depending on rendering choice
         if renderChoice == 1:
-            Z0 = math.sqrt(X0*X0 + Y0*Y0 + Z0*Z0)
-            Z1 = math.sqrt(X1*X1 + Y1*Y1 + Z1*Z1)
+            current_val0 = magF0
+            current_val1 = magF1
+            prev_val0 = magF0_prev
+            prev_val1 = magF1_prev
         else:
-            Z0 = Z0
-            Z1 = Z1
+            current_val0 = Z0
+            current_val1 = Z1
+            prev_val0 = Z0_prev
+            prev_val1 = Z1_prev
 
         # Hoxel 0:
-        moveHoxel0(X0, X0_prev, Y0, Y0_prev, Z0, Z0_prev)
+        moveHoxel0(current_val0, prev_val0)
         # Hoxel 1:
-        moveHoxel1(X1, X1_prev, Y1, Y1_prev, Z1, Z1_prev)
+        moveHoxel1(current_val1, prev_val1)
 
         # Set prev values for each device direction
         X0_prev = X0
         Y0_prev = Y0
         Z0_prev = Z0
+        magF0_prev = magF0
         X1_prev = X1
         Y1_prev = Y1
         Z1_prev = Z1
+        magF1_prev = magF1
         time.sleep(0.01)

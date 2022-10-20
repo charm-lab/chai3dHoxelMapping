@@ -186,7 +186,7 @@ void MainWindow::writeSerialData()
         dev1Mag = QString::number(localForce1.norm(), 'f', 1);
     }
     //Reverse Mapping
-    else if(p_CommonData->mapping == 2)
+    if(p_CommonData->mapping == 2)
     {
         //Set Device Desired Forces:
         //Dorsal - thumb desired forces:
@@ -216,47 +216,51 @@ void MainWindow::writeSerialData()
         device1X = QString::number(0.0); //localForce1[0] //X
         device1Y = QString::number(0.0); //localForce1[1] //Y
         device1Z = QString::number(0.0); //localForce1[2] //Z
-        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+        dev1Mag = QString::number(0.0, 'f', 1);
     }
     //Averaged
     if(p_CommonData->mapping == 4)
     {
         //Set Device Desired Forces:
         //Dorsal - index desired forces:
-        device0X = QString::number(0.5*(localForce0[0] + localForce0[0]), 'f', 1); //localForce0[0] //X
-        device0Y = QString::number(0.5*(localForce0[1] + localForce0[1]), 'f', 1); //localForce0[1] //Y
-        device0Z = QString::number(0.5*(localForce0[2] + localForce0[2]), 'f', 1); //localForce0[2] //Z
-        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        device0X = QString::number(0.5*(localForce0[0] + localForce1[0]), 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(0.5*(localForce0[1] + localForce1[1]), 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(0.5*(localForce0[2] + localForce1[2]), 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(0.5*(localForce0.norm() + localForce1.norm()), 'f', 1);
         //Ventral - thumb desired forces:
         device1X = QString::number(0.0); //localForce1[0] //X
         device1Y = QString::number(0.0); //localForce1[1] //Y
         device1Z = QString::number(0.0); //localForce1[2] //Z
-        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+        dev1Mag = QString::number(0.0, 'f', 1);
     }
     //Control - No Haptic Feedback
-    else if(p_CommonData->mapping == 5)
+    if(p_CommonData->mapping == 5)
     {
         //Set Device Desired Forces:
         //Dorsal - index desired forces:
         device0X = QString::number(0.0); //localForce0[0] //X
         device0Y = QString::number(0.0); //localForce0[1] //Y
         device0Z = QString::number(0.0); //localForce0[2] //Z
-        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        dev0Mag = QString::number(0.0, 'f', 1);
         //Ventral - thumb desired forces:
         device1X = QString::number(0.0); //localForce1[0] //X
         device1Y = QString::number(0.0); //localForce1[1] //Y
         device1Z = QString::number(0.0); //localForce1[2] //Z
-        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+        dev1Mag = QString::number(0.0, 'f', 1);
+    }
+    else
+    {
+
     }
 
-    QString forceData = device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n";
+    QString forceData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
 
     payloadBuffer = payloadBuffer.append(forceData);
     //Dispay in GUI:
     ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "\r\nMag: " + dev0Mag); //device 0//device 0 _prev
     ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "\r\nMag: " + dev1Mag);//device 1 //device 1_prev
 
-    //qDebug() << payloadBuffer << " " << serial->isWritable();
+    qDebug() << payloadBuffer << " " << serial->isWritable();
 
     //qDebug() << p_CommonData->mapping;
 
@@ -1783,7 +1787,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
                 //mappingText.append("</P></br>");
                 //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
-                mappingText.append(getMappingText(p_CommonData->mapping));
+                //mappingText.append(getMappingText(p_CommonData->mapping));
+                mappingText.append(QString::number(p_CommonData->mapping));
                 mappingText.append("</P></br>");
                 ui->mappingTextBox->setText(mappingText);
             }
@@ -2083,7 +2088,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
                 //mappingText.append("</P></br>");
                 //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
-                mappingText.append(getMappingText(p_CommonData->mapping));
+                //mappingText.append(getMappingText(p_CommonData->mapping));
+                mappingText.append(QString::number(p_CommonData->mapping));
                 mappingText.append("</P></br>");
                 ui->mappingTextBox->setText(mappingText);
             }
