@@ -723,6 +723,10 @@ typedef struct
     bool hoopSuccess;
     bool targetSuccess;
     bool trialSuccess;
+
+    //Counter for number of times the user presses "H" prematurely
+    int mistakeCounter;
+
 } shared_data;
 
 #endif // SHARED_DATA_H

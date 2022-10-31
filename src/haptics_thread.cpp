@@ -2543,6 +2543,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     //p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop1);
     //p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop2);
 
+    p_CommonData->mistakeCounter = 0;
     qDebug()<<"Finished HME Setup";
 }
 

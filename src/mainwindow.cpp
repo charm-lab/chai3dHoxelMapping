@@ -1136,6 +1136,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
     //progressing to next trial
     if(a_event->key() == Qt::Key_H)
     {
+        bool mistake;
         qDebug()<<"H Key pressed -- progressing to next trial/state";
 
         //p_CommonData->hoopSuccess = 0;
@@ -1149,11 +1150,11 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 if(p_CommonData->trialNo<1)
                 {
                     p_CommonData->trialNo = 1;
-                    p_CommonData->recordFlag==true;
+                    p_CommonData->recordFlag = true;
                 }
 
                 else {
-                    if(p_CommonData->recordFlag==true){
+                    if(p_CommonData->recordFlag == true){
                         p_CommonData->dataRecordMutex.lock();
                         localDataRecorderVector = p_CommonData->dataRecorderVector;
                         p_CommonData->dataRecorderVector.clear();
@@ -1162,7 +1163,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                         p_CommonData->recordFlag=false;
                     }
 
-                    if(p_CommonData->TrialType=="training" || p_CommonData->TrialType=="testing")
+                    if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
                     {
                         if(p_CommonData->target1Responded == true)
                         {
@@ -1185,7 +1186,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 p_CommonData->environmentChange = true;
                 QThread::msleep(200);
 
-                if(p_CommonData->recordFlag==true){
+                if(p_CommonData->recordFlag == true){
                     p_CommonData->dataRecordMutex.lock();
                     localDataRecorderVector = p_CommonData->dataRecorderVector;
                     p_CommonData->dataRecorderVector.clear();
@@ -1240,7 +1241,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
         if (p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
         {
-            bool mistake = false;
+            //mistake boolean for incase the user presses "H" prematurely
+            mistake = false;
             p_CommonData->flagMassExp = true;
 
             qDebug("advance StiffnessMassExperiment");
@@ -1505,7 +1507,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
         if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
         {
-            bool mistake = false;
+            //mistake boolean for incase the user presses "H" prematurely
+            mistake = false;
             p_CommonData->flagMassExp = false;
 
             qDebug("advance FingerMappingExp");
@@ -1514,9 +1517,9 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 //PRE-TRIAL******
                 if(p_CommonData->trialNo < 1)
                 {
-                    qDebug()<<"Trial# < 1";
+                    qDebug()<< "Trial# < 1";
                     p_CommonData->trialNo = 1;
-                    p_CommonData->recordFlag == true;
+                    p_CommonData->recordFlag = true;
 
                     //Read in protocol file and check if the read is successful
                     if (readExpStuffIn())
@@ -1574,7 +1577,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                     }
                     p_CommonData->environmentChange = true;
 
-                    qDebug()<<"Recorded Pre-Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                    qDebug()<<"Progress to FME Pre-Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                 }
                 //ACTUAL TRIAL*******************************
                 else
@@ -1591,7 +1594,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                     }
 
                     //if in training or testing trials
-                    if(p_CommonData->TrialType=="training" || p_CommonData->TrialType=="testing")
+                    if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
                     {
                         //If cube passed hoop and target, advance trial
                         if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
@@ -1652,7 +1655,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 ui->text->setText(labelText);
                                 qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
                             }
-                            qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                            qDebug()<<"Progress to FME Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                             p_CommonData->environmentChange = true;
 
 
@@ -1673,6 +1676,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 labelText.append("</b></P></br>");
                                 ui->text->setText(labelText);
                                 mistake = true;
+                                p_CommonData->mistakeCounter++;
                                 //qDebug()<<"___"<<p_CommonData->trialNo;
 
                                 //p_CommonData->targetSuccess = 1;
@@ -1694,6 +1698,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                     labelText1.append("</b></P></br>");
                                     ui->text->setText(labelText1);
                                     mistake = true;
+                                    p_CommonData->mistakeCounter++;
                                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
                                     //p_CommonData->hoopSuccess = 1;
@@ -1712,14 +1717,13 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                     labelText1.append("</b></P></br>");
                                     ui->text->setText(labelText1);
                                     mistake = true;
+                                    p_CommonData->mistakeCounter++;
                                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
                                     //p_CommonData->hoopSuccess = 0;
                                 }
-
                                 //p_CommonData->targetSuccess = 0;
                             }
-
                             //p_CommonData->trialSuccess = 0;
                         }
                     }
@@ -1773,7 +1777,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                             ui->text->setText(labelText);
                             //qDebug()<<"___"<<p_CommonData->trialNo;
                         }
-                        qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                        qDebug()<<"Progress to Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                         p_CommonData->environmentChange = true;
                     }
                 }
@@ -1792,12 +1796,12 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 mappingText.append("</P></br>");
                 ui->mappingTextBox->setText(mappingText);
             }
-
         }
 
         else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
-            bool mistake = false;
+            //mistake boolean for incase the user presses "H" prematurely
+            mistake = false;
             p_CommonData->flagMassExp = false;
 
             qDebug("advance HoxelMappingExp");
@@ -1870,7 +1874,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                     }
                     p_CommonData->environmentChange = true;
 
-                    qDebug()<<"Recorded Pre-Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                    qDebug()<<"Progress to HME Pre-Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                 }
                 //ACTUAL TRIAL*******************************
                 else
@@ -1887,7 +1891,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                     }
 
                     //if in training or testing trials
-                    if(p_CommonData->TrialType=="training" || p_CommonData->TrialType=="testing")
+                    if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
                     {
                         //If cube passed hoop and target, advance trial
                         if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
@@ -1948,7 +1952,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 ui->text->setText(labelText);
                                 qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
                             }
-                            qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                            qDebug()<<"Progressed to HME Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                             p_CommonData->environmentChange = true;
 
 
@@ -1969,6 +1973,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                 labelText.append("</b></P></br>");
                                 ui->text->setText(labelText);
                                 mistake = true;
+                                p_CommonData->mistakeCounter++;
                                 //qDebug()<<"___"<<p_CommonData->trialNo;
 
                                 //p_CommonData->targetSuccess = 1;
@@ -1989,7 +1994,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                                       "Place it in the target area");
                                     labelText1.append("</b></P></br>");
                                     ui->text->setText(labelText1);
-                                    mistake = true;
+                                    mistake = true;                                    
+                                    p_CommonData->mistakeCounter++;
                                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
                                     //p_CommonData->hoopSuccess = 1;
@@ -2007,7 +2013,8 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                                       "Place it in the target area");
                                     labelText1.append("</b></P></br>");
                                     ui->text->setText(labelText1);
-                                    mistake = true;
+                                    mistake = true;                                    
+                                    p_CommonData->mistakeCounter++;
                                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
                                     //p_CommonData->hoopSuccess = 0;
@@ -2074,7 +2081,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                             ui->text->setText(labelText);
                             //qDebug()<<"___"<<p_CommonData->trialNo;
                         }
-                        qDebug()<<"Recorded Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                        qDebug()<<"Progressed to Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                         p_CommonData->environmentChange = true;
                     }
                 }
@@ -2093,7 +2100,9 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 mappingText.append("</P></br>");
                 ui->mappingTextBox->setText(mappingText);
             }
+
         }
+        qDebug() << "mistake -- " << mistake << " -- numMistakes:" << p_CommonData->mistakeCounter;
     }
 
     if(a_event->key() == Qt::Key_Y)
@@ -2268,7 +2277,7 @@ void MainWindow::WriteDataToFile()
         //Open file to write data:
         file.open(directory.toStdString() + "/" + trialName.toStdString() + trialMode.toStdString() + trialBuffer + "trialRun.csv");
     }
-    //File names for Jasmin's Experiments
+    //File names for Jasmin's FME Experiments
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         //Sort data by trialName
@@ -2280,23 +2289,49 @@ void MainWindow::WriteDataToFile()
         if (p_CommonData->trialNo < 10)
         {
             //Open file to write data:
+            //if no mistakes due to premature presses of H:
+            if(p_CommonData->mistakeCounter == 0)
+            {
             file.open(directory.toStdString()
                       +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
                       + "_Trial0" + trialNum.toStdString()
                       + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
                       + ".csv");
+            }
+            else //append mistakes number so that files can be combined in post-processing
+            {
+                file.open(directory.toStdString()
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial0" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + "-MISTAKE-NUM-" + QString::number(p_CommonData->mistakeCounter).toStdString()
+                          + ".csv");
+            }
         }
         else
         {
             //Open file to write data:
-            file.open(directory.toStdString()
+            //if no mistakes due to premature presses of H:
+            if(p_CommonData->mistakeCounter == 0)
+            {
+                file.open(directory.toStdString()
                       +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
                       + "_Trial" + trialNum.toStdString()
                       + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
                       + ".csv");
+            }
+            else //append mistakes number so that files can be combined in post-processing
+            {
+                file.open(directory.toStdString()
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + "-MISTAKE-NUM-" + QString::number(p_CommonData->mistakeCounter).toStdString()
+                          + ".csv");
+            }
         }
     }
-    //File names for Jasmin's Experiments
+    //File names for Jasmin's HME Experiments
     else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //Sort data by trialName
@@ -2308,20 +2343,46 @@ void MainWindow::WriteDataToFile()
         if (p_CommonData->trialNo < 10)
         {
             //Open file to write data:
+            //if no mistakes due to premature presses of H:
+            if(p_CommonData->mistakeCounter == 0)
+            {
             file.open(directory.toStdString()
                       +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
                       + "_Trial0" + trialNum.toStdString()
                       + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
                       + ".csv");
+            }
+            else //append mistakes number so that files can be combined in post-processing
+            {
+                file.open(directory.toStdString()
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial0" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + "-MISTAKE-NUM-" + QString::number(p_CommonData->mistakeCounter).toStdString()
+                          + ".csv");
+            }
         }
         else
         {
             //Open file to write data:
-            file.open(directory.toStdString()
+            //if no mistakes due to premature presses of H:
+            if(p_CommonData->mistakeCounter == 0)
+            {
+                file.open(directory.toStdString()
                       +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
                       + "_Trial" + trialNum.toStdString()
                       + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
                       + ".csv");
+            }
+            else //append mistakes number so that files can be combined in post-processing
+            {
+                file.open(directory.toStdString()
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + "-MISTAKE-NUM-" + QString::number(p_CommonData->mistakeCounter).toStdString()
+                          + ".csv");
+            }
         }
     }
 
@@ -2413,7 +2474,7 @@ void MainWindow::WriteDataToFile()
                //box global rotation Matrix
             << "boxGlobalRot_11" << "," << " "
             << "boxGlobalRot_12" << "," << " "
-            << "boxGlobalRot_13]" << "," << " "
+            << "boxGlobalRot_13" << "," << " "
             << "boxGlobalRot_21" << "," << " "
             << "boxGlobalRot_22" << "," << " "
             << "boxGlobalRot_23" << "," << " "
