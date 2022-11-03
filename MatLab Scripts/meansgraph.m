@@ -50,6 +50,7 @@ x = [0.5 n+0.5];
 x = [x NaN x];
 y = [repmat(glower(1),1,2) NaN repmat(gupper(1),1,2)];
 % clf
+disp("RUNNING MODDED MEANSGRAPH~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 plot(y,x,':', 'UserData','Comparison lines', 'Color',repmat(0.8,1,3));
 if ~iscontrol
     title(getString(message('stats:meansgraph:ClickGroup')), 'fontweight','bold');

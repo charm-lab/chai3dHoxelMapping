@@ -498,7 +498,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Data
 close all;
-saveFigures = false;
+saveFigures = true;
 %Old color scheme:
 visCubeColor = "[0 0 0]";
 invisCubeColor = "[0.5 0.5 0.5]";
@@ -520,7 +520,7 @@ markerSize = 20; %variable used in createErrorBarPlot
 close all;
 figure(1);
 markerSize = 15;
-minY = -10; maxY = 40;
+minY = -2; maxY =5;
 visCubeColor = evalin('base','boxVisColor');
 invisCubeColor = evalin('base','boxInvisColor');
 [h1,visCompletionTime, visCompletionTimeStdVals] = ...
@@ -544,7 +544,7 @@ figure(2);
 subplot(1,3,1)
 markerSize = 12;
 jitterVal = 0.14;
-minY = -1; maxY = 5;
+minY = -0.1; maxY = 1.4;
 [h3, visIndexPathLength, visIndexPathLengthStdVals] = ...
     createErrorBarPlot(indexPathLengthMapping1, indexPathLengthMapping2,...
     indexPathLengthMapping3, indexPathLengthMapping4, indexPathLengthMapping5,...
@@ -591,7 +591,7 @@ figure(3);
 subplot(1,2,1)
 markerSize = 10;
 plotMarker = "d";
-minY = 0; maxY = 35;
+minY = 0; maxY = 55;
 [h9, visIndexNormalMean, visIndexNormalMeanStdVals] = ...
     createErrorBarPlot(meanIndexNormalForceMapping1, meanIndexNormalForceMapping2,...
     meanIndexNormalForceMapping3, meanIndexNormalForceMapping4, meanIndexNormalForceMapping5,...
