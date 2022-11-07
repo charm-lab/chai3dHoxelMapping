@@ -51,7 +51,7 @@
 
 //#define EXPERIMENTSTIFFNESS 175
 #define EXPERIMENTFRICTION 2.25
-#define VIBRATE_TIME .3
+#define VIBRATE_TIME 0.3
 // define the data structure that holds recorded data
 typedef struct
 {

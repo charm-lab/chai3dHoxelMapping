@@ -479,6 +479,20 @@ void MainWindow::Initialize()
     p_CommonData->device1Initing = false;
     p_CommonData->resetBoxPosFlag = false;
 
+    //Initialize Camera:
+    //ui->cameraPos_BoxX->setValue(p_CommonData->cameraPos.get(0));
+    ui->cameraPos_BoxY->setValue(p_CommonData->cameraPos.get(1));
+    ui->cameraPos_BoxZ->setValue(p_CommonData->cameraPos.get(2));
+    ui->cameraOffset_Box->setValue(p_CommonData->offset);
+    ui->cameraPolar_Box->setValue(p_CommonData->polar);
+    ui->cameraRadius_Box->setValue(p_CommonData->camRadius);
+    ui->cameraAzimuth_Box->setValue(p_CommonData->azimuth);
+    // Save initial camera values for reset
+    initOffset= p_CommonData->offset;
+    initPolar = p_CommonData->polar;
+    initCamRadius = p_CommonData->camRadius;
+    initAzimuth = p_CommonData->azimuth;
+
 
 #ifdef QWT
     ///////////////
@@ -646,6 +660,35 @@ void MainWindow::UpdateGUIInfo()
 
     p_CommonData->subjectNo = ui->subject_no->value();
     p_CommonData->AdjustedTrialNo = ui->SetTrialNo->value();
+
+    //if Locked Camera is unchecked, allow adjustments:
+    if(!ui->lockCameraBox->isChecked())
+    {
+        ui->cameraOffset_Box->setEnabled(true);
+        ui->cameraPos_BoxY->setEnabled(true);
+        ui->cameraPos_BoxZ->setEnabled(true);
+        ui->cameraPolar_Box->setEnabled(true);
+        ui->cameraRadius_Box->setEnabled(true);
+        ui->cameraAzimuth_Box->setEnabled(true);
+
+        //Set the new values to change the camera
+        //        p_CommonData->cameraPos.set(ui->cameraPos_BoxX->value(),
+        //                                    ui->cameraPos_BoxY->value(),
+        //                                    ui->cameraPos_BoxZ->value());
+        p_CommonData->offset = ui->cameraOffset_Box->value();
+        p_CommonData->polar = ui->cameraPolar_Box->value();
+        p_CommonData->camRadius = ui->cameraRadius_Box->value();
+        p_CommonData->azimuth = ui->cameraAzimuth_Box->value();
+    }
+    else //disable boxes to lock camera
+    {
+        ui->cameraOffset_Box->setEnabled(false);
+        ui->cameraPos_BoxY->setEnabled(false);
+        ui->cameraPos_BoxZ->setEnabled(false);
+        ui->cameraPolar_Box->setEnabled(false);
+        ui->cameraRadius_Box->setEnabled(false);
+        ui->cameraAzimuth_Box->setEnabled(false);
+    }
 
     //calibrate if startup process over
     if(p_CommonData->calibClock.timeoutOccurred())
@@ -1115,24 +1158,78 @@ QString getMappingText(int mappingVal)
 
 void MainWindow::keyPressEvent(QKeyEvent *a_event)
 {
+    /***Environment Adjustment Buttons***/
+    double degInc = 5.0;
+    double radInc = 0.05;
+    //Hide/Show finger interaction forces
     if (a_event->key() == Qt::Key_Y)
     {
         p_CommonData->show_forces = !p_CommonData->show_forces;
     }
+    //Hide/Show finger reference frames
     if (a_event->key() == Qt::Key_F)
     {
         p_CommonData->showCursorFrames = !p_CommonData->showCursorFrames;
     }
-    if (a_event->key() == Qt::Key_I)
+    //Update GUI Info Manually
+    if(a_event->key() == Qt::Key_Y)
     {
-        p_CommonData->camRadius = p_CommonData->camRadius - 0.05;
+        UpdateGUIInfo();
     }
-    if (a_event->key() == Qt::Key_O)
+    //rotate camera + (Downwards)
+    if (a_event->key() == Qt::Key_W)
     {
-        p_CommonData->camRadius = p_CommonData->camRadius + 0.05;
+        p_CommonData->polar = p_CommonData->polar + degInc;
+        qDebug() << "pol" << p_CommonData->polar;
+    }
+    // rotate camera - (Upwards)
+    if (a_event->key() == Qt::Key_S)
+    {
+        p_CommonData->polar = p_CommonData->polar - degInc;
+        qDebug() << "pol" << p_CommonData->polar;
+    }
+    //rotate camera z-axis + (CCW)
+    if (a_event->key() == Qt::Key_A)
+    {
+        p_CommonData->azimuth = p_CommonData->azimuth + degInc;
+        qDebug() << "azim" << p_CommonData->azimuth;
+    }
+    //rotate camera z-axis - (CW)
+    if (a_event->key() == Qt::Key_D)
+    {
+        p_CommonData->azimuth = p_CommonData->azimuth - degInc;
+        qDebug() << "azim" << p_CommonData->azimuth;
+    }
+    //Zoom camera in
+    if (a_event->key() == Qt::Key_C)
+    {
+        p_CommonData->camRadius = p_CommonData->camRadius - radInc;
+        qDebug() << "camRadius" << p_CommonData->camRadius;
+    }
+    //Zoom camera out
+    if (a_event->key() == Qt::Key_V)
+    {
+        p_CommonData->camRadius = p_CommonData->camRadius + radInc;
+        qDebug() << "camRadius" << p_CommonData->camRadius;
+    }
+    //Stop Recording Data
+    if (a_event->key() == Qt::Key_G)
+    {
+        qDebug()<<"Stopped Recording";
+        if(p_CommonData->recordFlag == true)
+        {
+            p_CommonData->dataRecordMutex.lock();
+            localDataRecorderVector = p_CommonData->dataRecorderVector;
+            p_CommonData->dataRecorderVector.clear();
+            p_CommonData->dataRecordMutex.unlock();
+            WriteDataToFile();
+            p_CommonData->recordFlag = false;
+        }
+        //assuming this is switching between states without progressing trial
     }
 
-    /***Vt Experiment Buttons***/
+    /***Pick-and-Place Trial Progression Buttons***/
+    /***For FME, HME, & Stiffness-Mass and Mass Discrimination***/
     //progressing to next trial
     if(a_event->key() == Qt::Key_H)
     {
@@ -1994,7 +2091,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                                       "Place it in the target area");
                                     labelText1.append("</b></P></br>");
                                     ui->text->setText(labelText1);
-                                    mistake = true;                                    
+                                    mistake = true;
                                     p_CommonData->mistakeCounter++;
                                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
@@ -2013,7 +2110,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                                                       "Place it in the target area");
                                     labelText1.append("</b></P></br>");
                                     ui->text->setText(labelText1);
-                                    mistake = true;                                    
+                                    mistake = true;
                                     p_CommonData->mistakeCounter++;
                                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
@@ -2105,10 +2202,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
         qDebug() << "mistake -- " << mistake << " -- numMistakes:" << p_CommonData->mistakeCounter;
     }
 
-    if(a_event->key() == Qt::Key_Y)
-    {
-        UpdateGUIInfo();
-    }
+    /***Stiffness-Mass and Mass Discrimination Buttons***/
     // choosing box1
     if(a_event->key() == Qt::Key_J)
     {
@@ -2122,57 +2216,15 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
         p_CommonData->answer2 = true;
     }
 
-    double degInc = 5.0;
-    double radInc = 0.05;
-    if (a_event->key() == Qt::Key_W)
-    {
-        p_CommonData->polar = p_CommonData->polar + degInc;
-        qDebug() << "pol" << p_CommonData->polar;
-    }
-    if (a_event->key() == Qt::Key_S)
-    {
-        p_CommonData->polar = p_CommonData->polar - degInc;
-        qDebug() << "pol" << p_CommonData->polar;
-    }
-    if (a_event->key() == Qt::Key_A)
-    {
-        p_CommonData->azimuth = p_CommonData->azimuth + degInc;
-        qDebug() << "azim" << p_CommonData->azimuth;
-    }
-    if (a_event->key() == Qt::Key_D)
-    {
-        p_CommonData->azimuth = p_CommonData->azimuth - degInc;
-        qDebug() << "azim" << p_CommonData->azimuth;
-    }
-    if (a_event->key() == Qt::Key_C)
-    {
-        p_CommonData->camRadius = p_CommonData->camRadius - radInc;
-    }
-    if (a_event->key() == Qt::Key_V)
-    {
-        p_CommonData->camRadius = p_CommonData->camRadius + radInc;
-    }
-    if (a_event->key() == Qt::Key_G)
-    {
-        qDebug()<<"Stopped Recording";
-        if(p_CommonData->recordFlag == true)
-        {
-            p_CommonData->dataRecordMutex.lock();
-            localDataRecorderVector = p_CommonData->dataRecorderVector;
-            p_CommonData->dataRecorderVector.clear();
-            p_CommonData->dataRecordMutex.unlock();
-            WriteDataToFile();
-            p_CommonData->recordFlag = false;
-        }
-    }
-    //assuming this is switching between states without progressing trial
-
+    /***Tissue Study Buttons***/
     double angle = 10.0;
+    //Rotate Tissue - (CW)
     if (a_event->key() == Qt::Key_Z)
     {
         rotateTissueLineDisp(-angle);
         p_CommonData->p_indicator->setTransparencyLevel(1, true);
     }
+    //Rotate Tissue + (CCW)
     if (a_event->key() == Qt::Key_X)
     {
         rotateTissueLineDisp(angle);
@@ -2385,7 +2437,6 @@ void MainWindow::WriteDataToFile()
             }
         }
     }
-
 
     //write data to file when we are done
 
@@ -2967,4 +3018,12 @@ void MainWindow::on_Manual_clicked()
     ui->JakeRenderCheckBox->setChecked(false);
     onGUIchanged();
     qDebug()<<"Manual Button finished";
+}
+
+void MainWindow::on_resetCameraButton_clicked()
+{
+    ui->cameraOffset_Box->setValue(initOffset);
+    ui->cameraPolar_Box->setValue(initPolar);
+    ui->cameraRadius_Box->setValue(initCamRadius);
+    ui->cameraAzimuth_Box->setValue(initAzimuth);
 }

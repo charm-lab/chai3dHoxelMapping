@@ -144,7 +144,8 @@ void Vibrotactile_thread::run()
         A=p_CommonData->SDVibAmp/10; //V
         Omega=p_CommonData->SDVibFreq; //Hz
         Beta=-1*p_CommonData->SDVibBeta;
-        if (p_CommonData->playVib0 && p_CommonData->playingVib0 == false){ //play vibration
+        if (p_CommonData->playVib0 && p_CommonData->playingVib0 == false)
+        { //play vibration
             p_CommonData->playVib0=false;
             p_CommonData->playingVib0=true;
             StartTime0=p_CommonData->overallClock.getCurrentTimeSeconds();
@@ -157,7 +158,8 @@ void Vibrotactile_thread::run()
         }
         CurrentTime0=p_CommonData->overallClock.getCurrentTimeSeconds()-StartTime0;
 
-        if (p_CommonData->playVib1 && p_CommonData->playingVib1 == false){   //play vibration
+        if (p_CommonData->playVib1 && p_CommonData->playingVib1 == false)
+        {   //play vibration
             p_CommonData->playVib1=false;
             p_CommonData->playingVib1=true;
             StartTime1=p_CommonData->overallClock.getCurrentTimeSeconds();
@@ -166,66 +168,75 @@ void Vibrotactile_thread::run()
             A1=p_CommonData->Velocity1.length()*A;
             A1=A;
             maxx1=0;
-
         }
         CurrentTime1=p_CommonData->overallClock.getCurrentTimeSeconds()-StartTime1;
 
 
-        if (p_CommonData->playingVib0){   //playing vibration on 0
-            if (CurrentTime0>.1){ // .3 second
+        if (p_CommonData->playingVib0)
+        {   //playing vibration on 0
+            if (CurrentTime0>.1)
+            { // .3 second
                 p_CommonData->playingVib0=false;
                 //qDebug()<<"Vibration Done 0. Max: "<<maxx0;
 
             }
             VibOutPut0=A0*sin(2*pi*Omega*CurrentTime0)*exp(Beta*CurrentTime0)+A0/2;
 
-            if (p_CommonData->Decaying==false){
+            if (p_CommonData->Decaying==false)
+            {
                 out0=taps0[int(CurrentTime0*1000)]*1.8/200;
                 VibOutPut0=out0;
-
             }
-            if (maxx0<abs(VibOutPut0)){
+            if (maxx0<abs(VibOutPut0))
+            {
                 maxx0=abs(VibOutPut0);
             }
-
-
-
-        }else{
+        }
+        else
+        {
             VibOutPut0=0;
         }
 
-        if (p_CommonData->playingVib1){  //playing vibration on 1
-            if (CurrentTime1>.1){ // 1 second
+        if (p_CommonData->playingVib1)
+        {  //playing vibration on 1
+            if (CurrentTime1>0.1){ // 1 second
                 p_CommonData->playingVib1=false;
                  //qDebug()<<"Vibration Done 1. Max: "<<maxx1;
-
             }
             VibOutPut1=A1*sin(2*pi*Omega*CurrentTime1)*exp(Beta*CurrentTime1)+A1/2;
 
-            if (p_CommonData->Decaying==false){
+            if (p_CommonData->Decaying==false)
+            {
                 out1=taps1[int(CurrentTime1*1000)]*1.8/200;
                 VibOutPut1=out1;
             }
-            if (maxx1<abs(VibOutPut1)){
+            if (maxx1<abs(VibOutPut1))
+            {
                 maxx1=abs(VibOutPut1);
             }
-
-        }else{
+        }
+        else
+        {
             VibOutPut1=0;
         }
 
-        if (VibOutPut0>Vmax){
+        if (VibOutPut0>Vmax)
+        {
             VibOutPut0=Vmax;
-        }else if(VibOutPut0<Vmin){
+        }
+        else if(VibOutPut0<Vmin)
+        {
             VibOutPut0=Vmin;
         }
 
-    if (VibOutPut1>Vmax){
+    if (VibOutPut1>Vmax)
+    {
         VibOutPut1=Vmax;
-    }else if(VibOutPut1<Vmin){
+    }
+    else if(VibOutPut1<Vmin)
+    {
         VibOutPut1=Vmin;
     }
-
 
     uint setPoint0 = (VibOutPut0-Vmin)/(Vmax-Vmin) * MAXSETPNT_V;
     uint setPoint1 = (VibOutPut1-Vmin)/(Vmax-Vmin) * MAXSETPNT_V;
@@ -252,15 +263,19 @@ void Vibrotactile_thread::run()
 #ifdef VIBRATION
 
     //qDebug()<<"Choose signal to play\n";
-    while (false){
-        while (p_CommonData->playVib1){
+    while (false)
+    {
+        while (p_CommonData->playVib1)
+        {
             qDebug()<<"playing vib";
-            if (playText){
+            if (playText)
+            {
                 iMax = tLoop*SAMPLE_RATE;
                 mymatrix.HashAndInterp2(textNum, tangentSpeed, normForce, filtCoeff, filtMACoeff); // call when force and speed are updated, doesn't have to be called each loop; function definition in "AccSynthHashMatrix.cpp"
                 std::tie(coeffNum, MAcoeffNum, filtVariance, filtGain) = mymatrix.HashAndInterp2(textNum, tangentSpeed, normForce, filtCoeff, filtMACoeff); // call when force and speed are updated, doesn't have to be called each loop; function definition in "AccSynthHashMatrix.cpp"
             }
-            else{
+            else
+            {
                 qDebug()<<"playing vib";
                 iMax = 100;
                 taps1 = mytapmatrix.HashAndInterp2(textNum, tapSpeed); // interpolates entire 100 ms long tap; function in "TappingParameters.cpp"
@@ -285,10 +300,12 @@ void Vibrotactile_thread::run()
                 else
                     elapsedTime = elapsedTime + deltaT;
 
-                if (playText){
+                if (playText)
+                {
                     out1 = texGain*vibrations(coeffNum, MAcoeffNum, filtVariance, filtGain, filtCoeff, filtMACoeff, outputHist, excitationHist); // needs to be called in loop at 1000 Hz when user is touching the surface; then scale output and play to voicecoil
                 }
-                else{
+                else
+                {
                     out1 = taps1[iLoop] * 0.05;
                 }
                 //std::cout << out1 << std::endl;
@@ -305,9 +322,9 @@ void Vibrotactile_thread::run()
         elapsedTime = 0.0;
 
         //S826_DacDataWrite(board, channelNum, (uint)(DAC_VSCALAR), 0);
-
     }
-while (false){
+while (false)
+{
     // Program all analog outputs to zero volts.
     //S826_DacDataWrite(board, channelNum, (uint)(DAC_VSCALAR), 0);
 
@@ -334,42 +351,52 @@ double Vibrotactile_thread::vibrations(int coeffNum, int MAcoeffNum, double filt
         output = 0.0;
 
         //if the size of output history is less than the number of AR coefficients, append zeros
-        if(outputHist.size()<(unsigned int) MAX_COEFF) {
+        if(outputHist.size()<(unsigned int) MAX_COEFF)
+        {
             int subt = MAX_COEFF - outputHist.size();
-            for(int j = 0; j < subt ; j++) {
+            for(int j = 0; j < subt ; j++)
+            {
                 outputHist.push_back(0.0);
             }
         }
         //if the size of excitation history is less than the number of MA coefficients, append zeros
-        if(excitationHist.size()<(unsigned int) MAX_MACOEFF) {
+        if(excitationHist.size()<(unsigned int) MAX_MACOEFF)
+        {
             int subt = MAX_MACOEFF - excitationHist.size();
-            for(int j = 0; j < subt ; j++) {
+            for(int j = 0; j < subt ; j++)
+            {
                 excitationHist.push_back(0.0);
             }
         }
 
         //apply AR coefficients to history of output values
-        for(int i = 0; i < coeffNum; i++) {
+        for(int i = 0; i < coeffNum; i++)
+        {
             output += outputHist.at(i) * (-filtCoeff[i]);
         }
         //if applicable, also apply MA coefficients to history of excitation values
-        if(isARMA){
+        if(isARMA)
+        {
             output += excitation*filtGain;
-            for(int i = 0; i < MAcoeffNum; i++) {
+            for(int i = 0; i < MAcoeffNum; i++)
+            {
                 output += excitationHist.at(i) * (filtMACoeff[i])*filtGain;
             }
 
-            } else{
+            } else
+        {
             output += excitation;
         }
 
         //if the size of output history is greater than the number of AR coefficients, make the extra values zero so we're not storing junk
-        if(outputHist.size()>(unsigned int) coeffNum) {
+        if(outputHist.size()>(unsigned int) coeffNum)
+        {
             for(unsigned int kk = coeffNum; kk < outputHist.size(); kk++)
             outputHist.at(kk) = 0.0;
         }
         //if the size of excitation history is greater than the number of MA coefficients, make the extra values zero so we're not storing junk
-        if(excitationHist.size()>(unsigned int) MAcoeffNum) {
+        if(excitationHist.size()>(unsigned int) MAcoeffNum)
+        {
             for(unsigned int kk = MAcoeffNum; kk < excitationHist.size(); kk++)
             excitationHist.at(kk) = 0.0;
         }

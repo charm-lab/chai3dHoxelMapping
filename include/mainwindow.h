@@ -98,6 +98,12 @@ public:
     // oculus device
     chai3d::cOVRDevice oculusVR;
 
+    //Initial Camera Variables:
+    double initOffset;
+    double initPolar;
+    double initCamRadius;
+    double initAzimuth;
+
     //------------------------------------------------------------------------------
     // DECLARED MACROS
     //------------------------------------------------------------------------------
@@ -199,6 +205,7 @@ private slots:
     void on_FingerMappingExp_clicked();
     void on_HoxelMappingExp_clicked();
     void on_Manual_clicked();
+    void on_resetCameraButton_clicked();
 
     //SERIAL:
     void on_openButton_clicked();
