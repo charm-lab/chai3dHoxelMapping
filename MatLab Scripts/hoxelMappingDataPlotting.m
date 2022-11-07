@@ -498,7 +498,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Data
 close all;
-saveFigures = true;
+saveFigures = false;
 %Old color scheme:
 visCubeColor = "[0 0 0]";
 invisCubeColor = "[0.5 0.5 0.5]";

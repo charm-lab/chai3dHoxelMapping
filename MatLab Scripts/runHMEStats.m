@@ -9,7 +9,7 @@ function runHMEStats()
     format long; close all;
     fontSize = 10; width = 1700; height = 1000;
     
-    interactableCompare = false;
+    interactableCompare = true;
 
     % Groups:
     %Mapping group:
@@ -185,36 +185,36 @@ function runHMEStats()
     
         %Box Path Length
         subplot(3,3,4)    
-        compBPL = multcompare(stats_BoxPathLength, "CriticalValueType", "dunnett", ...
-            "ControlGroup", 5, "Alpha", 0.05);
+        compBPL = multcompare(stats_BoxPathLength, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         title("Box Path Length -- Control")
         improvePlot_v2(false, true, fontSize, width, height)    
     
         %Index Shear Force
         subplot(3,3,5)        
-        compISF = multcompare(stats_IndexShearForce, "CriticalValueType", "dunnett", ...
-            "ControlGroup", 5, "Alpha", 0.05);
+        compISF = multcompare(stats_IndexShearForce, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         title("Index Shear Force -- Control")
         improvePlot_v2(false, true, fontSize, width, height)    
     
         %Index Normal Force
         subplot(3,3,6)    
-        compINF = multcompare(stats_IndexNormalForce, "CriticalValueType","dunnett", ...
-            "ControlGroup", 5, "Alpha", 0.05);
+        compINF = multcompare(stats_IndexNormalForce, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         title("Index Normal Force -- Control")
         improvePlot_v2(false, true, fontSize, width, height)
         
         %Thumb Shear Force
         subplot(3,3,7)    
-        compTSF = multcompare(stats_ThumbShearForce, "CriticalValueType", "dunnett", ...
-            "ControlGroup", 5, "Alpha", 0.05);
+        compTSF = multcompare(stats_ThumbShearForce, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         title("Thumb Shear Force -- Control")
         improvePlot_v2(false, true, fontSize, width, height)           
     
         %Thumb Normal Force
         subplot(3,3,8)    
-        compTNF = multcompare(stats_ThumbNormalForce, "CriticalValueType", "dunnett", ...         
-            "ControlGroup", 5, "Alpha", 0.05); 
+        compTNF = multcompare(stats_ThumbNormalForce, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         improvePlot_v2(false, true, fontSize, width, height) 
         title("Thumb Normal Force -- Control")
         
