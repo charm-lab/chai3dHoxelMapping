@@ -727,6 +727,9 @@ typedef struct
     //Counter for number of times the user presses "H" prematurely
     int mistakeCounter;
 
+    //Boolean for enabling/disabling planar motion constraints for HME
+    bool enablePlanarConstraint;
+
 } shared_data;
 
 #endif // SHARED_DATA_H

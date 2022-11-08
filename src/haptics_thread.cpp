@@ -175,7 +175,6 @@ void haptics_thread::run()
 
 void haptics_thread::UpdateVRGraphics()
 {
-
 #ifndef OCULUS
     // Update camera Pos
     double xPos = p_CommonData->camRadius*cos(p_CommonData->azimuth*PI/180.0)*sin(p_CommonData->polar*PI/180.0);
@@ -243,7 +242,7 @@ void haptics_thread::UpdateVRGraphics()
     position1 = m_tool1->m_hapticPoint->getGlobalPosGoal();
     p_CommonData->chaiMagDevice1->getRotation(rotation1);
 
-    // update position of finger to stay on proxy point
+    // update position of finger0 to stay on proxy point
     fingerRotation0 = rotation0;
     fingerRotation0.rotateAboutLocalAxisDeg(0,0,1,90);
     fingerRotation0.rotateAboutLocalAxisDeg(1,0,0,90);
@@ -254,7 +253,7 @@ void haptics_thread::UpdateVRGraphics()
     m_curSphere0->setLocalRot(rotation0);
     m_tool0->computeInteractionForces();
 
-    // update position of finger to stay on proxy  point
+    // update position of finger1 to stay on proxy  point
     fingerRotation1 = rotation1;
     fingerRotation1.rotateAboutLocalAxisDeg(0,0,1,90);
     fingerRotation1.rotateAboutLocalAxisDeg(1,0,0,90);
@@ -284,8 +283,8 @@ void haptics_thread::UpdateVRGraphics()
     p_CommonData->fingerTouchingLast = p_CommonData->fingerTouching;
     p_CommonData->thumbTouchingLast = p_CommonData->thumbTouching;
 
-    chai3d::cVector3d gravity_force1(0,0,0);
-    chai3d::cVector3d gravity_force2(0,0,0);
+    chai3d::cVector3d gravity_force1(0.0, 0.0, 0.0);
+    chai3d::cVector3d gravity_force2(0.0, 0.0, 0.0);
 
     // set fingers to non initially touching
     p_CommonData->fingerTouching = false;
@@ -295,9 +294,11 @@ void haptics_thread::UpdateVRGraphics()
     currTime = p_CommonData->overallClock.getCurrentTimeSeconds();
     timeInterval = currTime - lastTime;
     if(timeInterval > 0.001)
+    {
         timeInterval = 0.001;
+    }
 
-    double forceLimit = 20;
+    double forceLimit = 20.0;
 
     // perform our dynamic body updates if we are in a dynamic environment
     if(p_CommonData->currentEnvironmentState == dynamicBodies)
@@ -415,7 +416,7 @@ void haptics_thread::UpdateVRGraphics()
 
             p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
 
-            gravity_force1.set(0,0,original_mass1*9.81);
+            gravity_force1.set(0.0, 0.0, original_mass1*9.81);
 
             p_CommonData->ODEBody1->addExternalForce(gravity_force1);
         }
@@ -424,13 +425,41 @@ void haptics_thread::UpdateVRGraphics()
 
             p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
 
-            gravity_force1.set(0,0,original_mass1*9.81);
+            gravity_force1.set(0.0, 0.0, original_mass1*9.81);
 
             p_CommonData->ODEBody1->addExternalForce(gravity_force1);
             //p_CommonData->ODEHoop1->addExternalForce(gravity_force1); //added for HME
 
-            chai3d::cVector3d thisPos = p_CommonData->ODEBody1->getGlobalPos();
-            qDebug()<< "x: " << thisPos.get(0) << " | y: " << thisPos.get(1) << " | z: " << thisPos.get(2);
+            qDebug()<< "BoxGlobalX: " << p_CommonData->ODEBody1->getGlobalPos().x()<< "Hoop: " << p_CommonData->ODEHoop1->getGlobalPos().x() << "targetRad: " << targetRadius;
+            //Keep motion to the yz plane only when box is checked
+            if (p_CommonData->enablePlanarConstraint == true)
+            {
+                //Stricly on the plane:
+                chai3d::cVector3d thisPos = p_CommonData->ODEBody1->getLocalPos();
+                //p_CommonData->ODEBody1->setLocalPos(box1InitPos.x(), thisPos.get(1), thisPos.get(2));
+                //qDebug()<< "x: " << thisPos.get(0) << " | y: " << thisPos.get(1) << " | z: " << thisPos.get(2);
+
+                //within a range around the yz plane:
+                double boundary = targetRadius;
+                //If exceeding max allowable val:
+                if(thisPos.x() > box1InitPos.x()+boundary)
+                {
+                    p_CommonData->ODEBody1->setLocalPos(box1InitPos.x()+boundary, thisPos.get(1), thisPos.get(2));
+                    qDebug() << "lim1";
+                }
+                //If exceeding min allowable val:
+                if(thisPos.x() < box1InitPos.x()-boundary)
+                {
+                    p_CommonData->ODEBody1->setLocalPos(box1InitPos.x()-boundary, thisPos.get(1), thisPos.get(2));
+                    qDebug() << "lim2";
+                }
+                else
+                {
+                    //move normally
+                    qDebug() << "normal";
+                }
+            }
+            //else -- move normally without planar constraint
         }
 
         if(p_CommonData->show_forces)
@@ -486,19 +515,23 @@ void haptics_thread::UpdateVRGraphics()
     UpdateScaledFingers();
     UpdateScaledBoxes();
 
-    chai3d::cVector3d Box2Pos = p_CommonData->ODEBody2->getLocalPos();
-    chai3d::cVector3d Box1Pos = p_CommonData->ODEBody1->getLocalPos();
-    chai3d::cVector3d box1Pos = Box1Pos;
+    //chai3d::cVector3d Box2Pos = p_CommonData->ODEBody2->getLocalPos();
+    //chai3d::cVector3d Box1Pos = p_CommonData->ODEBody1->getLocalPos();
+    chai3d::cVector3d box1Pos = p_CommonData->ODEBody1->getLocalPos();
+    chai3d::cVector3d box2Pos = p_CommonData->ODEBody2->getLocalPos();
 
     //VR Updates for Mine's StiffnessExperiment
-    if(p_CommonData->currentDynamicObjectState == StiffnessExperiment){
-
+    if(p_CommonData->currentDynamicObjectState == StiffnessExperiment)
+    {
         if(!p_CommonData->target1Complete)
         {
-            chai3d::cVector3d err12 = Box2Pos - target1Pos;
-            chai3d::cVector3d err11 = Box1Pos - target1Pos;
+            //Find distance between box2 and target1
+            chai3d::cVector3d err12 = box2Pos - target1Pos;
+            //Find distance between box1 and target1
+            chai3d::cVector3d err11 = box1Pos - target1Pos;
 
-            if(p_CommonData->stiffness2 > p_CommonData->stiffness1){
+            if(p_CommonData->stiffness2 > p_CommonData->stiffness1)
+            {
                 if(err11.length()< targetRadius)
                 {
                     p_CommonData->target1Responded = true;
@@ -533,18 +566,21 @@ void haptics_thread::UpdateVRGraphics()
                 }
             }
 
-            if(p_CommonData->stiffness1 > p_CommonData->stiffness2){
+            if(p_CommonData->stiffness1 > p_CommonData->stiffness2)
+            {
                 if(err11.length()< targetRadius)
                 {
                     p_CommonData->target1Responded = true;
                     p_CommonData->target1Complete = true;
                     p_CommonData->targetSuccess = 1;
-                    if (p_CommonData->TrialType=="training"){
+                    if (p_CommonData->TrialType=="training")
+                    {
                         matTarget1.setGreen();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(0.35, true);
                     }
-                    else if (p_CommonData->TrialType=="testing"){
+                    else if (p_CommonData->TrialType=="testing")
+                    {
                         matTarget1.setPurple();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(1, true);
@@ -560,7 +596,8 @@ void haptics_thread::UpdateVRGraphics()
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(0.35, true);
                     }
-                    else if (p_CommonData->TrialType=="testing"){
+                    else if (p_CommonData->TrialType=="testing")
+                    {
                         matTarget1.setPurple();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(1, true);
@@ -571,21 +608,24 @@ void haptics_thread::UpdateVRGraphics()
     }
 
     //VR Updates for Mine's StiffnessMassExperiment
-    if(p_CommonData->currentDynamicObjectState == StiffnessMassExperiment){
+    if(p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
+    {
+        if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete)
+        {
+            //Find distance between box1 and hoop1
+            chai3d::cVector3d err11 = box1Pos - hoop1Pos;
 
-        if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete){
-            chai3d::cVector3d err11 = Box1Pos - hoop1Pos;
-
-            if(err11.length()< targetRadius)
+            if(err11.length() < targetRadius)
             {
                 p_CommonData->hoop1Complete = true;
                 hoop1->setMaterial(matHoop1);
                 hoop1->setTransparencyLevel(0.85, true);
             }
         }
-
-        else if(!p_CommonData->target1Complete && p_CommonData->hoop1Complete){
-            chai3d::cVector3d err12 = Box1Pos - target1Pos;
+        else if(!p_CommonData->target1Complete && p_CommonData->hoop1Complete)
+        {
+            //Find distance between box1 and target1
+            chai3d::cVector3d err12 = box1Pos - target1Pos;
 
             if(err12.length()< targetRadius)
             {
@@ -595,18 +635,21 @@ void haptics_thread::UpdateVRGraphics()
             }
         }
 
-        if(!p_CommonData->target2Complete && !p_CommonData->hoop2Complete){
-            chai3d::cVector3d err21 = Box2Pos - hoop2Pos;
-            if(err21.length()< targetRadius)
+        if(!p_CommonData->target2Complete && !p_CommonData->hoop2Complete)
+        {
+            //Find distance between box 2 and hoop2
+            chai3d::cVector3d err22 = box2Pos - hoop2Pos;
+            if(err22.length()< targetRadius)
             {
                 p_CommonData->hoop2Complete = true;
                 hoop2->setMaterial(matHoop2);
                 hoop2->setTransparencyLevel(0.85, true);
             }
         }
-
-        else if(!p_CommonData->target2Complete && p_CommonData->hoop2Complete){
-            chai3d::cVector3d err22 = Box2Pos - target2Pos;
+        else if(!p_CommonData->target2Complete && p_CommonData->hoop2Complete)
+        {
+            //find distance between box2 and target2
+            chai3d::cVector3d err22 = box2Pos - target2Pos;
             if(err22.length()< targetRadius)
             {
                 p_CommonData->target2Complete = true;
@@ -615,12 +658,16 @@ void haptics_thread::UpdateVRGraphics()
             }
         }
 
-        if(p_CommonData->target1Complete && p_CommonData->target2Complete){
+        if(p_CommonData->target1Complete && p_CommonData->target2Complete)
+        {
             p_CommonData->explorationComplete = true;
-            if (p_CommonData->lev1 > p_CommonData->lev2){
-                if(p_CommonData->answer1){
+            if (p_CommonData->lev1 > p_CommonData->lev2)
+            {
+                if(p_CommonData->answer1)
+                {
                     p_CommonData->targetSuccess = 1;
-                    if (p_CommonData->TrialType=="training"){
+                    if (p_CommonData->TrialType=="training")
+                    {
                         matTarget1.setGreen();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(0.85, true);
@@ -629,7 +676,8 @@ void haptics_thread::UpdateVRGraphics()
                         hoop1->setTransparencyLevel(0.85, true);
                         p_CommonData->answerComplete = true;
                     }
-                    else if (p_CommonData->TrialType=="testing"){
+                    else if (p_CommonData->TrialType=="testing")
+                    {
                         matTarget1.setGray();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(1, true);
@@ -639,10 +687,11 @@ void haptics_thread::UpdateVRGraphics()
                         p_CommonData->answerComplete = true;
                     }
                 }
-
-                else if(p_CommonData->answer2){
+                else if(p_CommonData->answer2)
+                {
                     p_CommonData->targetSuccess = 0;
-                    if (p_CommonData->TrialType=="training"){
+                    if (p_CommonData->TrialType=="training")
+                    {
                         matTarget2.setRed();
                         target2->setMaterial(matTarget2);
                         target2->setTransparencyLevel(1, true);
@@ -651,7 +700,8 @@ void haptics_thread::UpdateVRGraphics()
                         hoop2->setTransparencyLevel(0.85, true);
                         p_CommonData->answerComplete = true;
                     }
-                    else if (p_CommonData->TrialType=="testing"){
+                    else if (p_CommonData->TrialType=="testing")
+                    {
                         matTarget2.setGray();
                         target2->setMaterial(matTarget2);
                         target2->setTransparencyLevel(1, true);
@@ -662,11 +712,13 @@ void haptics_thread::UpdateVRGraphics()
                     }
                 }
             }
-
-            else if (p_CommonData->lev1 < p_CommonData->lev2){
-                if(p_CommonData->answer1){
+            else if (p_CommonData->lev1 < p_CommonData->lev2)
+            {
+                if(p_CommonData->answer1)
+                {
                     p_CommonData->targetSuccess = 0;
-                    if (p_CommonData->TrialType=="training"){
+                    if (p_CommonData->TrialType=="training")
+                    {
                         matTarget1.setRed();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(1, true);
@@ -675,7 +727,8 @@ void haptics_thread::UpdateVRGraphics()
                         hoop1->setTransparencyLevel(0.85, true);
                         p_CommonData->answerComplete = true;
                     }
-                    else if (p_CommonData->TrialType=="testing"){
+                    else if (p_CommonData->TrialType=="testing")
+                    {
                         matTarget1.setGray();
                         target1->setMaterial(matTarget1);
                         target1->setTransparencyLevel(1, true);
@@ -685,10 +738,11 @@ void haptics_thread::UpdateVRGraphics()
                         p_CommonData->answerComplete = true;
                     }
                 }
-
-                else if(p_CommonData->answer2){
+                else if(p_CommonData->answer2)
+                {
                     p_CommonData->targetSuccess = 1;
-                    if (p_CommonData->TrialType=="training"){
+                    if (p_CommonData->TrialType=="training")
+                    {
                         matTarget2.setGreen();
                         target2->setMaterial(matTarget2);
                         target2->setTransparencyLevel(1, true);
@@ -697,7 +751,8 @@ void haptics_thread::UpdateVRGraphics()
                         hoop2->setTransparencyLevel(0.85, true);
                         p_CommonData->answerComplete = true;
                     }
-                    else if (p_CommonData->TrialType=="testing"){
+                    else if (p_CommonData->TrialType=="testing")
+                    {
                         matTarget2.setGray();
                         target2->setMaterial(matTarget2);
                         target2->setTransparencyLevel(1, true);
@@ -719,9 +774,10 @@ void haptics_thread::UpdateVRGraphics()
         if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete)
         {
             //qDebug()<<"target + hoop not complete";
-            chai3d::cVector3d err11 = Box1Pos - hoop1Pos;
+            //Find distance between box1 and hoop1
+            chai3d::cVector3d err11 = box1Pos - hoop1Pos;
 
-            if(err11.length()< targetRadius)
+            if(err11.length() < targetRadius)
             {
                 p_CommonData->hoop1Complete = true;
                 hoop1->setMaterial(matHoop1);
@@ -735,7 +791,8 @@ void haptics_thread::UpdateVRGraphics()
         else if(!p_CommonData->target1Complete && p_CommonData->hoop1Complete)
         {
             //qDebug()<<"target not complete, hoop completed earlier";
-            chai3d::cVector3d err12 = Box1Pos - target1Pos;
+            //Find distance between box1 and target1
+            chai3d::cVector3d err12 = box1Pos - target1Pos;
 
             if(err12.length()< targetRadius)
             {
@@ -825,7 +882,6 @@ void haptics_thread::UpdateVRGraphics()
       p_CommonData->expDone = false;
     }
     */
-
 }
 
 /*
@@ -919,7 +975,6 @@ void haptics_thread::UpdateScaledBoxes()
     //    }
     p_CommonData->p_dynamicScaledBox1->setLocalPos(scaledBox1Pos);
     p_CommonData->p_dynamicScaledBox1->setLocalRot(p_CommonData->ODEBody1->getLocalRot());
-
 }
 
 void haptics_thread::ComputeVRDesiredDevicePos()
@@ -1567,6 +1622,7 @@ void haptics_thread::InitDynamicBodies()
     //    p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
     //    p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
 
+    //Define lines for showforces
     chai3d::cColorf LineColor;
     LineColor.setGreenLawn();
     force1_show = new chai3d::cShapeLine(chai3d::cVector3d(0,0,0),
@@ -1585,7 +1641,6 @@ void haptics_thread::InitDynamicBodies()
     force2_show->m_colorPointB=LineColor;
     p_CommonData->p_world->addChild(force1_show);
     p_CommonData->p_world->addChild(force2_show);
-
 }
 
 void haptics_thread::DeleteDynamicBodies()
@@ -2358,7 +2413,6 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
     hoop1->setTransparencyLevel(0.2, true);
     p_CommonData->p_world->addChild(hoop1);
 
-
     /*
     //wall = new chai3d::cMesh();
     ////create a plane
@@ -2424,6 +2478,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     chai3d::cMaterial mat1;
     mat1.setRed();
     mat1.setStiffness(stiffness1);
+    //mat1.setLateralStiffness(latStiffness1);
     mat1.setDynamicFriction(dynFriction1);
     mat1.setStaticFriction(friction1);
     mat1.setUseHapticFriction(true);
@@ -2447,7 +2502,8 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
     // set position of box
-    p_CommonData->ODEBody1->setLocalPos(0.1, hoop1Pos.y()-0.2, -0.02); //(0.15, -0.2, -0.02);
+    box1InitPos = chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02); //(0.15, -0.2, -0.02);
+    p_CommonData->ODEBody1->setLocalPos(box1InitPos);
     //Set orientation of box
     p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
 
@@ -2540,7 +2596,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->targetSuccess = 0;
     p_CommonData->hoopSuccess = 0;
     p_CommonData->trialSuccess = 0;
-
 
     //Add non-dynamic objects to the world
     p_CommonData->p_world->addChild(hoop1);
@@ -2687,7 +2742,6 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     target3->setUseTransparency(true);
     target3->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target3);
-
 
     target2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);

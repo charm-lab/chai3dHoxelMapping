@@ -150,6 +150,7 @@ public:
 
     chai3d::cVector3d hoop1Pos;
     chai3d::cVector3d hoop2Pos;
+    chai3d::cVector3d box1InitPos;
 
     chai3d::cVector3d dynamicHoop1Pos; // -- addedd for HME    
     chai3d::cVector3d dynamicHoop2Pos; // -- addedd for HME

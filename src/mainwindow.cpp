@@ -8,7 +8,6 @@
 #include <string>
 #include <QTime>
 
-
 //***Define directory/folder for Subjects' experiment info***
 //Make sure this directory exists before runtime or else the data will not save
 //QString subjectDirectory = "C:/Users/Sam/Desktop/chai3dFingerMapping/Subjects/";
@@ -30,13 +29,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 {
     ui->setupUi(this);
-//#ifndef OCULUS
-//    //windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
-//    //Make the window that the environment appears the one that is editable in mainwindow.ui
-//    windowGLDisplay = new Widget_OpenGLDisplay(ui->openGLWidget);
-//    //Changes position and size of CHAI3D window:
-//    windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
-//#endif
+    //#ifndef OCULUS
+    //    //windowGLDisplay = new Widget_OpenGLDisplay(this->centralWidget());
+    //    //Make the window that the environment appears the one that is editable in mainwindow.ui
+    //    windowGLDisplay = new Widget_OpenGLDisplay(ui->openGLWidget);
+    //    //Changes position and size of CHAI3D window:
+    //    windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
+    //#endif
 
     //Find available serial ports
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -82,10 +81,10 @@ MainWindow::~MainWindow()
 //START SERIAL
 
 //Serial data writing happens here:
-/*
+
 Eigen::Vector3d localDesiredPos0_prev;
 Eigen::Vector3d localDesiredPos1_prev;
-*/
+
 Eigen::Vector3d localForce0_prev;
 Eigen::Vector3d localForce1_prev;
 
@@ -107,6 +106,8 @@ QString device1Y_prev;// = QString::number(localForce1_prev[1], 'f', 1); //local
 QString device1Z_prev;// = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
 QString dev1Mag;// = QString::number(localForce1.norm(), 'f', 1);
 
+
+
 void MainWindow::writeSerialData()
 {
     QByteArray payloadBuffer;
@@ -114,151 +115,201 @@ void MainWindow::writeSerialData()
     //IIR Filter:
     double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
     //qDebug() << alpha;
-    /*
+
+    if(ui->positionControlButton->isChecked())
+    {
         localDesiredPos0 = alpha*localDesiredPos0 + (1.0-alpha)*localDesiredPos0_prev;
         localDesiredPos1 = alpha*localDesiredPos1 + (1.0-alpha)*localDesiredPos1_prev;
 
-        //Set Device Desired Pos:
-        //index desiered positions:
-        QString device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
-        QString device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
-        QString device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
-        QString device0X_prev = QString::number(localDesiredPos0_prev[0], 'f', 1); //localDesiredPos0_prev[0] //X
-        QString device0Y_prev = QString::number(localDesiredPos0_prev[1], 'f', 1); //localDesiredPos0_prev[1] //Y
-        QString device0Z_prev = QString::number(localDesiredPos0_prev[2], 'f', 1); //localDesiredPos0_prev[2] //Z
-        //thumb desiered positions:
-        QString device1X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
-        QString device1Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
-        QString device1Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
-        QString device1X_prev = QString::number(localDesiredPos1_prev[0], 'f', 1); //localDesiredPos1_prev[0] //X
-        QString device1Y_prev = QString::number(localDesiredPos1_prev[1], 'f', 1); //localDesiredPos1_prev[1] //Y
-        QString device1Z_prev = QString::number(localDesiredPos1_prev[2], 'f', 1); //localDesiredPos1_prev[2] //Z
-        QString positionData = device0X + " " + device0Y + " " + device0Z + " " + device1X + " " + device1Y + " " + device1Z + "\r\n";
+        //Mappings:
+        //Normal Mapping
+        if(p_CommonData->mapping == 1)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
+            device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
+            device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
+            dev0Mag = QString::number(localDesiredPos0.norm(), 'f', 1);
+            //Ventral - thumb desired forces:
+            device1X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
+            device1Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
+            device1Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
+            dev1Mag = QString::number(localDesiredPos1.norm(), 'f', 1);
+        }
+        //Reverse Mapping
+        if(p_CommonData->mapping == 2)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - thumb desired forces:
+            device0X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
+            device0Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
+            device0Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
+            dev0Mag = QString::number(localDesiredPos1.norm(), 'f', 1);
+            //Ventral - index desired forces:
+            device1X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
+            device1Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
+            device1Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
+            dev1Mag = QString::number(localDesiredPos0.norm(), 'f', 1);
+        }
+        //Single Mapping
+        if(p_CommonData->mapping == 3)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
+            device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
+            device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
+            dev0Mag = QString::number(localDesiredPos0.norm(), 'f', 1);
+            //Ventral - thumb desired forces:
+            //localDesiredPos1[0] = 0.0;
+            //localDesiredPos1[1] = 0.0;
+            //localDesiredPos1[2] = 0.0;
+            device1X = QString::number(0.0); //localDesiredPos1[0] //X
+            device1Y = QString::number(0.0); //localDesiredPos1[1] //Y
+            device1Z = QString::number(0.0); //localDesiredPos1[2] //Z
+            dev1Mag = QString::number(0.0, 'f', 1);
+        }
+        //Averaged
+        if(p_CommonData->mapping == 4)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(0.5*(localDesiredPos0[0] + localDesiredPos1[0]), 'f', 1); //localDesiredPos0[0] //X
+            device0Y = QString::number(0.5*(localDesiredPos0[1] + localDesiredPos1[1]), 'f', 1); //localDesiredPos0[1] //Y
+            device0Z = QString::number(0.5*(localDesiredPos0[2] + localDesiredPos1[2]), 'f', 1); //localDesiredPos0[2] //Z
+            dev0Mag = QString::number(0.5*(localDesiredPos0.norm() + localDesiredPos1.norm()), 'f', 1);
+            //Ventral - thumb desired forces:
+            device1X = QString::number(0.0); //localDesiredPos1[0] //X
+            device1Y = QString::number(0.0); //localDesiredPos1[1] //Y
+            device1Z = QString::number(0.0); //localDesiredPos1[2] //Z
+            dev1Mag = QString::number(0.0, 'f', 1);
+        }
+        //Control - No Haptic Feedback
+        if(p_CommonData->mapping == 5)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(0.0); //localDesiredPos0[0] //X
+            device0Y = QString::number(0.0); //localDesiredPos0[1] //Y
+            device0Z = QString::number(0.0); //localDesiredPos0[2] //Z
+            dev0Mag = QString::number(0.0, 'f', 1);
+            //Ventral - thumb desired forces:
+            device1X = QString::number(0.0); //localDesiredPos1[0] //X
+            device1Y = QString::number(0.0); //localDesiredPos1[1] //Y
+            device1Z = QString::number(0.0); //localDesiredPos1[2] //Z
+            dev1Mag = QString::number(0.0, 'f', 1);
+        }
+        else
+        {
 
-        payloadBuffer = payloadBuffer.append(positionData);
+        }
+
         //Dispay in GUI:
-        ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev); //device 0//device 0 _prev
-        ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev);//device 1 //device 1_prev
-
-        //Update:
-        localDesiredPos0_prev = localDesiredPos0;
-        localDesiredPos1_prev = localDesiredPos1;
-        */
-
-    localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
-    localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
-
-    /*
-    //Set Device Desired Forces:
-    //index desiered forces:
-    QString device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-    QString device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-    QString device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-    QString device0X_prev = QString::number(localForce0_prev[0], 'f', 1); //localForce0_prev[0] //X
-    QString device0Y_prev = QString::number(localForce0_prev[1], 'f', 1); //localForce0_prev[1] //Y
-    QString device0Z_prev = QString::number(localForce0_prev[2], 'f', 1); //localForce0_prev[2] //Z
-    QString dev0Mag = QString::number(localForce0.norm(), 'f', 1);
-    //thumb desiered forces:
-    QString device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
-    QString device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
-    QString device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
-    QString device1X_prev = QString::number(localForce1_prev[0], 'f', 1); //localForce1_prev[0] //X
-    QString device1Y_prev = QString::number(localForce1_prev[1], 'f', 1); //localForce1_prev[1] //Y
-    QString device1Z_prev = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
-    QString dev1Mag = QString::number(localForce1.norm(), 'f', 1);
-    */
-
-
-    //Mappings:
-    //Normal Mapping
-    if(p_CommonData->mapping == 1)
-    {
-        //Set Device Desired Forces:
-        //Dorsal - index desired forces:
-        device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-        device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-        device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
-        //Ventral - thumb desired forces:
-        device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
-        device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
-        device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
-        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
-    }
-    //Reverse Mapping
-    if(p_CommonData->mapping == 2)
-    {
-        //Set Device Desired Forces:
-        //Dorsal - thumb desired forces:
-        device0X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
-        device0Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
-        device0Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
-        dev0Mag = QString::number(localForce1.norm(), 'f', 1);
-        //Ventral - index desired forces:
-        device1X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-        device1Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-        device1Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-        dev1Mag = QString::number(localForce0.norm(), 'f', 1);
-    }
-    //Single Mapping
-    if(p_CommonData->mapping == 3)
-    {
-        //Set Device Desired Forces:
-        //Dorsal - index desired forces:
-        device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-        device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-        device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
-        //Ventral - thumb desired forces:
-        //localForce1[0] = 0.0;
-        //localForce1[1] = 0.0;
-        //localForce1[2] = 0.0;
-        device1X = QString::number(0.0); //localForce1[0] //X
-        device1Y = QString::number(0.0); //localForce1[1] //Y
-        device1Z = QString::number(0.0); //localForce1[2] //Z
-        dev1Mag = QString::number(0.0, 'f', 1);
-    }
-    //Averaged
-    if(p_CommonData->mapping == 4)
-    {
-        //Set Device Desired Forces:
-        //Dorsal - index desired forces:
-        device0X = QString::number(0.5*(localForce0[0] + localForce1[0]), 'f', 1); //localForce0[0] //X
-        device0Y = QString::number(0.5*(localForce0[1] + localForce1[1]), 'f', 1); //localForce0[1] //Y
-        device0Z = QString::number(0.5*(localForce0[2] + localForce1[2]), 'f', 1); //localForce0[2] //Z
-        dev0Mag = QString::number(0.5*(localForce0.norm() + localForce1.norm()), 'f', 1);
-        //Ventral - thumb desired forces:
-        device1X = QString::number(0.0); //localForce1[0] //X
-        device1Y = QString::number(0.0); //localForce1[1] //Y
-        device1Z = QString::number(0.0); //localForce1[2] //Z
-        dev1Mag = QString::number(0.0, 'f', 1);
-    }
-    //Control - No Haptic Feedback
-    if(p_CommonData->mapping == 5)
-    {
-        //Set Device Desired Forces:
-        //Dorsal - index desired forces:
-        device0X = QString::number(0.0); //localForce0[0] //X
-        device0Y = QString::number(0.0); //localForce0[1] //Y
-        device0Z = QString::number(0.0); //localForce0[2] //Z
-        dev0Mag = QString::number(0.0, 'f', 1);
-        //Ventral - thumb desired forces:
-        device1X = QString::number(0.0); //localForce1[0] //X
-        device1Y = QString::number(0.0); //localForce1[1] //Y
-        device1Z = QString::number(0.0); //localForce1[2] //Z
-        dev1Mag = QString::number(0.0, 'f', 1);
-    }
-    else
-    {
-
+        ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "mm\r\nMag: " + dev0Mag + "mm"); //device 0//device 0 _prev
+        ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "mm\r\nMag: " + dev1Mag + "mm");//device 1 //device 1_prev
     }
 
-    QString forceData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
+    if (ui->forceControlButton->isChecked())
+    {
+        localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
+        localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
 
-    payloadBuffer = payloadBuffer.append(forceData);
-    //Dispay in GUI:
-    ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "\r\nMag: " + dev0Mag); //device 0//device 0 _prev
-    ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "\r\nMag: " + dev1Mag);//device 1 //device 1_prev
+        //Mappings:
+        //Normal Mapping
+        if(p_CommonData->mapping == 1)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+            device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+            device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+            dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+            //Ventral - thumb desired forces:
+            device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+            device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+            device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+            dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+        }
+        //Reverse Mapping
+        if(p_CommonData->mapping == 2)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - thumb desired forces:
+            device0X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+            device0Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+            device0Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+            dev0Mag = QString::number(localForce1.norm(), 'f', 1);
+            //Ventral - index desired forces:
+            device1X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+            device1Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+            device1Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+            dev1Mag = QString::number(localForce0.norm(), 'f', 1);
+        }
+        //Single Mapping
+        if(p_CommonData->mapping == 3)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+            device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+            device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+            dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+            //Ventral - thumb desired forces:
+            //localForce1[0] = 0.0;
+            //localForce1[1] = 0.0;
+            //localForce1[2] = 0.0;
+            device1X = QString::number(0.0); //localForce1[0] //X
+            device1Y = QString::number(0.0); //localForce1[1] //Y
+            device1Z = QString::number(0.0); //localForce1[2] //Z
+            dev1Mag = QString::number(0.0, 'f', 1);
+        }
+        //Averaged
+        if(p_CommonData->mapping == 4)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(0.5*(localForce0[0] + localForce1[0]), 'f', 1); //localForce0[0] //X
+            device0Y = QString::number(0.5*(localForce0[1] + localForce1[1]), 'f', 1); //localForce0[1] //Y
+            device0Z = QString::number(0.5*(localForce0[2] + localForce1[2]), 'f', 1); //localForce0[2] //Z
+            dev0Mag = QString::number(0.5*(localForce0.norm() + localForce1.norm()), 'f', 1);
+            //Ventral - thumb desired forces:
+            device1X = QString::number(0.0); //localForce1[0] //X
+            device1Y = QString::number(0.0); //localForce1[1] //Y
+            device1Z = QString::number(0.0); //localForce1[2] //Z
+            dev1Mag = QString::number(0.0, 'f', 1);
+        }
+        //Control - No Haptic Feedback
+        if(p_CommonData->mapping == 5)
+        {
+            //Set Device Desired Forces:
+            //Dorsal - index desired forces:
+            device0X = QString::number(0.0); //localForce0[0] //X
+            device0Y = QString::number(0.0); //localForce0[1] //Y
+            device0Z = QString::number(0.0); //localForce0[2] //Z
+            dev0Mag = QString::number(0.0, 'f', 1);
+            //Ventral - thumb desired forces:
+            device1X = QString::number(0.0); //localForce1[0] //X
+            device1Y = QString::number(0.0); //localForce1[1] //Y
+            device1Z = QString::number(0.0); //localForce1[2] //Z
+            dev1Mag = QString::number(0.0, 'f', 1);
+        }
+        else
+        {
+
+        }
+
+        //Dispay in GUI:
+        ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\nMag: " + dev0Mag + "N"); //device 0//device 0 _prev
+        ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
+    }
+
+    QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
+    /*temp*/
+    //QString serialData = "*" + device0X + "," + device0Y + "," + device0Z + "\n";
+    //QString serialData = "*2,0,0\n";
+    /*temp*/
+    payloadBuffer = payloadBuffer.append(serialData);
 
     qDebug() << payloadBuffer << " " << serial->isWritable();
 
@@ -268,18 +319,33 @@ void MainWindow::writeSerialData()
     {
         //ui->textEdit_2->toPlainText().toLatin1();
         //Write data to board
+        payloadBuffer = payloadBuffer.append(serialData);
         serial->write(payloadBuffer, payloadBuffer.size());
     }
 
     //Set previous values:
-    device0X_prev = device0X;
-    device0Y_prev = device0Y;
-    device0Z_prev = device0Z;
-    device1X_prev = device1X;
-    device1Y_prev = device1Y;
-    device1Z_prev = device1Z;
-    localForce0_prev = localForce0;
-    localForce1_prev = localForce1;
+    if(ui->positionControlButton->isChecked())
+    {
+        device0X_prev = device0X;
+        device0Y_prev = device0Y;
+        device0Z_prev = device0Z;
+        device1X_prev = device1X;
+        device1Y_prev = device1Y;
+        device1Z_prev = device1Z;
+        localDesiredPos0_prev = localDesiredPos0;
+        localDesiredPos1_prev = localDesiredPos1;
+    }
+    if(ui->forceControlButton->isChecked())
+    {
+        device0X_prev = device0X;
+        device0Y_prev = device0Y;
+        device0Z_prev = device0Z;
+        device1X_prev = device1X;
+        device1Y_prev = device1Y;
+        device1Z_prev = device1Z;
+        localForce0_prev = localForce0;
+        localForce1_prev = localForce1;
+    }
 }
 
 //Read received data
@@ -348,7 +414,7 @@ void MainWindow::on_openButton_clicked()
         QTimer *timer0 = new QTimer(this);
         connect(timer0, SIGNAL(timeout()), this, SLOT(writeSerialData()));
         timer0->start(10);
-      //close PCI control:
+        //close PCI control:
 #ifdef SENSORAY826
         S826_SystemClose();
         qDebug()<<"Closing PCI Control -- S826_SystemClose()";
@@ -425,9 +491,9 @@ void MainWindow::Initialize()
     //    p_CommonData->currentControlState = VRControlMode;
     
     
-//#ifndef OCULUS
-//    windowGLDisplay->p_CommonData = p_CommonData;
-//#endif
+    //#ifndef OCULUS
+    //    windowGLDisplay->p_CommonData = p_CommonData;
+    //#endif
 
     connect(this->ui->Act1, SIGNAL(valueChanged(int)), this, SLOT(onGUIchanged()));
     connect(this->ui->Act2, SIGNAL(valueChanged(int)), this, SLOT(onGUIchanged()));
@@ -492,21 +558,23 @@ void MainWindow::Initialize()
     initPolar = p_CommonData->polar;
     initCamRadius = p_CommonData->camRadius;
     initAzimuth = p_CommonData->azimuth;
-
+    //Initilize planar constraint box
+    ui->planarCheckBox->setChecked(false);
+    //Initialize Force control button:
+    ui->forceControlButton->setChecked(true);
+    ui->positionControlButton->setChecked(false);
 
 #ifdef QWT
     ///////////////
     // QWT INITS //
     ///////////////
     i = 0;
-
 #endif
 
     GraphicsTimer.setInterval(1);
     GraphicsTimer.start();
     connect(&GraphicsTimer, SIGNAL(timeout()), this, SLOT(UpdateGUIInfo()));
     UpdateGUIInfo();
-
 }
 
 //Updates Information Displays in the Window
@@ -605,7 +673,6 @@ void MainWindow::UpdateGUIInfo()
     points2 << QPointF( i , p_CommonData->filteredDeviceComputedForce.z());
     if (points2.length() > 5*updateHz)
         points2.removeFirst();
-
 #endif
 
     // index device
@@ -688,6 +755,25 @@ void MainWindow::UpdateGUIInfo()
         ui->cameraPolar_Box->setEnabled(false);
         ui->cameraRadius_Box->setEnabled(false);
         ui->cameraAzimuth_Box->setEnabled(false);
+    }
+
+    //Disable planar constraint if not using HME:
+    if(!(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment))
+    {
+        ui->planarCheckBox->setEnabled(false);
+    }
+    else
+    {
+        ui->planarCheckBox->setEnabled(true);
+        //if planar constraint box checked, restrict motion to xz plane
+        if(ui->planarCheckBox->isChecked())
+        {
+            p_CommonData->enablePlanarConstraint = true;
+        }
+        else
+        {
+            p_CommonData->enablePlanarConstraint = false;
+        }
     }
 
     //calibrate if startup process over
@@ -1159,8 +1245,6 @@ QString getMappingText(int mappingVal)
 void MainWindow::keyPressEvent(QKeyEvent *a_event)
 {
     /***Environment Adjustment Buttons***/
-    double degInc = 5.0;
-    double radInc = 0.05;
     //Hide/Show finger interaction forces
     if (a_event->key() == Qt::Key_Y)
     {
@@ -1175,42 +1259,6 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
     if(a_event->key() == Qt::Key_Y)
     {
         UpdateGUIInfo();
-    }
-    //rotate camera + (Downwards)
-    if (a_event->key() == Qt::Key_W)
-    {
-        p_CommonData->polar = p_CommonData->polar + degInc;
-        qDebug() << "pol" << p_CommonData->polar;
-    }
-    // rotate camera - (Upwards)
-    if (a_event->key() == Qt::Key_S)
-    {
-        p_CommonData->polar = p_CommonData->polar - degInc;
-        qDebug() << "pol" << p_CommonData->polar;
-    }
-    //rotate camera z-axis + (CCW)
-    if (a_event->key() == Qt::Key_A)
-    {
-        p_CommonData->azimuth = p_CommonData->azimuth + degInc;
-        qDebug() << "azim" << p_CommonData->azimuth;
-    }
-    //rotate camera z-axis - (CW)
-    if (a_event->key() == Qt::Key_D)
-    {
-        p_CommonData->azimuth = p_CommonData->azimuth - degInc;
-        qDebug() << "azim" << p_CommonData->azimuth;
-    }
-    //Zoom camera in
-    if (a_event->key() == Qt::Key_C)
-    {
-        p_CommonData->camRadius = p_CommonData->camRadius - radInc;
-        qDebug() << "camRadius" << p_CommonData->camRadius;
-    }
-    //Zoom camera out
-    if (a_event->key() == Qt::Key_V)
-    {
-        p_CommonData->camRadius = p_CommonData->camRadius + radInc;
-        qDebug() << "camRadius" << p_CommonData->camRadius;
     }
     //Stop Recording Data
     if (a_event->key() == Qt::Key_G)
@@ -2344,11 +2392,11 @@ void MainWindow::WriteDataToFile()
             //if no mistakes due to premature presses of H:
             if(p_CommonData->mistakeCounter == 0)
             {
-            file.open(directory.toStdString()
-                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                      + "_Trial0" + trialNum.toStdString()
-                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                      + ".csv");
+                file.open(directory.toStdString()
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial0" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + ".csv");
             }
             else //append mistakes number so that files can be combined in post-processing
             {
@@ -2367,10 +2415,10 @@ void MainWindow::WriteDataToFile()
             if(p_CommonData->mistakeCounter == 0)
             {
                 file.open(directory.toStdString()
-                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                      + "_Trial" + trialNum.toStdString()
-                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                      + ".csv");
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + ".csv");
             }
             else //append mistakes number so that files can be combined in post-processing
             {
@@ -2398,11 +2446,11 @@ void MainWindow::WriteDataToFile()
             //if no mistakes due to premature presses of H:
             if(p_CommonData->mistakeCounter == 0)
             {
-            file.open(directory.toStdString()
-                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                      + "_Trial0" + trialNum.toStdString()
-                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                      + ".csv");
+                file.open(directory.toStdString()
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial0" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + ".csv");
             }
             else //append mistakes number so that files can be combined in post-processing
             {
@@ -2421,10 +2469,10 @@ void MainWindow::WriteDataToFile()
             if(p_CommonData->mistakeCounter == 0)
             {
                 file.open(directory.toStdString()
-                      +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                      + "_Trial" + trialNum.toStdString()
-                      + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                      + ".csv");
+                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
+                          + "_Trial" + trialNum.toStdString()
+                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
+                          + ".csv");
             }
             else //append mistakes number so that files can be combined in post-processing
             {
@@ -2699,61 +2747,61 @@ void MainWindow::WriteDataToFile()
                 <<localDataRecorderVector[i].box1Pos << "," << " "
 
                   //Cube local orientation
-                <<localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
-                <<localDataRecorderVector[i].box1LocalRotMat(0,1) << "," << " "
-                <<localDataRecorderVector[i].box1LocalRotMat(0,2) << "," << " "
-                <<localDataRecorderVector[i].box1LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
-                <<localDataRecorderVector[i].box1LocalRotMat(1,1) << "," << " "
-                <<localDataRecorderVector[i].box1LocalRotMat(1,2) << "," << " "
-                <<localDataRecorderVector[i].box1LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
-                <<localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
-                <<localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
+               <<localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
+              <<localDataRecorderVector[i].box1LocalRotMat(0,1) << "," << " "
+             <<localDataRecorderVector[i].box1LocalRotMat(0,2) << "," << " "
+            <<localDataRecorderVector[i].box1LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            <<localDataRecorderVector[i].box1LocalRotMat(1,1) << "," << " "
+            <<localDataRecorderVector[i].box1LocalRotMat(1,2) << "," << " "
+            <<localDataRecorderVector[i].box1LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            <<localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
+            <<localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
 
 
-                 //Cube Global orientation
-                <<localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
-                <<localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
-                <<localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
-                <<localDataRecorderVector[i].box1GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
-                <<localDataRecorderVector[i].box1GlobalRotMat(1,1) << "," << " "
-                <<localDataRecorderVector[i].box1GlobalRotMat(1,2) << "," << " "
-                <<localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
-                <<localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
-                <<localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
+              //Cube Global orientation
+            <<localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
+            <<localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
+            <<localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
+            <<localDataRecorderVector[i].box1GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            <<localDataRecorderVector[i].box1GlobalRotMat(1,1) << "," << " "
+            <<localDataRecorderVector[i].box1GlobalRotMat(1,2) << "," << " "
+            <<localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            <<localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
+            <<localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
 
-                  //"cond = "
-                  //<< localDataRecorderVector[i].conditionNo<< "," << " "
+              //"cond = "
+              //<< localDataRecorderVector[i].conditionNo<< "," << " "
 
-                  //INDEX:
-               << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
-               << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
-                  // last force on tool0:
-               << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
-               << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
-               << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
-                  // last force on tool0 in global coords
-               << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
-               << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
-               << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
+              //INDEX:
+            << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
+            << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
+               // last force on tool0:
+            << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
+               // last force on tool0 in global coords
+            << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
 
-                  //THUMB
-               << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
-               << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
-                  // last force on tool1:
-               << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
-               << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
-               << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
-                  // last force on tool1 in global coords
-               << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
-               << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
-               << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
+               //THUMB
+            << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
+            << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
+               // last force on tool1:
+            << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
+               // last force on tool1 in global coords
+            << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
 
-                  //Touch hoop, target, trial success booleans
-               << localDataRecorderVector[i].hoopSuccess << "," << " "
-               << localDataRecorderVector[i].targetSuccess << "," << " "
-               << localDataRecorderVector[i].trialSuccess << "," << " "
+               //Touch hoop, target, trial success booleans
+            << localDataRecorderVector[i].hoopSuccess << "," << " "
+            << localDataRecorderVector[i].targetSuccess << "," << " "
+            << localDataRecorderVector[i].trialSuccess << "," << " "
 
-               << std::endl;
+            << std::endl;
         }
 
 
@@ -2920,7 +2968,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
     onGUIchanged();
 }
 
-//Jasmin Finger Mapping Experiment -- 1DoF Servo Device
+//Jasmin Finger Mapping Experiment -- 1-DoF Servo Device
 void MainWindow::on_FingerMappingExp_clicked()
 {
     QString protocolFolder = "./FingerMappingProtocols/";
