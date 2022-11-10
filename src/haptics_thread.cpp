@@ -430,7 +430,7 @@ void haptics_thread::UpdateVRGraphics()
             p_CommonData->ODEBody1->addExternalForce(gravity_force1);
             //p_CommonData->ODEHoop1->addExternalForce(gravity_force1); //added for HME
 
-            qDebug()<< "BoxGlobalX: " << p_CommonData->ODEBody1->getGlobalPos().x()<< "Hoop: " << p_CommonData->ODEHoop1->getGlobalPos().x() << "targetRad: " << targetRadius;
+            //qDebug()<< "BoxGlobalX: " << p_CommonData->ODEBody1->getGlobalPos().x()<< "Hoop: " << p_CommonData->ODEHoop1->getGlobalPos().x() << "targetRad: " << targetRadius;
             //Keep motion to the yz plane only when box is checked
             if (p_CommonData->enablePlanarConstraint == true)
             {
@@ -2471,8 +2471,10 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     // create the visual boxes on the dynamic box meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
 
-    // setup collision detectors for the dynamic box
+    // setup collision detectors for the dynamic box with finger only
     p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+
+    //p_CommonData->p_dynamicBox1->createBruteForceCollisionDetector();
 
     // define material properties for box 1 - invisible
     chai3d::cMaterial mat1;
@@ -2596,6 +2598,11 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->targetSuccess = 0;
     p_CommonData->hoopSuccess = 0;
     p_CommonData->trialSuccess = 0;
+
+
+    //Make fingers collide with wall
+    //wall->createAABBCollisionDetector(toolRadius);
+    //wall->createBruteForceCollisionDetector();
 
     //Add non-dynamic objects to the world
     p_CommonData->p_world->addChild(hoop1);

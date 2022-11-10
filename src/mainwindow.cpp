@@ -106,8 +106,6 @@ QString device1Y_prev;// = QString::number(localForce1_prev[1], 'f', 1); //local
 QString device1Z_prev;// = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
 QString dev1Mag;// = QString::number(localForce1.norm(), 'f', 1);
 
-
-
 void MainWindow::writeSerialData()
 {
     QByteArray payloadBuffer;
