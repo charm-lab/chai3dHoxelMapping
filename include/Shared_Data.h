@@ -474,6 +474,7 @@ typedef struct
     cODEGenericBody* ODEBody4; //ODE body for box 4
     cODEGenericBody* ODEHoop1; //ODE body for dynamic hoop 1 -- added for HME
     cODEGenericBody* ODEHoop2; //ODE body for dynamic hoop 1 -- added for HME
+    cODEGenericBody* ODEWall; //ODE body for dynamic hoop 1 -- added for HME
 
     // haptics thread objects for visual representation of dynamic objects
     chai3d::cMesh* p_dynamicBox1; // mesh for box 1

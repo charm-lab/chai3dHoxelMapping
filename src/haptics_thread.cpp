@@ -1,4 +1,5 @@
 ﻿#include "haptics_thread.h"
+using namespace chai3d;
 
 haptics_thread::haptics_thread(QObject *parent) : QThread(parent)
 {
@@ -1428,7 +1429,7 @@ void haptics_thread::InitFingerAndTool()
     p_CommonData->p_world->addChild(thumb);
     thumb->setShowFrame(false);
     thumb->setFrameSize(0.05);
-    thumb->setLocalPos(0,0,0);
+    thumb->setLocalPos(0.0, 0.0, 0.0);
 
     // load an object file
     if(cLoadFileOBJ(finger, "./Resources/FingerModel.obj")){
@@ -1475,7 +1476,7 @@ void haptics_thread::InitFingerAndTool()
     p_CommonData->p_world->addChild(scaledThumb);
     scaledThumb->setShowFrame(false);
     scaledThumb->setFrameSize(0.05);
-    scaledThumb->setLocalPos(0,0,0);
+    scaledThumb->setLocalPos(0.0, 0.0, 0.0);
 
     if(cLoadFileOBJ(scaledFinger, "./Resources/FingerModel.obj")){
         qDebug() << "finger file loaded";
@@ -1558,6 +1559,7 @@ void haptics_thread::InitDynamicBodies()
     //p_CommonData->ODEBody4 = new cODEGenericBody(ODEWorld);
     p_CommonData->ODEHoop1 = new cODEGenericBody(ODEWorld); // added for HME
     p_CommonData->ODEHoop2 = new cODEGenericBody(ODEWorld); // added for HME
+    p_CommonData->ODEWall = new cODEGenericBody(ODEWorld); // added for HME
 
     // create a virtual mesh that will be used for the geometry representation of the dynamic body
     p_CommonData->p_dynamicBox1 = new chai3d::cMesh();
@@ -1840,8 +1842,16 @@ void haptics_thread::RenderDynamicBodies()
         wall->setLocalPos(0.05, 0.05, -0.05);
     }
 
-    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
+    {
+        wallHeight = 0.1;
+        wallThickness = 0.01;
+
+        chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
+        wall->setLocalPos(0.05, 0.085, -0.05);
+    }
+
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         wallHeight = 0.1;
         wallThickness = 0.01;
@@ -1854,6 +1864,7 @@ void haptics_thread::RenderDynamicBodies()
     chai3d::cCreateSphere(globe, 30, 30, 30); //(globe, 10, 30, 30);
     globe->setUseDisplayList(true);
     globe->deleteCollisionDetector();
+    globe->setShowFrame(true); //Show globe frame
     chai3d::cMaterial matGlobe;
     matGlobe.setWhite();
     globe->setMaterial(matGlobe);
@@ -2474,8 +2485,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     // setup collision detectors for the dynamic box with finger only
     p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
 
-    //p_CommonData->p_dynamicBox1->createBruteForceCollisionDetector();
-
     // define material properties for box 1 - invisible
     chai3d::cMaterial mat1;
     mat1.setRed();
@@ -2521,8 +2530,10 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     target1->setTransparencyLevel(0.2, true);
     p_CommonData->p_world->addChild(target1);
 
+    //Make fingers collide with wall
+    wall->createAABBCollisionDetector(toolRadius);
+
     //Add vertical Wall to world
-    p_CommonData->p_world->addChild(wall);
 
     // create the visual hoops on the dynamic box and hoop meshes
     cCreateRing(p_CommonData->p_dynamicHoop1, 0.005, 0.8*targetRadius); //ring
@@ -2599,17 +2610,35 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->hoopSuccess = 0;
     p_CommonData->trialSuccess = 0;
 
-
-    //Make fingers collide with wall
-    //wall->createAABBCollisionDetector(toolRadius);
-    //wall->createBruteForceCollisionDetector();
-
     //Add non-dynamic objects to the world
     p_CommonData->p_world->addChild(hoop1);
+    p_CommonData->p_world->addChild(wall);
     //Add dynamic objects to the world
     p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
-    //p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop1);
-    //p_CommonData->p_world->addChild(p_CommonData->p_dynamicHoop2);
+
+    /*
+    //Create the wire object
+    wire = new chai3d::cMultiMesh(); // create a virtual mesh
+    if(cLoadFileSTL(wire, "./Resources/wire_Jasmin.stl")){
+        qDebug() << "wire loaded";
+    }
+    p_CommonData->p_world->addChild(wire); // add object to world
+    wire->setShowFrame(true);
+    wire->setFrameSize(0.1);
+    wire->rotateAboutLocalAxisDeg(0,1,0,180);
+    double scaleFactor = 10.0;
+    wire->setLocalPos(0.0*scaleFactor, -0.0*scaleFactor, 0.0*scaleFactor);
+    wire->scale(scaleFactor);
+    // set params for finger
+    wire->setShowEnabled(true);
+    wire->setUseVertexColors(true);
+    chai3d::cColorf wireColor;
+    wireColor.setBlack();
+    wire->setVertexColor(wireColor);
+    wire->m_material->m_specular.set(1.0, 1.0, 1.0);
+    wire->setUseMaterial(true);
+    wire->setHapticEnabled(false);
+    */
 
     p_CommonData->mistakeCounter = 0;
     qDebug()<<"Finished HME Setup";
