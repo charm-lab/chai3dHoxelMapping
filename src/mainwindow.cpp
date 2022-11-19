@@ -777,6 +777,25 @@ void MainWindow::UpdateGUIInfo()
         }
     }
 
+    //Hide show all frames
+    // update frames to show or not
+    if (ui->showAllFramesCheckBox->isChecked())
+    {
+        //Remove existing frames first
+        p_CommonData->p_world->setShowFrame(false, true);
+        //Show all frames
+        p_CommonData->p_world->setShowFrame(true, true);
+        //set the size
+        p_CommonData->p_world->setFrameSize(0.075, true);
+        p_CommonData->adjustBox->setShowFrame(true, true);
+    }
+    else
+    {
+        //Remove all the frames
+        p_CommonData->p_world->setShowFrame(false, true);
+        p_CommonData->adjustBox->setShowFrame(false, true);
+    }
+
     //calibrate if startup process over
     if(p_CommonData->calibClock.timeoutOccurred())
     {

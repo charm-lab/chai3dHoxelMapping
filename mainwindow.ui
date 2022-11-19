@@ -75,464 +75,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_38">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>500</y>
-      <width>171</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>SERIAL</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="openButton">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>530</y>
-      <width>141</width>
-      <height>211</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>Serial
-Not
-Found</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>2200</x>
-      <y>990</y>
-      <width>331</width>
-      <height>271</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-     </font>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_7">
-     <item row="13" column="0">
-      <widget class="QLabel" name="label_55">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Act2</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="3" rowspan="2">
-      <widget class="QLineEdit" name="mass_set">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QLCDNumber" name="Act1_show">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="digitCount">
-        <number>6</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_60">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>CD</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="3" rowspan="2">
-      <widget class="QLabel" name="label_11">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Scaled Gravity</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="3">
-      <widget class="QLabel" name="label_32">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>CD Ratio</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2" rowspan="2">
-      <widget class="QRadioButton" name="equalBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Equal</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" rowspan="2" colspan="2">
-      <widget class="QCheckBox" name="JakeRenderCheckBox">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>JakeRender</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="2">
-      <widget class="QSlider" name="Act1">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>90</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="pageStep">
-        <number>10</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="sliderPosition">
-        <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" rowspan="2" colspan="2">
-      <widget class="QCheckBox" name="CD_Vertical_Box">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>CD Vertical</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="QLabel" name="label_35">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Mass</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="1">
-      <widget class="QLCDNumber" name="Act2_show">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="digitCount">
-        <number>6</number>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="QLabel" name="label_54">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Act1</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="2">
-      <widget class="QLCDNumber" name="Inertia_Val">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="digitCount">
-        <number>3</number>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="2">
-      <spacer name="verticalSpacer">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="7" column="3">
-      <widget class="QLineEdit" name="cd_ratio">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" rowspan="2" colspan="2">
-      <widget class="QPushButton" name="turnOff">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Turn Off</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2" rowspan="2">
-      <widget class="QRadioButton" name="VRControl">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>VR
-Control</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="2">
-      <widget class="QSlider" name="Act2">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>9</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="pageStep">
-        <number>10</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="sliderPosition">
-        <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QLCDNumber" name="Mass_Val">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="digitCount">
-        <number>5</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="2">
-      <widget class="QRadioButton" name="reverseBox">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Reverse</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="label_48">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Inertia</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLCDNumber" name="CD_Val">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="digitCount">
-        <number>3</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="label_28">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Mass</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="3">
-      <widget class="QLineEdit" name="inertiaValue">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <spacer name="verticalSpacer_2">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="7" column="2" rowspan="3">
-      <widget class="QCheckBox" name="equalBoxTouch">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Touch
-Effective</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -568,105 +110,6 @@ Effective</string>
      </item>
      <item row="1" column="1">
       <widget class="QTextEdit" name="textEdit_2"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>540</y>
-      <width>281</width>
-      <height>205</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="2" column="1">
-      <widget class="QComboBox" name="BitNumBox">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="currentText">
-        <string>8</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_43">
-       <property name="text">
-        <string>STOP BITS</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QComboBox" name="ParityBox">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_41">
-       <property name="text">
-        <string>BITNUM</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_39">
-       <property name="text">
-        <string>PORT</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="BaudBox">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="currentText">
-        <string>115200</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="PortBox"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_42">
-       <property name="text">
-        <string>PARTIY</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QComboBox" name="StopBox">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_40">
-       <property name="text">
-        <string>BAUD</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
      </item>
     </layout>
    </widget>
@@ -1107,27 +550,6 @@ Bodies</string>
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="label_61">
-    <property name="geometry">
-     <rect>
-      <x>2200</x>
-      <y>959</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Legacy:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -1180,7 +602,15 @@ Rate:</string>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_9">
-     <item row="1" column="0">
+     <item row="6" column="1">
+      <widget class="QCheckBox" name="AdjustTrialNo">
+       <property name="text">
+        <string>Adjust
+Trial No.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
       <widget class="QSpinBox" name="subject_no">
        <property name="font">
         <font>
@@ -1199,6 +629,13 @@ Rate:</string>
       </widget>
      </item>
      <item row="3" column="0">
+      <widget class="QLabel" name="label_23">
+       <property name="text">
+        <string>Trial No.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QLCDNumber" name="trialNo">
        <property name="palette">
         <palette>
@@ -1338,28 +775,7 @@ Rate:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_23">
-       <property name="text">
-        <string>Trial No.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="label_24">
-       <property name="text">
-        <string>Pair No.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_51">
-       <property name="text">
-        <string>Subject No.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QLCDNumber" name="pairNo">
        <property name="palette">
         <palette>
@@ -1467,7 +883,7 @@ Rate:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="6" column="0">
       <widget class="QSpinBox" name="SetTrialNo">
        <property name="font">
         <font>
@@ -1485,18 +901,24 @@ Rate:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_24">
+       <property name="text">
+        <string>Pair No.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
       <widget class="QLabel" name="label_56">
        <property name="text">
         <string>Trial No.</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QCheckBox" name="AdjustTrialNo">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_51">
        <property name="text">
-        <string>Adjust
-Trial No.</string>
+        <string>Subject No.</string>
        </property>
       </widget>
      </item>
@@ -2229,6 +1651,586 @@ Planar Constraint</string>
       </item>
      </layout>
     </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>510</y>
+      <width>451</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>SERIAL</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>40</y>
+       <width>281</width>
+       <height>205</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QComboBox" name="PortBox"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="ParityBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_41">
+        <property name="text">
+         <string>BITNUM</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="BitNumBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="currentText">
+         <string>8</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_40">
+        <property name="text">
+         <string>BAUD</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="StopBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_43">
+        <property name="text">
+         <string>STOP BITS</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_42">
+        <property name="text">
+         <string>PARTIY</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="BaudBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="currentText">
+         <string>115200</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_39">
+        <property name="text">
+         <string>PORT</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QPushButton" name="openButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>141</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Serial
+Not
+Found</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>2160</x>
+      <y>990</y>
+      <width>351</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Legacy:</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>331</width>
+       <height>309</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_55">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Act2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3" rowspan="2">
+       <widget class="QLineEdit" name="mass_set">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QLCDNumber" name="Act1_show">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_60">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>CD</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="3" rowspan="2">
+       <widget class="QLabel" name="label_11">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Scaled Gravity</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="3">
+       <widget class="QLabel" name="label_32">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>CD Ratio</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2" rowspan="2">
+       <widget class="QRadioButton" name="equalBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Equal</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" rowspan="2" colspan="2">
+       <widget class="QCheckBox" name="JakeRenderCheckBox">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>JakeRender</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QSlider" name="Act1">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>90</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+        <property name="pageStep">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="sliderPosition">
+         <number>0</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::NoTicks</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" rowspan="2" colspan="2">
+       <widget class="QCheckBox" name="CD_Vertical_Box">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>CD Vertical</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLabel" name="label_35">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Mass</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QLCDNumber" name="Act2_show">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="label_54">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Act1</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLCDNumber" name="Inertia_Val">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>3</number>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="2">
+       <spacer name="verticalSpacer">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="3">
+       <widget class="QLineEdit" name="cd_ratio">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" rowspan="2" colspan="2">
+       <widget class="QPushButton" name="turnOff">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Turn Off</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" rowspan="2">
+       <widget class="QRadioButton" name="VRControl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>VR
+Control</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="2">
+       <widget class="QSlider" name="Act2">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>9</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+        <property name="pageStep">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="sliderPosition">
+         <number>0</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::NoTicks</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLCDNumber" name="Mass_Val">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QRadioButton" name="reverseBox">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Reverse</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="label_48">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Inertia</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLCDNumber" name="CD_Val">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>3</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_28">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Mass</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="3">
+       <widget class="QLineEdit" name="inertiaValue">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <spacer name="verticalSpacer_2">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="2" rowspan="3">
+       <widget class="QCheckBox" name="equalBoxTouch">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Touch
+Effective</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QCheckBox" name="showAllFramesCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>1290</x>
+      <y>1140</y>
+      <width>201</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show All Frames</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

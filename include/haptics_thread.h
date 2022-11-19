@@ -109,7 +109,8 @@ public:
     chai3d::cMesh* Left_Platform;
     chai3d::cMultiMesh* finger;
     chai3d::cMultiMesh* thumb;
-    chai3d::cMultiMesh* wire;
+    chai3d::cMultiMesh* wire;    
+    chai3d::cMultiMesh* boxWithHole;
     chai3d::cEffectSurface* newEffect;
     cODEGenericBody* ODEGPlane0;
     cODEGenericBody* ODEGPlane1;

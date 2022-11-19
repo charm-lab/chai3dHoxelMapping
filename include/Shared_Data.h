@@ -483,6 +483,8 @@ typedef struct
     chai3d::cMesh* p_dynamicBox4; // mesh for box 4
     chai3d::cMesh* p_dynamicHoop1; // mesh for hoop 1 --  added for HME
     chai3d::cMesh* p_dynamicHoop2; // mesh for hoop 1 --  added for HME
+    chai3d::cMultiMesh* p_boxWithHole; // mesh for p_boxWithHole--  added for HME
+
 
     chai3d::cMesh* p_wall; // mesh for wall
 
