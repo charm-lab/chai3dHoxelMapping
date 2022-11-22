@@ -74,6 +74,7 @@ public:
     void SetDynEnvironStiffMassExp();
     void SetDynEnvironFingerMappingExp();
     void SetDynEnvironHoxelMappingExp();
+    void SetDynEnvironMultiMassExp();
     void SetDynEnvironAdjust();
     void SetManualAdjust();
     //    void SetDynEnvironVtExp();
@@ -152,7 +153,9 @@ public:
 
     chai3d::cVector3d hoop1Pos;
     chai3d::cVector3d hoop2Pos;
-    chai3d::cVector3d box1InitPos;
+    chai3d::cVector3d box1InitPos;    
+    chai3d::cVector3d box2InitPos;
+    chai3d::cVector3d box3InitPos;
 
     chai3d::cVector3d dynamicHoop1Pos; // -- addedd for HME    
     chai3d::cVector3d dynamicHoop2Pos; // -- addedd for HME
@@ -225,11 +228,15 @@ public:
     chai3d::cVector3d estimatedVel1;
 
     // tracker rotation variables
-    chai3d::cVector3d position0; chai3d::cMatrix3d rotation0;
-    chai3d::cMatrix3d fingerRotation0; chai3d::cMatrix3d deviceRotation0;
+    chai3d::cVector3d position0;
+    chai3d::cMatrix3d rotation0;
+    chai3d::cMatrix3d fingerRotation0;
+    chai3d::cMatrix3d deviceRotation0;
 
-    chai3d::cVector3d position1; chai3d::cMatrix3d rotation1;
-    chai3d::cMatrix3d fingerRotation1; chai3d::cMatrix3d deviceRotation1;
+    chai3d::cVector3d position1;
+    chai3d::cMatrix3d rotation1;
+    chai3d::cMatrix3d fingerRotation1;
+    chai3d::cMatrix3d deviceRotation1;
 
     // ints for display counters
     int rateDisplayCounter;
@@ -277,9 +284,9 @@ public:
     double SDVib_CurrentTime1;
     double Fragile;
 
-    chai3d::cMaterial mat11;
-    chai3d::cMaterial mat22;
-    chai3d::cMaterial mat33;
+    chai3d::cMaterial mat1;
+    chai3d::cMaterial mat2;
+    chai3d::cMaterial mat3;
     bool Break0;
     bool Break1;
 

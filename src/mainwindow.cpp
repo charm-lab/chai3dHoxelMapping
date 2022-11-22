@@ -82,29 +82,6 @@ MainWindow::~MainWindow()
 
 //Serial data writing happens here:
 
-Eigen::Vector3d localDesiredPos0_prev;
-Eigen::Vector3d localDesiredPos1_prev;
-
-Eigen::Vector3d localForce0_prev;
-Eigen::Vector3d localForce1_prev;
-
-//Set Device Desired Forces:
-//Dorsal desiered forces:
-QString device0X;// = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-QString device0Y;// = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-QString device0Z;// = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-QString device0X_prev;// = QString::number(localForce0_prev[0], 'f', 1); //localForce0_prev[0] //X
-QString device0Y_prev;// = QString::number(localForce0_prev[1], 'f', 1); //localForce0_prev[1] //Y
-QString device0Z_prev;// = QString::number(localForce0_prev[2], 'f', 1); //localForce0_prev[2] //Z
-QString dev0Mag;// = QString::number(localForce0.norm(), 'f', 1);
-//Ventral desiered forces:
-QString device1X;// = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
-QString device1Y;// = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
-QString device1Z;// = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
-QString device1X_prev;// = QString::number(localForce1_prev[0], 'f', 1); //localForce1_prev[0] //X
-QString device1Y_prev;// = QString::number(localForce1_prev[1], 'f', 1); //localForce1_prev[1] //Y
-QString device1Z_prev;// = QString::number(localForce1_prev[2], 'f', 1); //localForce1_prev[2] //Z
-QString dev1Mag;// = QString::number(localForce1.norm(), 'f', 1);
 
 void MainWindow::writeSerialData()
 {
@@ -204,8 +181,8 @@ void MainWindow::writeSerialData()
         }
 
         //Dispay in GUI:
-        ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "mm\r\nMag: " + dev0Mag + "mm"); //device 0//device 0 _prev
-        ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "mm\r\nMag: " + dev1Mag + "mm");//device 1 //device 1_prev
+        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "mm\r\nMag: " + dev0Mag + "mm"); //device 0//device 0 _prev
+        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "mm\r\nMag: " + dev1Mag + "mm");//device 1 //device 1_prev
     }
 
     if (ui->forceControlButton->isChecked())
@@ -298,8 +275,8 @@ void MainWindow::writeSerialData()
         }
 
         //Dispay in GUI:
-        ui->textEdit->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\nMag: " + dev0Mag + "N"); //device 0//device 0 _prev
-        ui->textEdit_2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
+        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\nMag: " + dev0Mag + "N"); //device 0//device 0 _prev
+        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
     }
 
     QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
@@ -318,7 +295,7 @@ void MainWindow::writeSerialData()
 
     if(serial->isWritable())
     {
-        //ui->textEdit_2->toPlainText().toLatin1();
+        //ui->serialWrite2->toPlainText().toLatin1();
         //Write data to board
         payloadBuffer = payloadBuffer.append(serialData);
         serial->write(payloadBuffer, payloadBuffer.size());
@@ -356,10 +333,10 @@ void MainWindow::readSerialData()
     buf = serial->readAll();
     if(!buf.isEmpty())
     {
-        QString str = ui->textEdit->toPlainText();
+        QString str = ui->serialRead->toPlainText();
         str+=tr(buf);
-        ui->textEdit->clear();
-        ui->textEdit->append(str);
+        ui->serialRead->clear();
+        ui->serialRead->append(str);
     }
     buf.clear();
 }
@@ -548,9 +525,6 @@ void MainWindow::Initialize()
 
     //Initialize Camera:
     //ui->cameraPos_BoxX->setValue(p_CommonData->cameraPos.get(0));
-    ui->cameraPos_BoxY->setValue(p_CommonData->cameraPos.get(1));
-    ui->cameraPos_BoxZ->setValue(p_CommonData->cameraPos.get(2));
-    ui->cameraOffset_Box->setValue(p_CommonData->offset);
     ui->cameraPolar_Box->setValue(p_CommonData->polar);
     ui->cameraRadius_Box->setValue(p_CommonData->camRadius);
     ui->cameraAzimuth_Box->setValue(p_CommonData->azimuth);
@@ -666,12 +640,12 @@ void MainWindow::UpdateGUIInfo()
     i += 1/updateHz;
 
     // assign values to first curve
-    points1 << QPointF( i , p_CommonData->deviceComputedForce.z());
+    points1 << QPointF(i, p_CommonData->deviceComputedForce.z());
     if (points1.length() > 5*updateHz)
         points1.removeFirst();
 
     // assign values to second curve
-    points2 << QPointF( i , p_CommonData->filteredDeviceComputedForce.z());
+    points2 << QPointF(i, p_CommonData->filteredDeviceComputedForce.z());
     if (points2.length() > 5*updateHz)
         points2.removeFirst();
 #endif
@@ -732,27 +706,17 @@ void MainWindow::UpdateGUIInfo()
     //if Locked Camera is unchecked, allow adjustments:
     if(!ui->lockCameraBox->isChecked())
     {
-        ui->cameraOffset_Box->setEnabled(true);
-        ui->cameraPos_BoxY->setEnabled(true);
-        ui->cameraPos_BoxZ->setEnabled(true);
         ui->cameraPolar_Box->setEnabled(true);
         ui->cameraRadius_Box->setEnabled(true);
         ui->cameraAzimuth_Box->setEnabled(true);
 
         //Set the new values to change the camera
-        //        p_CommonData->cameraPos.set(ui->cameraPos_BoxX->value(),
-        //                                    ui->cameraPos_BoxY->value(),
-        //                                    ui->cameraPos_BoxZ->value());
-        p_CommonData->offset = ui->cameraOffset_Box->value();
         p_CommonData->polar = ui->cameraPolar_Box->value();
         p_CommonData->camRadius = ui->cameraRadius_Box->value();
         p_CommonData->azimuth = ui->cameraAzimuth_Box->value();
     }
     else //disable boxes to lock camera
     {
-        ui->cameraOffset_Box->setEnabled(false);
-        ui->cameraPos_BoxY->setEnabled(false);
-        ui->cameraPos_BoxZ->setEnabled(false);
         ui->cameraPolar_Box->setEnabled(false);
         ui->cameraRadius_Box->setEnabled(false);
         ui->cameraAzimuth_Box->setEnabled(false);
@@ -866,7 +830,7 @@ bool MainWindow::readExpStuffIn(){
     {
         p_CommonData->TrialType = p_CommonData->MineProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
-    //For Jasmin's FingerMapping and HoxelMapping Experiment
+    //For Jasmin's Experiments:
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
@@ -875,6 +839,11 @@ bool MainWindow::readExpStuffIn(){
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
+    if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
+    }
+
     qDebug()<<"TrialType"<< p_CommonData->TrialType;
 
 
@@ -1123,7 +1092,7 @@ bool MainWindow::readExpStuffIn(){
     }
 
     //For Jasmin's HoxelMapping Experiment
-    else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         qDebug() << "Reading In HoxelMappingExperiment Protocol";
         //Training trials
@@ -1223,6 +1192,114 @@ bool MainWindow::readExpStuffIn(){
             return false;
         }
     }
+
+    //For Jasmin's MultiMass Experiment
+    else if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        qDebug() << "Reading In MultiMassExperiment Protocol";
+        //Training trials
+        if (p_CommonData->TrialType=="training")
+        {
+            if (p_CommonData->trialNo > 0)
+            {
+                p_CommonData->currentExperimentState = idleExperiment;
+                qDebug()<<"idleExperiment";
+            }
+            else
+            {
+                p_CommonData->currentExperimentState = trialBreak;
+                p_CommonData->recordFlag = false;
+                qDebug()<<"trialBreak";
+            }
+
+            //Read protocal ini file info into the experiment environment
+            //for TrialMode, 1 means mass 2 means stiffness
+            p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
+            p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
+            p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
+            p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
+            p_CommonData->stiffness2    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness2", NULL /*default*/));
+            p_CommonData->mass2         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass2", NULL /*default*/));
+            p_CommonData->stiffness3    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness3", NULL /*default*/));
+            p_CommonData->mass3         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass3", NULL /*default*/));
+            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+            p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+
+            /*
+            if(p_CommonData->TrialMode == 1)
+            {
+                if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
+                if(p_CommonData->mass1 == 0.2) p_CommonData->lev1 = 2;
+                if(p_CommonData->mass1 == 0.3) p_CommonData->lev1 = 3;
+                if(p_CommonData->mass1 == 0.4) p_CommonData->lev1 = 4;
+                if(p_CommonData->mass1 == 0.5) p_CommonData->lev1 = 5;
+                qDebug()<<"TrialMode == 1";
+            }
+            else if(p_CommonData->TrialMode == 2)
+            {
+                if(p_CommonData->stiffness1 == 100) p_CommonData->lev1 = 1;
+                if(p_CommonData->stiffness1 == 200) p_CommonData->lev1 = 2;
+                if(p_CommonData->stiffness1 == 300) p_CommonData->lev1 = 3;
+                if(p_CommonData->stiffness1 == 400) p_CommonData->lev1 = 4;
+                if(p_CommonData->stiffness1 == 500) p_CommonData->lev1 = 5;
+                qDebug()<<"TrialMode == 2";
+            }
+            */
+            onGUIchanged();
+            return true;
+        }
+        //Testing trials
+        else if (p_CommonData->TrialType=="testing")
+        {
+            p_CommonData->currentExperimentState = idleExperiment;
+            p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
+            p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
+            p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
+            p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
+            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+            p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+
+            if(p_CommonData->TrialMode == 1)
+            {
+                if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
+                if(p_CommonData->mass1 == 0.2) p_CommonData->lev1 = 2;
+                if(p_CommonData->mass1 == 0.3) p_CommonData->lev1 = 3;
+                if(p_CommonData->mass1 == 0.4) p_CommonData->lev1 = 4;
+                if(p_CommonData->mass1 == 0.5) p_CommonData->lev1 = 5;
+            }
+            else if(p_CommonData->TrialMode == 2)
+            {
+                if(p_CommonData->stiffness1 == 100) p_CommonData->lev1 = 1;
+                if(p_CommonData->stiffness1 == 200) p_CommonData->lev1 = 2;
+                if(p_CommonData->stiffness1 == 300) p_CommonData->lev1 = 3;
+                if(p_CommonData->stiffness1 == 400) p_CommonData->lev1 = 4;
+                if(p_CommonData->stiffness1 == 500) p_CommonData->lev1 = 5;
+            }
+            //qDebug() << "test" << "st1" << p_CommonData->stiffness1<< "st2" << p_CommonData->stiffness2 << "cond" << p_CommonData->cond;
+            onGUIchanged();
+            return true;
+        }
+        //Trial Break
+        else if (p_CommonData->TrialType=="break"){
+            p_CommonData->currentExperimentState = trialBreak;
+            return true;
+        }
+        else if (p_CommonData->TrialType=="breakbreak"){
+            p_CommonData->currentExperimentState = trialBreak;
+            return true;
+        }
+        //Trial Over
+        else if (p_CommonData->TrialType=="end"){
+            p_CommonData->currentExperimentState = endExperiment;
+            qDebug()<<"MultiMassExperiment DONE!!";
+            return false;
+        }
+        else if (p_CommonData->TrialType==""){
+            qDebug()<<"THIS IS BROKEN -- YOU SHOULD NEVER BE HERE -- bad protocol file read";
+            return false;
+        }
+    }
+
 }
 
 //Mataches text to mapping type to be displayed for FingerMapping Experiment
@@ -1963,7 +2040,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             }
         }
 
-        else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
             //mistake boolean for incase the user presses "H" prematurely
             mistake = false;
@@ -2267,6 +2344,186 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             }
 
         }
+
+        else if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+        {
+            //mistake boolean for incase the user presses "H" prematurely
+            mistake = false;
+            p_CommonData->flagMassExp = false;
+
+            qDebug("advance MultiMassExp");
+            //if(CheckFingers()&& (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
+            //{
+            //PRE-TRIAL******
+            if(p_CommonData->trialNo < 1)
+            {
+                qDebug()<<"Trial# < 1";
+                p_CommonData->trialNo = 1;
+                p_CommonData->recordFlag = true;
+
+                //Read in protocol file and check if the read is successful
+                if (readExpStuffIn())
+                {
+                    qDebug()<<"readExpStuffIn() SUCCESS -- Pre-Trials";
+                }
+                else
+                {
+                    qDebug()<<"readExpStuffIn() return false -- why???";
+                }
+
+                //GUI Stuff for each trial type transitioning from pre-trial to trial 1
+                //GUI should show in light blue to distinguish that these
+                //are for the trial that transitioned from pre-trial
+                if (p_CommonData->TrialType == "training")
+                {
+                    QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                    labelText.append("TRAINING\n");
+                    labelText.append("</P></br>");
+                    labelText.append("<P><FONT COLOR='#7abfe4' FONT SIZE = 2>");
+                    labelText.append("Pick up the cube,\n"
+                                     "bring it through the hoop,\n"
+                                     "Place it in the target area");
+                    labelText.append("</P></br>");
+                    ui->text->setText(labelText);
+                    qDebug()<<"TRAINING "<<p_CommonData->trialNo;
+                }
+                else if (p_CommonData->TrialType == "testing")
+                {
+                    QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                    labelText .append("TRIAL -- ");
+                    labelText .append("</P></br>");
+                    ui->text->setText(labelText);
+                    qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
+                }
+                else if (p_CommonData->TrialType == "break")
+                {
+                    QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                    labelText .append("PRESS NEXT AFTER THE BREAK --");
+                    labelText .append("</b></P></br>");
+                    ui->text->setText(labelText);
+                    qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                }
+                else if (p_CommonData->TrialType == "breakbreak")
+                {
+                    QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                    labelText .append("TIME TO CHANGE THE GROUNDING --");
+                    labelText .append("</b></P></br>");
+                    ui->text->setText(labelText);
+                    qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                }
+                else if (p_CommonData->TrialType == "end")
+                {
+                    QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                    labelText .append("END OF THE EXPERIMENT --");
+                    labelText .append("</b></P></br>");
+                    ui->text->setText(labelText);
+                    qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
+                }
+                p_CommonData->environmentChange = true;
+
+                qDebug()<<"Progress to HME Pre-Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+            }
+            //ACTUAL TRIAL*******************************
+            else
+            {
+                qDebug()<<"Trial# >= 1";
+                if(p_CommonData->recordFlag)
+                {
+                    p_CommonData->dataRecordMutex.lock();
+                    localDataRecorderVector = p_CommonData->dataRecorderVector;
+                    p_CommonData->dataRecorderVector.clear();
+                    p_CommonData->dataRecordMutex.unlock();
+                    WriteDataToFile();
+                    p_CommonData->recordFlag = false;
+                }
+
+                //if in training or testing trials
+                if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
+                {
+                    qDebug() <<" ~~~ TRAINING PROTOCOL NOT SET ~~~";
+                    //ADVANCE to next trial
+                    p_CommonData->trialNo++;
+                    if (readExpStuffIn())
+                    {
+                        qDebug()<<"_readExpStuffIn() SUCCESS 2_";
+                    }
+                }
+
+                //if not in training or testing trials
+                //This area is called when coming back from break
+                else
+                {
+                    p_CommonData->trialNo++;
+                    //GUI Stuff
+                    if (readExpStuffIn())
+                    {
+                        qDebug()<<"successful read -- back from break";
+                    }
+                    else
+                    {
+                        qDebug()<<"FAILED READ";
+                    }
+
+                    if (p_CommonData->TrialType == "training")
+                    {
+                        QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+                        labelText.append("Training -- back from break");
+                        labelText.append("</P></br>");
+                        ui->text->setText(labelText);
+                        //qDebug()<<"___"<<p_CommonData->trialNo;
+                    }
+
+                    else if (p_CommonData->TrialType == "testing"){
+                        QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+                        labelText.append("Testing -- back from break");
+                        labelText.append("</P></br>");
+                        ui->text->setText(labelText);
+                        //qDebug()<<"___"<<p_CommonData->trialNo;
+                    }
+
+                    else if (p_CommonData->TrialType == "break"){
+                        QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
+                        labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
+                        labelText.append("</b></P></br>");
+                        ui->text->setText(labelText);
+                    }
+
+                    else if (p_CommonData->TrialType == "breakbreak"){
+                        QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
+                        labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
+                        labelText.append("</b></P></br>");
+                        ui->text->setText(labelText);
+                        // qDebug()<<"___"<<p_CommonData->trialNo;
+                    }
+
+                    else if (p_CommonData->TrialType == "end"){
+                        QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
+                        labelText.append("END OF THE EXPERIMENT -- back from break");
+                        labelText.append("</b></P></br>");
+                        ui->text->setText(labelText);
+                        //qDebug()<<"___"<<p_CommonData->trialNo;
+                    }
+                    qDebug()<<"Progressed to Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
+                    p_CommonData->environmentChange = true;
+                }
+            }
+            //}
+
+            //Set Mapping Text
+            if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+            {
+                mappingVal = p_CommonData->mapping;
+                QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+                //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
+                //mappingText.append("</P></br>");
+                //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
+                //mappingText.append(getMappingText(p_CommonData->mapping));
+                mappingText.append(QString::number(p_CommonData->mapping));
+                mappingText.append("</P></br>");
+                ui->mappingTextBox->setText(mappingText);
+            }
+
+        }
         qDebug() << "mistake -- " << mistake << " -- numMistakes:" << p_CommonData->mistakeCounter;
     }
 
@@ -2312,9 +2569,13 @@ QString MainWindow::getSubjectDirectory()
     {
         return "./FME_Subject_Data_v2/";
     }
-    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         return  "./HME_Subject_Data/";
+    }
+    else if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        return  "./MME_Subject_Data/";
     }
 }
 
@@ -2356,7 +2617,8 @@ void MainWindow::WriteDataToFile()
             qDebug()<<"Saved data to: "<<directory;
         }
     }
-    else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment){
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == MultiMassExperiment){
         if(p_CommonData->TrialType == "training")
         {
             directory = getSubjectDirectory() + "TrainingTrialData";
@@ -2368,6 +2630,7 @@ void MainWindow::WriteDataToFile()
             qDebug()<<"Saved data to: "<<directory;
         }
     }
+
 
     //Create file object (needed for later parsing)
     std::ofstream file;
@@ -2452,7 +2715,8 @@ void MainWindow::WriteDataToFile()
         }
     }
     //File names for Jasmin's HME Experiments
-    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+             p_CommonData->currentDynamicObjectState == MultiMassExperiment)
     {
         //Sort data by trialName
         QString trialNum = QString::number(p_CommonData->trialNo);
@@ -2565,7 +2829,7 @@ void MainWindow::WriteDataToFile()
 
             << std::endl;
     }
-    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
@@ -2631,6 +2895,152 @@ void MainWindow::WriteDataToFile()
 
             << std::endl;
     }
+    else if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        //These *MUST* match the order of variables saved below:
+        file <<std::setprecision(9)
+            << "time" << "," << " " //time in seconds
+
+            << "realDorsalTactorPos" << "," << " "//in mm
+
+            << "realVentralTactorPos" << "," << " " //in mm
+
+               //boxPos is a vector and will need 3 headers per box
+            << "box1PosX" << "," << " " //in m
+            << "box1PosY" << "," << " " //in m
+            << "box1PosZ" << "," << " " //in m
+            << "box2PosX" << "," << " " //in m
+            << "box2PosY" << "," << " " //in m
+            << "box2PosZ" << "," << " " //in m
+            << "box3PosX" << "," << " " //in m
+            << "box3PosY" << "," << " " //in m
+            << "box3PosZ" << "," << " " //in m
+
+               //box1 local rotation Matrix
+            << "box1LocalRot_11" << "," << " "
+            << "box1LocalRot_12" << "," << " "
+            << "box1LocalRot_13" << "," << " "
+            << "box1LocalRot_21" << "," << " "
+            << "box1LocalRot_22" << "," << " "
+            << "box1LocalRot_23" << "," << " "
+            << "box1LocalRot_31" << "," << " "
+            << "box1LocalRot_32" << "," << " "
+            << "box1LocalRot_33" << "," << " "
+               //box1 global rotation Matrix
+            << "box1GlobalRot_11" << "," << " "
+            << "box1GlobalRot_12" << "," << " "
+            << "box1GlobalRot_13" << "," << " "
+            << "box1GlobalRot_21" << "," << " "
+            << "box1GlobalRot_22" << "," << " "
+            << "box1GlobalRot_23" << "," << " "
+            << "box1GlobalRot_31" << "," << " "
+            << "box1GlobalRot_32" << "," << " "
+            << "box1GlobalRot_33" << "," << " "
+
+               //box2 local rotation Matrix
+            << "box2LocalRot_11" << "," << " "
+            << "box2LocalRot_12" << "," << " "
+            << "box2LocalRot_13" << "," << " "
+            << "box2LocalRot_21" << "," << " "
+            << "box2LocalRot_22" << "," << " "
+            << "box2LocalRot_23" << "," << " "
+            << "box2LocalRot_31" << "," << " "
+            << "box2LocalRot_32" << "," << " "
+            << "box2LocalRot_33" << "," << " "
+               //box2 global rotation Matrix
+            << "box2GlobalRot_11" << "," << " "
+            << "box2GlobalRot_12" << "," << " "
+            << "box2GlobalRot_13" << "," << " "
+            << "box2GlobalRot_21" << "," << " "
+            << "box2GlobalRot_22" << "," << " "
+            << "box2GlobalRot_23" << "," << " "
+            << "box2GlobalRot_31" << "," << " "
+            << "box2GlobalRot_32" << "," << " "
+            << "box2GlobalRot_33" << "," << " "
+
+               //box3 local rotation Matrix
+            << "box3LocalRot_11" << "," << " "
+            << "box3LocalRot_12" << "," << " "
+            << "box3LocalRot_13" << "," << " "
+            << "box3LocalRot_21" << "," << " "
+            << "box3LocalRot_22" << "," << " "
+            << "box3LocalRot_23" << "," << " "
+            << "box3LocalRot_31" << "," << " "
+            << "box3LocalRot_32" << "," << " "
+            << "box3LocalRot_33" << "," << " "
+               //box3 global rotation Matrix
+            << "box3GlobalRot_11" << "," << " "
+            << "box3GlobalRot_12" << "," << " "
+            << "box3GlobalRot_13" << "," << " "
+            << "box3GlobalRot_21" << "," << " "
+            << "box3GlobalRot_22" << "," << " "
+            << "box3GlobalRot_23" << "," << " "
+            << "box3GlobalRot_31" << "," << " "
+            << "box3GlobalRot_32" << "," << " "
+            << "box3GlobalRot_33" << "," << " "
+
+               //interaction forces in local coordinates
+            << "indexForceX" << "," << " " //in N
+            << "indexForceY" << "," << " " //in N
+            << "indexForceZ" << "," << " " //in N
+               //interaction force in global coordinates
+            << "indexForceGlobalX" << "," << " " //in N
+            << "indexForceGlobalY" << "," << " " //in N
+            << "indexForceGlobalZ" << "," << " " //in N
+
+               //Contact boolean
+            << "indexContact" << "," << " " //bool
+
+               //magTrackerPos vectors will need 3 headers each
+            << "indexPosX" << "," << " " //in m
+            << "indexPosY" << "," << " " //in m
+            << "indexPosZ" << "," << " " //in m
+
+               //Tracker orientation:
+            << "indexRot_11" << "," << " "
+            << "indexRot_12" << "," << " "
+            << "indexRot_13" << "," << " "
+            << "indexRot_21" << "," << " "
+            << "indexRot_22" << "," << " "
+            << "indexRot_23" << "," << " "
+            << "indexRot_31" << "," << " "
+            << "indexRot_32" << "," << " "
+            << "indexRot_33" << "," << " "
+
+               //interaction forces in local coordinates
+            << "thumbForceX" << "," << " " //in N
+            << "thumbForceY" << "," << " " //in N
+            << "thumbForceZ" << "," << " " //in N
+
+               //interaction force in global coordinates
+            << "thumbForceGlobalX" << "," << " " //in N
+            << "thumbForceGlobalY" << "," << " " //in N
+            << "thumbForceGlobalZ" << "," << " " //in N
+
+               //Contact boolean
+            << "thumbContact" << "," << " " //bool
+
+               //magTrackerPos vectors will need 3 headers each
+            << "thumbPosX" << "," << " " //in m
+            << "thumbPosY" << "," << " " //in m
+            << "thumbPosZ" << "," << " " //in m
+
+               //Tracker orientation:
+
+            << "thumbRot_11" << "," << " "
+            << "thumbRot_12" << "," << " "
+            << "thumbRot_13" << "," << " "
+            << "thumbRot_21" << "," << " "
+            << "thumbRot_22" << "," << " "
+            << "thumbRot_23" << "," << " "
+            << "thumbRot_31" << "," << " "
+            << "thumbRot_32" << "," << " "
+            << "thumbRot_33" << "," << " "
+
+            << "trialSuccess" << "," << " " //bool
+
+            << std::endl;
+    }
 
 
     //Parse through localDataVector to more easily readable form in .txt or .csv file
@@ -2691,8 +3101,8 @@ void MainWindow::WriteDataToFile()
                 << localDataRecorderVector[i].dir << "," << " "
                 << localDataRecorderVector[i].magTrackerPos0 << "," << " "
                 << localDataRecorderVector[i].magTrackerPos1 << "," << " "
-                << localDataRecorderVector[i].index_contact << "," << " "
-                << localDataRecorderVector[i].thumb_contact << "," << " "
+                << localDataRecorderVector[i].indexContact << "," << " "
+                << localDataRecorderVector[i].thumbContact << "," << " "
 
                 << std::endl;
         }
@@ -2719,7 +3129,7 @@ void MainWindow::WriteDataToFile()
 
                   //INDEX:
                << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
-               << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
+               << localDataRecorderVector[i].indexContact << "," << " " //contact boolean
                   // last force on tool0:
                << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
                << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
@@ -2731,7 +3141,7 @@ void MainWindow::WriteDataToFile()
 
                   //THUMB
                << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
-               << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
+               << localDataRecorderVector[i].thumbContact << "," << " "//contact boolean
                   // last force on tool1:
                << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
                << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
@@ -2748,7 +3158,7 @@ void MainWindow::WriteDataToFile()
 
                << std::endl;
         }
-        else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                    //"time = "
@@ -2794,7 +3204,7 @@ void MainWindow::WriteDataToFile()
 
               //INDEX:
             << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
-            << localDataRecorderVector[i].index_contact << "," << " " //contact boolean
+            << localDataRecorderVector[i].indexContact << "," << " " //contact boolean
                // last force on tool0:
             << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
             << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
@@ -2806,7 +3216,7 @@ void MainWindow::WriteDataToFile()
 
                //THUMB
             << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
-            << localDataRecorderVector[i].thumb_contact << "," << " "//contact boolean
+            << localDataRecorderVector[i].thumbContact << "," << " "//contact boolean
                // last force on tool1:
             << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
             << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
@@ -2823,8 +3233,148 @@ void MainWindow::WriteDataToFile()
 
             << std::endl;
         }
+        else if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+        {
+            file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
+                   //"time = "
+            << localDataRecorderVector[i].time << "," << " "
 
+               //"des0 = "
+            << localDataRecorderVector[i].desiredStroke0 << "," << " "
+               //"real0 = "
+               //<< localDataRecorderVector[i].strokeOut0 << "," << " " //Giving motor angles N/A for FME
+               //"des1 = "
+            << localDataRecorderVector[i].desiredStroke1 << "," << " "
+               //"real1 = "
+               //<< localDataRecorderVector[i].strokeOut1 << "," << " "//Giving motor angles N/A for FME
 
+            //Cube position
+            << localDataRecorderVector[i].box1Pos << "," << " " //Each needs 3 headers
+            << localDataRecorderVector[i].box2Pos << "," << " " //Each needs 3 headers
+            << localDataRecorderVector[i].box3Pos << "," << " " //Each needs 3 headers
+
+            //Box1 -- Cube local orientation
+            << localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box1LocalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box1LocalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
+
+            //Box1 --Cube Global orientation
+            << localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box1GlobalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
+
+            //Box2 --Cube local orientation
+            << localDataRecorderVector[i].box2LocalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box2LocalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box2LocalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box2LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box2LocalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box2LocalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box2LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box2LocalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box2LocalRotMat(2,2) << "," << " "
+
+            //Box2 --Cube Global orientation
+            << localDataRecorderVector[i].box2GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box2GlobalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box2GlobalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box2GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box2GlobalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box2GlobalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box2GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box2GlobalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box2GlobalRotMat(2,2) << "," << " "
+
+            //Box3 --Cube local orientation
+            << localDataRecorderVector[i].box3LocalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box3LocalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box3LocalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box3LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box3LocalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box3LocalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box3LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box3LocalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box3LocalRotMat(2,2) << "," << " "
+
+            //Box3 --Cube Global orientation
+            << localDataRecorderVector[i].box3GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box3GlobalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box3GlobalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box3GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box3GlobalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box3GlobalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box3GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box3GlobalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box3GlobalRotMat(2,2) << "," << " "
+
+            //"cond = "
+            //<< localDataRecorderVector[i].conditionNo<< "," << " "
+
+            //INDEX:
+             // last force on tool0:
+            << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
+            // last force on tool0 in global coords
+            << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
+
+            << localDataRecorderVector[i].indexContact << "," << " " //contact boolean
+            << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
+
+            //Index tracker orientation:
+            << localDataRecorderVector[i].deviceRotation0(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].deviceRotation0(0,1) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(0,2) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].deviceRotation0(1,1) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(1,2) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].deviceRotation0(2,1) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(2,2) << "," << " "
+
+            //THUMB
+            // last force on tool1:
+            << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
+            //last force on tool1 in global coords
+            << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
+            << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
+
+            << localDataRecorderVector[i].thumbContact << "," << " "//contact boolean
+            << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
+
+           //Thumb tracker orientation:
+           << localDataRecorderVector[i].deviceRotation1(0,0) << "," << " "  //Matrix 1st row
+           << localDataRecorderVector[i].deviceRotation1(0,1) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(0,2) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(1,0) << "," << " "  //Matrix 2nd row
+           << localDataRecorderVector[i].deviceRotation1(1,1) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(1,2) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(2,0) << "," << " "  //Matrix 3rd row
+           << localDataRecorderVector[i].deviceRotation1(2,1) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(2,2) << "," << " "
+
+            //Trial success booleans
+            << localDataRecorderVector[i].trialSuccess << "," << " "
+
+            << std::endl;
+        }
 #endif
 #ifdef ACC
         file <<std::setprecision(9)<< localDataRecorderVector[i].time << "," << " "
@@ -3076,6 +3626,49 @@ void MainWindow::on_HoxelMappingExp_clicked()
     onGUIchanged();
 }
 
+void MainWindow::on_MultiMassExp_clicked()
+{
+    QString protocolFolder = "./MultiMassProtocols/";
+    qDebug() << protocolFolder;
+    QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
+    p_CommonData->protocolFileLocation = temp;
+    int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
+    qDebug() << "error" << error << p_CommonData->protocolFileLocation;
+
+    if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
+    {
+        qDebug() << "AdjustTrial";
+        p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
+    }
+    else
+    {
+        qDebug() << "DONTAdjustTrial";
+        p_CommonData->trialNo = -1;
+    }
+
+    p_CommonData->environmentChange         = true;
+    p_CommonData->currentDynamicObjectState = MultiMassExperiment;
+    p_CommonData->currentExperimentState    = idleExperiment;
+    p_CommonData->currentEnvironmentState   = dynamicBodies;
+    p_CommonData->recordFlag                = false;
+    ui->VRControl->setChecked(true);
+    ui->JakeRenderCheckBox->setChecked(true);
+    qDebug()<<"Multi-Mass Button finished";
+
+    //**GUI Prompt****
+    QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
+    labelText.append("Pre-Training Stage\n");
+    labelText.append("</P></br>");
+    labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
+    labelText.append("Press the 'Next' button");
+    labelText.append("</P></br>");
+    ui->text->setText(labelText);
+    //****************
+
+    QThread::msleep(200);
+    onGUIchanged();
+}
+
 //for creating manually adjusted environment parameters during runtime
 void MainWindow::on_Manual_clicked()
 {
@@ -3090,7 +3683,6 @@ void MainWindow::on_Manual_clicked()
 
 void MainWindow::on_resetCameraButton_clicked()
 {
-    ui->cameraOffset_Box->setValue(initOffset);
     ui->cameraPolar_Box->setValue(initPolar);
     ui->cameraRadius_Box->setValue(initCamRadius);
     ui->cameraAzimuth_Box->setValue(initAzimuth);

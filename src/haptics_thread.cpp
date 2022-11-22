@@ -284,7 +284,8 @@ void haptics_thread::UpdateVRGraphics()
     p_CommonData->thumbTouchingLast = p_CommonData->thumbTouching;
 
     chai3d::cVector3d gravity_force1(0.0, 0.0, 0.0);
-    chai3d::cVector3d gravity_force2(0.0, 0.0, 0.0);
+    chai3d::cVector3d gravity_force2(0.0, 0.0, 0.0);    
+    chai3d::cVector3d gravity_force3(0.0, 0.0, 0.0);
 
     // set fingers to non initially touching
     p_CommonData->fingerTouching = false;
@@ -396,6 +397,7 @@ void haptics_thread::UpdateVRGraphics()
         // tiger added inertia to cd
         double original_mass1 = p_CommonData->mass1;
         double original_mass2 = p_CommonData->mass2;
+        double original_mass3 = p_CommonData->mass3;
 
         //For Mine's Experiments --> 2boxes
         if (p_CommonData->currentDynamicObjectState == StiffnessExperiment
@@ -422,8 +424,6 @@ void haptics_thread::UpdateVRGraphics()
         }
 
         if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment){
-
-            p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
 
             p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
             p_CommonData->ODEBody2->setMass(p_CommonData->mass2);
@@ -464,6 +464,23 @@ void haptics_thread::UpdateVRGraphics()
                 }
             }
             //else -- move normally without planar constraint
+        }
+
+        if (p_CommonData->currentDynamicObjectState == MultiMassExperiment){
+
+            p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
+            p_CommonData->ODEBody2->setMass(p_CommonData->mass2);
+            p_CommonData->ODEBody3->setMass(p_CommonData->mass3);
+
+            gravity_force1.set(0,0,original_mass1*9.81);
+            gravity_force2.set(0,0,original_mass2*9.81);
+            gravity_force3.set(0,0,original_mass3*9.81);
+
+            p_CommonData->ODEBody1->addExternalForce(gravity_force1);
+            p_CommonData->ODEBody2->addExternalForce(gravity_force2);
+            p_CommonData->ODEBody3->addExternalForce(gravity_force3);
+
+
         }
 
         if(p_CommonData->show_forces)
@@ -976,7 +993,8 @@ void haptics_thread::ComputeVRDesiredDevicePos()
         else if(p_CommonData->currentDynamicObjectState == StiffnessExperiment
                 || p_CommonData->currentDynamicObjectState == StiffnessMassExperiment
                 || p_CommonData->currentDynamicObjectState == FingerMappingExperiment
-                || p_CommonData->currentDynamicObjectState == HoxelMappingExperiment) // || p_CommonData->currentDynamicObjectState == dynamicMagnitudeExp)
+                || p_CommonData->currentDynamicObjectState == HoxelMappingExperiment
+                || p_CommonData->currentDynamicObjectState == MultiMassExperiment) // || p_CommonData->currentDynamicObjectState == dynamicMagnitudeExp)
             boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
         //        else if(p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp)
         //            boxRot_boxToWorld = p_CommonData->ODEBody1->getLocalRot();
@@ -1168,7 +1186,7 @@ void haptics_thread::RecordData()
         p_CommonData->dataRecorder.VRIntForce0      = deviceForceRecord0; // last force on tool0
         p_CommonData->dataRecorder.VRIntForceGlo0   = globalForceRecord0; // last force on tool0 in global coords
         p_CommonData->dataRecorder.magTrackerPos0   = position0;
-        p_CommonData->dataRecorder.index_contact    = p_CommonData->fingerTouching;
+        p_CommonData->dataRecorder.indexContact    = p_CommonData->fingerTouching;
 
         //For sensor0/finger1
         p_CommonData->dataRecorder.desiredPos1      = p_CommonData->wearableDelta1->ReadDesiredPos();
@@ -1177,7 +1195,7 @@ void haptics_thread::RecordData()
         p_CommonData->dataRecorder.VRIntForce1      = deviceForceRecord1; // last force on tool0
         p_CommonData->dataRecorder.VRIntForceGlo1   = globalForceRecord1; // last force on tool0 in global coords
         p_CommonData->dataRecorder.magTrackerPos1   = position1;
-        p_CommonData->dataRecorder.thumb_contact    = p_CommonData->thumbTouching;
+        p_CommonData->dataRecorder.thumbContact    = p_CommonData->thumbTouching;
 
         //Box mass/stiffness properties
         p_CommonData->dataRecorder.box1Stiffness    = stiffness1;
@@ -1186,6 +1204,7 @@ void haptics_thread::RecordData()
         p_CommonData->dataRecorder.box2Mass         = mass2;
         p_CommonData->dataRecorder.dir              = p_CommonData->direct;
 
+        //Rotation matrices of trackers
         p_CommonData->dataRecorder.deviceRotation0  = rotation0;
         p_CommonData->dataRecorder.deviceRotation1  = rotation1;
 
@@ -1212,7 +1231,7 @@ void haptics_thread::RecordData()
         //p_CommonData->dataRecorder.expInertia       = p_CommonData->expInertia;
     }
 
-    else if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //For sensor0/finger0
@@ -1221,8 +1240,7 @@ void haptics_thread::RecordData()
         p_CommonData->dataRecorder.desiredStroke0   = p_CommonData->wearableDelta0->ReadStrokeOutput();
         p_CommonData->dataRecorder.VRIntForce0      = deviceForceRecord0; // last force on tool0
         p_CommonData->dataRecorder.VRIntForceGlo0   = globalForceRecord0; // last force on tool0 in global coords
-        p_CommonData->dataRecorder.magTrackerPos0   = position0;
-        p_CommonData->dataRecorder.index_contact    = p_CommonData->fingerTouching;
+        p_CommonData->dataRecorder.indexContact    = p_CommonData->fingerTouching;
 
         //For sensor0/finger1
         p_CommonData->dataRecorder.desiredPos1      = p_CommonData->wearableDelta1->ReadDesiredPos();
@@ -1230,28 +1248,31 @@ void haptics_thread::RecordData()
         p_CommonData->dataRecorder.desiredStroke1   = p_CommonData->wearableDelta1->ReadStrokeOutput();
         p_CommonData->dataRecorder.VRIntForce1      = deviceForceRecord1; // last force on tool0
         p_CommonData->dataRecorder.VRIntForceGlo1   = globalForceRecord1; // last force on tool0 in global coords
-        p_CommonData->dataRecorder.magTrackerPos1   = position1;
-        p_CommonData->dataRecorder.thumb_contact    = p_CommonData->thumbTouching;
+        p_CommonData->dataRecorder.thumbContact    = p_CommonData->thumbTouching;
 
         //Box mass/stiffness properties
         p_CommonData->dataRecorder.box1Stiffness    = stiffness1;
-        //p_CommonData->dataRecorder.box2Stiffness    = stiffness2;
         p_CommonData->dataRecorder.box1Mass         = mass1;
-        //p_CommonData->dataRecorder.box2Mass         = mass2;
         p_CommonData->dataRecorder.dir              = p_CommonData->direct;
 
+        //Rotation matrices of trackers
         p_CommonData->dataRecorder.deviceRotation0  = rotation0;
         p_CommonData->dataRecorder.deviceRotation1  = rotation1;
 
+
+        //Position vectors of trackers
+        p_CommonData->dataRecorder.magTrackerPos0   = position0;
+        p_CommonData->dataRecorder.magTrackerPos1   = position1;
+
+
         //Box positions
         p_CommonData->dataRecorder.box1Pos          = p_CommonData->ODEBody1->getLocalPos();
-        //p_CommonData->dataRecorder.box2Pos          = p_CommonData->ODEBody2->getLocalPos();
 
         //Experiment information
         //p_CommonData->dataRecorder.pairNo           = p_CommonData->pairNo;
         p_CommonData->dataRecorder.conditionNo      = p_CommonData->cond;
         p_CommonData->dataRecorder.strokeScale      = p_CommonData->strokeScale;
-        //p_CommonData->dataRecorder.success          = p_CommonData->targetSuccess; //for Mine's old experiment (not for Jasmin's FME)
+        //p_CommonData->dataRecorder.success          = p_CommonData->targetSuccess; //for Mine's old experiment (not for Jasmin's Jasmin's Experiments)
         p_CommonData->dataRecorder.box1GlobalRotMat      = p_CommonData->ODEBody1->getGlobalRot();
         p_CommonData->dataRecorder.box1LocalRotMat      = p_CommonData->ODEBody1->getLocalRot();
 
@@ -1266,11 +1287,80 @@ void haptics_thread::RecordData()
         //p_CommonData->dataRecorder.expCD            = p_CommonData->expCD;
         //p_CommonData->dataRecorder.expInertia       = p_CommonData->expInertia;
 
-        //Added variables for FME
+        //Added variables for Jasmin's Experiments
         p_CommonData->dataRecorder.hoopSuccess        = p_CommonData->hoopSuccess;
         p_CommonData->dataRecorder.targetSuccess      = p_CommonData->targetSuccess;
         p_CommonData->dataRecorder.trialSuccess       = p_CommonData->trialSuccess;
     }
+    else if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        //For sensor0/finger0
+        p_CommonData->dataRecorder.desiredPos0      = p_CommonData->wearableDelta0->ReadDesiredPos(); // desired vector for index
+        p_CommonData->dataRecorder.strokeOut0       = p_CommonData->wearableDelta0->GetJointAngles(); //for Mine's experiments
+        p_CommonData->dataRecorder.desiredStroke0   = p_CommonData->wearableDelta0->ReadStrokeOutput();
+        p_CommonData->dataRecorder.VRIntForce0      = deviceForceRecord0; // last force on tool0
+        p_CommonData->dataRecorder.VRIntForceGlo0   = globalForceRecord0; // last force on tool0 in global coords
+        p_CommonData->dataRecorder.indexContact     = p_CommonData->fingerTouching;
+
+        //For sensor0/finger1
+        p_CommonData->dataRecorder.desiredPos1      = p_CommonData->wearableDelta1->ReadDesiredPos();
+        p_CommonData->dataRecorder.strokeOut1       = p_CommonData->wearableDelta1->GetJointAngles();
+        p_CommonData->dataRecorder.desiredStroke1   = p_CommonData->wearableDelta1->ReadStrokeOutput();
+        p_CommonData->dataRecorder.VRIntForce1      = deviceForceRecord1; // last force on tool0
+        p_CommonData->dataRecorder.VRIntForceGlo1   = globalForceRecord1; // last force on tool0 in global coords
+        p_CommonData->dataRecorder.thumbContact     = p_CommonData->thumbTouching;
+
+        //Box mass/stiffness properties
+        p_CommonData->dataRecorder.box1Stiffness    = stiffness1;
+        p_CommonData->dataRecorder.box2Stiffness    = stiffness2;
+        p_CommonData->dataRecorder.box3Stiffness    = stiffness3;
+        p_CommonData->dataRecorder.box1Mass         = mass1;
+        p_CommonData->dataRecorder.box2Mass         = mass2;
+        p_CommonData->dataRecorder.box3Mass         = mass3;
+        //p_CommonData->dataRecorder.dir              = p_CommonData->direct;
+
+        //Rotation matrices of trackers
+        p_CommonData->dataRecorder.deviceRotation0  = rotation0;
+        p_CommonData->dataRecorder.deviceRotation1  = rotation1;
+
+        //Position vectors of trackers
+        p_CommonData->dataRecorder.magTrackerPos0   = position0;
+        p_CommonData->dataRecorder.magTrackerPos1   = position1;
+
+        //Box positions
+        p_CommonData->dataRecorder.box1Pos          = p_CommonData->ODEBody1->getLocalPos();
+        p_CommonData->dataRecorder.box2Pos          = p_CommonData->ODEBody2->getLocalPos();
+        p_CommonData->dataRecorder.box3Pos          = p_CommonData->ODEBody3->getLocalPos();
+
+        //Experiment information
+        //p_CommonData->dataRecorder.pairNo           = p_CommonData->pairNo;
+        p_CommonData->dataRecorder.conditionNo          = p_CommonData->cond;
+        p_CommonData->dataRecorder.strokeScale          = p_CommonData->strokeScale;
+        //p_CommonData->dataRecorder.success          = p_CommonData->targetSuccess; //for Mine's old experiment (not for Jasmin's Experiments)
+        p_CommonData->dataRecorder.box1GlobalRotMat     = p_CommonData->ODEBody1->getGlobalRot();
+        p_CommonData->dataRecorder.box1LocalRotMat      = p_CommonData->ODEBody1->getLocalRot();
+        p_CommonData->dataRecorder.box2GlobalRotMat     = p_CommonData->ODEBody2->getGlobalRot();
+        p_CommonData->dataRecorder.box2LocalRotMat      = p_CommonData->ODEBody2->getLocalRot();
+        p_CommonData->dataRecorder.box3GlobalRotMat     = p_CommonData->ODEBody3->getGlobalRot();
+        p_CommonData->dataRecorder.box3LocalRotMat      = p_CommonData->ODEBody3->getLocalRot();
+
+        //p_CommonData->dataRecorder.compMass         = p_CommonData->compMass;
+        p_CommonData->dataRecorder.compCD               = p_CommonData->compCD;
+        //p_CommonData->dataRecorder.compInertia      = p_CommonData->compInertia;
+
+        //p_CommonData->dataRecorder.CDVert           = p_CommonData->cdVertScaleOn;
+
+        //p_CommonData->dataRecorder.training         = p_CommonData->trainingOn;
+        //p_CommonData->dataRecorder.expMass          = p_CommonData->expMass;
+        //p_CommonData->dataRecorder.expCD            = p_CommonData->expCD;
+        //p_CommonData->dataRecorder.expInertia       = p_CommonData->expInertia;
+
+        //Added variables for Jasmin's Experiments
+        //p_CommonData->dataRecorder.hoopSuccess        = p_CommonData->hoopSuccess;
+        //p_CommonData->dataRecorder.targetSuccess      = p_CommonData->targetSuccess;
+        p_CommonData->dataRecorder.trialSuccess         = p_CommonData->trialSuccess;
+    }
+
 
 #ifdef ACC
     p_CommonData->dataRecorder.Acc = p_CommonData->Acc;
@@ -1532,12 +1622,12 @@ void haptics_thread::InitDynamicBodies()
 
     // create a virtual mesh that will be used for the geometry representation of the dynamic body
     p_CommonData->p_dynamicBox1 = new chai3d::cMesh();
-    p_CommonData->adjustBox = new chai3d::cMesh();
-    p_CommonData->adjustBox1 = new chai3d::cMesh();
     p_CommonData->p_dynamicBox2 = new chai3d::cMesh();
     p_CommonData->p_dynamicBox3 = new chai3d::cMesh();
-    p_CommonData->p_wall = new chai3d::cMesh();
     //p_CommonData->p_dynamicBox4 = new chai3d::cMesh();
+    p_CommonData->adjustBox = new chai3d::cMesh();
+    p_CommonData->adjustBox1 = new chai3d::cMesh();
+    p_CommonData->p_wall = new chai3d::cMesh();
     p_CommonData->p_dynamicHoop1 = new chai3d::cMesh(); // added for HME
     p_CommonData->p_dynamicHoop2 = new chai3d::cMesh(); // added for HME
     p_CommonData->p_boxWithHole = new chai3d::cMultiMesh(); // added for HME
@@ -1764,7 +1854,7 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(scaledFinger);
         p_CommonData->p_world->removeChild(scaledThumb);
     }
-    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         delete ODEWorld;
         delete p_CommonData->ODEAdjustBody;
@@ -1817,7 +1907,55 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(scaledFinger);
         p_CommonData->p_world->removeChild(scaledThumb);
     }
+    else if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        delete ODEWorld;
+        delete p_CommonData->ODEAdjustBody;
+        delete p_CommonData->ODEAdjustBody1;
 
+        delete p_CommonData->ODEBody1;
+        delete p_CommonData->ODEBody2;
+        delete p_CommonData->ODEBody3;
+        //delete p_CommonData->ODEBody4;
+
+        delete p_CommonData->adjustBox;
+        delete p_CommonData->adjustBox1;
+        delete p_CommonData->p_dynamicBox1;
+        delete p_CommonData->p_dynamicBox2;
+        delete p_CommonData->p_dynamicBox3;
+
+        delete ODEGPlane0;
+        delete ground;
+        delete Right_Platform;
+        delete Left_Platform;
+        delete globe;
+
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox2);
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox3);
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicScaledBox1);
+        p_CommonData->p_world->removeChild(ODEWorld);
+        p_CommonData->p_world->removeChild(ground);
+        p_CommonData->p_world->removeChild(wall);
+        p_CommonData->p_world->removeChild(hoop1);
+        //p_CommonData->p_world->removeChild(hoop2);
+        p_CommonData->p_world->removeChild(hoop3);
+        p_CommonData->p_world->removeChild(hoop4);
+        p_CommonData->p_world->removeChild(target1);
+        p_CommonData->p_world->removeChild(m_tool0);
+        p_CommonData->p_world->removeChild(m_tool1);
+        p_CommonData->p_world->removeChild(finger);
+        p_CommonData->p_world->removeChild(thumb);
+        p_CommonData->p_world->removeChild(globe);
+        p_CommonData->p_world->removeChild(force1_show);
+        p_CommonData->p_world->removeChild(force1_show);
+
+        // add scaled bodies for altering display ratio
+        p_CommonData->p_world->removeChild(m_dispScaleCurSphere0);
+        p_CommonData->p_world->removeChild(m_dispScaleCurSphere1);
+        p_CommonData->p_world->removeChild(scaledFinger);
+        p_CommonData->p_world->removeChild(scaledThumb);
+    }
 }
 
 void haptics_thread::RenderDynamicBodies()
@@ -1938,9 +2076,13 @@ void haptics_thread::RenderDynamicBodies()
     case HoxelMappingExperiment:  // Jasmin HoxelMapping Experiment
         boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
         friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;        
-        //mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
-        mass1 = 700.0; mass2 = 700.0; mass3 = 700.0;
-        //stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
+        mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
+        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
+        break;
+    case MultiMassExperiment:  // Jasmin MultiMass Experiment
+        boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
+        mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
         stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
     }
@@ -1972,6 +2114,11 @@ void haptics_thread::RenderDynamicBodies()
     if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         SetDynEnvironHoxelMappingExp();
+    }
+
+    if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    {
+        SetDynEnvironMultiMassExp();
     }
 
     // if just rendering dynamic environments without an experiment
@@ -2104,25 +2251,25 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     //p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
 
     // define material properties for box 2
-    //chai3d::cMaterial mat22;
-    mat22.setBlueMediumTurquoise();
-    mat22.setStiffness(stiffness2);
-    //mat22.setLateralStiffness(latStiffness2);
-    mat22.setDynamicFriction(dynFriction2);
-    mat22.setStaticFriction(friction2);
-    mat22.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox2->setMaterial(mat22);
+    //chai3d::cMaterial mat2;
+    mat2.setBlueMediumTurquoise();
+    mat2.setStiffness(stiffness2);
+    //mat2.setLateralStiffness(latStiffness2);
+    mat2.setDynamicFriction(dynFriction2);
+    mat2.setStaticFriction(friction2);
+    mat2.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat2);
     p_CommonData->p_dynamicBox2->setUseMaterial(true);
 
     // define material properties for box 3
-    //chai3d::cMaterial mat33;
-    //mat33.setRedSalmon();
-    //mat33.setStiffness(stiffness3);
-    //mat33.setLateralStiffness(latStiffness3);
-    //mat33.setDynamicFriction(dynFriction3);
-    //mat33.setStaticFriction(friction3);
-    //mat33.setUseHapticFriction(true);
-    //p_CommonData->p_dynamicBox3->setMaterial(mat33);
+    //chai3d::cMaterial mat3;
+    //mat3.setRedSalmon();
+    //mat3.setStiffness(stiffness3);
+    //mat3.setLateralStiffness(latStiffness3);
+    //mat3.setDynamicFriction(dynFriction3);
+    //mat3.setStaticFriction(friction3);
+    //mat3.setUseHapticFriction(true);
+    //p_CommonData->p_dynamicBox3->setMaterial(mat3);
     //p_CommonData->p_dynamicBox3->setUseMaterial(true);
 
     // add mesh to ODE object
@@ -2286,16 +2433,16 @@ void haptics_thread::SetDynEnvironStiffMassExp()   // Mine Stiffness-Mass Experi
     p_CommonData->p_dynamicBox2->createAABBCollisionDetector(toolRadius);
 
     // define material properties for box 2
-    //chai3d::cMaterial mat22;
-    mat22.setYellow();
-    mat22.setStiffness(stiffness2);
-    //mat22.setLateralStiffness(latStiffness2);
-    mat22.setDynamicFriction(dynFriction2);
-    mat22.setStaticFriction(friction2);
-    mat22.setUseHapticFriction(true);
-    //mat22->setTransparencyLevel(1, true);
+    //chai3d::cMaterial mat2;
+    mat2.setYellow();
+    mat2.setStiffness(stiffness2);
+    //mat2.setLateralStiffness(latStiffness2);
+    mat2.setDynamicFriction(dynFriction2);
+    mat2.setStaticFriction(friction2);
+    mat2.setUseHapticFriction(true);
+    //mat2->setTransparencyLevel(1, true);
 
-    p_CommonData->p_dynamicBox2->setMaterial(mat22);
+    p_CommonData->p_dynamicBox2->setMaterial(mat2);
     p_CommonData->p_dynamicBox2->setUseMaterial(true);
 
     // add mesh to ODE object
@@ -2408,7 +2555,6 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
     p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
 
     // define material properties for box 1 - invisible
-    chai3d::cMaterial mat1;
     mat1.setBlue();
     mat1.setStiffness(stiffness1);
     //mat1.setLateralStiffness(latStiffness1);
@@ -2508,7 +2654,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
 
     // define material properties for box 1 - invisible
-    chai3d::cMaterial mat1;
     mat1.setRed();
     mat1.setStiffness(stiffness1);
     //mat1.setLateralStiffness(latStiffness1);
@@ -2706,6 +2851,78 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     qDebug()<<"Finished HME Setup";
 }
 
+void haptics_thread::SetDynEnvironMultiMassExp() // Jasmin MultiMass Experiment
+{
+    // create the visual boxes on the dynamicbox meshes
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
+    cCreateBox(p_CommonData->p_dynamicBox3, boxSize3, boxSize3, boxSize3); // make mesh a box
+
+    //setup collision detectors for the dynamic objects
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_dynamicBox2->createAABBCollisionDetector(toolRadius);
+    p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
+
+    //define material properties for box 1
+    //chai3d::cMaterial mat1;
+    mat1.setRedCrimson();
+    mat1.setStiffness(stiffness1);
+    //mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+    // define material properties for box 2
+    //chai3d::cMaterial mat2;
+    mat2.setBlueAqua();
+    mat2.setStiffness(stiffness2);
+    //mat2.setLateralStiffness(latStiffness2);
+    mat2.setDynamicFriction(dynFriction2);
+    mat2.setStaticFriction(friction2);
+    mat2.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat2);
+    p_CommonData->p_dynamicBox2->setUseMaterial(true);
+
+    // define material properties for box 3
+    //chai3d::cMaterial mat3;
+    mat3.setPurpleBlueViolet();
+    mat3.setStiffness(stiffness3);
+    //mat3.setLateralStiffness(latStiffness3);
+    mat3.setDynamicFriction(dynFriction3);
+    mat3.setStaticFriction(friction3);
+    mat3.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox3->setMaterial(mat3);
+    p_CommonData->p_dynamicBox3->setUseMaterial(true);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+    p_CommonData->ODEBody2->setImageModel(p_CommonData->p_dynamicBox2);
+    p_CommonData->ODEBody3->setImageModel(p_CommonData->p_dynamicBox3);
+
+    // create a dynamic model of the ODE object
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
+    p_CommonData->ODEBody2->createDynamicBox(boxSize2, boxSize2, boxSize2);
+    p_CommonData->ODEBody3->createDynamicBox(boxSize3, boxSize3, boxSize3);
+
+    // set mass of box
+    p_CommonData->ODEBody1->setMass(mass1);
+    p_CommonData->ODEBody2->setMass(mass2);
+    p_CommonData->ODEBody3->setMass(mass3);
+
+    // set position of box
+    box2InitPos = chai3d::cVector3d(0.1, 0.090, -0.02);// set middle box 1st to use a reference for other box positions
+    p_CommonData->ODEBody1->setLocalPos(box2InitPos.get(0), box2InitPos.get(1)+0.15, box2InitPos.get(2));
+    p_CommonData->ODEBody2->setLocalPos(box2InitPos);
+    p_CommonData->ODEBody3->setLocalPos(box2InitPos.get(0), box2InitPos.get(1)-0.15, box2InitPos.get(2));
+
+    //Add boxes to the world
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox2);
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox3);
+}
+
 // general mass demo with adjustable parameters
 void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 {
@@ -2720,36 +2937,36 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
 
     //define material properties for box 1
-    //chai3d::cMaterial mat11;
-    mat11.setGreenLawn();
-    mat11.setStiffness(stiffness1);
-    //mat11.setLateralStiffness(latStiffness1);
-    mat11.setDynamicFriction(dynFriction1);
-    mat11.setStaticFriction(friction1);
-    mat11.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox1->setMaterial(mat11);
+    //chai3d::cMaterial mat1;
+    mat1.setGreenLawn();
+    mat1.setStiffness(stiffness1);
+    //mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
     p_CommonData->p_dynamicBox1->setUseMaterial(true);
 
     // define material properties for box 2
-    //chai3d::cMaterial mat22;
-    mat22.setBlueRoyal();
-    mat22.setStiffness(stiffness2);
-    //mat22.setLateralStiffness(latStiffness2);
-    mat22.setDynamicFriction(dynFriction2);
-    mat22.setStaticFriction(friction2);
-    mat22.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox2->setMaterial(mat22);
+    //chai3d::cMaterial mat2;
+    mat2.setBlueRoyal();
+    mat2.setStiffness(stiffness2);
+    //mat2.setLateralStiffness(latStiffness2);
+    mat2.setDynamicFriction(dynFriction2);
+    mat2.setStaticFriction(friction2);
+    mat2.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat2);
     p_CommonData->p_dynamicBox2->setUseMaterial(true);
 
     // define material properties for box 3
-    //chai3d::cMaterial mat33;
-    mat33.setRedSalmon();
-    mat33.setStiffness(stiffness3);
-    //mat33.setLateralStiffness(latStiffness3);
-    mat33.setDynamicFriction(dynFriction3);
-    mat33.setStaticFriction(friction3);
-    mat33.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox3->setMaterial(mat33);
+    //chai3d::cMaterial mat3;
+    mat3.setRedSalmon();
+    mat3.setStiffness(stiffness3);
+    //mat3.setLateralStiffness(latStiffness3);
+    mat3.setDynamicFriction(dynFriction3);
+    mat3.setStaticFriction(friction3);
+    mat3.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox3->setMaterial(mat3);
     p_CommonData->p_dynamicBox3->setUseMaterial(true);
 
     // add mesh to ODE object
@@ -2887,37 +3104,37 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     //    p_CommonData->p_dynamicBox3->createAABBCollisionDetector(toolRadius);
 
     // define material properties for box 1
-    //chai3d::cMaterial mat11;
-    mat11.setGreenLawn();
-    mat11.setStiffness(stiffness1);
-    //mat11.setLateralStiffness(latStiffness1);
-    mat11.setDynamicFriction(dynFriction1);
-    mat11.setStaticFriction(friction1);
-    mat11.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox1->setMaterial(mat11);
+    //chai3d::cMaterial mat1;
+    mat1.setGreenLawn();
+    mat1.setStiffness(stiffness1);
+    //mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
     p_CommonData->p_dynamicBox1->setUseMaterial(true);
 
     /*
     // define material properties for box 2
-    //chai3d::cMaterial mat22;
-    mat22.setBlueRoyal();
-    mat22.setStiffness(stiffness2);
-    mat22.setLateralStiffness(latStiffness2);
-    mat22.setDynamicFriction(dynFriction2);
-    mat22.setStaticFriction(friction2);
-    mat22.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox2->setMaterial(mat22);
+    //chai3d::cMaterial mat2;
+    mat2.setBlueRoyal();
+    mat2.setStiffness(stiffness2);
+    mat2.setLateralStiffness(latStiffness2);
+    mat2.setDynamicFriction(dynFriction2);
+    mat2.setStaticFriction(friction2);
+    mat2.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox2->setMaterial(mat2);
     p_CommonData->p_dynamicBox2->setUseMaterial(true);
 
     // define material properties for box 3
-    //chai3d::cMaterial mat33;
-    mat33.setRedSalmon();
-    mat33.setStiffness(stiffness3);
-    mat33.setLateralStiffness(latStiffness3);
-    mat33.setDynamicFriction(dynFriction3);
-    mat33.setStaticFriction(friction3);
-    mat33.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox3->setMaterial(mat33);
+    //chai3d::cMaterial mat3;
+    mat3.setRedSalmon();
+    mat3.setStiffness(stiffness3);
+    mat3.setLateralStiffness(latStiffness3);
+    mat3.setDynamicFriction(dynFriction3);
+    mat3.setStaticFriction(friction3);
+    mat3.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox3->setMaterial(mat3);
     p_CommonData->p_dynamicBox3->setUseMaterial(true);
     */
 

@@ -88,12 +88,14 @@ typedef struct
     double ref2;
     bool success; //double success;
     double box1Stiffness;
+    double box2Stiffness;
+    double box3Stiffness;
     double box1Mass;
+    double box2Mass;
+    double box3Mass;
     double stiffness1;
     double stiffness2;
     double stiffness3;
-    double box2Stiffness;
-    double box2Mass;
     double mass1;
     double mass2;
     double mass3;
@@ -107,13 +109,14 @@ typedef struct
     //Eigen::Vector3d VRInteractionForceGlobal1;
     chai3d::cVector3d magTrackerPos0;
     chai3d::cVector3d magTrackerPos1;
-    bool index_contact;
-    bool thumb_contact;
+    bool indexContact;
+    bool thumbContact;
     chai3d::cMatrix3d deviceRotation0;
     chai3d::cMatrix3d deviceRotation1;
 
     chai3d::cVector3d box1Pos;
     chai3d::cVector3d box2Pos;
+    chai3d::cVector3d box3Pos;
     chai3d::cVector3d scaledBox1Pos;
 
     double boxMass;
@@ -146,6 +149,10 @@ typedef struct
     chai3d::cVector3d gravity;
     chai3d::cMatrix3d box1GlobalRotMat; //Modified for HME
     chai3d::cMatrix3d box1LocalRotMat; //Added for HME
+    chai3d::cMatrix3d box2GlobalRotMat; //Modified for HME
+    chai3d::cMatrix3d box2LocalRotMat; //Added for HME
+    chai3d::cMatrix3d box3GlobalRotMat; //Modified for HME
+    chai3d::cMatrix3d box3LocalRotMat; //Added for HME
     int Break_num;
     int ThroughHoop_num;
     int StartTime;
@@ -217,6 +224,7 @@ typedef enum
     StiffnessMassExperiment,
     FingerMappingExperiment,
     HoxelMappingExperiment,
+    MultiMassExperiment,
     dynamicMagnitudeExp,
 } dynamicObject_states;
 
@@ -395,7 +403,7 @@ typedef struct
     QString MineProtocolLocation;
     CSimpleIniA MineProtocolFile;
 
-    //Protocol loading For Jasmin's Finger Mapping Experiments
+    //Protocol loading For Jasmin's Experiments
     QString protocolFileLocation;
     CSimpleIniA selectedProtocolFile;
 
@@ -504,6 +512,7 @@ typedef struct
 
     chai3d::cVector3d box1PostInitCenter;
     chai3d::cVector3d box2PostInitCenter;
+    chai3d::cVector3d box3PostInitCenter;
 
 
     // flag for reseting box position during experiment if the standard reset causes issue
