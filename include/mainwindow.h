@@ -98,32 +98,6 @@ public:
     // oculus device
     chai3d::cOVRDevice oculusVR;
 
-    //Prev values needed for IIR filter:
-    Eigen::Vector3d localDesiredPos0_prev;
-    Eigen::Vector3d localDesiredPos1_prev;
-
-    Eigen::Vector3d localForce0_prev;
-    Eigen::Vector3d localForce1_prev;
-
-
-    //Set Device Desired Forces or positions:
-    //Dorsal desiered values:
-    QString device0X; //X
-    QString device0Y; //Y
-    QString device0Z; //Z
-    QString device0X_prev; //X
-    QString device0Y_prev; //Y
-    QString device0Z_prev; //Z
-    QString dev0Mag;
-    //Ventral desiered values:
-    QString device1X; //X
-    QString device1Y; //Y
-    QString device1Z; //Z
-    QString device1X_prev; //X
-    QString device1Y_prev; //Y
-    QString device1Z_prev; //Z
-    QString dev1Mag;
-
     //Initial Camera Variables:
     double initOffset;
     double initPolar;

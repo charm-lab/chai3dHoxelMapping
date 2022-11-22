@@ -426,13 +426,13 @@ void haptics_thread::UpdateVRGraphics()
         if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment){
 
             p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
-            p_CommonData->ODEBody2->setMass(p_CommonData->mass2);
+            //p_CommonData->ODEBody2->setMass(p_CommonData->mass2);
 
             gravity_force1.set(0,0,original_mass1*9.81);
-            gravity_force2.set(0,0,original_mass2*9.81);
+            //gravity_force2.set(0,0,original_mass2*9.81);
 
             p_CommonData->ODEBody1->addExternalForce(gravity_force1);
-            p_CommonData->ODEBody2->addExternalForce(gravity_force2);
+            //p_CommonData->ODEBody2->addExternalForce(gravity_force2);
 
             //qDebug()<< "BoxGlobalX: " << p_CommonData->ODEBody1->getGlobalPos().x()<< "Hoop: " << p_CommonData->ODEHoop1->getGlobalPos().x() << "targetRad: " << targetRadius;
             //Keep motion to the yz plane only when box is checked
@@ -2088,9 +2088,9 @@ void haptics_thread::RenderDynamicBodies()
     }
 
     //assign the params dependent on the others
-    //latStiffness1 = stiffness1*1.5;
-    //latStiffness2 = stiffness2*1.5;
-    //latStiffness3 = stiffness3*1.5;
+    latStiffness1 = stiffness1*1.5;
+    latStiffness2 = stiffness2*1.5;
+    latStiffness3 = stiffness3*1.5;
 
     dynFriction1 = 0.9*friction1;
     dynFriction2 = 0.9*friction2;
@@ -2645,13 +2645,22 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
 void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Experiment
 {   
     qDebug() << "start SetDynEnvironHoxelMappingExp()";
-    targetRadius = 0.05;
+    targetRadius = 0.05;    
+    double scaleFactorMMToM = 0.001; //scale stl file from mm unit to meter scale of the environment
 
-    // create the visual boxes on the dynamic box meshes
-    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    //Create the box with hole object
+    boxWithHole = new chai3d::cMultiMesh(); // create a virtual mesh
+    //boxWithHole->setShowFrame(true);
+    //boxWithHole->setFrameSize(0.075);
+
+    //Load stl model of the object
+    if(cLoadFileSTL(boxWithHole, "./Resources/boxWithHole.stl")){
+        qDebug() << "boxWithHole loaded";
+    }
+    boxWithHole->scale(scaleFactorMMToM);
 
     // setup collision detectors for the dynamic box with finger only
-    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+    boxWithHole->createAABBCollisionDetector(toolRadius);
 
     // define material properties for box 1 - invisible
     mat1.setRed();
@@ -2660,8 +2669,23 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     mat1.setDynamicFriction(dynFriction1);
     mat1.setStaticFriction(friction1);
     mat1.setUseHapticFriction(true);
-    p_CommonData->p_dynamicBox1->setMaterial(mat1);
-    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+    boxWithHole->setMaterial(mat1);
+    boxWithHole->setUseMaterial(true);
+    boxWithHole->setTransparencyLevel(0.75, true);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(boxWithHole);
+    // create a dynamic model of the ODE object - box1
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
+    // set mass of box1
+    p_CommonData->ODEBody1->setMass(mass1);
+    // set position of box
+    box1InitPos = chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02); //(0.15, -0.2, -0.02);
+    p_CommonData->ODEBody1->setLocalPos(box1InitPos);
+    //Set orientation of box
+    p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
+    //Add object to the world
+    p_CommonData->p_world->addChild(boxWithHole);
 
     //Create box1 hoop -- visual only
     hoop1 = new chai3d::cMesh();
@@ -2672,18 +2696,8 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     matHoop1.setRed();
     hoop1->setMaterial(matHoop1);
     hoop1->setTransparencyLevel(0.2, true);
-
-    // add mesh to ODE object
-    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
-    // create a dynamic model of the ODE object - box1
-    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
-    // set mass of box1
-    p_CommonData->ODEBody1->setMass(mass1);
-    // set position of box
-    box1InitPos = chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02); //(0.15, -0.2, -0.02);
-    p_CommonData->ODEBody1->setLocalPos(box1InitPos);
-    //Set orientation of box
-    p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
+    //Add object to the world
+    p_CommonData->p_world->addChild(hoop1);
 
     //Create Box1 Target Area
     target1 = new chai3d::cMesh();
@@ -2699,85 +2713,22 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
 
     //Make fingers collide with wall
     wall->createAABBCollisionDetector(toolRadius);
+    //Add object to the world
+    p_CommonData->p_world->addChild(wall);
 
-    /*
-    // create the visual hoops on the dynamic box and hoop meshes
-    //cCreateRing(p_CommonData->p_dynamicHoop1, 0.005, 0.8*targetRadius); //ring
-    //cCreateSphere(p_CommonData->p_dynamicHoop1, targetRadius); // sphere
-
-    // setup collision detectors for the dynamic objects
-    //p_CommonData->p_dynamicHoop1->createAABBCollisionDetector(toolRadius);
-
-
-    //Create dynamic hoop1
-    chai3d::cMaterial matDynamicHoop1;
-    matDynamicHoop1.setBlack();
-    matDynamicHoop1.setStiffness(stiffness1);
-    matDynamicHoop1.setDynamicFriction(dynFriction1);
-    matDynamicHoop1.setStaticFriction(friction1);
-    matDynamicHoop1.setUseHapticFriction(true);
-    p_CommonData->p_dynamicHoop1->setMaterial(matDynamicHoop1);
-    p_CommonData->p_dynamicHoop1->setUseMaterial(true);
-
-    // add mesh to ODE object
-    p_CommonData->ODEHoop1->setImageModel(p_CommonData->p_dynamicHoop1);
-    // create a dynamic model of the ODE object - dynamic hoop 1
-    p_CommonData->ODEHoop1->createDynamicBoundingBox(); // ring
-    //p_CommonData->ODEHoop1->createDynamicSphere(targetRadius); //sphere
-    // set mass of dynamic hoop 1
-    p_CommonData->ODEHoop1->setMass(mass1);
-    // set position of dynamic hoop 1
-    p_CommonData->ODEHoop1->setLocalPos(0.1, -0.2, -.02); //(0.1,-0.1,-.02);
-    //Set orientation of dynamic hoop 1
-    p_CommonData->ODEHoop1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
-
-    // create the visual hoops on the dynamic box and hoop meshes
-    cCreateRing(p_CommonData->p_dynamicHoop2, 0.01, 0.2); //ring
-    //cCreateSphere(p_CommonData->p_dynamicHoop1, targetRadius); // sphere
-
-    // setup collision detectors for the dynamic objects
-    p_CommonData->p_dynamicHoop2->createAABBCollisionDetector(toolRadius);
-
-    //Create dynamic hoop1
-    chai3d::cMaterial matDynamicHoop2;
-    matDynamicHoop2.setBlack();
-//    p_CommonData->p_dynamicHoop2->rotateAboutLocalAxisDeg(0, 1, 0, 90);
-//    p_CommonData->p_dynamicHoop2->setLocalPos(0.1, 0.05, 0.05);
-    p_CommonData->p_dynamicHoop2->setTransparencyLevel(1.0, true);
-    matDynamicHoop2.setStiffness(stiffness1);
-    matDynamicHoop2.setDynamicFriction(dynFriction1);
-    matDynamicHoop2.setStaticFriction(friction1);
-    matDynamicHoop2.setUseHapticFriction(true);
-    p_CommonData->p_dynamicHoop2->setMaterial(matDynamicHoop1);
-    p_CommonData->p_dynamicHoop2->setUseMaterial(true);
-
-    // add mesh to ODE object
-    p_CommonData->ODEHoop2->setImageModel(p_CommonData->p_dynamicHoop2);
-    // create a dynamic model of the ODE object - dynamic hoop 2
-    p_CommonData->ODEHoop2->createDynamicBoundingBox(); // ring
-    // set mass of dynamic hoop 2
-    p_CommonData->ODEHoop2->setMass(mass1);
-    // set position of dynamic hoop 2
-    p_CommonData->ODEHoop2->setLocalPos(0.1, 0.05, 0.05); //(0.1,-0.1,-.02);
-    //Set orientation of dynamic hoop 2
-    p_CommonData->ODEHoop2->rotateAboutLocalAxisDeg(0, 1, 0, 90);
-    */
-
-
-    /* */
     //Create the wire object
     wire = new chai3d::cMultiMesh(); // create a virtual mesh
     if(cLoadFileSTL(wire, "./Resources/wire_Jasmin.stl")){
         qDebug() << "wire loaded";
     }
-    p_CommonData->p_world->addChild(wire); // add object to world
-    wire->setShowFrame(true);
-    wire->setFrameSize(0.1);
+    //Add object to the world
+    p_CommonData->p_world->addChild(wire);
+    //wire->setShowFrame(true);
+    //wire->setFrameSize(0.1);
     wire->rotateAboutLocalAxisDeg(0,0,1,0);
-    double scaleFactorMMToM = 0.001; //scale stl file from mm unit to meter scale of the environment
-    wire->setLocalPos( hoop1Pos );
+    wire->setLocalPos(hoop1Pos);
     wire->scale(scaleFactorMMToM);
-    // set params for finger
+    //Set params for wire
     wire->setShowEnabled(true);
     wire->setUseVertexColors(true);
     chai3d::cColorf wireColor;
@@ -2786,46 +2737,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     wire->m_material->m_specular.set(1.0, 1.0, 1.0);
     wire->setUseMaterial(true);
     wire->setHapticEnabled(true);
-
-    //Create the box with hole object
-    //boxWithHole = new chai3d::cMultiMesh*(); // create a virtual mesh
-    if(cLoadFileSTL(p_CommonData->p_boxWithHole, "./Resources/boxWithHole.stl")){
-        qDebug() << "boxWithHole loaded";
-    }
-
-    p_CommonData->p_boxWithHole->setShowFrame(true);
-    p_CommonData->p_boxWithHole->setFrameSize(0.075);
-    p_CommonData->p_boxWithHole->scale(scaleFactorMMToM);
-    /*
-    // create the visual boxes on the dynamic box meshes
-    //cCreateBox(p_CommonData->p_dynamicBox2, boxSize1, boxSize1, boxSize1); // make mesh a box
-
-    // setup collision detectors for the dynamic box with finger only
-    //p_CommonData->p_boxWithHole->createAABBCollisionDetector(toolRadius);
-
-    // set params
-    boxWithHole->setShowEnabled(true);
-    chai3d::cMaterial boxWithHoleMat;
-    boxWithHoleMat.setPurpleDarkOrchid();
-    boxWithHoleMat.setStiffness(stiffness2);
-    boxWithHoleMat.setDynamicFriction(dynFriction2);
-    boxWithHoleMat.setStaticFriction(friction2);
-    boxWithHoleMat.setUseHapticFriction(true);
-    p_CommonData->p_boxWithHole->setMaterial(boxWithHoleMat);
-    p_CommonData->p_boxWithHole->setUseMaterial(true);
-
-    // add mesh to ODE object
-    p_CommonData->ODEBody2->setImageModel(p_CommonData->p_boxWithHole);
-    // create a dynamic model of the ODE object - box1
-    p_CommonData->ODEBody2->createDynamicBox(boxSize1, boxSize1, boxSize1);
-    // set mass of box1
-    p_CommonData->ODEBody2->setMass(mass2);
-
-    //Set position of boxWithHole
-    p_CommonData->ODEBody2->setLocalPos( chai3d::cVector3d(0.15, hoop1Pos.y()-0.2, -0.02) );
-    //Set orientation of boxWithHole
-    p_CommonData->ODEBody2->rotateAboutLocalAxisDeg(0, 0, 1, 45);
-*/
 
     p_CommonData->target1Complete = false;
     p_CommonData->hoop1Complete = false;
@@ -2839,14 +2750,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     p_CommonData->targetSuccess = 0;
     p_CommonData->hoopSuccess = 0;
     p_CommonData->trialSuccess = 0;
-
-    //Add non-dynamic objects to the world
-    p_CommonData->p_world->addChild(hoop1);
-    p_CommonData->p_world->addChild(wall);
-    //Add dynamic objects to the world
-    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
-    p_CommonData->p_world->addChild(p_CommonData->p_boxWithHole); // add object to world
-
     p_CommonData->mistakeCounter = 0;
     qDebug()<<"Finished HME Setup";
 }

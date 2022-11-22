@@ -23,10 +23,33 @@ int defaultBitNum = 8;
 int defaultParity = 0;
 int defaultStopBit = 1;
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+//Set Device Desired Forces or positions:
+//Dorsal desiered values:
+QString device0X; //X
+QString device0Y; //Y
+QString device0Z; //Z
+QString device0X_prev; //X
+QString device0Y_prev; //Y
+QString device0Z_prev; //Z
+QString dev0Mag;
+//Ventral desiered values:
+QString device1X; //X
+QString device1Y; //Y
+QString device1Z; //Z
+QString device1X_prev; //X
+QString device1Y_prev; //Y
+QString device1Z_prev; //Z
+QString dev1Mag;
 
+//Prev values needed for IIR filter:
+Eigen::Vector3d localDesiredPos0_prev;
+Eigen::Vector3d localDesiredPos1_prev;
+
+Eigen::Vector3d localForce0_prev;
+Eigen::Vector3d localForce1_prev;
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     //#ifndef OCULUS
@@ -81,8 +104,6 @@ MainWindow::~MainWindow()
 //START SERIAL
 
 //Serial data writing happens here:
-
-
 void MainWindow::writeSerialData()
 {
     QByteArray payloadBuffer;
@@ -284,7 +305,7 @@ void MainWindow::writeSerialData()
     //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
 
     /*temp*/
-    //QString serialData = "*" + device0X + "," + device0Y + "," + device0Z + "\n";
+    //QString serialData = device0X + " " + device0Y + " " + device0Z + "\r\n";
     //QString serialData = "*2,0,0\n";
     /*temp*/
     payloadBuffer = payloadBuffer.append(serialData);
@@ -335,8 +356,9 @@ void MainWindow::readSerialData()
     {
         QString str = ui->serialRead->toPlainText();
         str+=tr(buf);
-        ui->serialRead->clear();
-        ui->serialRead->append(str);
+        //ui->serialRead->clear();
+        //ui->serialRead->append(str);
+        ui->serialRead->setText(str);
     }
     buf.clear();
 }
@@ -391,6 +413,7 @@ void MainWindow::on_openButton_clicked()
 
         QTimer *timer0 = new QTimer(this);
         connect(timer0, SIGNAL(timeout()), this, SLOT(writeSerialData()));
+
         timer0->start(10);
         //close PCI control:
 #ifdef SENSORAY826

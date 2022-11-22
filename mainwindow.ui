@@ -843,7 +843,7 @@ Planar Constraint</string>
       <x>110</x>
       <y>510</y>
       <width>691</width>
-      <height>641</height>
+      <height>711</height>
      </rect>
     </property>
     <property name="title">
@@ -969,13 +969,13 @@ Not
 Found</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>280</y>
        <width>641</width>
-       <height>361</height>
+       <height>421</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_6">
@@ -1491,6 +1491,9 @@ Effective</string>
     </property>
     <property name="text">
      <string>Show All Frames</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_5">
@@ -2066,7 +2069,7 @@ Experiment</string>
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>1180</y>
+      <y>1220</y>
       <width>281</width>
       <height>81</height>
      </rect>
