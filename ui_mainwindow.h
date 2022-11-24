@@ -906,7 +906,7 @@ public:
         showAllFramesCheckBox = new QCheckBox(centralWidget);
         showAllFramesCheckBox->setObjectName(QStringLiteral("showAllFramesCheckBox"));
         showAllFramesCheckBox->setGeometry(QRect(1780, 1140, 321, 71));
-        showAllFramesCheckBox->setChecked(true);
+        showAllFramesCheckBox->setChecked(false);
         groupBox_5 = new QGroupBox(centralWidget);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
         groupBox_5->setGeometry(QRect(100, 30, 701, 461));

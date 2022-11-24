@@ -16,7 +16,7 @@ totalNumInvisCubeSubjects = 1;
 numRemovedVisCubeSubjects = 0;
 numRemovedInvisCubeSubjects = 0;
 %Number of mappings tested
-numMappings = 1;
+numMappings = 5;
 %Number of trials per mapping
 numTrialsPerMapping = 1;
 %Total number of trials each subject did
@@ -33,7 +33,7 @@ subjectNum = [1]; %[1:9, 11:21]; %WRITE IN THE SUBJECT NUMBERS YOU HAVE
 %Load data from folder
 %Folder contatining all data:
 %myFolder = "..\dummyData";
-myFolder = "..\MME_Subject_Data";
+myFolder = "..\HME_Subject_Data";
 totalNumSubjects = totalNumVisCubeSubjects + totalNumInvisCubeSubjects;
 numVisCubeSubjects  = totalNumVisCubeSubjects - numRemovedVisCubeSubjects;
 numInvisCubeSubjects  = totalNumInvisCubeSubjects - numRemovedInvisCubeSubjects;

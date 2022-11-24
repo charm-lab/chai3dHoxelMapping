@@ -840,7 +840,8 @@ void MainWindow::on_turnOff_clicked()
 }
 
 //Reads in experiment data from protocol ini files
-bool MainWindow::readExpStuffIn(){
+bool MainWindow::readExpStuffIn()
+{
     int trial;
     qDebug()<<"in readExpStuffIn()";
 
@@ -2628,20 +2629,9 @@ void MainWindow::WriteDataToFile()
     if(p_CommonData->currentDynamicObjectState == StiffnessMassExperiment){
         directory = getSubjectDirectory() + "StiffnessMassExperiment" + QString::number(p_CommonData->subjectNo);
     }
-    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment){
-        if(p_CommonData->TrialType == "training")
-        {
-            directory = getSubjectDirectory() + "TrainingTrialData";
-            qDebug()<<"Saved data to: "<<directory;
-        }
-        else
-        {
-            directory = getSubjectDirectory();
-            qDebug()<<"Saved data to: "<<directory;
-        }
-    }
-    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == MultiMassExperiment){
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+       p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+       p_CommonData->currentDynamicObjectState == MultiMassExperiment){
         if(p_CommonData->TrialType == "training")
         {
             directory = getSubjectDirectory() + "TrainingTrialData";
@@ -2683,62 +2673,9 @@ void MainWindow::WriteDataToFile()
         //Open file to write data:
         file.open(directory.toStdString() + "/" + trialName.toStdString() + trialMode.toStdString() + trialBuffer + "trialRun.csv");
     }
-    //File names for Jasmin's FME Experiments
-    if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
-    {
-        //Sort data by trialName
-        QString trialNum = QString::number(p_CommonData->trialNo);
-
-        //std::ofstream file;
-
-        //Formatting to help with post-processing
-        if (p_CommonData->trialNo < 10)
-        {
-            //Open file to write data:
-            //if no mistakes due to premature presses of H:
-            if(p_CommonData->mistakeCounter == 0)
-            {
-                file.open(directory.toStdString()
-                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                          + "_Trial0" + trialNum.toStdString()
-                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                          + ".csv");
-            }
-            else //append mistakes number so that files can be combined in post-processing
-            {
-                file.open(directory.toStdString()
-                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                          + "_Trial0" + trialNum.toStdString()
-                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                          + "-MISTAKE-NUM-" + QString::number(p_CommonData->mistakeCounter).toStdString()
-                          + ".csv");
-            }
-        }
-        else
-        {
-            //Open file to write data:
-            //if no mistakes due to premature presses of H:
-            if(p_CommonData->mistakeCounter == 0)
-            {
-                file.open(directory.toStdString()
-                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                          + "_Trial" + trialNum.toStdString()
-                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                          + ".csv");
-            }
-            else //append mistakes number so that files can be combined in post-processing
-            {
-                file.open(directory.toStdString()
-                          +"/Subject" + QString::number(p_CommonData->subjectNo).toStdString()
-                          + "_Trial" + trialNum.toStdString()
-                          + "_Mapping" + QString::number(p_CommonData->mapping).toStdString()
-                          + "-MISTAKE-NUM-" + QString::number(p_CommonData->mistakeCounter).toStdString()
-                          + ".csv");
-            }
-        }
-    }
-    //File names for Jasmin's HME Experiments
-    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+    //File names for Jasmin's Experiments
+    else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
              p_CommonData->currentDynamicObjectState == MultiMassExperiment)
     {
         //Sort data by trialName
@@ -2862,12 +2799,12 @@ void MainWindow::WriteDataToFile()
 
             << "realVentralTactorPos" << "," << " " //in mm
 
-               //boxPos is a vector and will need 3 headers
+               //boxPos is a vector and will need 3 headers per box
             << "boxPosX" << "," << " " //in m
             << "boxPosY" << "," << " " //in m
             << "boxPosZ" << "," << " " //in m
 
-               //box local rotation Matrix
+               //box1 local rotation Matrix
             << "boxLocalRot_11" << "," << " "
             << "boxLocalRot_12" << "," << " "
             << "boxLocalRot_13" << "," << " "
@@ -2877,7 +2814,7 @@ void MainWindow::WriteDataToFile()
             << "boxLocalRot_31" << "," << " "
             << "boxLocalRot_32" << "," << " "
             << "boxLocalRot_33" << "," << " "
-               //box global rotation Matrix
+               //box1 global rotation Matrix
             << "boxGlobalRot_11" << "," << " "
             << "boxGlobalRot_12" << "," << " "
             << "boxGlobalRot_13" << "," << " "
@@ -2888,32 +2825,65 @@ void MainWindow::WriteDataToFile()
             << "boxGlobalRot_32" << "," << " "
             << "boxGlobalRot_33" << "," << " "
 
+               //interaction forces in local coordinates
+            << "indexForceX" << "," << " " //in N
+            << "indexForceY" << "," << " " //in N
+            << "indexForceZ" << "," << " " //in N
+               //interaction force in global coordinates
+            << "indexForceGlobalX" << "," << " " //in N
+            << "indexForceGlobalY" << "," << " " //in N
+            << "indexForceGlobalZ" << "," << " " //in N
+
+               //Contact boolean
+            << "indexContact" << "," << " " //bool
+
                //magTrackerPos vectors will need 3 headers each
             << "indexPosX" << "," << " " //in m
             << "indexPosY" << "," << " " //in m
             << "indexPosZ" << "," << " " //in m
-            << "indexContact" << "," << " " //bool
-            << "indexForceX" << "," << " " //in N
-            << "indexForceY" << "," << " " //in N
-            << "indexForceZ" << "," << " " //in N
-            << "indexForceGlobalX" << "," << " " //in N
-            << "indexForceGlobalY" << "," << " " //in N
-            << "indexForceGlobalZ" << "," << " " //in N
+
+               //Tracker orientation:
+            << "indexRot_11" << "," << " "
+            << "indexRot_12" << "," << " "
+            << "indexRot_13" << "," << " "
+            << "indexRot_21" << "," << " "
+            << "indexRot_22" << "," << " "
+            << "indexRot_23" << "," << " "
+            << "indexRot_31" << "," << " "
+            << "indexRot_32" << "," << " "
+            << "indexRot_33" << "," << " "
+
+               //interaction forces in local coordinates
+            << "thumbForceX" << "," << " " //in N
+            << "thumbForceY" << "," << " " //in N
+            << "thumbForceZ" << "," << " " //in N
+
+               //interaction force in global coordinates
+            << "thumbForceGlobalX" << "," << " " //in N
+            << "thumbForceGlobalY" << "," << " " //in N
+            << "thumbForceGlobalZ" << "," << " " //in N
+
+               //Contact boolean
+            << "thumbContact" << "," << " " //bool
 
                //magTrackerPos vectors will need 3 headers each
             << "thumbPosX" << "," << " " //in m
             << "thumbPosY" << "," << " " //in m
             << "thumbPosZ" << "," << " " //in m
-            << "thumbContact" << "," << " " //bool
-            << "thumbForceX" << "," << " " //in N
-            << "thumbForceY" << "," << " " //in N
-            << "thumbForceZ" << "," << " " //in N
-            << "thumbForceGlobalX" << "," << " " //in N
-            << "thumbForceGlobalY" << "," << " " //in N
-            << "thumbForceGlobalZ" << "," << " " //in N
 
-            << "hoopSuccess" << "," << " " //bool
-            << "targetSuccess" << "," << " " //bool
+               //Tracker orientation:
+
+            << "thumbRot_11" << "," << " "
+            << "thumbRot_12" << "," << " "
+            << "thumbRot_13" << "," << " "
+            << "thumbRot_21" << "," << " "
+            << "thumbRot_22" << "," << " "
+            << "thumbRot_23" << "," << " "
+            << "thumbRot_31" << "," << " "
+            << "thumbRot_32" << "," << " "
+            << "thumbRot_33" << "," << " "
+
+            << "mapping" << "," << " "
             << "trialSuccess" << "," << " " //bool
 
             << std::endl;
@@ -3060,6 +3030,7 @@ void MainWindow::WriteDataToFile()
             << "thumbRot_32" << "," << " "
             << "thumbRot_33" << "," << " "
 
+            << "mapping" << "," << " "
             << "trialSuccess" << "," << " " //bool
 
             << std::endl;
@@ -3185,73 +3156,96 @@ void MainWindow::WriteDataToFile()
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                    //"time = "
-                << localDataRecorderVector[i].time << "," << " "
+            << localDataRecorderVector[i].time << "," << " "
 
-                   //"des0 = "
-                << localDataRecorderVector[i].desiredStroke0 << "," << " "
-                   //"real0 = "
-                   //<< localDataRecorderVector[i].strokeOut0 << "," << " " //Giving motor angles N/A for FME
-                   //"des1 = "
-                << localDataRecorderVector[i].desiredStroke1 << "," << " "
-                   //"real1 = "
-                   //<< localDataRecorderVector[i].strokeOut1 << "," << " "//Giving motor angles N/A for FME
+               //"des0 = "
+            << localDataRecorderVector[i].desiredStroke0 << "," << " "
+               //"real0 = "
+               //<< localDataRecorderVector[i].strokeOut0 << "," << " " //Giving motor angles N/A for FME
+               //"des1 = "
+            << localDataRecorderVector[i].desiredStroke1 << "," << " "
+               //"real1 = "
+               //<< localDataRecorderVector[i].strokeOut1 << "," << " "//Giving motor angles N/A for FME
 
-                   //Cube position
-                <<localDataRecorderVector[i].box1Pos << "," << " "
+            //Cube position
+            << localDataRecorderVector[i].box1Pos << "," << " " //Each needs 3 headers
 
-                  //Cube local orientation
-               <<localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
-              <<localDataRecorderVector[i].box1LocalRotMat(0,1) << "," << " "
-             <<localDataRecorderVector[i].box1LocalRotMat(0,2) << "," << " "
-            <<localDataRecorderVector[i].box1LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
-            <<localDataRecorderVector[i].box1LocalRotMat(1,1) << "," << " "
-            <<localDataRecorderVector[i].box1LocalRotMat(1,2) << "," << " "
-            <<localDataRecorderVector[i].box1LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
-            <<localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
-            <<localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
+            //Box1 -- Cube local orientation
+            << localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box1LocalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box1LocalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
 
+            //Box1 --Cube Global orientation
+            << localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].box1GlobalRotMat(1,1) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(1,2) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
+            << localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
 
-              //Cube Global orientation
-            <<localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
-            <<localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
-            <<localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
-            <<localDataRecorderVector[i].box1GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
-            <<localDataRecorderVector[i].box1GlobalRotMat(1,1) << "," << " "
-            <<localDataRecorderVector[i].box1GlobalRotMat(1,2) << "," << " "
-            <<localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
-            <<localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
-            <<localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
+            //"cond = "
+            //<< localDataRecorderVector[i].conditionNo<< "," << " "
 
-              //"cond = "
-              //<< localDataRecorderVector[i].conditionNo<< "," << " "
-
-              //INDEX:
-            << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
-            << localDataRecorderVector[i].indexContact << "," << " " //contact boolean
-               // last force on tool0:
+            //INDEX:
+             // last force on tool0:
             << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
             << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
             << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
-               // last force on tool0 in global coords
+            // last force on tool0 in global coords
             << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
             << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
             << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
 
-               //THUMB
-            << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
-            << localDataRecorderVector[i].thumbContact << "," << " "//contact boolean
-               // last force on tool1:
+            << localDataRecorderVector[i].indexContact << "," << " " //contact boolean
+            << localDataRecorderVector[i].magTrackerPos0 << "," << " " //magTrackerPos vectors will need 3 headers each
+
+            //Index tracker orientation:
+            << localDataRecorderVector[i].deviceRotation0(0,0) << "," << " "  //Matrix 1st row
+            << localDataRecorderVector[i].deviceRotation0(0,1) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(0,2) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(1,0) << "," << " "  //Matrix 2nd row
+            << localDataRecorderVector[i].deviceRotation0(1,1) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(1,2) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(2,0) << "," << " "  //Matrix 3rd row
+            << localDataRecorderVector[i].deviceRotation0(2,1) << "," << " "
+            << localDataRecorderVector[i].deviceRotation0(2,2) << "," << " "
+
+            //THUMB
+            // last force on tool1:
             << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
             << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
             << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
-               // last force on tool1 in global coords
+            //last force on tool1 in global coords
             << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
             << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
             << localDataRecorderVector[i].VRIntForceGlo1[2]<< "," << " "
 
-               //Touch hoop, target, trial success booleans
-            << localDataRecorderVector[i].hoopSuccess << "," << " "
-            << localDataRecorderVector[i].targetSuccess << "," << " "
+            << localDataRecorderVector[i].thumbContact << "," << " "//contact boolean
+            << localDataRecorderVector[i].magTrackerPos1 << "," << " " //magTrackerPos vectors will need 3 headers each
+
+           //Thumb tracker orientation:
+           << localDataRecorderVector[i].deviceRotation1(0,0) << "," << " "  //Matrix 1st row
+           << localDataRecorderVector[i].deviceRotation1(0,1) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(0,2) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(1,0) << "," << " "  //Matrix 2nd row
+           << localDataRecorderVector[i].deviceRotation1(1,1) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(1,2) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(2,0) << "," << " "  //Matrix 3rd row
+           << localDataRecorderVector[i].deviceRotation1(2,1) << "," << " "
+           << localDataRecorderVector[i].deviceRotation1(2,2) << "," << " "
+
+            //mapping
+            << localDataRecorderVector[i].mapping << "," << " "
+            //Trial success booleans
             << localDataRecorderVector[i].trialSuccess << "," << " "
 
             << std::endl;
@@ -3393,6 +3387,8 @@ void MainWindow::WriteDataToFile()
            << localDataRecorderVector[i].deviceRotation1(2,1) << "," << " "
            << localDataRecorderVector[i].deviceRotation1(2,2) << "," << " "
 
+              //mapping
+            << localDataRecorderVector[i].mapping << "," << " "
             //Trial success booleans
             << localDataRecorderVector[i].trialSuccess << "," << " "
 

@@ -120,6 +120,10 @@ public:
     chai3d::cMesh* wall;
     chai3d::cMesh* wall2;
 
+    chai3d::cMesh* backWall; //Added for HME
+    chai3d::cMesh* sideWall1; //Added for HME
+    chai3d::cMesh* sideWall2 ; //Added for HME
+
     chai3d::cMesh* hoop1;
     chai3d::cMesh* hoop2;
     chai3d::cMesh* hoop3;
@@ -142,6 +146,8 @@ public:
     chai3d::cMaterial matDynamicHoop2; // -- addedd for HME
 
     double targetRadius;
+
+    chai3d::cVector3d groundPos;
 
     chai3d::cVector3d scaledBox1Pos;
     chai3d::cVector3d scaledBox2Pos;
@@ -196,7 +202,11 @@ public:
     double groundSize;
     double groundThickness;
 
+
+    double wallLength;
     double wallHeight;
+    double innerWallHeight; //Added for HME
+    double outerWallHeight; //Added for HME
     double wallThickness;
 
     // ODE Module variables
