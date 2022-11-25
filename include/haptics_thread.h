@@ -199,7 +199,7 @@ public:
     chai3d::cTexture2dPtr textureSpace;
 
     double boxSize;
-    double groundSize;
+    double groundLength;
     double groundThickness;
 
 
@@ -260,6 +260,14 @@ public:
     chai3d::cShapeLine* force2_show;
     chai3d::cVector3d lastforce1;
     chai3d::cVector3d lastforce2;
+
+    //Line -- Added for HME
+     chai3d::cShapeLine* boxToWireLine;
+
+    //Length of straight wire stl
+    double wireLengthInM;
+    chai3d::cVector3d wireEnd1;
+    chai3d::cVector3d wireEnd2;
 
     //    chai3d::cShapeLine* hoop1;
     //    chai3d::cShapeLine* hoop2;
