@@ -50,7 +50,6 @@ int c3DOFDevice::Init3DOFDeviceEnc()
     this->neutralPos = this->GetCartesianPos();
     firstTimeThrough = true;
     return 0;
-
 }
 
 double c3DOFDevice::GetJointAngles() // Eigen::Vector3d

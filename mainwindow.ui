@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -1545,7 +1548,7 @@ Effective</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Finger Mapping
+         <string>Pick and Place
 Experiment</string>
         </property>
        </widget>
@@ -1559,7 +1562,7 @@ Experiment</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Hoxel Mapping
+         <string>Wire Guide
 Experiment</string>
         </property>
        </widget>
@@ -2066,6 +2069,9 @@ Experiment</string>
     </layout>
    </widget>
    <widget class="QGroupBox" name="groupBox_9">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>110</x>

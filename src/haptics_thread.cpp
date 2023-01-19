@@ -483,12 +483,11 @@ void haptics_thread::UpdateVRGraphics()
 
             boxToWireLine->m_pointA = box1Pos;
             boxToWireLine->m_pointB = u;
-            */
 
             //TEMP:
-
             boxToWireLine->m_pointA = box1Pos;
             boxToWireLine->m_pointB = wire->getLocalPos();
+            */
         }
 
         if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
@@ -1122,9 +1121,9 @@ void haptics_thread::ComputeVRDesiredDevicePos()
     filteredDeviceForce1 = alpha*deviceComputedForce1 + (1-alpha)*lastFilteredDeviceForce1;
 
     //convert device "force" to a mapped position
-    double forceToPosMult = 0;
+    double forceToPosMult = 0.0;
 
-    // For the device with normal and tangential directions, stifness values should be different.
+    // For the device with normal and tangential directions, stiffness values should be different.
     // If direct is 1, the device applies normal force
     // If direct is 0, the device applies shear force
 
@@ -1183,7 +1182,6 @@ void haptics_thread::ComputeVRDesiredDevicePos()
 
     p_CommonData->desiredFor0 << filteredDeviceForce0.x(),filteredDeviceForce0.y(),filteredDeviceForce0.z();
     p_CommonData->desiredFor1 << filteredDeviceForce1.x(),filteredDeviceForce1.y(),filteredDeviceForce1.z();
-
 
     lastFilteredDeviceForce0 = filteredDeviceForce0;
     lastFilteredDeviceForce1 = filteredDeviceForce1;
@@ -1669,9 +1667,9 @@ void haptics_thread::InitDynamicBodies()
     ground = new chai3d::cMesh();
     //Create walls
     wall = new chai3d::cMesh(); //center wall
-    backWall = new chai3d::cMesh(); //Added for HME
-    sideWall1 = new chai3d::cMesh(); //Added for HME
-    sideWall2 = new chai3d::cMesh(); //Added for HME
+    backWall = new chai3d::cMesh(); //Added for HME and FME v2
+    sideWall1 = new chai3d::cMesh(); //Added for HME and FME v2
+    sideWall2 = new chai3d::cMesh(); //Added for HME and FME v2
 
     //create background mesh
     globe = new chai3d::cMesh();
@@ -1835,6 +1833,9 @@ void haptics_thread::DeleteDynamicBodies()
         //delete p_CommonData->p_dynamicBox4;
 
         delete wall;
+        delete backWall;
+        delete sideWall1;
+        delete sideWall2;
         delete hoop1;
         //delete hoop2;
         //delete hoop3;
@@ -1846,6 +1847,9 @@ void haptics_thread::DeleteDynamicBodies()
         //qDebug("is this happening 7");
 
         delete p_CommonData->p_wall;
+        delete p_CommonData->p_backWall;
+        delete p_CommonData->p_sideWall1;
+        delete p_CommonData->p_sideWall2;
         delete ODEGPlane0;
         delete ground;
         delete Right_Platform;
@@ -1857,6 +1861,9 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(ODEWorld);
         p_CommonData->p_world->removeChild(ground);
         p_CommonData->p_world->removeChild(wall);
+        p_CommonData->p_world->removeChild(p_CommonData->p_backWall);
+        p_CommonData->p_world->removeChild(p_CommonData->p_sideWall1);
+        p_CommonData->p_world->removeChild(p_CommonData->p_sideWall2);
         p_CommonData->p_world->removeChild(hoop1);
         //p_CommonData->p_world->removeChild(hoop2);
         p_CommonData->p_world->removeChild(hoop3);
@@ -2042,7 +2049,7 @@ void haptics_thread::RenderDynamicBodies()
         chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
         wall->setLocalPos(0.05, 0.05, -0.05);
     }
-
+    /*
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         wallHeight = 0.1;
@@ -2051,16 +2058,17 @@ void haptics_thread::RenderDynamicBodies()
         chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
         wall->setLocalPos(0.05, 0.085, -0.05);
     }
+    */
 
-    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-
-        //redefine ground parameters for HME
+        //redefine ground parameters
         delete ground;
         p_CommonData->p_world->removeChild(ground);
 
         ground = new chai3d::cMesh();
-        groundLength = 0.25;
+        groundLength = 0.3;
         groundThickness = 0.01;
         groundDimX = 1.75*groundLength;
         groundDimY = 2.5*groundLength;
@@ -2077,7 +2085,7 @@ void haptics_thread::RenderDynamicBodies()
 
         chai3d::cCreateBox(wall, wallLength, wallThickness, innerWallHeight);
         wall->setLocalPos(0.05, 0.085, -0.5*innerWallHeight);
-        //Added walls for HME:
+        //Added walls for HME and FME v2:
         chai3d::cCreateBox(backWall, wallThickness, groundDimY, outerWallHeight);
         backWall->setLocalPos(groundPos.get(0)-0.5*groundDimX+0.5*wallThickness,
                               groundPos.get(1),
@@ -2618,7 +2626,7 @@ void haptics_thread::SetDynEnvironStiffMassExp()   // Mine Stiffness-Mass Experi
     qDebug()<<"Finished SME Setup";
 }
 
-void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping Experiment
+void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping Pick and Place Experiment
 {
     qDebug() << "start SetDynEnvironFingerMappingExp()";
     // create the visual boxes on the dynamic box meshes
@@ -2665,17 +2673,35 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
     hoop1->setTransparencyLevel(0.2, true);
     p_CommonData->p_world->addChild(hoop1);
 
-    /*
-    //wall = new chai3d::cMesh();
-    ////create a plane
-    //wallHeight = 0.1;
-    //wallThickness = 0.01;
-
-    //chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
-    //wall->setLocalPos(0.05, 0.05, -0.05);
-    */
+    //WALLS:
     //Add vertical Wall to world
     p_CommonData->p_world->addChild(wall);
+    //Back Wall properties:
+    chai3d::cMaterial matBackWall;
+    //matBackWall.setBlueMediumSlate();
+    matBackWall.setBrownSandy();
+    backWall->setMaterial(matBackWall);
+    //Side Wall1 properties:
+    chai3d::cMaterial matSideWall1;
+    //matSideWall1.setPink();
+    matSideWall1.setBrownSandy();
+    sideWall1->setMaterial(matSideWall1);
+    //Side Wall2 properties:
+    chai3d::cMaterial matSideWall2;
+    //matSideWall2.setYellowLight();
+    matSideWall2.setBrownSandy();
+    sideWall2->setMaterial(matSideWall2);
+
+    //Make fingers collide with walls
+    wall->createAABBCollisionDetector(toolRadius);
+    backWall->createAABBCollisionDetector(toolRadius);
+    sideWall1->createAABBCollisionDetector(toolRadius);
+    //sideWall2->createAABBCollisionDetector(toolRadius);
+    //Add objects to the world
+    p_CommonData->p_world->addChild(wall);
+    p_CommonData->p_world->addChild(backWall);
+    p_CommonData->p_world->addChild(sideWall1);
+    p_CommonData->p_world->addChild(sideWall2);
 
     //Create Box1 Target Area
     target1 = new chai3d::cMesh();
@@ -2715,7 +2741,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping E
     qDebug()<<"Finished FME Setup";
 }
 
-void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Experiment
+void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Wire Guide Experiment
 {   
     qDebug() << "start SetDynEnvironHoxelMappingExp()";
     targetRadius = 0.05;    
@@ -2814,7 +2840,6 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     //Add object to the world
     p_CommonData->p_world->addChild(boxWithHole);
 
-
     //ORIGINAL BOX:
     /*
     // create the visual boxes on the dynamic box meshes
@@ -2873,7 +2898,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
 
     //Line for min distance box to wire
     //Define lines for showforces
-    chai3d::cColorf boxtoWireLineColor;
+    /*chai3d::cColorf boxtoWireLineColor;
     boxtoWireLineColor.setPinkHot();
     boxToWireLine = new chai3d::cShapeLine(chai3d::cVector3d(0,0,0),
                                          chai3d::cVector3d(0,0,0));
@@ -2881,7 +2906,7 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Exp
     boxToWireLine->m_colorPointA=boxtoWireLineColor;
     boxToWireLine->m_colorPointB=boxtoWireLineColor;
     p_CommonData->p_world->addChild(boxToWireLine);
-
+*/
     p_CommonData->target1Complete = false;
     p_CommonData->hoop1Complete = false;
 
@@ -3141,7 +3166,7 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
 {
     // create the visual boxes on the dynamicbox meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
-    //    cCreateBox(p_CommonData->p_dynamicBox2, boxSize1*.9, boxSize1*1.05, boxSize1*.9); // make mesh a box
+    //    cCreateBox(p_CommonData->p_dynamicBox2, boxSize1*0.9, boxSize1*1.05, boxSize1*0.9); // make mesh a box
     //    cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
     //    cCreateBox(p_CommonData->p_dynamicBox3, boxSize3, boxSize3, boxSize3); // make mesh a box
 
@@ -3201,9 +3226,9 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     //    p_CommonData->ODEBody3->setMass(mass3);
 
     // set position of box
-    p_CommonData->ODEBody1->setLocalPos(0.15,-.2,-.3);
-    //    p_CommonData->ODEBody2->setLocalPos(0.2,-.1,-.2);
-    //    p_CommonData->ODEBody3->setLocalPos(0.25,0,-.1);
+    p_CommonData->ODEBody1->setLocalPos(0.15, -0.2, -0.3);
+    //    p_CommonData->ODEBody2->setLocalPos(0.2, -0.1, -0.2);
+    //    p_CommonData->ODEBody3->setLocalPos(0.25, 0.0, -0.1);
 
 
     // define some material properties for wall
@@ -3266,8 +3291,8 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     target3 = new chai3d::cMesh();
     double sc = 0.6;
     chai3d::cCreateEllipsoid(target3, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target3Pos = chai3d::cVector3d(0.05, 0.18, 0);
-    target3->setLocalPos(0,0,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    target3Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    target3->setLocalPos(0.0, 0.0, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
     matTarget3.setRed();
     target3->setMaterial(matTarget3);
     target3->setUseCulling(true);
@@ -3277,8 +3302,8 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
 
     target2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target2Pos = chai3d::cVector3d(0.05, 0.18, 0);
-    target2->setLocalPos(0.1,-0.1,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    target2Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    target2->setLocalPos(0.1, -0.1, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
     matTarget2.setRed();
     target2->setMaterial(matTarget2);
     target2->setUseCulling(true);
@@ -3288,8 +3313,8 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
 
     target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target1Pos = chai3d::cVector3d(0.05, 0.18, 0);
-    target1->setLocalPos(0,-0.2,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    target1Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    target1->setLocalPos(0.0, -0.2, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
     matTarget1.setRed();
     target1->setMaterial(matTarget1);
     target1->setUseCulling(true);

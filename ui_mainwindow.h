@@ -222,6 +222,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
+        MainWindow->setEnabled(true);
         MainWindow->resize(2540, 1356);
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
         sizePolicy.setHorizontalStretch(0);
@@ -1268,6 +1269,7 @@ public:
 
         groupBox_9 = new QGroupBox(centralWidget);
         groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
+        groupBox_9->setEnabled(false);
         groupBox_9->setGeometry(QRect(110, 1220, 281, 81));
         layoutWidget14 = new QWidget(groupBox_9);
         layoutWidget14->setObjectName(QStringLiteral("layoutWidget14"));
@@ -1373,9 +1375,9 @@ public:
 "Effective", 0));
         showAllFramesCheckBox->setText(QApplication::translate("MainWindow", "Show All Frames", 0));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "Experiments:", 0));
-        FingerMappingExp->setText(QApplication::translate("MainWindow", "Finger Mapping\n"
+        FingerMappingExp->setText(QApplication::translate("MainWindow", "Pick and Place\n"
 "Experiment", 0));
-        HoxelMappingExp->setText(QApplication::translate("MainWindow", "Hoxel Mapping\n"
+        HoxelMappingExp->setText(QApplication::translate("MainWindow", "Wire Guide\n"
 "Experiment", 0));
         Manual->setText(QApplication::translate("MainWindow", "Manual", 0));
         MultiMassExp->setText(QApplication::translate("MainWindow", "Multi-Mass\n"

@@ -28,25 +28,25 @@ int defaultStopBit = 1;
 QString device0X; //X
 QString device0Y; //Y
 QString device0Z; //Z
-QString device0X_prev; //X
-QString device0Y_prev; //Y
-QString device0Z_prev; //Z
 QString dev0Mag;
 //Ventral desiered values:
 QString device1X; //X
 QString device1Y; //Y
 QString device1Z; //Z
-QString device1X_prev; //X
-QString device1Y_prev; //Y
-QString device1Z_prev; //Z
 QString dev1Mag;
-
+/*
 //Prev values needed for IIR filter:
 Eigen::Vector3d localDesiredPos0_prev;
 Eigen::Vector3d localDesiredPos1_prev;
-
 Eigen::Vector3d localForce0_prev;
 Eigen::Vector3d localForce1_prev;
+QString device0X_prev; //X
+QString device0Y_prev; //Y
+QString device0Z_prev; //Z
+QString device1X_prev; //X
+QString device1Y_prev; //Y
+QString device1Z_prev; //Z
+*/
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -109,13 +109,13 @@ void MainWindow::writeSerialData()
     QByteArray payloadBuffer;
 
     //IIR Filter:
-    double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
+    //double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
     //qDebug() << alpha;
 
     if(ui->positionControlButton->isChecked())
     {
-        localDesiredPos0 = alpha*localDesiredPos0 + (1.0-alpha)*localDesiredPos0_prev;
-        localDesiredPos1 = alpha*localDesiredPos1 + (1.0-alpha)*localDesiredPos1_prev;
+        //localDesiredPos0 = alpha*localDesiredPos0 + (1.0-alpha)*localDesiredPos0_prev;
+        //localDesiredPos1 = alpha*localDesiredPos1 + (1.0-alpha)*localDesiredPos1_prev;
 
         //Mappings:
         //Normal Mapping
@@ -202,14 +202,16 @@ void MainWindow::writeSerialData()
         }
 
         //Dispay in GUI:
-        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "mm\r\nMag: " + dev0Mag + "mm"); //device 0//device 0 _prev
-        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "mm\r\nMag: " + dev1Mag + "mm");//device 1 //device 1_prev
+        //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "mm\r\nMag: " + dev0Mag + "mm"); //device 0//device 0 _prev
+        //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "mm\r\nMag: " + dev1Mag + "mm");//device 1 //device 1_prev
+        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\n"); //device 0//device 0 _prev
+        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\n");//device 1 //device 1_prev
     }
 
     if (ui->forceControlButton->isChecked())
     {
-        localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
-        localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
+        //localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
+        //localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
 
         //Mappings:
         //Normal Mapping
@@ -296,8 +298,11 @@ void MainWindow::writeSerialData()
         }
 
         //Dispay in GUI:
-        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\nMag: " + dev0Mag + "N"); //device 0//device 0 _prev
-        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
+        //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\nMag: " + dev0Mag + "N"); //device 0//device 0 _prev
+        //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
+        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\n"); //device 0//device 0 _prev
+        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n");//device 1 //device 1_prev
+
     }
 
     //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
@@ -322,6 +327,7 @@ void MainWindow::writeSerialData()
         serial->write(payloadBuffer, payloadBuffer.size());
     }
 
+    /*
     //Set previous values:
     if(ui->positionControlButton->isChecked())
     {
@@ -345,6 +351,7 @@ void MainWindow::writeSerialData()
         localForce0_prev = localForce0;
         localForce1_prev = localForce1;
     }
+    */
 }
 
 //Read received data
@@ -2743,10 +2750,11 @@ void MainWindow::WriteDataToFile()
             p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
     {
         //none for now
-    }
+    }   
+    /*
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
-        //These *MUST* match the order of variables saved below:
+        //These ~MUST~ match the order of variables saved below:
         file <<std::setprecision(9)
             << "time" << "," << " " //time in seconds
 
@@ -2789,7 +2797,9 @@ void MainWindow::WriteDataToFile()
 
             << std::endl;
     }
-    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    */
+    if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
@@ -3100,6 +3110,7 @@ void MainWindow::WriteDataToFile()
 
                 << std::endl;
         }
+        /*
         if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
@@ -3152,7 +3163,9 @@ void MainWindow::WriteDataToFile()
 
                << std::endl;
         }
-        if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        */
+        if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+                p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                    //"time = "
