@@ -2628,7 +2628,7 @@ void haptics_thread::SetDynEnvironStiffMassExp()   // Mine Stiffness-Mass Experi
 
 void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping Pick and Place Experiment
 {
-    qDebug() << "start SetDynEnvironFingerMappingExp()";
+    qDebug() << "start SetDynEnvironPickAndPlaceExp()";
     // create the visual boxes on the dynamic box meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
 
@@ -2743,7 +2743,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
 
 void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Wire Guide Experiment
 {   
-    qDebug() << "start SetDynEnvironHoxelMappingExp()";
+    qDebug() << "start SetDynEnvironWireGuidanceExp()";
     targetRadius = 0.05;    
     double scaleFactorMMToM = 0.001; //scale stl file from mm unit to meter scale of the environment
 
