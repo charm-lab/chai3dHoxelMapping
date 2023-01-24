@@ -11,9 +11,8 @@ haptics_thread::~haptics_thread()
 
 void haptics_thread::initialize()
 {
-    InitGeneralChaiStuff();
+    InitializeChai3DStuff();
     InitFingerAndTool();
-    //InitEnvironments();
     InitDynamicBodies();
 
     // GENERAL HAPTICS INITS=================================
@@ -60,8 +59,8 @@ void haptics_thread::initialize()
     qDebug()<<"error check 3 pass";
     //p_CommonData->workspaceScaleFactor = 1;
 
-    currTime = 0;
-    lastTime = 0;
+    currTime = 0.0;
+    lastTime = 0.0;
 
     //init counters to 0
     rateDisplayCounter = 0;
@@ -80,9 +79,7 @@ void haptics_thread::initialize()
     fingerOffset.set(0.0, -0.006, 0.003); // finger axis are not at fingerpad, so we want a translation outward on fingertip
     thumbOffset.set(0.0, -0.009, 0.003); // finger axis are not at fingerpad, so we want a translation outward on fingertip
 
-    // initial box positions
-    //tiger edit
-
+    // initial box positions:
     qDebug()<<"error check 4 pass";
     p_CommonData->box1InitPos.set(0.05, 0.0, -0.025);
     p_CommonData->box2InitPos.set(1.0, 0.0, 0.0);
@@ -94,13 +91,13 @@ void haptics_thread::initialize()
     p_CommonData->thumbTouching = false;
     p_CommonData->fingerTouchingLast = false;
     p_CommonData->thumbTouchingLast = false;
-    p_CommonData->clutchedOffset.set(0,0,0);
+    p_CommonData->clutchedOffset.set(0.0, 0.0, 0.0);
     p_CommonData->fingerDisplayScale = 1.0; //will get changed in dynsim if necessary
     p_CommonData->show_forces = false;
-    p_CommonData->ImpulseAmp=0;
-    p_CommonData->SDVibAmp=0;
-    p_CommonData->SDVibFreq=5;
-    p_CommonData->SDVibBeta=10;
+    p_CommonData->ImpulseAmp = 0.0;
+    p_CommonData->SDVibAmp = 0.0;
+    p_CommonData->SDVibFreq = 5.0;
+    p_CommonData->SDVibBeta = 10.0;
 }
 
 void haptics_thread::run()
@@ -307,7 +304,10 @@ void haptics_thread::UpdateVRGraphics()
     // perform our dynamic body updates if we are in a dynamic environment
     if(p_CommonData->currentEnvironmentState == dynamicBodies)
     {
-        if(timeInterval > 0.01) timeInterval = 0.01;
+        if(timeInterval > 0.01)
+        {
+            timeInterval = 0.01;
+        }
         //---------------------------------------------------
         // Implement Dynamic simulation
         //---------------------------------------------------
@@ -315,6 +315,7 @@ void haptics_thread::UpdateVRGraphics()
         // with the environment and apply forces accordingly
         int numInteractionPoints = m_tool0->getNumHapticPoints();
 
+        //Dynamic Simulation for tool 0
         for (int j=0; j<numInteractionPoints; j++)
         {
             // get pointer to next interaction point of tool
@@ -336,25 +337,29 @@ void haptics_thread::UpdateVRGraphics()
 
                 // cast to ODE object
                 cODEGenericBody* ODEobject = dynamic_cast<cODEGenericBody*>(object);
-                if (ODEobject==p_CommonData->ODEBody1){
+                if (ODEobject==p_CommonData->ODEBody1)
+                {
                     p_CommonData->ActiveBox = 1;
                 }
-                else if(ODEobject==p_CommonData->ODEBody2){
+                else if(ODEobject==p_CommonData->ODEBody2)
+                {
                     p_CommonData->ActiveBox = 2;
                 }
 
                 // if ODE object, we apply interaction forces
-                if (ODEobject != NULL){
-
+                if (ODEobject != NULL)
+                {
                     ODEobject->addExternalForceAtPoint(-p_CommonData->adjustedDynamicForceReduction * interactionPoint->getLastComputedForce(),
                                                        collisionEvent->m_globalPos);
-
                     if((interactionPoint->getLastComputedForce().length() > forceLimit) & (computedForce0.length() > forceLimit))
+                    {
                         p_CommonData->resetBoxPosFlag = false; //true;
+                    }
 
                 }
             }
         }
+        //Dynamic Simulation for tool 1
         numInteractionPoints = m_tool1->getNumHapticPoints();
         for (int j=0; j<numInteractionPoints; j++)
         {
@@ -377,11 +382,13 @@ void haptics_thread::UpdateVRGraphics()
 
                 // cast to ODE object
                 cODEGenericBody* ODEobject = dynamic_cast<cODEGenericBody*>(object);
-                if (ODEobject==p_CommonData->ODEBody1){
+                if (ODEobject==p_CommonData->ODEBody1)
+                {
                     p_CommonData->ActiveBox = 1;
                 }
 
-                else if(ODEobject==p_CommonData->ODEBody2){
+                else if(ODEobject==p_CommonData->ODEBody2)
+                {
                     p_CommonData->ActiveBox = 2;
                 }
 
@@ -392,7 +399,6 @@ void haptics_thread::UpdateVRGraphics()
                                                        collisionEvent->m_globalPos);
                     if((interactionPoint->getLastComputedForce().length() > forceLimit) & (computedForce1.length() > forceLimit))
                         p_CommonData->resetBoxPosFlag = false; //true;
-
                 }
             }
         }
@@ -402,7 +408,7 @@ void haptics_thread::UpdateVRGraphics()
         double original_mass2 = p_CommonData->mass2;
         double original_mass3 = p_CommonData->mass3;
 
-        //For Mine's Experiments --> 2boxes
+        //For Mine's Experiments --> 2 boxes
         if (p_CommonData->currentDynamicObjectState == StiffnessExperiment
                 || p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
         {
@@ -557,11 +563,6 @@ void haptics_thread::UpdateVRGraphics()
     UpdateScaledCursors();
     UpdateScaledFingers();
     UpdateScaledBoxes();
-
-    //chai3d::cVector3d Box2Pos = p_CommonData->ODEBody2->getLocalPos();
-    //chai3d::cVector3d Box1Pos = p_CommonData->ODEBody1->getLocalPos();
-    //chai3d::cVector3d box1Pos = p_CommonData->ODEBody1->getLocalPos();
-    //chai3d::cVector3d box2Pos = p_CommonData->ODEBody2->getLocalPos();
 
     //VR Updates for Mine's StiffnessExperiment
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment)
@@ -1120,7 +1121,7 @@ void haptics_thread::ComputeVRDesiredDevicePos()
     filteredDeviceForce0 = alpha*deviceComputedForce0 + (1-alpha)*lastFilteredDeviceForce0;
     filteredDeviceForce1 = alpha*deviceComputedForce1 + (1-alpha)*lastFilteredDeviceForce1;
 
-    //convert device "force" to a mapped position
+    //convert device "force" to a mapped position -- force to position multiplier (stiffness)
     double forceToPosMult = 0.0;
 
     // For the device with normal and tangential directions, stiffness values should be different.
@@ -1392,7 +1393,7 @@ void haptics_thread::RecordData()
     p_CommonData->dataRecordMutex.unlock();
 }
 
-void haptics_thread::InitGeneralChaiStuff()
+void haptics_thread::InitializeChai3DStuff()
 {
     //--------------------------------------------------------------------------
     // WORLD - CAMERA - LIGHTING
@@ -1401,7 +1402,7 @@ void haptics_thread::InitGeneralChaiStuff()
     p_CommonData->p_world = new chai3d::cWorld();
 
     // create a camera and insert it into the virtual world
-    p_CommonData->p_world->setBackgroundColor(0, 0, 0);
+    //p_CommonData->p_world->setBackgroundColor(0, 0, 0);
     p_CommonData->p_world->m_backgroundColor.setWhite();
 
     // create a camera and insert it into the virtual world
@@ -1589,37 +1590,6 @@ void haptics_thread::InitFingerAndTool()
     scaledThumb->setHapticEnabled(false);
 }
 
-void haptics_thread::InitEnvironments()
-{
-    //    p_CommonData->p_tissueOne = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueTwo = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueThree = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueFour = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueFive = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueSix = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueSeven = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueEight = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueNine = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueTen = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueEleven = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueTwelve = new chai3d::cMultiMesh();
-    p_CommonData->p_indicator = new chai3d::cMultiMesh();
-    //    p_CommonData->p_tissueOne->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueTwo->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueThree->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueFour->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueFive->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueSix->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueSeven->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueEight->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueNine->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueTen->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueEleven->rotateAboutLocalAxisDeg(1,0,0,180);
-    //    p_CommonData->p_tissueTwelve->rotateAboutLocalAxisDeg(1,0,0,180);
-    p_CommonData->p_indicator->rotateAboutLocalAxisDeg(1,0,0,180);
-    p_CommonData->p_expFrictionBox = new chai3d::cMesh();
-}
-
 //Must add new body here or else environment *will* crash
 void haptics_thread::InitDynamicBodies()
 {
@@ -1662,7 +1632,29 @@ void haptics_thread::InitDynamicBodies()
     // CREATING ODE INVISIBLE WALLS
     //--------------------------------------------------------------------------
     ODEGPlane0 = new cODEGenericBody(ODEWorld);
+    /*
+    //////////////////////////////////////////////////////////////////////////
+        // 6 ODE INVISIBLE WALLS
+        //////////////////////////////////////////////////////////////////////////
 
+        // we create 6 static walls to contains the 3 cubes within a limited workspace
+        ODEGPlane0 = new cODEGenericBody(ODEWorld);
+        ODEGPlane1 = new cODEGenericBody(ODEWorld);
+        ODEGPlane2 = new cODEGenericBody(ODEWorld);
+        ODEGPlane3 = new cODEGenericBody(ODEWorld);
+        ODEGPlane4 = new cODEGenericBody(ODEWorld);
+        ODEGPlane5 = new cODEGenericBody(ODEWorld);
+
+        int w = 1.0;
+        ODEGPlane0->createStaticPlane(cVector3d(0.0, 0.0, 2.0 * w), cVector3d(0.0, 0.0, -1.0));
+        ODEGPlane1->createStaticPlane(cVector3d(0.0, 0.0, -w), cVector3d(0.0, 0.0, 1.0));
+        ODEGPlane2->createStaticPlane(cVector3d(0.0, w, 0.0), cVector3d(0.0, -1.0, 0.0));
+        ODEGPlane3->createStaticPlane(cVector3d(0.0, -w, 0.0), cVector3d(0.0, 1.0, 0.0));
+        ODEGPlane4->createStaticPlane(cVector3d(w, 0.0, 0.0), cVector3d(-1.0, 0.0, 0.0));
+        ODEGPlane5->createStaticPlane(cVector3d(-0.8 * w, 0.0, 0.0), cVector3d(1.0, 0.0, 0.0));
+        */
+
+    //Create visible boundaries of environment
     //create ground
     ground = new chai3d::cMesh();
     //Create walls
@@ -1678,35 +1670,37 @@ void haptics_thread::InitDynamicBodies()
     // CREATE 1 and 2 MODELS FOR EXPERIMENT DISPLAY
     /////////////////////////////////////////////
     //init one and two meshes
-    //    p_CommonData->oneModel = new chai3d::cMultiMesh();
-    //    p_CommonData->twoModel = new chai3d::cMultiMesh();
     p_CommonData->p_world->addChild(p_CommonData->oneModel); // add object to world
     p_CommonData->p_world->addChild(p_CommonData->twoModel); // add object to world
-    //    p_CommonData->oneModel->setShowEnabled(false);
-    //    p_CommonData->twoModel->setShowEnabled(false);
+    /*
+        p_CommonData->oneModel = new chai3d::cMultiMesh();
+        p_CommonData->twoModel = new chai3d::cMultiMesh();
+        p_CommonData->oneModel->setShowEnabled(false);
+        p_CommonData->twoModel->setShowEnabled(false);
 
-    // load an object file
-    //    if(cLoadFileOBJ(p_CommonData->oneModel, "./Resources/One.obj")){
-    //        //qDebug() << "'One' loaded";
-    //    }
-    //    if(cLoadFileOBJ(p_CommonData->twoModel, "./Resources/Two.obj")){
-    //        //qDebug() << "'Two' loaded";
-    //    }
+        //load an object file
+        if(cLoadFileOBJ(p_CommonData->oneModel, "./Resources/One.obj")){
+            //qDebug() << "'One' loaded";
+        }
+        if(cLoadFileOBJ(p_CommonData->twoModel, "./Resources/Two.obj")){
+            //qDebug() << "'Two' loaded";
+        }
 
-    //    p_CommonData->oneModel->setUseVertexColors(true);
-    //    chai3d::cColorf oneColor;
-    //    oneColor.setRedCrimson();
-    //    p_CommonData->oneModel->setVertexColor(oneColor);
+        p_CommonData->oneModel->setUseVertexColors(true);
+        chai3d::cColorf oneColor;
+        oneColor.setRedCrimson();
+        p_CommonData->oneModel->setVertexColor(oneColor);
 
-    //    p_CommonData->twoModel->setUseVertexColors(true);
-    //    chai3d::cColorf twoColor;
-    //    twoColor.setRedCrimson();
-    //    p_CommonData->twoModel->setVertexColor(twoColor);
+        p_CommonData->twoModel->setUseVertexColors(true);
+        chai3d::cColorf twoColor;
+        twoColor.setRedCrimson();
+        p_CommonData->twoModel->setVertexColor(twoColor);
 
-    //    p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(0,0,1), -90);
-    //    p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(0,0,1), -90);
-    //    p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
-    //    p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
+        p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(0,0,1), -90);
+        p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(0,0,1), -90);
+        p_CommonData->oneModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
+        p_CommonData->twoModel->rotateAboutLocalAxisDeg(chai3d::cVector3d(1,0,0), -90);
+        */
 
     //Define lines for showforces
     chai3d::cColorf LineColor;
@@ -1731,6 +1725,65 @@ void haptics_thread::InitDynamicBodies()
 
 void haptics_thread::DeleteDynamicBodies()
 {
+    if(p_CommonData->currentDynamicObjectState == standard ||
+            p_CommonData->currentDynamicObjectState == manual)
+    {
+        delete ODEWorld;
+        delete p_CommonData->oneModel;
+        delete p_CommonData->twoModel;
+
+        delete p_CommonData->ODEBody1;
+        delete p_CommonData->ODEBody2;
+        delete p_CommonData->ODEBody3;
+
+        delete p_CommonData->adjustBox;
+        delete p_CommonData->adjustBox1;
+        delete p_CommonData->p_dynamicBox1;
+
+        delete wall;
+        delete hoop1;
+        delete hoop2;
+        delete hoop3;
+        delete hoop4;
+        delete target1;
+        delete target2;
+        delete target3;
+
+        delete p_CommonData->p_wall;
+        delete p_CommonData->p_backWall;
+        delete p_CommonData->p_sideWall1;
+        delete p_CommonData->p_sideWall2;
+        delete ODEGPlane0;
+        delete ground;
+        delete globe;
+
+        //remove objects from world
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox2);
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox3);
+        p_CommonData->p_world->removeChild(ODEWorld);
+        p_CommonData->p_world->removeChild(ground);
+        p_CommonData->p_world->removeChild(wall);
+        p_CommonData->p_world->removeChild(hoop1);
+        p_CommonData->p_world->removeChild(hoop2);
+        p_CommonData->p_world->removeChild(hoop3);
+        p_CommonData->p_world->removeChild(hoop4);
+        p_CommonData->p_world->removeChild(p_CommonData->oneModel);
+        p_CommonData->p_world->removeChild(p_CommonData->twoModel);
+        p_CommonData->p_world->removeChild(m_tool0);
+        p_CommonData->p_world->removeChild(m_tool1);
+        p_CommonData->p_world->removeChild(finger);
+        p_CommonData->p_world->removeChild(thumb);
+        p_CommonData->p_world->removeChild(globe);
+        p_CommonData->p_world->removeChild(m_curSphere0);
+        p_CommonData->p_world->removeChild(m_curSphere1);
+
+        p_CommonData->p_world->removeChild(m_dispScaleCurSphere0);
+        p_CommonData->p_world->removeChild(m_dispScaleCurSphere1);
+        p_CommonData->p_world->removeChild(scaledFinger);
+        p_CommonData->p_world->removeChild(scaledThumb);
+
+    }
     //For Mine's Experiemnts
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment ||
             p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
@@ -1814,37 +1867,22 @@ void haptics_thread::DeleteDynamicBodies()
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
     {
         delete ODEWorld;
-        //delete p_CommonData->oneModel;
-        //delete p_CommonData->twoModel;
         delete p_CommonData->ODEAdjustBody;
         delete p_CommonData->ODEAdjustBody1;
 
         delete p_CommonData->ODEBody1;
-        //delete p_CommonData->ODEBody2;
-        //delete p_CommonData->ODEBody3;
-        //delete p_CommonData->ODEBody4;
 
         delete p_CommonData->adjustBox;
         delete p_CommonData->adjustBox1;
         delete p_CommonData->p_dynamicBox1;
-        //delete p_CommonData->p_dynamicScaledBox1;
-        //delete p_CommonData->p_dynamicBox2;
-        //delete p_CommonData->p_dynamicBox3;
-        //delete p_CommonData->p_dynamicBox4;
 
         delete wall;
         delete backWall;
         delete sideWall1;
         delete sideWall2;
         delete hoop1;
-        //delete hoop2;
-        //delete hoop3;
-        //delete hoop4;
 
         delete target1;
-        //delete target2;
-        //delete target3;
-        //qDebug("is this happening 7");
 
         delete p_CommonData->p_wall;
         delete p_CommonData->p_backWall;
@@ -1865,12 +1903,9 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(p_CommonData->p_sideWall1);
         p_CommonData->p_world->removeChild(p_CommonData->p_sideWall2);
         p_CommonData->p_world->removeChild(hoop1);
-        //p_CommonData->p_world->removeChild(hoop2);
         p_CommonData->p_world->removeChild(hoop3);
         p_CommonData->p_world->removeChild(hoop4);
         p_CommonData->p_world->removeChild(target1);
-        //p_CommonData->p_world->removeChild(target2);
-        p_CommonData->p_world->removeChild(target3);
         p_CommonData->p_world->removeChild(Right_Platform);
         p_CommonData->p_world->removeChild(Left_Platform);
         p_CommonData->p_world->removeChild(m_tool0);
@@ -1894,14 +1929,14 @@ void haptics_thread::DeleteDynamicBodies()
         delete p_CommonData->ODEAdjustBody1;
 
         delete p_CommonData->ODEBody1;
-        delete p_CommonData->ODEBody2;
+        //delete p_CommonData->ODEBody2;
         //delete p_CommonData->ODEBody3;
         //delete p_CommonData->ODEBody4;
 
         delete p_CommonData->adjustBox;
         delete p_CommonData->adjustBox1;
         delete p_CommonData->p_dynamicBox1;
-        delete p_CommonData->p_dynamicBox2;
+        //delete p_CommonData->p_dynamicBox2;
         delete p_CommonData->p_boxWithHole;
 
         delete wall;
@@ -1921,9 +1956,9 @@ void haptics_thread::DeleteDynamicBodies()
         delete Left_Platform;
         delete globe;
 
-        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
+        //p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
         p_CommonData->p_world->removeChild(p_CommonData->p_boxWithHole);
-        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicScaledBox1);
+        //p_CommonData->p_world->removeChild(p_CommonData->p_dynamicScaledBox1);
         p_CommonData->p_world->removeChild(ODEWorld);
         p_CommonData->p_world->removeChild(ground);
         p_CommonData->p_world->removeChild(wall);
@@ -1932,8 +1967,8 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(p_CommonData->p_sideWall2);
         p_CommonData->p_world->removeChild(hoop1);
         //p_CommonData->p_world->removeChild(hoop2);
-        p_CommonData->p_world->removeChild(hoop3);
-        p_CommonData->p_world->removeChild(hoop4);
+        //p_CommonData->p_world->removeChild(hoop3);
+        //p_CommonData->p_world->removeChild(hoop4);
         p_CommonData->p_world->removeChild(target1);
         p_CommonData->p_world->removeChild(m_tool0);
         p_CommonData->p_world->removeChild(m_tool1);
@@ -2015,12 +2050,8 @@ void haptics_thread::RenderDynamicBodies()
     p_CommonData->p_world->addChild(ODEWorld);
 
     // give world gravity
-    //if (p_CommonData->currentDynamicObjectState == dynamicInertiaExp || p_CommonData->currentDynamicObjectState == dynamicSubjectiveExp || p_CommonData->currentDynamicObjectState == dynamicCDInertiaExp){
-    //    ODEWorld->setGravity(chai3d::cVector3d(0.0, 0.0, 0));
-    //}
-    //else {
     ODEWorld->setGravity(chai3d::cVector3d(0.0, 0.0, 9.81));
-    //    }
+
     // define damping properties
     ODEWorld->setAngularDamping(0.02);
     ODEWorld->setLinearDamping(0.007);

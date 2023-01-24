@@ -51,9 +51,8 @@ public:
     void CommandSinPos(Eigen::Vector3d);
     void CommandCircPos(Eigen::Vector3d);
 
-    void InitGeneralChaiStuff();
+    void InitializeChai3DStuff();
     void InitFingerAndTool();
-    void InitEnvironments();
     //    void RenderPalpation();
     //    void RenderTwoFriction();
     void RenderHump();
@@ -115,6 +114,10 @@ public:
     chai3d::cEffectSurface* newEffect;
     cODEGenericBody* ODEGPlane0;
     cODEGenericBody* ODEGPlane1;
+    cODEGenericBody* ODEGPlane2;
+    cODEGenericBody* ODEGPlane3;
+    cODEGenericBody* ODEGPlane4;
+    cODEGenericBody* ODEGPlane5;
     chai3d::cMesh* globe;
 
     chai3d::cMesh* wall;

@@ -1293,17 +1293,43 @@ end
 %Rotation relative to global frame
 axisAngles = cell(numTrials, numSubjects);
 
-for j = 1:numSubjects
-    for k = 1:numTrials
-        t_Ni = trialStartTime_index(k,j):trialEndTime_index(k,j);
-        axisAng = zeros(length(t_Ni),4); %Reset needed to prevent accumulating values
-        for i=1:length(t_Ni)
-            boxRotationMatrix = [subjectData{j}.boxGlobalRot_11(t_Ni(i)) subjectData{j}.boxGlobalRot_12(t_Ni(i)) subjectData{j}.boxGlobalRot_13(t_Ni(i))
-                subjectData{j}.boxGlobalRot_21(t_Ni(i)) subjectData{j}.boxGlobalRot_22(t_Ni(i)) subjectData{j}.boxGlobalRot_23(t_Ni(i))
-                subjectData{j}.boxGlobalRot_31(t_Ni(i)) subjectData{j}.boxGlobalRot_32(t_Ni(i)) subjectData{j}.boxGlobalRot_33(t_Ni(i))];
-            
-            axisAng(i,:) = rotm2axang(boxRotationMatrix);
+%Boolean to savefigures of box altitude
+renderFigures = true;
+saveFigures = true;
+%Render figures to analyze box drops:
+if (renderFigures == true)
+    for j = 1:numSubjects
+        for k = 1:numTrials
+            t_Ni = trialStartTime_index(k,j):trialEndTime_index(k,j);
+            timeVec = subjectData{j}.time(t_Ni);
+
+            axisAng = zeros(length(t_Ni),4); %Reset needed to prevent accumulating values
+            for i=1:length(t_Ni)
+                boxRotationMatrix = [subjectData{j}.boxGlobalRot_11(t_Ni(i)) subjectData{j}.boxGlobalRot_12(t_Ni(i)) subjectData{j}.boxGlobalRot_13(t_Ni(i))
+                    subjectData{j}.boxGlobalRot_21(t_Ni(i)) subjectData{j}.boxGlobalRot_22(t_Ni(i)) subjectData{j}.boxGlobalRot_23(t_Ni(i))
+                    subjectData{j}.boxGlobalRot_31(t_Ni(i)) subjectData{j}.boxGlobalRot_32(t_Ni(i)) subjectData{j}.boxGlobalRot_33(t_Ni(i))];
+
+                axisAng(i,:) = rotm2axang(boxRotationMatrix);
+            end
+            axisAngles{k,j} = axisAng(:,:);
+
+
+            plot(timeVec, axisAng(:,4), "-", "Color", boxVisColor); hold on;% Axis labels
+            %title
+            title(strcat('Angle --',...
+            ' Subject #', num2str(subjectNum(j)),...
+            ' Trial #', num2str(k)));
+            xlabel("Time [sec]"); ylabel("Angle [rad]");
+            improvePlot_v2(false, true, 22, 1150, 500);
+            %Save figure as pdf:
+            if (saveFigures == true)
+                set(gcf,'PaperOrientation','landscape');
+                print(gcf, strcat('figures\axisAngleAnalysis\',...
+                    'Subject',num2str(subjectNum(j)),'_Trial',num2str(k),...
+                    '_axisAngleAnalysis'),'-dpdf','-fillpage');
+                close;
+            end
+
         end
-        axisAngles{k,j} = axisAng(:,:);
     end
 end

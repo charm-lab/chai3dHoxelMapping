@@ -3536,6 +3536,16 @@ void MainWindow::on_StiffnessExp_clicked()
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
     ui->JakeRenderCheckBox->setChecked(true);
+
+    //Disable all other buttons:
+    ui->dynamicEnvironment->setEnabled(false);
+    //ui->StiffnessExp->setEnabled(false);
+    ui->StiffnMassCombined->setEnabled(false);
+    ui->FingerMappingExp->setEnabled(false);
+    ui->HoxelMappingExp->setEnabled(false);
+    ui->MultiMassExp->setEnabled(false);
+    ui->Manual->setEnabled(false);
+
     qDebug()<<"Stiffness Button finished";
     QThread::msleep(200);
     onGUIchanged();
@@ -3565,6 +3575,16 @@ void MainWindow::on_StiffnMassCombined_clicked()
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
     ui->JakeRenderCheckBox->setChecked(true);
+
+    //Disable all other buttons:
+    ui->dynamicEnvironment->setEnabled(false);
+    ui->StiffnessExp->setEnabled(false);
+    //ui->StiffnMassCombined->setEnabled(false);
+    ui->FingerMappingExp->setEnabled(false);
+    ui->HoxelMappingExp->setEnabled(false);
+    ui->MultiMassExp->setEnabled(false);
+    ui->Manual->setEnabled(false);
+
     qDebug()<<"StiffMass Button finished";
     QThread::msleep(200);
     onGUIchanged();
@@ -3610,6 +3630,15 @@ void MainWindow::on_FingerMappingExp_clicked()
     ui->text->setText(labelText);
     //****************
 
+    //Disable all other buttons:
+    ui->dynamicEnvironment->setEnabled(false);
+    ui->StiffnessExp->setEnabled(false);
+    ui->StiffnMassCombined->setEnabled(false);
+    //ui->FingerMappingExp->setEnabled(false);
+    ui->HoxelMappingExp->setEnabled(false);
+    ui->MultiMassExp->setEnabled(false);
+    ui->Manual->setEnabled(false);
+
     QThread::msleep(200);
     onGUIchanged();
 }
@@ -3653,6 +3682,15 @@ void MainWindow::on_HoxelMappingExp_clicked()
     labelText.append("</P></br>");
     ui->text->setText(labelText);
     //****************
+
+    //Disable all other buttons:
+    ui->dynamicEnvironment->setEnabled(false);
+    ui->StiffnessExp->setEnabled(false);
+    ui->StiffnMassCombined->setEnabled(false);
+    ui->FingerMappingExp->setEnabled(false);
+    //ui->HoxelMappingExp->setEnabled(false);
+    ui->MultiMassExp->setEnabled(false);
+    ui->Manual->setEnabled(false);
 
     QThread::msleep(200);
     onGUIchanged();
@@ -3709,6 +3747,16 @@ void MainWindow::on_Manual_clicked()
     p_CommonData->currentEnvironmentState   = dynamicBodies;
     ui->VRControl->setChecked(true);
     ui->JakeRenderCheckBox->setChecked(false);
+
+    //Disable all other buttons:
+    ui->dynamicEnvironment->setEnabled(false);
+    ui->StiffnessExp->setEnabled(false);
+    ui->StiffnMassCombined->setEnabled(false);
+    ui->FingerMappingExp->setEnabled(false);
+    ui->HoxelMappingExp->setEnabled(false);
+    ui->MultiMassExp->setEnabled(false);
+    //ui->Manual->setEnabled(false);
+
     onGUIchanged();
     qDebug()<<"Manual Button finished";
 }
