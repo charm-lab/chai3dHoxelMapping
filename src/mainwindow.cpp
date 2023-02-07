@@ -307,10 +307,10 @@ void MainWindow::writeSerialData()
 
     //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
     //device0Y = QString::number(20.0, 'f', 1);
-    //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
+    QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
 
     /*temp*/
-    QString serialData = device0X + " " + device0Y + " " + device0Z + "\n";
+    //QString serialData = device0X + " " + device0Y + " " + device0Z + "\n";
     //QString serialData = "*2,0,0\n";
     /*temp*/
     payloadBuffer = payloadBuffer.append(serialData);
