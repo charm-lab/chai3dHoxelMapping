@@ -122,6 +122,7 @@ private:
     void keyPressEvent(QKeyEvent* a_event);
 
 private slots:
+    void progressPickAndPlaceExperiment(bool mistake);
     void UpdateGUIInfo();
     //void on_CalibratePushButton_clicked();
     //void on_ZeroSliders_clicked();
