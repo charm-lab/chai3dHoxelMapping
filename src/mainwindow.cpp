@@ -567,7 +567,9 @@ void MainWindow::Initialize()
     ui->planarCheckBox->setChecked(false);
     //Initialize Force control button:
     ui->forceControlButton->setChecked(true);
-    ui->positionControlButton->setChecked(false);
+    ui->positionControlButton->setChecked(false);    
+
+    ui->SetTrialNoButton->setEnabled(false);
 
 #ifdef QWT
     ///////////////
@@ -769,6 +771,22 @@ void MainWindow::UpdateGUIInfo()
         {
             p_CommonData->enablePlanarConstraint = false;
         }
+    }
+
+    //Trial Adjustment if needed
+    if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
+    {
+        //qDebug() << "AdjustTrial";
+        ui->SetTrialNoButton->setEnabled(true);
+        //p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
+        //qDebug() << "New TrialNo: " << p_CommonData->trialNo;
+
+    }
+    else
+    {
+        //qDebug() << "DONTAdjustTrial";
+        ui->SetTrialNoButton->setEnabled(false);
+        p_CommonData->trialNo = -1;
     }
 
     //Hide show all frames
@@ -1460,7 +1478,16 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
                 {
                     //ADVANCE to next trial
-                    p_CommonData->trialNo++;
+                    if(p_CommonData->trialNo == p_CommonData->AdjustedTrialNo && ui->SetTrialNo->value()!=1)
+                    {
+                        //stay at same value for this trial becuase you adjusted the trial number already
+                        qDebug()<< "~~Trial No. Adjusted To " << p_CommonData->trialNo;
+                    }
+                    else
+                    {
+                        //advance
+                        p_CommonData->trialNo++;
+                    }
                     if (readExpStuffIn())
                     {
                         qDebug()<<"_readExpStuffIn() SUCCESS 2_";
@@ -1592,12 +1619,23 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             //This area is called when coming back from break
             else
             {
-                p_CommonData->trialNo++;
+                //ADVANCE to next trial
+                if(p_CommonData->trialNo == p_CommonData->AdjustedTrialNo && ui->SetTrialNo->value()!=1)
+                {
+                    //stay at same value for this trial becuase you adjusted the trial number already
+                    qDebug()<< "~~Trial No. Adjusted To " << p_CommonData->trialNo;
+                }
+                else
+                {
+                    //advance
+                    p_CommonData->trialNo++;
+                }
                 //GUI Stuff
                 if (readExpStuffIn())
                 {
                     qDebug()<<"successful read -- back from break";
                 }
+                //Logic after break
                 if (p_CommonData->TrialType == "training")
                 {
                     QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
@@ -3838,7 +3876,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
     p_CommonData->MineProtocolLocation = temp;
     int error = p_CommonData->MineProtocolFile.LoadFile(temp.toStdString().c_str());
     //qDebug() << "error" << error << p_CommonData->MineProtocolLocation;
-
+/*
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
         qDebug() << "AdjustTrial";
@@ -3847,7 +3885,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
         qDebug() << "DONTAdjustTrial";
         p_CommonData->trialNo       = -1;
     }
-
+*/
     p_CommonData->environmentChange         = true;
     p_CommonData->currentDynamicObjectState = StiffnessMassExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;
@@ -3879,10 +3917,11 @@ void MainWindow::on_FingerMappingExp_clicked()
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
     qDebug() << "error" << error << p_CommonData->protocolFileLocation;
-
+/*
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
-        qDebug() << "AdjustTrial";
+        qDebug() << "AdjustTrial";        
+        ui->SetTrialNoButton->setEnabled(true);
         p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
         qDebug() << "New TrialNo: " << p_CommonData->trialNo;
 
@@ -3890,9 +3929,10 @@ void MainWindow::on_FingerMappingExp_clicked()
     else
     {
         qDebug() << "DONTAdjustTrial";
+        ui->SetTrialNoButton->setEnabled(false);
         p_CommonData->trialNo = -1;
     }
-
+*/
     p_CommonData->environmentChange         = true;
     p_CommonData->currentDynamicObjectState = FingerMappingExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;
@@ -3934,7 +3974,7 @@ void MainWindow::on_HoxelMappingExp_clicked()
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
     qDebug() << "error" << error << p_CommonData->protocolFileLocation;
-
+/*
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
         qDebug() << "AdjustTrial";
@@ -3945,7 +3985,7 @@ void MainWindow::on_HoxelMappingExp_clicked()
         qDebug() << "DONTAdjustTrial";
         p_CommonData->trialNo = -1;
     }
-
+*/
     p_CommonData->environmentChange         = true;
     p_CommonData->currentDynamicObjectState = HoxelMappingExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;
@@ -3978,6 +4018,14 @@ void MainWindow::on_HoxelMappingExp_clicked()
     onGUIchanged();
 }
 
+void MainWindow::on_SetTrialNoButton_clicked()
+{
+    p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
+    qDebug() << "New TrialNo: " << p_CommonData->trialNo;
+
+
+}
+
 void MainWindow::on_MultiMassExp_clicked()
 {
     QString protocolFolder = "./MultiMassProtocols/";
@@ -3986,7 +4034,7 @@ void MainWindow::on_MultiMassExp_clicked()
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
     qDebug() << "error" << error << p_CommonData->protocolFileLocation;
-
+/*
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
         qDebug() << "AdjustTrial";
@@ -3997,7 +4045,7 @@ void MainWindow::on_MultiMassExp_clicked()
         qDebug() << "DONTAdjustTrial";
         p_CommonData->trialNo = -1;
     }
-
+*/
     p_CommonData->environmentChange         = true;
     p_CommonData->currentDynamicObjectState = MultiMassExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;

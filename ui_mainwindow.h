@@ -214,6 +214,7 @@ public:
     QGridLayout *gridLayout_8;
     QLabel *label_46;
     QDoubleSpinBox *alphaBox;
+    QPushButton *SetTrialNoButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -1294,6 +1295,9 @@ public:
 
         gridLayout_8->addWidget(alphaBox, 0, 1, 1, 1);
 
+        SetTrialNoButton = new QPushButton(centralWidget);
+        SetTrialNoButton->setObjectName(QStringLiteral("SetTrialNoButton"));
+        SetTrialNoButton->setGeometry(QRect(1230, 970, 381, 41));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -1327,7 +1331,7 @@ public:
 "Trial No.", 0));
         label_23->setText(QApplication::translate("MainWindow", "Trial No.", 0));
         label_24->setText(QApplication::translate("MainWindow", "Pair No.", 0));
-        label_56->setText(QApplication::translate("MainWindow", "Trial No.", 0));
+        label_56->setText(QApplication::translate("MainWindow", "Starting Trial No.", 0));
         label_51->setText(QApplication::translate("MainWindow", "Subject No.", 0));
         planarCheckBox->setText(QApplication::translate("MainWindow", "Enable HME\n"
 "Planar Constraint", 0));
@@ -1410,6 +1414,7 @@ public:
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));
         groupBox_9->setTitle(QApplication::translate("MainWindow", "IIR Filter:", 0));
         label_46->setText(QApplication::translate("MainWindow", "Alpha = ", 0));
+        SetTrialNoButton->setText(QApplication::translate("MainWindow", "Set New Trial Number", 0));
     } // retranslateUi
 
 };

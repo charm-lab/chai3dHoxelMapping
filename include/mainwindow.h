@@ -205,6 +205,7 @@ private slots:
     void on_StiffnMassCombined_clicked();
     void on_FingerMappingExp_clicked();
     void on_HoxelMappingExp_clicked();
+    void on_SetTrialNoButton_clicked();
     void on_MultiMassExp_clicked();
     void on_Manual_clicked();
     void on_resetCameraButton_clicked();

@@ -603,7 +603,7 @@ Trial No.</string>
      <item row="5" column="0">
       <widget class="QLabel" name="label_56">
        <property name="text">
-        <string>Trial No.</string>
+        <string>Starting Trial No.</string>
        </property>
       </widget>
      </item>
@@ -2121,6 +2121,19 @@ Experiment</string>
       </item>
      </layout>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="SetTrialNoButton">
+    <property name="geometry">
+     <rect>
+      <x>1230</x>
+      <y>970</y>
+      <width>381</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Set New Trial Number</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
