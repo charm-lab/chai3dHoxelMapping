@@ -657,8 +657,10 @@ void MainWindow::UpdateGUIInfo()
     double localFor1_1     =  localForce1[1];
     double localFor1_2     =  localForce1[2];
 
-    if(p_CommonData->flagEqualTouch){
-        if (p_CommonData->fingerTouching == true && p_CommonData->thumbTouching == true){
+    if(p_CommonData->flagEqualTouch)
+    {
+        if (p_CommonData->fingerTouching == true && p_CommonData->thumbTouching == true)
+        {
             localOutputStrokes0 = p_CommonData->wearableDelta0->ReadStrokeOutput();
             localOutputStrokes1 = p_CommonData->wearableDelta0->ReadStrokeOutput();
         }
@@ -894,7 +896,6 @@ bool MainWindow::readExpStuffIn()
     }
 
     qDebug()<<"TrialType"<< p_CommonData->TrialType;
-
 
     //Stiffness Experiment
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment)
@@ -1390,7 +1391,7 @@ QString getMappingText(int mappingVal)
 
 void MainWindow::progressPickAndPlaceExperiment(bool mistake)
 {
-    if(CheckFingers()&& (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
+    if(CheckFingers() && (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
     {
         //PRE-TRIAL******
         if(p_CommonData->trialNo < 1)
@@ -1477,21 +1478,39 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 //If cube passed hoop and target, advance trial
                 if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
                 {
+
+                    //advance
+                    p_CommonData->trialNo++;
+                    //then read in
+                    if (readExpStuffIn())
+                    {
+                        qDebug()<<"_readExpStuffIn() SUCCESS 2_";
+                    }
+
+                    /*
                     //ADVANCE to next trial
                     if(p_CommonData->trialNo == p_CommonData->AdjustedTrialNo && ui->SetTrialNo->value()!=1)
                     {
                         //stay at same value for this trial becuase you adjusted the trial number already
                         qDebug()<< "~~Trial No. Adjusted To " << p_CommonData->trialNo;
+                        //read in with trial No as is
+
+                        if (readExpStuffIn())
+                        {
+                            qDebug()<<"_readExpStuffIn() SUCCESS 2_";
+                        }
                     }
                     else
                     {
                         //advance
                         p_CommonData->trialNo++;
+                        //then read in
+                        if (readExpStuffIn())
+                        {
+                            qDebug()<<"_readExpStuffIn() SUCCESS 2_";
+                        }
                     }
-                    if (readExpStuffIn())
-                    {
-                        qDebug()<<"_readExpStuffIn() SUCCESS 2_";
-                    }
+                    */
 
                     //GUI Indication of completed trial
                     if (p_CommonData->TrialType == "training")
@@ -1619,22 +1638,44 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             //This area is called when coming back from break
             else
             {
+                //advance
+                p_CommonData->trialNo++;
+                //then read in
+                if (readExpStuffIn())
+                {
+                    qDebug()<<"successful read -- back from break";
+                }
+
+                /*
                 //ADVANCE to next trial
                 if(p_CommonData->trialNo == p_CommonData->AdjustedTrialNo && ui->SetTrialNo->value()!=1)
                 {
                     //stay at same value for this trial becuase you adjusted the trial number already
                     qDebug()<< "~~Trial No. Adjusted To " << p_CommonData->trialNo;
+                    //read in with trial No as is
+                    if (readExpStuffIn())
+                    {
+                        qDebug()<<"successful read -- back from break";
+                    }
                 }
                 else
                 {
                     //advance
                     p_CommonData->trialNo++;
+                    //then read in
+                    if (readExpStuffIn())
+                    {
+                        qDebug()<<"successful read -- back from break";
+                    }
                 }
+                */
                 //GUI Stuff
+                /*
                 if (readExpStuffIn())
                 {
                     qDebug()<<"successful read -- back from break";
                 }
+                */
                 //Logic after break
                 if (p_CommonData->TrialType == "training")
                 {
@@ -1682,31 +1723,11 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
     }
 
     //Set Mapping Text
-    if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
-    {
-        mappingVal = p_CommonData->mapping;
-        QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-        //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
-        //mappingText.append("</P></br>");
-        //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
-        //mappingText.append(getMappingText(p_CommonData->mapping));
-        mappingText.append(QString::number(p_CommonData->mapping));
-        mappingText.append("</P></br>");
-        ui->mappingTextBox->setText(mappingText);
-    }
-    //Set Mapping Text
-    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
-    {
-        mappingVal = p_CommonData->mapping;
-        QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-        //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
-        //mappingText.append("</P></br>");
-        //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
-        //mappingText.append(getMappingText(p_CommonData->mapping));
-        mappingText.append(QString::number(p_CommonData->mapping));
-        mappingText.append("</P></br>");
-        ui->mappingTextBox->setText(mappingText);
-    }
+    QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+    mappingText.append(QString::number(p_CommonData->mapping));
+    mappingText.append("</P></br>");
+    ui->mappingTextBox->setText(mappingText);
+
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *a_event)
@@ -4021,8 +4042,22 @@ void MainWindow::on_HoxelMappingExp_clicked()
 void MainWindow::on_SetTrialNoButton_clicked()
 {
     p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
+    if (readExpStuffIn())
+    {
+        qDebug()<<"readExpStuffIn() SUCCESS -- Adjusted Trial No Set";
+    }
     qDebug() << "New TrialNo: " << p_CommonData->trialNo;
+    QString text = "New TrialNo: ";
+    text.append(QString::number(p_CommonData->trialNo));
+    text.append("\nNew Mapping: ");
+    text.append(QString::number(p_CommonData->mapping));
+    ui->text->setText(text);
 
+    //Mapping text
+    QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+    mappingText.append(QString::number(p_CommonData->mapping));
+    mappingText.append("</P></br>");
+    ui->mappingTextBox->setText(mappingText);
 
 }
 
