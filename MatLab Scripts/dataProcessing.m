@@ -12,14 +12,14 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 %Initialization of the total number of subjects that were run in
 %the experiment
-totalNumSubjects = 1;
+totalNumSubjects = 2;
 %Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1];
+subjectNum = [1 2];
 
 %Load data from folder
 %Folder contatining all data:
@@ -88,7 +88,7 @@ disp("***Data Upload and Merge Complete***")
 
 %% Plot Success/Fails
 plotVis = "on";
-saveFigures = false;
+saveFigures = true;
 
 for j = 1:numSubjects
     figure; plot(subjectData{j}.time , subjectData{j}.trialSuccess, "b-");
@@ -499,7 +499,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Data
 close all;
-saveFigures = false;
+saveFigures = true;
 %Old color scheme:
 visCubeColor = "[0 0 0]";
 invisCubeColor = "[0.5 0.5 0.5]";
@@ -521,7 +521,7 @@ markerSize = 20; %variable used in createErrorBarPlot
 close all;
 figure(1);
 markerSize = 15;
-minY = -2; maxY =5;
+minY = -0.5; maxY = 8;
 visCubeColor = evalin('base','boxVisColor');
 invisCubeColor = evalin('base','boxInvisColor');
 [h1,visCompletionTime, visCompletionTimeStdVals] = ...
@@ -545,7 +545,7 @@ figure(2);
 subplot(1,3,1)
 markerSize = 12;
 jitterVal = 0.14;
-minY = -0.1; maxY = 1.4;
+minY = 0.4; maxY = 2.1;
 [h3, visIndexPathLength, visIndexPathLengthStdVals] = ...
     createErrorBarPlot(indexPathLengthMapping1, indexPathLengthMapping2,...
     indexPathLengthMapping3, indexPathLengthMapping4, indexPathLengthMapping5,...
@@ -1294,8 +1294,8 @@ end
 axisAngles = cell(numTrials, numSubjects);
 
 %Boolean to savefigures of box altitude
-renderFigures = true;
-saveFigures = true;
+renderFigures = false;
+saveFigures = false;
 %Render figures to analyze box drops:
 if (renderFigures == true)
     for j = 1:numSubjects

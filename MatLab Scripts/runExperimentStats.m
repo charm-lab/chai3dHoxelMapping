@@ -13,11 +13,11 @@ function runExperimentStats()
 
     % Groups:
     %Mapping group:
-    mappings(1:10,1)  = {'1'};
-    mappings(11:20,1) = {'2'};
-    mappings(21:30,1) = {'3'};
-    mappings(31:40,1) = {'4'};
-    mappings(41:50,1) = {'5'};
+    mappings(1:20,1)  = {'1'};
+    mappings(21:40,1) = {'2'};
+    mappings(41:60,1) = {'3'};
+    mappings(61:80,1) = {'4'};
+    mappings(81:100,1) = {'5'};
 
     %Convert matrix of subject results to column vectors
     %CompletionTime Mapping 1 visCube group
@@ -108,16 +108,16 @@ function runExperimentStats()
     %ThumbNormalForceMag Mapping 5 visCube group
     yTNF_visMap5 = reshape(meanThumbNormalForceMapping5(:,1:numSubjects),[],1);
     
-    %BoxDrops Mapping 1 visCube group
-    yBD_visMap1 = reshape(boxDropsMapping1(:,1:numSubjects),[],1);
-    %BoxDrops Mapping 2 visCube group
-    yBD_visMap2 = reshape(boxDropsMapping2(:,1:numSubjects),[],1);
-    %BoxDrops Mapping 3 visCube group
-    yBD_visMap3 = reshape(boxDropsMapping3(:,1:numSubjects),[],1);
-    %BoxDrops Mapping 4 visCube group
-    yBD_visMap4 = reshape(boxDropsMapping4(:,1:numSubjects),[],1);
-    %BoxDrops Mapping 5 visCube group
-    yBD_visMap5 = reshape(boxDropsMapping5(:,1:numSubjects),[],1);
+%     %BoxDrops Mapping 1 visCube group
+%     yBD_visMap1 = reshape(boxDropsMapping1(:,1:numSubjects),[],1);
+%     %BoxDrops Mapping 2 visCube group
+%     yBD_visMap2 = reshape(boxDropsMapping2(:,1:numSubjects),[],1);
+%     %BoxDrops Mapping 3 visCube group
+%     yBD_visMap3 = reshape(boxDropsMapping3(:,1:numSubjects),[],1);
+%     %BoxDrops Mapping 4 visCube group
+%     yBD_visMap4 = reshape(boxDropsMapping4(:,1:numSubjects),[],1);
+%     %BoxDrops Mapping 5 visCube group
+%     yBD_visMap5 = reshape(boxDropsMapping5(:,1:numSubjects),[],1);
     
     %Find p-values
     %vertically concatenate columns of the same metric
@@ -154,9 +154,9 @@ function runExperimentStats()
     [p_ThumbNormalForce, ~, stats_ThumbNormalForce] = anovan(yTNF, {mappings},...
         "Model","interaction", "Varnames", "mappings", "display",showStats);
 
-    yBD = [yBD_visMap1; yBD_visMap2; yBD_visMap3; yBD_visMap4; yBD_visMap5];
-    [p_BoxDrops, ~, stats_BoxDrops] = anovan(yBD,  {mappings},...
-        "Model","interaction", "Varnames", "mappings", "display",showStats);
+%     yBD = [yBD_visMap1; yBD_visMap2; yBD_visMap3; yBD_visMap4; yBD_visMap5];
+%     [p_BoxDrops, ~, stats_BoxDrops] = anovan(yBD,  {mappings},...
+%         "Model","interaction", "Varnames", "mappings", "display",showStats);
 
     %Compare signifcance with control group only:
     if(interactableCompare == false)
@@ -218,13 +218,13 @@ function runExperimentStats()
         improvePlot_v2(false, true, fontSize, width, height) 
         title("Thumb Normal Force -- Control")
         
-        %Box Drops
-        subplot(3,3,9)    
-        %Compare signifcance with control group only:
-        compBD = multcompare(stats_BoxDrops, "CriticalValueType", "dunnett", ...
-            "ControlGroup", 5, "Alpha", 0.05);        
-        improvePlot_v2(false, true, fontSize, width, height)
-        title("BoxDrops -- Control")
+%         %Box Drops
+%         subplot(3,3,9)    
+%         %Compare signifcance with control group only:
+%         compBD = multcompare(stats_BoxDrops, "CriticalValueType", "dunnett", ...
+%             "ControlGroup", 5, "Alpha", 0.05);        
+%         improvePlot_v2(false, true, fontSize, width, height)
+%         title("BoxDrops -- Control")
     
         %Tables with Mapping 5 as Control:    
         tbl_CompletionTime = array2table(compCT,"VariableNames", ...
@@ -251,9 +251,9 @@ function runExperimentStats()
         tbl_ThumbNormalForce = array2table(compTNF,"VariableNames", ...
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
     
-        tbl_BoxDrops = array2table(compBD,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
-    
+%         tbl_BoxDrops = array2table(compBD,"VariableNames", ...
+%         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+%     
     %Interactable comparison with any group:
     else    
         close all;
@@ -299,10 +299,10 @@ function runExperimentStats()
         title("Thumb Normal Force -- Interactable")
         improvePlot_v2(false, true, fontSize, width, height)
     
-        subplot(3,3,9)
-        compBD = multcompare(stats_BoxDrops);
-        title("BoxDrops -- Interactable")
-        improvePlot_v2(false, true, fontSize, width, height)    
+%         subplot(3,3,9)
+%         compBD = multcompare(stats_BoxDrops);
+%         title("BoxDrops -- Interactable")
+%         improvePlot_v2(false, true, fontSize, width, height)    
         
         %Tables with Variable Control:    
         tbl_CompletionTime = array2table(compCT,"VariableNames", ...
@@ -329,8 +329,8 @@ function runExperimentStats()
         tbl_ThumbNormalForce = array2table(compTNF,"VariableNames", ...
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
     
-        tbl_BoxDrops = array2table(compBD,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+%         tbl_BoxDrops = array2table(compBD,"VariableNames", ...
+%         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
     end
 
     if (showStats == "on")
@@ -342,6 +342,6 @@ function runExperimentStats()
         p_IndexNormalForce
         p_ThumbShearForce
         p_ThumbNormalForce
-        p_BoxDrops
+%         p_BoxDrops
     end       
 end

@@ -298,11 +298,10 @@ void MainWindow::writeSerialData()
         }
 
         //Dispay in GUI:
-        //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\nMag: " + dev0Mag + "N"); //device 0//device 0 _prev
+        //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\n); //device 0//device 0 _prev
         //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
-        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\n"); //device 0//device 0 _prev
-        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n");//device 1 //device 1_prev
-
+        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z + "N\r\n" + "Mag: " + dev0Mag + "N\r\n"); //device 0 //device 0 _prev
+        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n" + "Mag: " + dev1Mag + "N\r\n"); //device 1 //device 1_prev
     }
 
     //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
@@ -1366,7 +1365,6 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             p_CommonData->trialNo = 1;
             p_CommonData->recordFlag = true;
 
-
             //Read in protocol file and check if the read is successful
             if (readExpStuffIn())
             {
@@ -1447,6 +1445,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 {
                     //advance
                     p_CommonData->trialNo++;
+                    //reset mistakeCunter
+                    p_CommonData->mistakeCounter = 0;
                     //then read in
                     if (readExpStuffIn())
                     {
@@ -1606,6 +1606,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             {
                 //advance
                 p_CommonData->trialNo++;
+                //reset mistakeCounter
+                p_CommonData->mistakeCounter = 0;
                 //then read in
                 if (readExpStuffIn())
                 {
