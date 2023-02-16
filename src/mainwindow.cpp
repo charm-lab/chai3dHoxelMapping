@@ -775,6 +775,7 @@ void MainWindow::UpdateGUIInfo()
         }
     }
 
+
     //Trial Adjustment if needed
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
@@ -783,13 +784,15 @@ void MainWindow::UpdateGUIInfo()
         //p_CommonData->trialNo = p_CommonData->AdjustedTrialNo;
         //qDebug() << "New TrialNo: " << p_CommonData->trialNo;
 
-    }
+    }/*
     else
     {
         //qDebug() << "DONTAdjustTrial";
         ui->SetTrialNoButton->setEnabled(false);
-        p_CommonData->trialNo = -1;
+        //p_CommonData->trialNo = -1;
+
     }
+    */
 
     //Hide show all frames
     // update frames to show or not
@@ -1352,43 +1355,6 @@ bool MainWindow::readExpStuffIn()
 
 }
 
-//Mataches text to mapping type to be displayed for FingerMapping Experiment
-QString getMappingText(int mappingVal)
-{
-    QString textVal;
-
-    if(mappingVal == 1)
-    {
-        //textVal = "Normal";
-        textVal = "A";
-    }
-    else if(mappingVal == 2)
-    {
-        //textVal = "Reversed";
-        textVal = "B";
-    }
-    else if(mappingVal == 3)
-    {
-        //textVal = "Single";
-        textVal = "C";
-    }
-    else if(mappingVal == 4)
-    {
-        //textVal = "Averaged";
-        textVal = "D";
-    }
-    else if(mappingVal == 5)
-    {
-        //textVal = "Control";
-        textVal = "E";
-    }
-    else
-    {
-        textVal = "FAILED MAPPING";
-    }
-    return textVal;
-}
-
 void MainWindow::progressPickAndPlaceExperiment(bool mistake)
 {
     if(CheckFingers() && (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
@@ -1399,6 +1365,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             qDebug()<< "Trial# < 1";
             p_CommonData->trialNo = 1;
             p_CommonData->recordFlag = true;
+
 
             //Read in protocol file and check if the read is successful
             if (readExpStuffIn())
@@ -1478,7 +1445,6 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 //If cube passed hoop and target, advance trial
                 if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
                 {
-
                     //advance
                     p_CommonData->trialNo++;
                     //then read in
@@ -2884,10 +2850,6 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             {
                 mappingVal = p_CommonData->mapping;
                 QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-                //mappingText.append("Mapping " + QString::number(p_CommonData->mapping) +":\n");
-                //mappingText.append("</P></br>");
-                //mappingText.append("<P><FONT COLOR='#0c88fb' FONT SIZE = 3>");
-                //mappingText.append(getMappingText(p_CommonData->mapping));
                 mappingText.append(QString::number(p_CommonData->mapping));
                 mappingText.append("</P></br>");
                 ui->mappingTextBox->setText(mappingText);
@@ -3938,7 +3900,7 @@ void MainWindow::on_FingerMappingExp_clicked()
     p_CommonData->protocolFileLocation = temp;
     int error = p_CommonData->selectedProtocolFile.LoadFile(temp.toStdString().c_str()); //DO NOT COMMENT OUT THIS LINE it will cause protocol reading to fail
     qDebug() << "error" << error << p_CommonData->protocolFileLocation;
-/*
+
     if(ui->AdjustTrialNo->isChecked())        //let haptics thread determine desired position
     {
         qDebug() << "AdjustTrial";        
@@ -3953,7 +3915,7 @@ void MainWindow::on_FingerMappingExp_clicked()
         ui->SetTrialNoButton->setEnabled(false);
         p_CommonData->trialNo = -1;
     }
-*/
+/**/
     p_CommonData->environmentChange         = true;
     p_CommonData->currentDynamicObjectState = FingerMappingExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;

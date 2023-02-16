@@ -1313,7 +1313,6 @@ if (renderFigures == true)
             end
             axisAngles{k,j} = axisAng(:,:);
 
-
             plot(timeVec, axisAng(:,4), "-", "Color", boxVisColor); hold on;% Axis labels
             %title
             title(strcat('Angle --',...
@@ -1329,7 +1328,6 @@ if (renderFigures == true)
                     '_axisAngleAnalysis'),'-dpdf','-fillpage');
                 close;
             end
-
         end
     end
 end
