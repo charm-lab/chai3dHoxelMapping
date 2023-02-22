@@ -73,7 +73,8 @@ public:
     void SetDynEnvironStiffMassExp();
     void SetDynEnvironFingerMappingExp();
     void SetDynEnvironHoxelMappingExp();
-    void SetDynEnvironMultiMassExp();
+    void SetDynEnvironMultiMassExp();    
+    void SetDynEnvironCubeSlideExp();
     void SetDynEnvironAdjust();
     void SetManualAdjust();
     //    void SetDynEnvironVtExp();
@@ -141,6 +142,7 @@ public:
     chai3d::cMaterial matHoop1;
     chai3d::cMaterial matHoop2;
     chai3d::cMaterial matHoop3;
+    chai3d::cMaterial matHoop4;
 
 
     chai3d::cMesh* dynamicHoop1; // -- addedd for HME

@@ -225,6 +225,7 @@ typedef enum
     FingerMappingExperiment,
     HoxelMappingExperiment,
     MultiMassExperiment,
+    CubeSlideExperiment,
     dynamicMagnitudeExp,
 } dynamicObject_states;
 

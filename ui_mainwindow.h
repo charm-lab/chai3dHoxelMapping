@@ -142,15 +142,16 @@ public:
     QLineEdit *inertiaValue;
     QSpacerItem *verticalSpacer_2;
     QCheckBox *equalBoxTouch;
+    QPushButton *Manual;
     QCheckBox *showAllFramesCheckBox;
     QGroupBox *groupBox_5;
     QWidget *layoutWidget7;
     QGridLayout *gridLayout_12;
     QPushButton *FingerMappingExp;
-    QPushButton *HoxelMappingExp;
-    QPushButton *Manual;
-    QPushButton *MultiMassExp;
     QPushButton *dynamicEnvironment;
+    QPushButton *HoxelMappingExp;
+    QPushButton *MultiMassExp;
+    QPushButton *CubeSlideExp;
     QGroupBox *groupBox_6;
     QWidget *layoutWidget8;
     QGridLayout *gridLayout;
@@ -905,6 +906,16 @@ public:
 
         gridLayout_7->addWidget(equalBoxTouch, 7, 2, 3, 1);
 
+        Manual = new QPushButton(layoutWidget6);
+        Manual->setObjectName(QStringLiteral("Manual"));
+        QSizePolicy sizePolicy3(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(Manual->sizePolicy().hasHeightForWidth());
+        Manual->setSizePolicy(sizePolicy3);
+
+        gridLayout_7->addWidget(Manual, 13, 3, 1, 1);
+
         showAllFramesCheckBox = new QCheckBox(centralWidget);
         showAllFramesCheckBox->setObjectName(QStringLiteral("showAllFramesCheckBox"));
         showAllFramesCheckBox->setGeometry(QRect(1780, 1140, 321, 71));
@@ -923,13 +934,17 @@ public:
         FingerMappingExp = new QPushButton(layoutWidget7);
         FingerMappingExp->setObjectName(QStringLiteral("FingerMappingExp"));
         FingerMappingExp->setEnabled(true);
-        QSizePolicy sizePolicy3(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
         sizePolicy3.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
         FingerMappingExp->setSizePolicy(sizePolicy3);
 
         gridLayout_12->addWidget(FingerMappingExp, 1, 0, 1, 1);
+
+        dynamicEnvironment = new QPushButton(layoutWidget7);
+        dynamicEnvironment->setObjectName(QStringLiteral("dynamicEnvironment"));
+        sizePolicy3.setHeightForWidth(dynamicEnvironment->sizePolicy().hasHeightForWidth());
+        dynamicEnvironment->setSizePolicy(sizePolicy3);
+
+        gridLayout_12->addWidget(dynamicEnvironment, 0, 0, 1, 2);
 
         HoxelMappingExp = new QPushButton(layoutWidget7);
         HoxelMappingExp->setObjectName(QStringLiteral("HoxelMappingExp"));
@@ -938,26 +953,20 @@ public:
 
         gridLayout_12->addWidget(HoxelMappingExp, 1, 1, 1, 1);
 
-        Manual = new QPushButton(layoutWidget7);
-        Manual->setObjectName(QStringLiteral("Manual"));
-        sizePolicy3.setHeightForWidth(Manual->sizePolicy().hasHeightForWidth());
-        Manual->setSizePolicy(sizePolicy3);
-
-        gridLayout_12->addWidget(Manual, 2, 1, 1, 1);
-
         MultiMassExp = new QPushButton(layoutWidget7);
         MultiMassExp->setObjectName(QStringLiteral("MultiMassExp"));
         sizePolicy3.setHeightForWidth(MultiMassExp->sizePolicy().hasHeightForWidth());
         MultiMassExp->setSizePolicy(sizePolicy3);
 
-        gridLayout_12->addWidget(MultiMassExp, 2, 0, 1, 1);
+        gridLayout_12->addWidget(MultiMassExp, 2, 1, 1, 1);
 
-        dynamicEnvironment = new QPushButton(layoutWidget7);
-        dynamicEnvironment->setObjectName(QStringLiteral("dynamicEnvironment"));
-        sizePolicy3.setHeightForWidth(dynamicEnvironment->sizePolicy().hasHeightForWidth());
-        dynamicEnvironment->setSizePolicy(sizePolicy3);
+        CubeSlideExp = new QPushButton(layoutWidget7);
+        CubeSlideExp->setObjectName(QStringLiteral("CubeSlideExp"));
+        CubeSlideExp->setEnabled(true);
+        sizePolicy3.setHeightForWidth(CubeSlideExp->sizePolicy().hasHeightForWidth());
+        CubeSlideExp->setSizePolicy(sizePolicy3);
 
-        gridLayout_12->addWidget(dynamicEnvironment, 0, 0, 1, 2);
+        gridLayout_12->addWidget(CubeSlideExp, 2, 0, 1, 1);
 
         groupBox_6 = new QGroupBox(centralWidget);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
@@ -1377,17 +1386,19 @@ public:
         label_28->setText(QApplication::translate("MainWindow", "Mass", 0));
         equalBoxTouch->setText(QApplication::translate("MainWindow", "Touch\n"
 "Effective", 0));
+        Manual->setText(QApplication::translate("MainWindow", "Manual", 0));
         showAllFramesCheckBox->setText(QApplication::translate("MainWindow", "Show All Frames", 0));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "Experiments:", 0));
         FingerMappingExp->setText(QApplication::translate("MainWindow", "Pick and Place\n"
 "Experiment", 0));
-        HoxelMappingExp->setText(QApplication::translate("MainWindow", "Wire Guide\n"
-"Experiment", 0));
-        Manual->setText(QApplication::translate("MainWindow", "Manual", 0));
-        MultiMassExp->setText(QApplication::translate("MainWindow", "Multi-Mass\n"
-"Experiment", 0));
         dynamicEnvironment->setText(QApplication::translate("MainWindow", "Dynamic\n"
 "Bodies", 0));
+        HoxelMappingExp->setText(QApplication::translate("MainWindow", "Wire Guide\n"
+"Experiment", 0));
+        MultiMassExp->setText(QApplication::translate("MainWindow", "Multi-Mass\n"
+"Experiment", 0));
+        CubeSlideExp->setText(QApplication::translate("MainWindow", "Cube Slide\n"
+"Experiment", 0));
         groupBox_6->setTitle(QApplication::translate("MainWindow", "Mine's Experiments", 0));
         StiffnessExp->setText(QApplication::translate("MainWindow", "Stiffness\n"
 "Experiment", 0));

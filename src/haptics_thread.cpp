@@ -511,6 +511,15 @@ void haptics_thread::UpdateVRGraphics()
             p_CommonData->ODEBody3->addExternalForce(gravity_force3);
         }
 
+        if (p_CommonData->currentDynamicObjectState == CubeSlideExperiment)
+        {
+            p_CommonData->ODEBody1->setMass(p_CommonData->mass1);
+
+            gravity_force1.set(0.0, 0.0, original_mass1*9.81);
+
+            p_CommonData->ODEBody1->addExternalForce(gravity_force1);
+        }
+
         if(p_CommonData->show_forces)
         {
             if(m_tool1->getDeviceGlobalForce().length()>0)
@@ -863,6 +872,60 @@ void haptics_thread::UpdateVRGraphics()
         //        }
         //        qDebug()<< "X: " << box1Pos.x() << "Y: " << box1Pos.y() << "Z: " << box1Pos.z();
     }
+
+    //VR Updates for Jasmin's FingerMapping Experiment
+    if(p_CommonData->currentDynamicObjectState == CubeSlideExperiment)
+    {
+        //If netiher the target or hoop are completed
+        if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete)
+        {
+            //qDebug()<<"target + hoop not complete";
+            //Find distance between box1 and hoop1
+            chai3d::cVector3d err11 = box1Pos - hoop1Pos;
+
+            if(err11.length() < targetRadius)
+            {
+                p_CommonData->hoop1Complete = true;
+                hoop1->setMaterial(matHoop1);
+                hoop1->setTransparencyLevel(0.85, true);
+                //qDebug()<<"hoop completed";
+
+                p_CommonData->hoopSuccess = 1;
+            }
+        }
+        //If the target is not completed but the hoop is completed
+        else if(!p_CommonData->target1Complete && p_CommonData->hoop1Complete)
+        {
+            //qDebug()<<"target not complete, hoop completed earlier";
+            //Find distance between box1 and target1
+            chai3d::cVector3d err12 = box1Pos - target1Pos;
+
+            if(err12.length()< targetRadius)
+            {
+                p_CommonData->target1Complete = true;
+                target1->setMaterial(matTarget1);
+                target1->setTransparencyLevel(0.85, true);
+                //qDebug()<<"target now completed in addition to hoop";
+
+                p_CommonData->targetSuccess = 1;
+                p_CommonData->trialSuccess = 1;
+            }
+        }
+
+        //        //less than to accomodate coordinate differences
+        //        if(box1Pos.z() <= -0.03)
+        //        {
+        //            //make invisible
+        //            p_CommonData->p_dynamicBox1->setTransparencyLevel(0.0, true);
+        //        }
+        //        else
+        //        {
+        //            //make visible again
+        //            p_CommonData->p_dynamicBox1->setTransparencyLevel(1.0, true);
+        //        }
+        //        qDebug()<< "X: " << box1Pos.x() << "Y: " << box1Pos.y() << "Z: " << box1Pos.z();
+    }
+
 
     // if fingers reset in box, fix it and reset the environment again
     if(p_CommonData->resetBoxPosFlag)
@@ -1254,7 +1317,8 @@ void haptics_thread::RecordData()
     }
 
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == CubeSlideExperiment)
     {
         //For sensor0/finger0
         p_CommonData->dataRecorder.desiredPos0      = p_CommonData->wearableDelta0->ReadDesiredPos(); // desired vector for index
@@ -1605,7 +1669,7 @@ void haptics_thread::InitDynamicBodies()
     p_CommonData->ODEAdjustBody1 = new cODEGenericBody(ODEWorld);
     p_CommonData->ODEBody2 = new cODEGenericBody(ODEWorld);
     p_CommonData->ODEBody3 = new cODEGenericBody(ODEWorld);
-    //p_CommonData->ODEBody4 = new cODEGenericBody(ODEWorld);
+    p_CommonData->ODEBody4 = new cODEGenericBody(ODEWorld);
     p_CommonData->ODEHoop1 = new cODEGenericBody(ODEWorld); // added for HME
     p_CommonData->ODEHoop2 = new cODEGenericBody(ODEWorld); // added for HME
     p_CommonData->ODEWall = new cODEGenericBody(ODEWorld); // added for HME
@@ -1614,7 +1678,7 @@ void haptics_thread::InitDynamicBodies()
     p_CommonData->p_dynamicBox1 = new chai3d::cMesh();
     p_CommonData->p_dynamicBox2 = new chai3d::cMesh();
     p_CommonData->p_dynamicBox3 = new chai3d::cMesh();
-    //p_CommonData->p_dynamicBox4 = new chai3d::cMesh();
+    p_CommonData->p_dynamicBox4 = new chai3d::cMesh();
     p_CommonData->adjustBox = new chai3d::cMesh();
     p_CommonData->adjustBox1 = new chai3d::cMesh();
     p_CommonData->p_wall = new chai3d::cMesh();
@@ -1984,6 +2048,64 @@ void haptics_thread::DeleteDynamicBodies()
         p_CommonData->p_world->removeChild(scaledFinger);
         p_CommonData->p_world->removeChild(scaledThumb);
     }
+    if (p_CommonData->currentDynamicObjectState == CubeSlideExperiment)
+    {
+        delete ODEWorld;
+        delete p_CommonData->ODEAdjustBody;
+        delete p_CommonData->ODEAdjustBody1;
+
+        delete p_CommonData->ODEBody1;
+
+        delete p_CommonData->adjustBox;
+        delete p_CommonData->adjustBox1;
+        delete p_CommonData->p_dynamicBox1;
+
+        delete wall;
+        delete backWall;
+        delete sideWall1;
+        delete sideWall2;
+        delete hoop1;
+
+        delete target1;
+
+        delete p_CommonData->p_wall;
+        delete p_CommonData->p_backWall;
+        delete p_CommonData->p_sideWall1;
+        delete p_CommonData->p_sideWall2;
+        delete ODEGPlane0;
+        delete ground;
+        delete Right_Platform;
+        delete Left_Platform;
+        delete globe;
+
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
+        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicScaledBox1);
+        p_CommonData->p_world->removeChild(ODEWorld);
+        p_CommonData->p_world->removeChild(ground);
+        p_CommonData->p_world->removeChild(wall);
+        p_CommonData->p_world->removeChild(p_CommonData->p_backWall);
+        p_CommonData->p_world->removeChild(p_CommonData->p_sideWall1);
+        p_CommonData->p_world->removeChild(p_CommonData->p_sideWall2);
+        p_CommonData->p_world->removeChild(hoop1);
+        p_CommonData->p_world->removeChild(hoop3);
+        p_CommonData->p_world->removeChild(hoop4);
+        p_CommonData->p_world->removeChild(target1);
+        p_CommonData->p_world->removeChild(Right_Platform);
+        p_CommonData->p_world->removeChild(Left_Platform);
+        p_CommonData->p_world->removeChild(m_tool0);
+        p_CommonData->p_world->removeChild(m_tool1);
+        p_CommonData->p_world->removeChild(finger);
+        p_CommonData->p_world->removeChild(thumb);
+        p_CommonData->p_world->removeChild(globe);
+        p_CommonData->p_world->removeChild(force1_show);
+        p_CommonData->p_world->removeChild(force1_show);
+
+        // add scaled bodies for altering display ratio
+        p_CommonData->p_world->removeChild(m_dispScaleCurSphere0);
+        p_CommonData->p_world->removeChild(m_dispScaleCurSphere1);
+        p_CommonData->p_world->removeChild(scaledFinger);
+        p_CommonData->p_world->removeChild(scaledThumb);
+    }
     else if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
     {
         delete ODEWorld;
@@ -2133,6 +2255,48 @@ void haptics_thread::RenderDynamicBodies()
                                -0.5*outerWallHeight);
     }
 
+    if(p_CommonData->currentDynamicObjectState == CubeSlideExperiment)
+    {
+        //redefine ground parameters
+        delete ground;
+        p_CommonData->p_world->removeChild(ground);
+
+        ground = new chai3d::cMesh();
+        groundLength = 0.3;
+        groundThickness = 0.01;
+        groundDimX = 1.75*groundLength;
+        groundDimY = 2.5*groundLength;
+        groundDimZ = groundThickness;
+
+        chai3d::cCreateBox(ground, groundDimX, groundDimY, groundDimZ);
+        groundPos = chai3d::cVector3d(0.05, 0.1, groundThickness*0.5);
+        ground->setLocalPos(groundPos);
+
+        wallLength = 1.75*groundLength;
+        innerWallHeight = 0.09;
+        outerWallHeight = 0.4;
+        wallThickness = 0.01;
+
+        chai3d::cCreateBox(wall, wallLength, wallThickness, innerWallHeight);
+        wall->setLocalPos(0.05, 0.085, -0.5*innerWallHeight);
+        //Added walls for HME and FME v2:
+        chai3d::cCreateBox(backWall, wallThickness, groundDimY, outerWallHeight);
+        backWall->setLocalPos(groundPos.get(0)-0.5*groundDimX+0.5*wallThickness,
+                              groundPos.get(1),
+                              -0.5*outerWallHeight);
+
+        chai3d::cCreateBox(sideWall1, wallLength, wallThickness, outerWallHeight);
+        sideWall1->setLocalPos(groundPos.get(0),
+                               0.5*groundDimY+groundPos.get(1)-0.5*wallThickness,
+                               -0.5*outerWallHeight);
+
+        chai3d::cCreateBox(sideWall2, wallLength, wallThickness, outerWallHeight);
+        sideWall2->setLocalPos(groundPos.get(0),
+                               -0.5*groundDimY+groundPos.get(1)+0.5*wallThickness,
+                               -0.5*outerWallHeight);
+    }
+
+
     //create globe
     chai3d::cCreateSphere(globe, 30, 30, 30); //(globe, 10, 30, 30);
     globe->setUseDisplayList(true);
@@ -2197,6 +2361,12 @@ void haptics_thread::RenderDynamicBodies()
         mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
         stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
+    case CubeSlideExperiment:  // Jasmin CubeSlide Experiment
+        boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
+        mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
+        stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
+        break;
     }
 
     //assign the params dependent on the others
@@ -2231,6 +2401,11 @@ void haptics_thread::RenderDynamicBodies()
     if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
     {
         SetDynEnvironMultiMassExp();
+    }
+
+    if(p_CommonData->currentDynamicObjectState == CubeSlideExperiment)
+    {
+        SetDynEnvironCubeSlideExp();
     }
 
     // if just rendering dynamic environments without an experiment
@@ -2408,7 +2583,7 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     double hoopY = 0.65;
     double hoopZ = -0.35;
 
-    hoop1 =new chai3d::cMesh();
+    hoop1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop1, 0.08, 0.01, 0.08);
     //    hoop1->setLocalPos(hoopX, hoopY, hoopZ);
     hoop1->setLocalPos(hoopX, hoopY, hoopZ);
@@ -2447,7 +2622,7 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
 
     targetRadius = 0.08;
 
-    target1 =new chai3d::cMesh();
+    target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
     target1Pos = chai3d::cVector3d(0.05,0,0); //(0.05, 0, -0.24);
     target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
@@ -2458,7 +2633,7 @@ void haptics_thread::SetDynEnvironCDInertiaExp()   // Mine Stiffness Experiment
     target1->setTransparencyLevel(0.35, true);
     p_CommonData->p_world->addChild(target1);
 
-    target2 =new chai3d::cMesh();
+    target2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target2, 0.02, 0.02, 0.01);
     target2Pos = chai3d::cVector3d(0.25,0,0); //(0.05, 0, -0.24);
     target2->setLocalPos(target2Pos.x(), target2Pos.y(), target2Pos.z());
@@ -2660,6 +2835,19 @@ void haptics_thread::SetDynEnvironStiffMassExp()   // Mine Stiffness-Mass Experi
 void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping Pick and Place Experiment
 {
     qDebug() << "start SetDynEnvironPickAndPlaceExp()";
+    targetRadius = 0.05;
+
+    //Create box1 hoop -- visual only
+    hoop1 = new chai3d::cMesh();
+    chai3d::cCreateRing(hoop1, 0.005, targetRadius);
+    hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);
+    hoop1Pos = chai3d::cVector3d(0.1, 0.085, -0.15);
+    hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
+    matHoop1.setBlue();
+    hoop1->setMaterial(matHoop1);
+    hoop1->setTransparencyLevel(0.2, true);
+    //Add object to the world
+    p_CommonData->p_world->addChild(hoop1);
     // create the visual boxes on the dynamic box meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
 
@@ -2678,31 +2866,41 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
 
     // add mesh to ODE object
     p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
-
     // create a dynamic model of the ODE object - box1
     p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
-
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
-
     // set position of box
-    p_CommonData->ODEBody1->setLocalPos(0.15, -0.2, -0.02); //(0.1,-0.1,-.02);
+    box1InitPos = chai3d::cVector3d(0.1, -0.02, -0.2); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
+    p_CommonData->ODEBody1->setLocalPos(box1InitPos);
+    //Set orientation of box
+    p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 1, 0, 45);
 
+    //Create Box1 Target Area
+    target1 = new chai3d::cMesh();
+    chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
+    target1Pos = chai3d::cVector3d(0.1, hoop1Pos.y()+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
+    target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
+    matTarget1.setRed();
+    target1->setMaterial(matTarget1);
+    target1->setUseCulling(true);
+    target1->setUseTransparency(true);
+    target1->setTransparencyLevel(0.2, true);
+    p_CommonData->p_world->addChild(target1);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(boxWithHole);
+    // create a dynamic model of the ODE object - box1
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
+    // set mass of box1
+    p_CommonData->ODEBody1->setMass(mass1);
+    // set position of box
+    box1InitPos = chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02); //(0.15, -0.2, -0.02);
+    p_CommonData->ODEBody1->setLocalPos(box1InitPos);
     //Set orientation of box
     p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
-
-    targetRadius = 0.05;
-
-    //Create box1 hoop
-    hoop1 = new chai3d::cMesh();
-    chai3d::cCreateRing(hoop1, 0.005, targetRadius);
-    hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);
-    hoop1Pos = chai3d::cVector3d(0.1, 0.05, -0.2);
-    hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
-    matHoop1.setBlue();
-    hoop1->setMaterial(matHoop1);
-    hoop1->setTransparencyLevel(0.2, true);
-    p_CommonData->p_world->addChild(hoop1);
+    //Add object to the world
+    p_CommonData->p_world->addChild(boxWithHole);
 
     //WALLS:
     //Add vertical Wall to world
@@ -2734,6 +2932,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
     p_CommonData->p_world->addChild(sideWall1);
     p_CommonData->p_world->addChild(sideWall2);
 
+    /*
     //Create Box1 Target Area
     target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
@@ -2745,6 +2944,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
     target1->setUseTransparency(true);
     target1->setTransparencyLevel(0.2, true);
     p_CommonData->p_world->addChild(target1);
+    */
 
     p_CommonData->target1Complete = false;
     p_CommonData->hoop1Complete = false;
@@ -3024,6 +3224,121 @@ void haptics_thread::SetDynEnvironMultiMassExp() // Jasmin MultiMass Experiment
     p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
     p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox2);
     p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox3);
+}
+
+void haptics_thread::SetDynEnvironCubeSlideExp()   // Jasmin Clube Sliding Experiment
+{
+    qDebug() << "start SetDynEnvironCubeSlideExp()";
+    // create the visual boxes on the dynamic box meshes
+    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+
+    // setup collision detectorsfor the dynamic objects
+    p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
+
+    // define material properties for box 1 - invisible
+    mat1.setPurpleAmethyst();
+    mat1.setStiffness(stiffness1);
+    //mat1.setLateralStiffness(latStiffness1);
+    mat1.setDynamicFriction(dynFriction1);
+    mat1.setStaticFriction(friction1);
+    mat1.setUseHapticFriction(true);
+    p_CommonData->p_dynamicBox1->setMaterial(mat1);
+    p_CommonData->p_dynamicBox1->setUseMaterial(true);
+
+    // add mesh to ODE object
+    p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
+
+    // create a dynamic model of the ODE object - box1
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
+
+    // set mass of box1
+    p_CommonData->ODEBody1->setMass(mass1);
+
+    // set position of box
+    p_CommonData->ODEBody1->setLocalPos(0.15, -0.2, -0.02); //(0.1,-0.1,-.02);
+
+    //Set orientation of box
+    p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
+
+    targetRadius = 0.05;
+
+    //Create box1 hoop
+    hoop1 = new chai3d::cMesh();
+    chai3d::cCreateRing(hoop1, 0.005, targetRadius);
+    hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);
+    hoop1Pos = chai3d::cVector3d(0.1, 0.05, -0.2);
+    hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
+    matHoop1.setPurpleAmethyst();
+    hoop1->setMaterial(matHoop1);
+    hoop1->setTransparencyLevel(0.2, true);
+    p_CommonData->p_world->addChild(hoop1);
+
+    //WALLS:
+    //Add vertical Wall to world
+    p_CommonData->p_world->addChild(wall);
+    //Back Wall properties:
+    chai3d::cMaterial matBackWall;
+    //matBackWall.setBlueMediumSlate();
+    matBackWall.setBrownSandy();
+    backWall->setMaterial(matBackWall);
+    //Side Wall1 properties:
+    chai3d::cMaterial matSideWall1;
+    //matSideWall1.setPink();
+    matSideWall1.setBrownSandy();
+    sideWall1->setMaterial(matSideWall1);
+    //Side Wall2 properties:
+    chai3d::cMaterial matSideWall2;
+    //matSideWall2.setYellowLight();
+    matSideWall2.setBrownSandy();
+    sideWall2->setMaterial(matSideWall2);
+
+    //Make fingers collide with walls
+    wall->createAABBCollisionDetector(toolRadius);
+    backWall->createAABBCollisionDetector(toolRadius);
+    sideWall1->createAABBCollisionDetector(toolRadius);
+    //sideWall2->createAABBCollisionDetector(toolRadius);
+    //Add objects to the world
+    p_CommonData->p_world->addChild(wall);
+    p_CommonData->p_world->addChild(backWall);
+    p_CommonData->p_world->addChild(sideWall1);
+    p_CommonData->p_world->addChild(sideWall2);
+
+    //Create Box1 Target Area
+    target1 = new chai3d::cMesh();
+    chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
+    target1Pos = chai3d::cVector3d(0.1, 0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02)
+    target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
+    matTarget1.setPurpleAmethyst();
+    target1->setMaterial(matTarget1);
+    target1->setUseCulling(true);
+    target1->setUseTransparency(true);
+    target1->setTransparencyLevel(0.2, true);
+    p_CommonData->p_world->addChild(target1);
+
+    p_CommonData->target1Complete = false;
+    p_CommonData->hoop1Complete = false;
+
+    p_CommonData->explorationComplete = false;
+
+    p_CommonData->answer1 = false;
+    p_CommonData->answerComplete = false;
+
+    //Reset trial succes markers whenever environment is created
+    p_CommonData->targetSuccess = 0;
+    p_CommonData->hoopSuccess = 0;
+    p_CommonData->trialSuccess = 0;
+
+    //add one and two indicators
+    //p_CommonData->p_world->addChild(p_CommonData->oneModel);
+    //p_CommonData->p_world->addChild(p_CommonData->twoModel);
+
+    //Add dynamic boxes to the world
+    p_CommonData->p_world->addChild(p_CommonData->p_dynamicBox1);
+
+    //p_CommonData->oneModel->setLocalPos(1.0, 0.5, 0.0);
+    //p_CommonData->oneModel->setLocalPos(0.22, 0.2, 0.0);
+    //p_CommonData->twoModel->setLocalPos(0.22, 0.2, 0.0);
+    qDebug()<<"Finished CSE Setup";
 }
 
 // general mass demo with adjustable parameters
@@ -3358,6 +3673,6 @@ void haptics_thread::SetManualAdjust() //susana change other properties here
     p_CommonData->target3Complete = false;
 
     //add one and two indicators
-    p_CommonData->p_world->addChild(p_CommonData->oneModel);
-    p_CommonData->p_world->addChild(p_CommonData->twoModel);
+    //p_CommonData->p_world->addChild(p_CommonData->oneModel);
+    //p_CommonData->p_world->addChild(p_CommonData->twoModel);
 }
