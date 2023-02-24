@@ -151,7 +151,7 @@ public:
     QPushButton *dynamicEnvironment;
     QPushButton *HoxelMappingExp;
     QPushButton *MultiMassExp;
-    QPushButton *CubeSlideExp;
+    QPushButton *CubeGuidanceExp;
     QGroupBox *groupBox_6;
     QWidget *layoutWidget8;
     QGridLayout *gridLayout;
@@ -960,13 +960,13 @@ public:
 
         gridLayout_12->addWidget(MultiMassExp, 2, 1, 1, 1);
 
-        CubeSlideExp = new QPushButton(layoutWidget7);
-        CubeSlideExp->setObjectName(QStringLiteral("CubeSlideExp"));
-        CubeSlideExp->setEnabled(true);
-        sizePolicy3.setHeightForWidth(CubeSlideExp->sizePolicy().hasHeightForWidth());
-        CubeSlideExp->setSizePolicy(sizePolicy3);
+        CubeGuidanceExp = new QPushButton(layoutWidget7);
+        CubeGuidanceExp->setObjectName(QStringLiteral("CubeGuidanceExp"));
+        CubeGuidanceExp->setEnabled(true);
+        sizePolicy3.setHeightForWidth(CubeGuidanceExp->sizePolicy().hasHeightForWidth());
+        CubeGuidanceExp->setSizePolicy(sizePolicy3);
 
-        gridLayout_12->addWidget(CubeSlideExp, 2, 0, 1, 1);
+        gridLayout_12->addWidget(CubeGuidanceExp, 2, 0, 1, 1);
 
         groupBox_6 = new QGroupBox(centralWidget);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
@@ -1397,7 +1397,7 @@ public:
 "Experiment", 0));
         MultiMassExp->setText(QApplication::translate("MainWindow", "Multi-Mass\n"
 "Experiment", 0));
-        CubeSlideExp->setText(QApplication::translate("MainWindow", "Cube Slide\n"
+        CubeGuidanceExp->setText(QApplication::translate("MainWindow", "Cube Guidance\n"
 "Experiment", 0));
         groupBox_6->setTitle(QApplication::translate("MainWindow", "Mine's Experiments", 0));
         StiffnessExp->setText(QApplication::translate("MainWindow", "Stiffness\n"

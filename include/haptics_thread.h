@@ -74,7 +74,7 @@ public:
     void SetDynEnvironFingerMappingExp();
     void SetDynEnvironHoxelMappingExp();
     void SetDynEnvironMultiMassExp();    
-    void SetDynEnvironCubeSlideExp();
+    void SetDynEnvironCubeGuidanceExp();
     void SetDynEnvironAdjust();
     void SetManualAdjust();
     //    void SetDynEnvironVtExp();
@@ -266,8 +266,11 @@ public:
     chai3d::cVector3d lastforce1;
     chai3d::cVector3d lastforce2;
 
+
     //Line -- Added for HME
      chai3d::cShapeLine* boxToWireLine;
+    //Line -- Added for CGE
+    chai3d::cShapeLine* boxToTargetIdealPath;
 
     //Length of straight wire stl
     double wireLengthInM;

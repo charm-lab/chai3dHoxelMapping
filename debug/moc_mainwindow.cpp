@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[27];
-    char stringdata0[523];
+    char stringdata0[526];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -51,11 +51,11 @@ QT_MOC_LITERAL(18, 320, 26), // "on_HoxelMappingExp_clicked"
 QT_MOC_LITERAL(19, 347, 27), // "on_SetTrialNoButton_clicked"
 QT_MOC_LITERAL(20, 375, 23), // "on_MultiMassExp_clicked"
 QT_MOC_LITERAL(21, 399, 17), // "on_Manual_clicked"
-QT_MOC_LITERAL(22, 417, 23), // "on_CubeSlideExp_clicked"
-QT_MOC_LITERAL(23, 441, 28), // "on_resetCameraButton_clicked"
-QT_MOC_LITERAL(24, 470, 21), // "on_openButton_clicked"
-QT_MOC_LITERAL(25, 492, 14), // "readSerialData"
-QT_MOC_LITERAL(26, 507, 15) // "writeSerialData"
+QT_MOC_LITERAL(22, 417, 26), // "on_CubeGuidanceExp_clicked"
+QT_MOC_LITERAL(23, 444, 28), // "on_resetCameraButton_clicked"
+QT_MOC_LITERAL(24, 473, 21), // "on_openButton_clicked"
+QT_MOC_LITERAL(25, 495, 14), // "readSerialData"
+QT_MOC_LITERAL(26, 510, 15) // "writeSerialData"
 
     },
     "MainWindow\0progressPickAndPlaceExperiment\0"
@@ -70,7 +70,7 @@ QT_MOC_LITERAL(26, 507, 15) // "writeSerialData"
     "on_HoxelMappingExp_clicked\0"
     "on_SetTrialNoButton_clicked\0"
     "on_MultiMassExp_clicked\0on_Manual_clicked\0"
-    "on_CubeSlideExp_clicked\0"
+    "on_CubeGuidanceExp_clicked\0"
     "on_resetCameraButton_clicked\0"
     "on_openButton_clicked\0readSerialData\0"
     "writeSerialData"
@@ -170,7 +170,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 15: _t->on_SetTrialNoButton_clicked(); break;
         case 16: _t->on_MultiMassExp_clicked(); break;
         case 17: _t->on_Manual_clicked(); break;
-        case 18: _t->on_CubeSlideExp_clicked(); break;
+        case 18: _t->on_CubeGuidanceExp_clicked(); break;
         case 19: _t->on_resetCameraButton_clicked(); break;
         case 20: _t->on_openButton_clicked(); break;
         case 21: _t->readSerialData(); break;

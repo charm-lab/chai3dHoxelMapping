@@ -1609,7 +1609,7 @@ Experiment</string>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QPushButton" name="CubeSlideExp">
+       <widget class="QPushButton" name="CubeGuidanceExp">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -1620,7 +1620,7 @@ Experiment</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Cube Slide
+         <string>Cube Guidance
 Experiment</string>
         </property>
        </widget>

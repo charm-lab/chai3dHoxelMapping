@@ -208,7 +208,7 @@ private slots:
     void on_SetTrialNoButton_clicked();
     void on_MultiMassExp_clicked();
     void on_Manual_clicked();
-    void on_CubeSlideExp_clicked();
+    void on_CubeGuidanceExp_clicked();
     void on_resetCameraButton_clicked();
 
     //SERIAL:
