@@ -136,7 +136,6 @@ for j = 1:numSubjects
         firstIndexContactTime_index = find(subjectData{j}.indexContact(startTimes(k):end)==1) + startTimes(k)-1;
         firstThumbContactTime_index = find(subjectData{j}.thumbContact(startTimes(k):end)==1) + startTimes(k)-1 ;
 
-
         %Set start time for analysis at the soonest contact time:
         %         trialStartTime_index(k,j) = min(firstIndexContactTime_index(k,j), firstThumbContactTime_index(k,j));
 
@@ -147,8 +146,14 @@ for j = 1:numSubjects
     %No the trial start time is at the point of initial contact
     trialStartTime{j,1} = subjectData{j}.time(trialStartTime_index(:,j));
     trialEndTime{j,1} = subjectData{j}.time(trialEndTime_index(:,j)); %risingEdgeTime
+
 end
 disp("find trial start and end times -- done")
+
+%Modification to look at local initial contact values
+
+trialEndTime_index=trialStartTime_index+1000;
+trialStartTime_index=trialStartTime_index-2500;
 
 %% Parse Data *************************************************************
 %% Completion Time Calculation
@@ -163,14 +168,26 @@ completionTime;
 disp("compute completion times -- done")
 
 %% Path Length Calculations
-%Index finger Path Length
 indexPathLength = zeros(numTrials, numSubjects);
+thumbPathLength = zeros(numTrials, numSubjects);
+boxPathLength = zeros(numTrials, numSubjects);
 for j = 1:numSubjects
     for k = 1:numTrials
+        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
         %index position x, y, z subject j, any trial k
-        indexPosX = subjectData{j}.indexPosX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        indexPosY = subjectData{j}.indexPosY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        indexPosZ = subjectData{j}.indexPosZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
+        indexPosX = subjectData{j}.indexPosX(t_i);
+        indexPosY = subjectData{j}.indexPosY(t_i);
+        indexPosZ = subjectData{j}.indexPosZ(t_i);
+        
+        %thumb position x, y, z subject j, any trial k
+        thumbPosX = subjectData{j}.thumbPosX(t_i);
+        thumbPosY = subjectData{j}.thumbPosY(t_i);
+        thumbPosZ = subjectData{j}.thumbPosZ(t_i);
+
+        %box position x, y, z subject j, any trial k
+        boxPosX = subjectData{j}.boxPosX(t_i);
+        boxPosY = subjectData{j}.boxPosY(t_i);
+        boxPosZ = subjectData{j}.boxPosZ(t_i);
 
         %Find path length by taking the sum of the absolute difference
         % between each point
@@ -180,18 +197,6 @@ for j = 1:numSubjects
                 (indexPosY(i+1)-indexPosY(i))^2 +...
                 (indexPosZ(i+1)-indexPosZ(i))^2);
         end
-    end
-end
-indexPathLength;
-
-%Thumb Path Length
-thumbPathLength = zeros(numTrials, numSubjects);
-for j = 1:numSubjects
-    for k = 1:numTrials
-        %thumb position x, y, z subject j, any trial k
-        thumbPosX = subjectData{j}.thumbPosX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        thumbPosY = subjectData{j}.thumbPosY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        thumbPosZ = subjectData{j}.thumbPosZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
 
         %Find path length by taking the sum of the absolute difference
         % between each point
@@ -201,18 +206,6 @@ for j = 1:numSubjects
                 (thumbPosY(i+1)-thumbPosY(i))^2 +...
                 (thumbPosZ(i+1)-thumbPosZ(i))^2);
         end
-    end
-end
-thumbPathLength;
-
-%Box Path Length
-boxPathLength = zeros(numTrials, numSubjects);
-for j = 1:numSubjects
-    for k = 1:numTrials
-        %box position x, y, z subject j, any trial k
-        boxPosX = subjectData{j}.boxPosX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        boxPosY = subjectData{j}.boxPosY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        boxPosZ = subjectData{j}.boxPosZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
 
         %Find path length by taking the sum of the absolute difference
         % between each point
@@ -224,7 +217,10 @@ for j = 1:numSubjects
         end
     end
 end
+indexPathLength;
+thumbPathLength;
 boxPathLength;
+
 disp("compute path lengths -- done")
 
 %% Finger Global Force Magnitudes
@@ -239,15 +235,16 @@ thumbForceGlobalMag = cell(numTrials, numSubjects);
 for j = 1:numSubjects
     close all;
     for k = 1:numTrials
+        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
         %index position x, y, z for each subject and trial
-        indexForceGlobalX = subjectData{j}.indexForceGlobalX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        indexForceGlobalY = subjectData{j}.indexForceGlobalY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        indexForceGlobalZ = subjectData{j}.indexForceGlobalZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
+        indexForceGlobalX = subjectData{j}.indexForceGlobalX(t_i);
+        indexForceGlobalY = subjectData{j}.indexForceGlobalY(t_i);
+        indexForceGlobalZ = subjectData{j}.indexForceGlobalZ(t_i);
 
         %thumb position x, y, z for each subject and trial
-        thumbForceGlobalX = subjectData{j}.thumbForceGlobalX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        thumbForceGlobalY = subjectData{j}.thumbForceGlobalY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        thumbForceGlobalZ = subjectData{j}.thumbForceGlobalZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
+        thumbForceGlobalX = subjectData{j}.thumbForceGlobalX(t_i);
+        thumbForceGlobalY = subjectData{j}.thumbForceGlobalY(t_i);
+        thumbForceGlobalZ = subjectData{j}.thumbForceGlobalZ(t_i);
 
         %Caluate force magnitudes for each subject and trial
         indexForceGlobalMag{k,j} = sqrt(indexForceGlobalX.^2 ...
@@ -261,7 +258,7 @@ for j = 1:numSubjects
         if(renderForceProfiles == true)
             indexForceXYZFig = figure(1);
             sgtitle(strcat('Subject ',num2str(subjectNum(j)), ' All Trials Index Force XYZ Profile'));
-            timeVec = subjectData{j}.time(trialStartTime_index(k,j):trialEndTime_index(k,j));
+            timeVec = subjectData{j}.time(t_i);
 
             subplot(3,1,1)
             plot(timeVec, indexForceGlobalX);
@@ -281,7 +278,7 @@ for j = 1:numSubjects
             % Plot Thumb XYZ Force Profiles
             thumbforceXYZFig = figure(2);
             sgtitle(strcat('Subject ',num2str(subjectNum(j)), ' All Trials Thumb Force XYZ Profile'));
-            timeVec = subjectData{j}.time(trialStartTime_index(k,j):trialEndTime_index(k,j));
+            timeVec = subjectData{j}.time(t_i);
 
             subplot(3,1,1)
             plot(timeVec, thumbForceGlobalX);
@@ -302,7 +299,7 @@ for j = 1:numSubjects
             % Plot Thumb XYZ Force Profiles
             forceMagFig = figure(3);
             sgtitle(strcat('Subject ',num2str(subjectNum(j)), ' All Trials Force Mag Profile'));
-            timeVec = subjectData{j}.time(trialStartTime_index(k,j):trialEndTime_index(k,j));
+            timeVec = subjectData{j}.time(t_i);
 
             subplot(2,1,1)
             plot(timeVec, indexForceGlobalMag{k,j});
@@ -348,16 +345,16 @@ thumbShearForceMag = cell(numTrials, numSubjects);
 for j = 1:numSubjects
     for k = 1:numTrials
         %time index vector
-        t_Ni = trialStartTime_index(k,j):trialEndTime_index(k,j);
+        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
 
-        indexNormalForceMag{k,j} = abs(subjectData{j}.indexForceZ(t_Ni));
+        indexNormalForceMag{k,j} = abs(subjectData{j}.indexForceZ(t_i));
 
-        indexShearForceMag{k,j} = subjectData{j}.indexForceX(t_Ni).^2 + ...
-            subjectData{j}.indexForceY(t_Ni).^2;
+        indexShearForceMag{k,j} = subjectData{j}.indexForceX(t_i).^2 + ...
+            subjectData{j}.indexForceY(t_i).^2;
 
-        thumbNormalForceMag{k,j} = abs(subjectData{j}.thumbForceZ(t_Ni));
-        thumbShearForceMag{k,j} = subjectData{j}.thumbForceX(t_Ni).^2 + ...
-            subjectData{j}.thumbForceY(t_Ni).^2;
+        thumbNormalForceMag{k,j} = abs(subjectData{j}.thumbForceZ(t_i));
+        thumbShearForceMag{k,j} = subjectData{j}.thumbForceX(t_i).^2 + ...
+            subjectData{j}.thumbForceY(t_i).^2;
     end
 end
 disp("compute finger normal/shear force magnitudes -- done")
@@ -667,20 +664,21 @@ animateData = false;
 hoopPos = [0.1, 0.05, -0.2]; % m?
 targetPos = [0.1, 0.2, 0.0]; % m?
 
-for j = 1%1:numSubjects
-    for k = 1%1:numTrials
+for j = 1%:numSubjects
+    for k = 1%:numTrials
+        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
         %index position x, y, z subject j, any trial k
-        indexPosX = subjectData{j}.indexPosX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        indexPosY = subjectData{j}.indexPosY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        indexPosZ = subjectData{j}.indexPosZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
+        indexPosX = subjectData{j}.indexPosX(t_i);
+        indexPosY = subjectData{j}.indexPosY(t_i);
+        indexPosZ = subjectData{j}.indexPosZ(t_i);
         %thumb position x, y, z subject j, any trial k
-        thumbPosX = subjectData{j}.thumbPosX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        thumbPosY = subjectData{j}.thumbPosY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        thumbPosZ = subjectData{j}.thumbPosZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
+        thumbPosX = subjectData{j}.thumbPosX(t_i);
+        thumbPosY = subjectData{j}.thumbPosY(t_i);
+        thumbPosZ = subjectData{j}.thumbPosZ(t_i);
         %thumb position x, y, z subject j, any trial k
-        boxPosX = subjectData{j}.boxPosX(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        boxPosY = subjectData{j}.boxPosY(trialStartTime_index(k,j):trialEndTime_index(k,j));
-        boxPosZ = subjectData{j}.boxPosZ(trialStartTime_index(k,j):trialEndTime_index(k,j));
+        boxPosX = subjectData{j}.boxPosX(t_i);
+        boxPosY = subjectData{j}.boxPosY(t_i);
+        boxPosZ = subjectData{j}.boxPosZ(t_i);
 
         plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); hold on;
         plot3(indexPosX, indexPosY, indexPosZ,'k-',"LineWidth", 4);
@@ -848,9 +846,9 @@ for j = 1%1:numSubjects
     for k = 1%1:numTrials
         %only plot every N values
         %time index vector of every Nth point
-        t_Ni = trialStartTime_index(k,j):N:trialEndTime_index(k,j);
+        t_N_i = trialStartTime_index(k,j):N:trialEndTime_index(k,j);
         t_i = trialStartTime_index(k,j):res:trialEndTime_index(k,j);
-        zeroCol = zeros(length(t_Ni),1);
+        zeroCol = zeros(length(t_N_i),1);
 
         %index position x, y, z subject j, any trial k
         indexPosX = subjectData{j}.indexPosX(t_i);
@@ -866,13 +864,13 @@ for j = 1%1:numSubjects
         boxPosZ = subjectData{j}.boxPosZ(t_i);
 
         %index position x, y, z subject j, any trial k
-        indexPosX_N = subjectData{j}.indexPosX(t_Ni);
-        indexPosY_N = subjectData{j}.indexPosY(t_Ni);
-        indexPosZ_N = subjectData{j}.indexPosZ(t_Ni);
+        indexPosX_N = subjectData{j}.indexPosX(t_N_i);
+        indexPosY_N = subjectData{j}.indexPosY(t_N_i);
+        indexPosZ_N = subjectData{j}.indexPosZ(t_N_i);
         %thumb position x, y, z subject j, any trial k
-        thumbPosX_N = subjectData{j}.thumbPosX(t_Ni);
-        thumbPosY_N = subjectData{j}.thumbPosY(t_Ni);
-        thumbPosZ_N = subjectData{j}.thumbPosZ(t_Ni);
+        thumbPosX_N = subjectData{j}.thumbPosX(t_N_i);
+        thumbPosY_N = subjectData{j}.thumbPosY(t_N_i);
+        thumbPosZ_N = subjectData{j}.thumbPosZ(t_N_i);
 
         indexPos_N = [indexPosX_N, indexPosY_N, indexPosZ_N];
         thumbPos_N = [thumbPosX_N, thumbPosY_N, thumbPosZ_N];
@@ -898,22 +896,22 @@ for j = 1%1:numSubjects
             'c*',"LineWidth", 10);
 
         %plot every N norm/shear force vectors
-        indexNormalForceMag = abs(subjectData{j}.indexForceGlobalZ(t_Ni));
-        normalVec_index = [zeroCol, zeroCol, subjectData{j}.indexForceGlobalZ(t_Ni)];
+        indexNormalForceMag = abs(subjectData{j}.indexForceGlobalZ(t_N_i));
+        normalVec_index = [zeroCol, zeroCol, subjectData{j}.indexForceGlobalZ(t_N_i)];
         indexNormalForceDir = normalVec_index./norm(normalVec_index);
 
-        indexShearForceMag = subjectData{j}.indexForceGlobalX(t_Ni).^2 + ...
-            subjectData{j}.indexForceGlobalY(t_Ni).^2;
-        u_index = [subjectData{j}.indexForceGlobalX(t_Ni), subjectData{j}.indexForceGlobalY(t_Ni), zeroCol] ;
+        indexShearForceMag = subjectData{j}.indexForceGlobalX(t_N_i).^2 + ...
+            subjectData{j}.indexForceGlobalY(t_N_i).^2;
+        u_index = [subjectData{j}.indexForceGlobalX(t_N_i), subjectData{j}.indexForceGlobalY(t_N_i), zeroCol] ;
         indexShearForceDir = u_index./norm(u_index);
 
-        thumbNormalForceMag = abs(subjectData{j}.thumbForceGlobalZ(t_Ni));
-        normalVec_thumb = [zeroCol, zeroCol, subjectData{j}.thumbForceGlobalZ(t_Ni)];
+        thumbNormalForceMag = abs(subjectData{j}.thumbForceGlobalZ(t_N_i));
+        normalVec_thumb = [zeroCol, zeroCol, subjectData{j}.thumbForceGlobalZ(t_N_i)];
         thumbNormalForceDir = normalVec_thumb/norm(normalVec_thumb);
 
-        thumbShearForceMag = subjectData{j}.thumbForceGlobalX(t_Ni).^2 + ...
-            subjectData{j}.thumbForceGlobalY(t_Ni).^2;
-        u_thumb = [subjectData{j}.thumbForceX(t_Ni), subjectData{j}.thumbForceGlobalY(t_Ni), zeroCol];
+        thumbShearForceMag = subjectData{j}.thumbForceGlobalX(t_N_i).^2 + ...
+            subjectData{j}.thumbForceGlobalY(t_N_i).^2;
+        u_thumb = [subjectData{j}.thumbForceX(t_N_i), subjectData{j}.thumbForceGlobalY(t_N_i), zeroCol];
         thumbShearForceDir = u_thumb./norm(u_thumb);
 
 
@@ -1300,14 +1298,14 @@ saveFigures = false;
 if (renderFigures == true)
     for j = 1:numSubjects
         for k = 1:numTrials
-            t_Ni = trialStartTime_index(k,j):trialEndTime_index(k,j);
-            timeVec = subjectData{j}.time(t_Ni);
+            t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
+            timeVec = subjectData{j}.time(t_i);
 
-            axisAng = zeros(length(t_Ni),4); %Reset needed to prevent accumulating values
-            for i=1:length(t_Ni)
-                boxRotationMatrix = [subjectData{j}.boxGlobalRot_11(t_Ni(i)) subjectData{j}.boxGlobalRot_12(t_Ni(i)) subjectData{j}.boxGlobalRot_13(t_Ni(i))
-                    subjectData{j}.boxGlobalRot_21(t_Ni(i)) subjectData{j}.boxGlobalRot_22(t_Ni(i)) subjectData{j}.boxGlobalRot_23(t_Ni(i))
-                    subjectData{j}.boxGlobalRot_31(t_Ni(i)) subjectData{j}.boxGlobalRot_32(t_Ni(i)) subjectData{j}.boxGlobalRot_33(t_Ni(i))];
+            axisAng = zeros(length(t_i),4); %Reset needed to prevent accumulating values
+            for i=1:length(t_i)
+                boxRotationMatrix = [subjectData{j}.boxGlobalRot_11(t_i(i)) subjectData{j}.boxGlobalRot_12(t_i(i)) subjectData{j}.boxGlobalRot_13(t_i(i))
+                    subjectData{j}.boxGlobalRot_21(t_i(i)) subjectData{j}.boxGlobalRot_22(t_i(i)) subjectData{j}.boxGlobalRot_23(t_i(i))
+                    subjectData{j}.boxGlobalRot_31(t_i(i)) subjectData{j}.boxGlobalRot_32(t_i(i)) subjectData{j}.boxGlobalRot_33(t_i(i))];
 
                 axisAng(i,:) = rotm2axang(boxRotationMatrix);
             end
@@ -1331,3 +1329,5 @@ if (renderFigures == true)
         end
     end
 end
+
+
