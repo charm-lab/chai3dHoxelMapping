@@ -152,8 +152,8 @@ disp("find trial start and end times -- done")
 
 %Modification to look at local initial contact values
 
-trialEndTime_index=trialStartTime_index+1000;
-trialStartTime_index=trialStartTime_index-2500;
+% trialEndTime_index=trialStartTime_index+1000;
+% trialStartTime_index=trialStartTime_index-2500;
 
 %% Parse Data *************************************************************
 %% Completion Time Calculation
@@ -661,11 +661,12 @@ animateData = false;
 % Position of fingers and cube over time
 % Also display position of hoop and target zone
 % Environment Objects:
-hoopPos = [0.1, 0.05, -0.2]; % m?
-targetPos = [0.1, 0.2, 0.0]; % m?
+hoopPos = [0.1, 0.085, -0.15]; % m
+targetPos = [0.1, 0.2085, 0.0]; % m
+cubeInitPos = [0.15, -0.2, -0.02]
 
 for j = 1%:numSubjects
-    for k = 1%:numTrials
+    for k = 6%:numTrials
         t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
         %index position x, y, z subject j, any trial k
         indexPosX = subjectData{j}.indexPosX(t_i);
@@ -714,9 +715,9 @@ for j = 1%:numSubjects
         text(targetPos(1), targetPos(2), targetPos(3) + textZOffset,...
             "Target", "Color", "red", "fontSize", 18);
         %Start point***
-        plot3(0.15, -0.2, -0.02, "bo", "LineWidth", 2, "MarkerSize", 30);
+        plot3(cubeInitPos(1), cubeInitPos(2), cubeInitPos(3), "bo", "LineWidth", 2, "MarkerSize", 30);
         %Start point text:
-        text(0.15 - textXOffset, -0.2 - textYOffset, -0.02 - textZOffset,...
+        text(cubeInitPos(1) - textXOffset, cubeInitPos(2) - textYOffset, cubeInitPos(3) - textZOffset,...
             "Start" + newline +"Point", "Color", "red", "fontSize", 18);
         hold off;
 
@@ -1329,5 +1330,29 @@ if (renderFigures == true)
         end
     end
 end
+
+
+%% Path Error Calculations
+close all;
+hoopPos = [0.1, 0.085, -0.15]; % m
+targetPos = [0.1, 0.2085, 0.0]; % m
+cubeInitPos = [0.15, -0.2, -0.02]; % X = 0.1 in real exp
+
+plot3(hoopPos(1), hoopPos(2), hoopPos(3), "bo", "LineWidth", 2); hold on;
+plot3(targetPos(1), targetPos(2), targetPos(3), "bo", "LineWidth", 2);
+plot3(cubeInitPos(1), cubeInitPos(2), cubeInitPos(3), "bo", "LineWidth", 2);
+
+% Axis limits
+xlim([0, 0.3]);
+ylim([-0.3, 0.3]);
+zlim([-0.3, 0.3]);
+set(gca, 'ZDir','reverse');
+
+improvePlot;
+
+
+
+
+
 
 
