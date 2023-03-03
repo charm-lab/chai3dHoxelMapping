@@ -2914,7 +2914,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
     // set position of box
-    box1InitPos = chai3d::cVector3d(0.1, -0.02, -0.2); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
+    box1InitPos = chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.2); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
     p_CommonData->ODEBody1->setLocalPos(box1InitPos);
     //Set orientation of box
     p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
@@ -2924,7 +2924,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
     target1Pos = chai3d::cVector3d(0.1, hoop1Pos.y()+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
     target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
-    matTarget1.setRed();
+    matTarget1.setBlue();
     target1->setMaterial(matTarget1);
     target1->setUseCulling(true);
     target1->setUseTransparency(true);

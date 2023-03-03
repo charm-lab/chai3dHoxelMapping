@@ -663,7 +663,7 @@ animateData = false;
 % Environment Objects:
 hoopPos = [0.1, 0.085, -0.15]; % m
 targetPos = [0.1, 0.2085, 0.0]; % m
-cubeInitPos = [0.15, -0.2, -0.02]
+cubeInitPos = [0.15, -0.2, -0.02];
 
 for j = 1%:numSubjects
     for k = 6%:numTrials
@@ -1336,11 +1336,15 @@ end
 close all;
 hoopPos = [0.1, 0.085, -0.15]; % m
 targetPos = [0.1, 0.2085, 0.0]; % m
-cubeInitPos = [0.15, -0.2, -0.02]; % X = 0.1 in real exp
+cubeInitPos = [0.10, -0.2, -0.02]; % X = 0.1 in real exp
 
 plot3(hoopPos(1), hoopPos(2), hoopPos(3), "bo", "LineWidth", 2); hold on;
 plot3(targetPos(1), targetPos(2), targetPos(3), "bo", "LineWidth", 2);
 plot3(cubeInitPos(1), cubeInitPos(2), cubeInitPos(3), "bo", "LineWidth", 2);
+
+
+% Draw an arc between 3 points 
+arc3_Mod(cubeInitPos, hoopPos, targetPos)
 
 % Axis limits
 xlim([0, 0.3]);
