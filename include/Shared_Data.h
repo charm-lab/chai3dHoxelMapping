@@ -614,6 +614,8 @@ typedef struct
     bool hoop1Complete;
     bool hoop2Complete;
 
+    bool cubeLiftComplete; //Added for Jasmin's Cube ID experiment
+
     bool explorationComplete;
     bool answerComplete;
 

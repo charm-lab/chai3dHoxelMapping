@@ -1397,7 +1397,7 @@ public:
 "Experiment", 0));
         MultiMassExp->setText(QApplication::translate("MainWindow", "Multi-Mass\n"
 "Experiment", 0));
-        CubeGuidanceExp->setText(QApplication::translate("MainWindow", "Cube Guidance\n"
+        CubeGuidanceExp->setText(QApplication::translate("MainWindow", "~TEST ENVIRONMENTS~\n"
 "Experiment", 0));
         groupBox_6->setTitle(QApplication::translate("MainWindow", "Mine's Experiments", 0));
         StiffnessExp->setText(QApplication::translate("MainWindow", "Stiffness\n"

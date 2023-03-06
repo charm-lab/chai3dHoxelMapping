@@ -873,24 +873,20 @@ void haptics_thread::UpdateVRGraphics()
         //        qDebug()<< "X: " << box1Pos.x() << "Y: " << box1Pos.y() << "Z: " << box1Pos.z();
     }
 
-    //VR Updates for Jasmin's FingerMapping Experiment
-    if(p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
+    //VR Updates for Jasmin's CubeGuidance Experiment
+    else if(p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
     {
-        //if target 1 is completed:
+        //if cube is lifted high enough:
 
-        if(!p_CommonData->target1Complete)
+        if(!p_CommonData->cubeLiftComplete)
         {
             //Find distance between box1 and hoop1
-            chai3d::cVector3d cubeTarget1Distance = box1Pos - target1Pos;
+           // chai3d::cVector3d cubeTarget1Distance = box1Pos - target1Pos;
 
-            if(cubeTarget1Distance.length() < targetRadius)
+            if(box1Pos.z() <= -0.05)
             {
-                p_CommonData->target1Complete = true;
-                target1->setMaterial(matTarget1);
-                target1->setTransparencyLevel(0.85, true);
-                //qDebug()<<"target now completed in addition to hoop";
-
-                p_CommonData->targetSuccess = 1;
+                //mat1.setBlueAqua();
+                p_CommonData->cubeLiftComplete = true;
                 p_CommonData->trialSuccess = 1;
             }
         }
@@ -1402,7 +1398,7 @@ void haptics_thread::RecordData()
 
         //Added variables for Jasmin's Experiments
         p_CommonData->dataRecorder.hoopSuccess        = 0;
-        p_CommonData->dataRecorder.targetSuccess      = p_CommonData->targetSuccess;
+        p_CommonData->dataRecorder.targetSuccess      = 0;
         p_CommonData->dataRecorder.mapping            = p_CommonData->mapping;
         p_CommonData->dataRecorder.trialSuccess       = p_CommonData->trialSuccess;
     }
@@ -3289,11 +3285,12 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp()   // Jasmin Cube Guidance Ex
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
     // set position of box
-    box1InitPos = chai3d::cVector3d(0.15, -0.2, -0.02); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
+    box1InitPos = chai3d::cVector3d(0.10, -0.2, -0.02); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
     p_CommonData->ODEBody1->setLocalPos(box1InitPos);
     //Set orientation of box
     p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
 
+    /*
     //Create Box1 Target Area
     target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
@@ -3305,6 +3302,7 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp()   // Jasmin Cube Guidance Ex
     target1->setUseTransparency(true);
     target1->setTransparencyLevel(0.2, true);
     p_CommonData->p_world->addChild(target1);
+    */
 
     //WALLS:
     //Back Wall properties:
@@ -3332,8 +3330,9 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp()   // Jasmin Cube Guidance Ex
     p_CommonData->p_world->addChild(sideWall1);
     p_CommonData->p_world->addChild(sideWall2);
 
-    p_CommonData->target1Complete = false;
+    p_CommonData->target1Complete = true;
     p_CommonData->hoop1Complete = true; //default to true for testing until hoop can be fully removed
+    p_CommonData->cubeLiftComplete = false;
 
     p_CommonData->explorationComplete = false;
 
@@ -3356,10 +3355,9 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp()   // Jasmin Cube Guidance Ex
     chai3d::cColorf cgeColor;
     cgeColor.setPurpleAmethyst();
 
-    boxToTargetIdealPath = new chai3d::cShapeLine(box1InitPos, target1Pos);
-    boxToTargetIdealPath->setLineWidth(5);
-
-    p_CommonData->p_world->addChild(boxToTargetIdealPath);
+    //boxToTargetIdealPath = new chai3d::cShapeLine(box1InitPos, target1Pos);
+    //boxToTargetIdealPath->setLineWidth(5);
+    //p_CommonData->p_world->addChild(boxToTargetIdealPath);
 
     qDebug()<<"Finished CGE Setup";
 }
