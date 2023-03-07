@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[27];
-    char stringdata0[526];
+    QByteArrayData data[29];
+    char stringdata0[552];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,18 +44,20 @@ QT_MOC_LITERAL(11, 184, 5), // "angle"
 QT_MOC_LITERAL(12, 190, 12), // "CheckFingers"
 QT_MOC_LITERAL(13, 203, 19), // "RecordCDInertiaData"
 QT_MOC_LITERAL(14, 223, 14), // "readExpStuffIn"
-QT_MOC_LITERAL(15, 238, 23), // "on_StiffnessExp_clicked"
-QT_MOC_LITERAL(16, 262, 29), // "on_StiffnMassCombined_clicked"
-QT_MOC_LITERAL(17, 292, 27), // "on_FingerMappingExp_clicked"
-QT_MOC_LITERAL(18, 320, 26), // "on_HoxelMappingExp_clicked"
-QT_MOC_LITERAL(19, 347, 27), // "on_SetTrialNoButton_clicked"
-QT_MOC_LITERAL(20, 375, 23), // "on_MultiMassExp_clicked"
-QT_MOC_LITERAL(21, 399, 17), // "on_Manual_clicked"
-QT_MOC_LITERAL(22, 417, 26), // "on_CubeGuidanceExp_clicked"
-QT_MOC_LITERAL(23, 444, 28), // "on_resetCameraButton_clicked"
-QT_MOC_LITERAL(24, 473, 21), // "on_openButton_clicked"
-QT_MOC_LITERAL(25, 495, 14), // "readSerialData"
-QT_MOC_LITERAL(26, 510, 15) // "writeSerialData"
+QT_MOC_LITERAL(15, 238, 19), // "setRandomInitBoxPos"
+QT_MOC_LITERAL(16, 258, 5), // "param"
+QT_MOC_LITERAL(17, 264, 23), // "on_StiffnessExp_clicked"
+QT_MOC_LITERAL(18, 288, 29), // "on_StiffnMassCombined_clicked"
+QT_MOC_LITERAL(19, 318, 27), // "on_FingerMappingExp_clicked"
+QT_MOC_LITERAL(20, 346, 26), // "on_HoxelMappingExp_clicked"
+QT_MOC_LITERAL(21, 373, 27), // "on_SetTrialNoButton_clicked"
+QT_MOC_LITERAL(22, 401, 23), // "on_MultiMassExp_clicked"
+QT_MOC_LITERAL(23, 425, 17), // "on_Manual_clicked"
+QT_MOC_LITERAL(24, 443, 26), // "on_CubeGuidanceExp_clicked"
+QT_MOC_LITERAL(25, 470, 28), // "on_resetCameraButton_clicked"
+QT_MOC_LITERAL(26, 499, 21), // "on_openButton_clicked"
+QT_MOC_LITERAL(27, 521, 14), // "readSerialData"
+QT_MOC_LITERAL(28, 536, 15) // "writeSerialData"
 
     },
     "MainWindow\0progressPickAndPlaceExperiment\0"
@@ -64,6 +66,7 @@ QT_MOC_LITERAL(26, 510, 15) // "writeSerialData"
     "WriteDataToFile\0on_dynamicEnvironment_clicked\0"
     "rotateTissueLineDisp\0angle\0CheckFingers\0"
     "RecordCDInertiaData\0readExpStuffIn\0"
+    "setRandomInitBoxPos\0param\0"
     "on_StiffnessExp_clicked\0"
     "on_StiffnMassCombined_clicked\0"
     "on_FingerMappingExp_clicked\0"
@@ -83,7 +86,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      23,   14, // methods
+      24,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -91,29 +94,30 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,  129,    2, 0x08 /* Private */,
-       4,    0,  132,    2, 0x08 /* Private */,
-       5,    0,  133,    2, 0x08 /* Private */,
-       6,    0,  134,    2, 0x08 /* Private */,
-       7,    0,  135,    2, 0x08 /* Private */,
-       8,    0,  136,    2, 0x08 /* Private */,
-       9,    0,  137,    2, 0x08 /* Private */,
-      10,    1,  138,    2, 0x08 /* Private */,
-      12,    0,  141,    2, 0x08 /* Private */,
-      13,    0,  142,    2, 0x08 /* Private */,
-      14,    0,  143,    2, 0x08 /* Private */,
-      15,    0,  144,    2, 0x08 /* Private */,
-      16,    0,  145,    2, 0x08 /* Private */,
-      17,    0,  146,    2, 0x08 /* Private */,
-      18,    0,  147,    2, 0x08 /* Private */,
-      19,    0,  148,    2, 0x08 /* Private */,
-      20,    0,  149,    2, 0x08 /* Private */,
-      21,    0,  150,    2, 0x08 /* Private */,
-      22,    0,  151,    2, 0x08 /* Private */,
-      23,    0,  152,    2, 0x08 /* Private */,
-      24,    0,  153,    2, 0x08 /* Private */,
-      25,    0,  154,    2, 0x08 /* Private */,
-      26,    0,  155,    2, 0x08 /* Private */,
+       1,    1,  134,    2, 0x08 /* Private */,
+       4,    0,  137,    2, 0x08 /* Private */,
+       5,    0,  138,    2, 0x08 /* Private */,
+       6,    0,  139,    2, 0x08 /* Private */,
+       7,    0,  140,    2, 0x08 /* Private */,
+       8,    0,  141,    2, 0x08 /* Private */,
+       9,    0,  142,    2, 0x08 /* Private */,
+      10,    1,  143,    2, 0x08 /* Private */,
+      12,    0,  146,    2, 0x08 /* Private */,
+      13,    0,  147,    2, 0x08 /* Private */,
+      14,    0,  148,    2, 0x08 /* Private */,
+      15,    1,  149,    2, 0x08 /* Private */,
+      17,    0,  152,    2, 0x08 /* Private */,
+      18,    0,  153,    2, 0x08 /* Private */,
+      19,    0,  154,    2, 0x08 /* Private */,
+      20,    0,  155,    2, 0x08 /* Private */,
+      21,    0,  156,    2, 0x08 /* Private */,
+      22,    0,  157,    2, 0x08 /* Private */,
+      23,    0,  158,    2, 0x08 /* Private */,
+      24,    0,  159,    2, 0x08 /* Private */,
+      25,    0,  160,    2, 0x08 /* Private */,
+      26,    0,  161,    2, 0x08 /* Private */,
+      27,    0,  162,    2, 0x08 /* Private */,
+      28,    0,  163,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -127,6 +131,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Bool,
     QMetaType::Void,
     QMetaType::Bool,
+    QMetaType::Void, QMetaType::Int,   16,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -163,18 +168,19 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 9: _t->RecordCDInertiaData(); break;
         case 10: { bool _r = _t->readExpStuffIn();
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
-        case 11: _t->on_StiffnessExp_clicked(); break;
-        case 12: _t->on_StiffnMassCombined_clicked(); break;
-        case 13: _t->on_FingerMappingExp_clicked(); break;
-        case 14: _t->on_HoxelMappingExp_clicked(); break;
-        case 15: _t->on_SetTrialNoButton_clicked(); break;
-        case 16: _t->on_MultiMassExp_clicked(); break;
-        case 17: _t->on_Manual_clicked(); break;
-        case 18: _t->on_CubeGuidanceExp_clicked(); break;
-        case 19: _t->on_resetCameraButton_clicked(); break;
-        case 20: _t->on_openButton_clicked(); break;
-        case 21: _t->readSerialData(); break;
-        case 22: _t->writeSerialData(); break;
+        case 11: _t->setRandomInitBoxPos((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->on_StiffnessExp_clicked(); break;
+        case 13: _t->on_StiffnMassCombined_clicked(); break;
+        case 14: _t->on_FingerMappingExp_clicked(); break;
+        case 15: _t->on_HoxelMappingExp_clicked(); break;
+        case 16: _t->on_SetTrialNoButton_clicked(); break;
+        case 17: _t->on_MultiMassExp_clicked(); break;
+        case 18: _t->on_Manual_clicked(); break;
+        case 19: _t->on_CubeGuidanceExp_clicked(); break;
+        case 20: _t->on_resetCameraButton_clicked(); break;
+        case 21: _t->on_openButton_clicked(); break;
+        case 22: _t->readSerialData(); break;
+        case 23: _t->writeSerialData(); break;
         default: ;
         }
     }
@@ -205,13 +211,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 23)
+        if (_id < 24)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 23;
+        _id -= 24;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 23)
+        if (_id < 24)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 23;
+        _id -= 24;
     }
     return _id;
 }

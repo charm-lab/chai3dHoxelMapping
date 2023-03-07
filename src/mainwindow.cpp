@@ -868,6 +868,30 @@ void MainWindow::on_turnOff_clicked()
     ui->VRControl->setAutoExclusive(true);
 }
 
+void MainWindow::setRandomInitBoxPos(int param)
+{
+    if (param == 1)
+    {
+        p_CommonData->randBoxPosX = 0.1;
+        p_CommonData->randBoxPosY = 0.0;
+    }
+    if (param == 2)
+    {
+        p_CommonData->randBoxPosX = 0.1;
+        p_CommonData->randBoxPosY = -0.3;
+    }
+    if (param == 3)
+    {
+        p_CommonData->randBoxPosX = 0.1;
+        p_CommonData->randBoxPosY = 0.3;
+    }
+    else
+    {
+        p_CommonData->randBoxPosX = 0.0;
+        p_CommonData->randBoxPosY = 0.0;
+    }
+}
+
 //Reads in experiment data from protocol ini files
 bool MainWindow::readExpStuffIn()
 {
@@ -1383,7 +1407,7 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
             p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
-
+            p_CommonData->boxInitRandPos  = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "boxInitParam", NULL /*default*/));
 
             if(p_CommonData->TrialMode == 1){
                 if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
@@ -1401,6 +1425,7 @@ bool MainWindow::readExpStuffIn()
                 if(p_CommonData->stiffness1 == 500) p_CommonData->lev1 = 5;
                 qDebug()<<"TrialMode == 2";
             }
+            setRandomInitBoxPos(p_CommonData->boxInitRandPos);
             onGUIchanged();
         }
         //Testing trials
@@ -1428,8 +1453,10 @@ bool MainWindow::readExpStuffIn()
                 if(p_CommonData->stiffness1 == 500) p_CommonData->lev1 = 5;
             }
             //qDebug() << "test" << "st1" << p_CommonData->stiffness1<< "st2" << p_CommonData->stiffness2 << "cond" << p_CommonData->cond;
+            setRandomInitBoxPos(p_CommonData->boxInitRandPos);
             onGUIchanged();
         }
+
         //Trial Break
         else if (p_CommonData->TrialType=="break"){
             p_CommonData->currentExperimentState = trialBreak;
@@ -1446,6 +1473,7 @@ bool MainWindow::readExpStuffIn()
         else if (p_CommonData->TrialType==""){
             qDebug()<<"THIS IS BROKEN -- YOU SHOULD NEVER BE HERE -- bad protocol file read";
         }
+
     }
 }
 
@@ -1807,7 +1835,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
         p_CommonData->showCursorFrames = !p_CommonData->showCursorFrames;
     }
     //Update GUI Info Manually
-    if(a_event->key() == Qt::Key_Y)
+    if (a_event->key() == Qt::Key_Y)
     {
         UpdateGUIInfo();
     }
@@ -2208,279 +2236,6 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             p_CommonData->flagMassExp = false;
 
             qDebug("advance FingerMappingExp");
-            /*
-    if(CheckFingers()&& (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
-    {
-        //PRE-TRIAL******
-        if(p_CommonData->trialNo < 1)
-        {
-            qDebug()<< "Trial# < 1";
-            p_CommonData->trialNo = 1;
-            p_CommonData->recordFlag = true;
-
-            //Read in protocol file and check if the read is successful
-            if (readExpStuffIn())
-            {
-                qDebug()<<"readExpStuffIn() SUCCESS -- Pre-Trials";
-            }
-
-            //GUI Stuff for each trial type transitioning from pre-trial to trial 1
-            //GUI should show in light blue to distinguish that these
-            //are for the trial that transitioned from pre-trial
-            if (p_CommonData->TrialType == "training")
-            {
-                QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                labelText.append("TRAINING\n");
-                labelText.append("</P></br>");
-                labelText.append("<P><FONT COLOR='#7abfe4' FONT SIZE = 2>");
-                labelText.append("Pick up the cube,\n"
-                                 "bring it through the hoop,\n"
-                                 "Place it in the target area");
-                labelText.append("</P></br>");
-                ui->text->setText(labelText);
-                qDebug()<<"TRAINING "<<p_CommonData->trialNo;
-            }
-            else if (p_CommonData->TrialType == "testing")
-            {
-                QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                labelText .append("TRIAL -- ");
-                labelText .append("</P></br>");
-                ui->text->setText(labelText);
-                qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
-            }
-            else if (p_CommonData->TrialType == "break")
-            {
-                QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                labelText .append("PRESS NEXT AFTER THE BREAK --");
-                labelText .append("</b></P></br>");
-                ui->text->setText(labelText);
-                qDebug()<<"BREAK "<<p_CommonData->trialNo;
-            }
-            else if (p_CommonData->TrialType == "breakbreak")
-            {
-                QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                labelText .append("TIME TO CHANGE THE GROUNDING --");
-                labelText .append("</b></P></br>");
-                ui->text->setText(labelText);
-                qDebug()<<"BREAK "<<p_CommonData->trialNo;
-            }
-            else if (p_CommonData->TrialType == "end")
-            {
-                QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                labelText .append("END OF THE EXPERIMENT --");
-                labelText .append("</b></P></br>");
-                ui->text->setText(labelText);
-                qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
-            }
-            p_CommonData->environmentChange = true;
-
-            qDebug()<<"Progress to Pre-Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-        }
-        //ACTUAL TRIAL*******************************
-        else
-        {
-            qDebug()<<"Trial# >= 1";
-            if(p_CommonData->recordFlag)
-            {
-                p_CommonData->dataRecordMutex.lock();
-                localDataRecorderVector = p_CommonData->dataRecorderVector;
-                p_CommonData->dataRecorderVector.clear();
-                p_CommonData->dataRecordMutex.unlock();
-                WriteDataToFile();
-                p_CommonData->recordFlag = false;
-            }
-
-            //if in training or testing trials
-            if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
-            {
-                //If cube passed hoop and target, advance trial
-                if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
-                {
-                    //ADVANCE to next trial
-                    p_CommonData->trialNo++;
-                    if (readExpStuffIn())
-                    {
-                        qDebug()<<"_readExpStuffIn() SUCCESS 2_";
-                    }
-
-                    //GUI Indication of completed trial
-                    if (p_CommonData->TrialType == "training")
-                    {
-                        QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                        labelText.append("TRAINING...\n");
-                        labelText.append("</P></br>");
-                        labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
-                        labelText.append("Pick up the cube,\n"
-                                         "Bring it through the hoop,\n"
-                                         "Place it in the target area");
-                        labelText.append("</P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"TRAINING "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "testing")
-                    {
-                        QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                        labelText .append("TESTING...");
-                        labelText .append("</P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "break")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
-                        labelText .append("PRESS NEXT AFTER THE BREAK --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "breakbreak")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
-                        labelText .append("TIME TO CHANGE THE GROUNDING --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "end")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                        labelText.append("END OF THE EXPERIMENT");
-                        labelText.append("</b></P></br>");
-                        labelText.append("<P><b><FONT COLOR='#b00be5' FONT SIZE = 2>");
-                        labelText.append("~~Thanks :)");
-                        labelText.append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
-                    }
-                    qDebug()<<"Progress to FME Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                    p_CommonData->environmentChange = true;
-
-
-                    //p_CommonData->hoopSuccess = 1;
-                    //p_CommonData->targetSuccess = 1;
-                    //p_CommonData->trialSuccess = 1;
-                }
-
-                //If cube has not passed *both* hoop and target
-                else
-                {
-                    if(p_CommonData->target1Complete){//REVALUATE THIS CONDITION
-
-                        qDebug()<< "TrialComplete!!";
-
-                        QString labelText = "<P><b><FONT COLOR='#4f0080' FONT SIZE = 5>";
-                        labelText.append("DONE w/ move!! for:  ");
-                        labelText.append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        mistake = true;
-                        p_CommonData->mistakeCounter++;
-                        //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                        //p_CommonData->targetSuccess = 1;
-
-                    }
-                    //If object is not in the final area
-                    else if(!p_CommonData->target1Complete)
-                    {
-                        //If the object has gone through the hoop but not target
-                        if(p_CommonData->hoop1Complete)
-                        {
-                            //qDebug()<< "Through the Blue Hoop but not in target area yet";
-                            QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                            labelText1.append("CANNOT ADVANCE");
-                            labelText1.append("</b></P></br>");
-                            labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
-                            labelText1.append("Pick up the cube, "
-                                              "Place it in the target area");
-                            labelText1.append("</b></P></br>");
-                            ui->text->setText(labelText1);
-                            mistake = true;
-                            p_CommonData->mistakeCounter++;
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                            //p_CommonData->hoopSuccess = 1;
-                        }
-                        //If the object hit neither the target or hoop
-                        else if(!p_CommonData->hoop1Complete)
-                        {
-                            //qDebug()<< "Did not hit target area and did not pass through Blue Hoop";
-                            QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                            labelText1.append("CANNOT ADVANCE");
-                            labelText1.append("</b></P></br>");
-                            labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
-                            labelText1.append("Pick up the cube, "
-                                              "Bring it through the hoop, "
-                                              "Place it in the target area");
-                            labelText1.append("</b></P></br>");
-                            ui->text->setText(labelText1);
-                            mistake = true;
-                            p_CommonData->mistakeCounter++;
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                            //p_CommonData->hoopSuccess = 0;
-                        }
-                        //p_CommonData->targetSuccess = 0;
-                    }
-                    //p_CommonData->trialSuccess = 0;
-                }
-            }
-
-            //if not in training or testing trials
-            //This area is called when coming back from break
-            else
-            {
-                p_CommonData->trialNo++;
-                //GUI Stuff
-                if (readExpStuffIn())
-                {
-                    qDebug()<<"successful read -- back from break";
-                }
-                if (p_CommonData->TrialType == "training")
-                {
-                    QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                    labelText.append("Training -- back from break");
-                    labelText.append("</P></br>");
-                    ui->text->setText(labelText);
-                    //qDebug()<<"___"<<p_CommonData->trialNo;
-                }
-
-                else if (p_CommonData->TrialType == "testing"){
-                    QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                    labelText.append("Testing -- back from break");
-                    labelText.append("</P></br>");
-                    ui->text->setText(labelText);
-                    //qDebug()<<"___"<<p_CommonData->trialNo;
-                }
-
-                else if (p_CommonData->TrialType == "break"){
-                    QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                    labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
-                    labelText.append("</b></P></br>");
-                    ui->text->setText(labelText);
-                }
-
-                else if (p_CommonData->TrialType == "breakbreak"){
-                    QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                    labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
-                    labelText.append("</b></P></br>");
-                    ui->text->setText(labelText);
-                    // qDebug()<<"___"<<p_CommonData->trialNo;
-                }
-
-                else if (p_CommonData->TrialType == "end"){
-                    QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                    labelText.append("END OF THE EXPERIMENT -- back from break");
-                    labelText.append("</b></P></br>");
-                    ui->text->setText(labelText);
-                    //qDebug()<<"___"<<p_CommonData->trialNo;
-                }
-                qDebug()<<"Progress to Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                p_CommonData->environmentChange = true;
-            }
-        }
-    }
-
-            */
             progressPickAndPlaceExperiment(mistake);
         }
 
@@ -2491,291 +2246,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             p_CommonData->flagMassExp = false;
 
             qDebug("advance HoxelMappingExp");
-
             progressPickAndPlaceExperiment(mistake);
-            /*
-            if(CheckFingers()&& (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
-            {
-                //PRE-TRIAL******
-                if(p_CommonData->trialNo < 1)
-                {
-                    qDebug()<<"Trial# < 1";
-                    p_CommonData->trialNo = 1;
-                    p_CommonData->recordFlag = true;
-
-                    //Read in protocol file and check if the read is successful
-                    if (readExpStuffIn())
-                    {
-                        qDebug()<<"readExpStuffIn() SUCCESS -- Pre-Trials";
-                    }
-                    else
-                    {
-                        qDebug()<<"readExpStuffIn() return false -- why???";
-                    }
-
-                    //GUI Stuff for each trial type transitioning from pre-trial to trial 1
-                    //GUI should show in light blue to distinguish that these
-                    //are for the trial that transitioned from pre-trial
-                    if (p_CommonData->TrialType == "training")
-                    {
-                        QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText.append("TRAINING\n");
-                        labelText.append("</P></br>");
-                        labelText.append("<P><FONT COLOR='#7abfe4' FONT SIZE = 2>");
-                        labelText.append("Pick up the cube,\n"
-                                         "bring it through the hoop,\n"
-                                         "Place it in the target area");
-                        labelText.append("</P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"TRAINING "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "testing")
-                    {
-                        QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("TRIAL -- ");
-                        labelText .append("</P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "break")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("PRESS NEXT AFTER THE BREAK --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "breakbreak")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("TIME TO CHANGE THE GROUNDING --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "end")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("END OF THE EXPERIMENT --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
-                    }
-                    p_CommonData->environmentChange = true;
-
-                    qDebug()<<"Progress to HME Pre-Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                }
-                //ACTUAL TRIAL*******************************
-                else
-                {
-                    qDebug()<<"Trial# >= 1";
-                    if(p_CommonData->recordFlag)
-                    {
-                        p_CommonData->dataRecordMutex.lock();
-                        localDataRecorderVector = p_CommonData->dataRecorderVector;
-                        p_CommonData->dataRecorderVector.clear();
-                        p_CommonData->dataRecordMutex.unlock();
-                        WriteDataToFile();
-                        p_CommonData->recordFlag = false;
-                    }
-
-                    //if in training or testing trials
-                    if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
-                    {
-                        //If cube passed hoop and target, advance trial
-                        if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
-                        {
-                            //ADVANCE to next trial
-                            p_CommonData->trialNo++;
-                            if (readExpStuffIn())
-                            {
-                                qDebug()<<"_readExpStuffIn() SUCCESS 2_";
-                            }
-
-                            //GUI Indication of completed trial
-                            if (p_CommonData->TrialType == "training")
-                            {
-                                QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                                labelText.append("TRAINING...\n");
-                                labelText.append("</P></br>");
-                                labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
-                                labelText.append("Pick up the cube,\n"
-                                                 "Bring it through the hoop,\n"
-                                                 "Place it in the target area");
-                                labelText.append("</P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"TRAINING "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "testing")
-                            {
-                                QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                                labelText .append("TESTING...");
-                                labelText .append("</P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "break")
-                            {
-                                QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
-                                labelText .append("PRESS NEXT AFTER THE BREAK --");
-                                labelText .append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "breakbreak")
-                            {
-                                QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
-                                labelText .append("TIME TO CHANGE THE GROUNDING --");
-                                labelText .append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "end")
-                            {
-                                QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                                labelText.append("END OF THE EXPERIMENT");
-                                labelText.append("</b></P></br>");
-                                labelText.append("<P><b><FONT COLOR='#b00be5' FONT SIZE = 2>");
-                                labelText.append("~~Thanks :)");
-                                labelText.append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
-                            }
-                            qDebug()<<"Progressed to HME Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                            p_CommonData->environmentChange = true;
-
-
-                            //p_CommonData->hoopSuccess = 1;
-                            //p_CommonData->targetSuccess = 1;
-                            //p_CommonData->trialSuccess = 1;
-                        }
-
-                        //If cube has not passed *both* hoop and target
-                        else
-                        {
-                            if(p_CommonData->target1Complete){//REVALUATE THIS CONDITION
-
-                                qDebug()<< "TrialComplete!!";
-
-                                QString labelText = "<P><b><FONT COLOR='#4f0080' FONT SIZE = 5>";
-                                labelText.append("DONE w/ move!! for:  ");
-                                labelText.append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                mistake = true;
-                                p_CommonData->mistakeCounter++;
-                                //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                                //p_CommonData->targetSuccess = 1;
-
-                            }
-                            //If object is not in the final area
-                            else if(!p_CommonData->target1Complete)
-                            {
-                                //If the object has gone through the hoop but not target
-                                if(p_CommonData->hoop1Complete)
-                                {
-                                    //qDebug()<< "Through the Blue Hoop but not in target area yet";
-                                    QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                                    labelText1.append("CANNOT ADVANCE");
-                                    labelText1.append("</b></P></br>");
-                                    labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
-                                    labelText1.append("Pick up the cube, "
-                                                      "Place it in the target area");
-                                    labelText1.append("</b></P></br>");
-                                    ui->text->setText(labelText1);
-                                    mistake = true;
-                                    p_CommonData->mistakeCounter++;
-                                    //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                                    //p_CommonData->hoopSuccess = 1;
-                                }
-                                //If the object hit neither the target or hoop
-                                else if(!p_CommonData->hoop1Complete)
-                                {
-                                    //qDebug()<< "Did not hit target area and did not pass through Blue Hoop";
-                                    QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                                    labelText1.append("CANNOT ADVANCE");
-                                    labelText1.append("</b></P></br>");
-                                    labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
-                                    labelText1.append("Pick up the cube, "
-                                                      "Bring it through the hoop, "
-                                                      "Place it in the target area");
-                                    labelText1.append("</b></P></br>");
-                                    ui->text->setText(labelText1);
-                                    mistake = true;
-                                    p_CommonData->mistakeCounter++;
-                                    //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                                    //p_CommonData->hoopSuccess = 0;
-                                }
-
-                                //p_CommonData->targetSuccess = 0;
-                            }
-
-                            //p_CommonData->trialSuccess = 0;
-                        }
-                    }
-
-                    //if not in training or testing trials
-                    //This area is called when coming back from break
-                    else
-                    {
-                        p_CommonData->trialNo++;
-                        //GUI Stuff
-                        if (readExpStuffIn())
-                        {
-                            qDebug()<<"successful read -- back from break";
-                        }
-                        else
-                        {
-                            qDebug()<<"FAILED READ";
-                        }
-
-                        if (p_CommonData->TrialType == "training")
-                        {
-                            QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                            labelText.append("Training -- back from break");
-                            labelText.append("</P></br>");
-                            ui->text->setText(labelText);
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-
-                        else if (p_CommonData->TrialType == "testing"){
-                            QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                            labelText.append("Testing -- back from break");
-                            labelText.append("</P></br>");
-                            ui->text->setText(labelText);
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-
-                        else if (p_CommonData->TrialType == "break"){
-                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                            labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
-                            labelText.append("</b></P></br>");
-                            ui->text->setText(labelText);
-                        }
-
-                        else if (p_CommonData->TrialType == "breakbreak"){
-                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                            labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
-                            labelText.append("</b></P></br>");
-                            ui->text->setText(labelText);
-                            // qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-
-                        else if (p_CommonData->TrialType == "end"){
-                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                            labelText.append("END OF THE EXPERIMENT -- back from break");
-                            labelText.append("</b></P></br>");
-                            ui->text->setText(labelText);
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-                        qDebug()<<"Progressed to Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                        p_CommonData->environmentChange = true;
-                    }
-                }
-            }
-    */
         }
 
         if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
@@ -2956,237 +2427,13 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
         else if (p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
         {
-            //mistake boolean for in case the user presses "H" prematurely
+            //mistake boolean for incase the user presses "H" prematurely
             mistake = false;
             p_CommonData->flagMassExp = false;
 
             qDebug("advance CubeGuidanceExp");
 
-            if(CheckFingers() && (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
-            {
-                //PRE-TRIAL******
-                if(p_CommonData->trialNo < 1)
-                {
-                    qDebug()<< "Trial# < 1";
-                    p_CommonData->trialNo = 1;
-                    p_CommonData->recordFlag = true;
-
-                    //Read in protocol file and check if the read is successful
-                    if (readExpStuffIn())
-                    {
-                        qDebug()<<"readExpStuffIn() SUCCESS -- Pre-Trials";
-                    }
-
-                    //GUI Stuff for each trial type transitioning from pre-trial to trial 1
-                    //GUI should show in light blue to distinguish that these
-                    //are for the trial that transitioned from pre-trial
-                    if (p_CommonData->TrialType == "training")
-                    {
-                        QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText.append("TRAINING\n");
-                        labelText.append("</P></br>");
-                        labelText.append("<P><FONT COLOR='#7abfe4' FONT SIZE = 2>");
-                        labelText.append("Find the cube,\nand pick it up\n");
-                        labelText.append("</P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"TRAINING "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "testing")
-                    {
-                        QString labelText = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("TRIAL -- ");
-                        labelText .append("</P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "break")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("PRESS NEXT AFTER THE BREAK --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "breakbreak")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("TIME TO CHANGE THE GROUNDING --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    }
-                    else if (p_CommonData->TrialType == "end")
-                    {
-                        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                        labelText .append("END OF THE EXPERIMENT --");
-                        labelText .append("</b></P></br>");
-                        ui->text->setText(labelText);
-                        qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
-                    }
-                    p_CommonData->environmentChange = true;
-
-                    qDebug()<<"Progress to Pre-Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                }
-                //ACTUAL TRIAL*******************************
-                else
-                {
-                    qDebug()<<"Trial# >= 1";
-                    if(p_CommonData->recordFlag)
-                    {
-                        p_CommonData->dataRecordMutex.lock();
-                        localDataRecorderVector = p_CommonData->dataRecorderVector;
-                        p_CommonData->dataRecorderVector.clear();
-                        p_CommonData->dataRecordMutex.unlock();
-                        WriteDataToFile();
-                        p_CommonData->recordFlag = false;
-                    }
-
-                    //if in training or testing trials
-                    if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
-                    {
-                        //If cube lifted passed threshold, advance trial
-                        if(p_CommonData->cubeLiftComplete)
-                        {
-                            //advance
-                            p_CommonData->trialNo++;
-                            //reset mistakeCunter
-                            p_CommonData->mistakeCounter = 0;
-                            //then read in
-                            if (readExpStuffIn())
-                            {
-                                qDebug()<<"_readExpStuffIn() SUCCESS 2_";
-                            }
-
-                            //GUI Indication of completed trial
-                            if (p_CommonData->TrialType == "training")
-                            {
-                                QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                                labelText.append("TRAINING...\n");
-                                labelText.append("</P></br>");
-                                labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
-                                labelText.append("Pick up the cube,\n"
-                                                 "Bring it through the hoop,\n"
-                                                 "Place it in the target area");
-                                labelText.append("</P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"TRAINING "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "testing")
-                            {
-                                QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                                labelText .append("TESTING...");
-                                labelText .append("</P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"RUNNING TRIAL "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "break")
-                            {
-                                QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
-                                labelText.append("PRESS NEXT AFTER THE BREAK --");
-                                labelText.append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "breakbreak")
-                            {
-                                QString labelText = "<P><b><FONT COLOR='#0000ff' FONT SIZE = 5>";
-                                labelText.append("TIME TO CHANGE THE GROUNDING --");
-                                labelText.append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                            }
-                            else if (p_CommonData->TrialType == "end")
-                            {
-                                QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                                labelText.append("END OF THE EXPERIMENT");
-                                labelText.append("</b></P></br>");
-                                labelText.append("<P><b><FONT COLOR='#b00be5' FONT SIZE = 2>");
-                                labelText.append("~~Thanks :)");
-                                labelText.append("</b></P></br>");
-                                ui->text->setText(labelText);
-                                qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
-                            }
-                            qDebug()<<"Progress to CGE Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                            p_CommonData->environmentChange = true;
-                        }
-
-                        //If cube has not passed *both* hoop and target
-                        else
-                        {
-                            //qDebug()<< "Did not lift cube high enough";
-                            QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
-                            labelText1.append("CANNOT ADVANCE\n Lift the cube higher");
-                            labelText1.append("</b></P></br>");
-                            labelText1.append("<P><b><FONT COLOR='#000000' FONT SIZE = 2>");
-                            labelText1.append("Pick up the cube, "
-                                              "Place it in the target area");
-                            labelText1.append("</b></P></br>");
-                            ui->text->setText(labelText1);
-                            mistake = true;
-                            p_CommonData->mistakeCounter++;
-                        }
-                    }
-
-                    //if not in training or testing trials
-                    //This area is called when coming back from break
-                    else
-                    {
-                        //advance
-                        p_CommonData->trialNo++;
-                        //reset mistakeCounter
-                        p_CommonData->mistakeCounter = 0;
-                        //then read in
-                        if (readExpStuffIn())
-                        {
-                            qDebug()<<"successful read -- back from break";
-                        }
-
-                        //GUI Stuff
-                        //Logic after break
-                        if (p_CommonData->TrialType == "training")
-                        {
-                            QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                            labelText.append("Training -- back from break");
-                            labelText.append("</P></br>");
-                            ui->text->setText(labelText);
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-
-                        else if (p_CommonData->TrialType == "testing"){
-                            QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-                            labelText.append("Testing -- back from break");
-                            labelText.append("</P></br>");
-                            ui->text->setText(labelText);
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-
-                        else if (p_CommonData->TrialType == "break"){
-                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                            labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
-                            labelText.append("</b></P></br>");
-                            ui->text->setText(labelText);
-                        }
-
-                        else if (p_CommonData->TrialType == "breakbreak"){
-                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                            labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
-                            labelText.append("</b></P></br>");
-                            ui->text->setText(labelText);
-                            // qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-
-                        else if (p_CommonData->TrialType == "end"){
-                            QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
-                            labelText.append("END OF THE EXPERIMENT -- back from break");
-                            labelText.append("</b></P></br>");
-                            ui->text->setText(labelText);
-                            //qDebug()<<"___"<<p_CommonData->trialNo;
-                        }
-                        qDebug()<<"Progress to Trial#"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
-                        p_CommonData->environmentChange = true;
-                    }
-                }
-            }
+            progressPickAndPlaceExperiment(mistake);
             qDebug() << "mistake -- " << mistake << " -- numMistakes:" << p_CommonData->mistakeCounter;
         }
     }
@@ -3437,7 +2684,8 @@ void MainWindow::WriteDataToFile()
     }
     */
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)

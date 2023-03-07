@@ -189,6 +189,7 @@ private slots:
     //void on_SetIDir_clicked();
     //void WhatMassAreWeDisplaying();
     bool readExpStuffIn();
+    void setRandomInitBoxPos(int param);
 
     //void on_ContinueInertiaTrial_clicked();
 

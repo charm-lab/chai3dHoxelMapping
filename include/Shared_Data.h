@@ -749,6 +749,12 @@ typedef struct
     //Boolean for enabling/disabling planar motion constraints for HME
     bool enablePlanarConstraint;
 
+    //Parameter for deciding which pseudo random start position the box in CGE starts at
+    int boxInitRandPos;
+    //X and Y positions for randoms box initial positions
+    double randBoxPosX;
+    double randBoxPosY;
+
 } shared_data;
 
 #endif // SHARED_DATA_H
