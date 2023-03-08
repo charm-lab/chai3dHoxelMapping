@@ -870,25 +870,37 @@ void MainWindow::on_turnOff_clicked()
 
 void MainWindow::setRandomInitBoxPos(int param)
 {
+    qDebug()<<param;
     if (param == 1)
     {
-        p_CommonData->randBoxPosX = 0.1;
-        p_CommonData->randBoxPosY = 0.0;
+        p_CommonData->randBoxPosX = 0.3;
+        p_CommonData->randBoxPosY = 0.1;
     }
-    if (param == 2)
+    else if (param == 2)
     {
         p_CommonData->randBoxPosX = 0.1;
         p_CommonData->randBoxPosY = -0.3;
     }
-    if (param == 3)
+    else if (param == 3)
     {
-        p_CommonData->randBoxPosX = 0.1;
+        p_CommonData->randBoxPosX = -0.3;
         p_CommonData->randBoxPosY = 0.3;
+    }
+    else if (param == 4)
+    {
+        p_CommonData->randBoxPosX = 0.5;
+        p_CommonData->randBoxPosY = -0.1;
+    }
+    else if (param == 5)
+    {
+        p_CommonData->randBoxPosX = -0.1;
+        p_CommonData->randBoxPosY = 0.5;
     }
     else
     {
         p_CommonData->randBoxPosX = 0.0;
         p_CommonData->randBoxPosY = 0.0;
+        qDebug()<<"~~else~~";
     }
 }
 
@@ -1437,6 +1449,7 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
             p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+            p_CommonData->boxInitRandPos  = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "boxInitParam", NULL /*default*/));
 
             if(p_CommonData->TrialMode == 1){
                 if(p_CommonData->mass1 == 0.1) p_CommonData->lev1 = 1;
@@ -1813,11 +1826,29 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
         }
     }
 
-    //Set Mapping Text
-    QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-    mappingText.append(QString::number(p_CommonData->mapping));
-    mappingText.append("</P></br>");
-    ui->mappingTextBox->setText(mappingText);
+    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    {
+        //Set Mapping Text
+        QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+        mappingText.append(QString::number(p_CommonData->mapping));
+        mappingText.append("</P></br>");
+        ui->mappingTextBox->setText(mappingText);
+    }
+
+    if(p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
+    {
+        //Set Mapping Text
+        QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+        mappingText.append(QString::number(p_CommonData->mapping));
+        mappingText.append("</P></br>rParam - ");
+        mappingText.append(QString::number(p_CommonData->boxInitRandPos));
+        mappingText.append(" | X0-");
+        mappingText.append(QString::number(p_CommonData->randBoxPosX));
+        mappingText.append(" Y0-");
+        mappingText.append(QString::number(p_CommonData->randBoxPosY));
+        ui->mappingTextBox->setText(mappingText);
+    }
 
 }
 

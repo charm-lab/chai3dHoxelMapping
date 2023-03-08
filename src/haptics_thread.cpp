@@ -898,7 +898,7 @@ void haptics_thread::UpdateVRGraphics()
                 p_CommonData->trialSuccess = 1;
             }
         }
-       qDebug()<<cubeToHoopDist.length();
+       //qDebug()<<cubeToHoopDist.length();
     }
 
 
