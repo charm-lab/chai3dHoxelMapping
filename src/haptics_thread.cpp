@@ -1410,6 +1410,7 @@ void haptics_thread::RecordData()
         p_CommonData->dataRecorder.hoopSuccess        = 0;
         p_CommonData->dataRecorder.targetSuccess      = 0;
         p_CommonData->dataRecorder.mapping            = p_CommonData->mapping;
+        p_CommonData->dataRecorder.boxInitParam       = p_CommonData->boxInitRandPos;
         p_CommonData->dataRecorder.trialSuccess       = p_CommonData->trialSuccess;
     }
 
@@ -3340,8 +3341,8 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp() // Jasmin Cube Guidance Expe
 
     //Make fingers collide with walls
     //wall->createAABBCollisionDetector(toolRadius);
-    backWall->createAABBCollisionDetector(toolRadius);
-    sideWall1->createAABBCollisionDetector(toolRadius);
+    //backWall->createAABBCollisionDetector(toolRadius);
+    //sideWall1->createAABBCollisionDetector(toolRadius);
     //Add objects to the world
     p_CommonData->p_world->addChild(backWall);
     p_CommonData->p_world->addChild(sideWall1);

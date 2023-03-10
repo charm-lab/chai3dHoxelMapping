@@ -165,6 +165,7 @@ typedef struct
 
     //Mappings For Jasmin's Finger Mapping Experiments
     int mapping;
+    int boxInitParam;
     bool hoopSuccess;
     bool targetSuccess;
     bool trialSuccess;
