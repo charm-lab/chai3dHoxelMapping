@@ -5,7 +5,7 @@ clear; close all; clc;
 %#ok<*NOPTS>
 
 %Number of mappings tested
-numMappings = 5;
+numMappings = 1;
 %Number of trials per mapping
 numTrialsPerMapping = 10;
 %Total number of trials each subject did
@@ -663,7 +663,8 @@ animateData = false;
 % Environment Objects:
 
 for j = 1%:numSubjects
-    for k = 6%:numTrials
+    for k = 5%:numTrials
+        hold on;
         %get initial cube position
         if (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 1)
             cubeInitPos = [0.2, 0.1, -0.02];
@@ -684,6 +685,14 @@ for j = 1%:numSubjects
             cubeInitPos = [0.0, 0.0, -0.02];
             hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
         end
+        
+        % Axis limits
+        xlim([-0.15, 0.3]);
+        ylim([-0.3, 0.4]);
+        zlim([-0.3, 0.3]);
+        set(gca, 'ZDir','reverse');
+        %Set camera azimuth and elevation angles
+        view([-71,33]);
 
         t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
         %index position x, y, z subject j, any trial k
@@ -699,7 +708,7 @@ for j = 1%:numSubjects
         boxPosY = subjectData{j}.boxPosY(t_i);
         boxPosZ = subjectData{j}.boxPosZ(t_i);
 
-        plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); hold on;
+        plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); 
         plot3(indexPosX, indexPosY, indexPosZ,'k-',"LineWidth", 4);
         plot3(thumbPosX, thumbPosY, thumbPosZ,'Color', [0.5 0.5 0.5],"LineWidth", 4);
 
@@ -732,12 +741,6 @@ for j = 1%:numSubjects
             "Start" + newline +"Point", "Color", "red", "fontSize", 18);
         hold off;
 
-        % Axis limits
-        xlim([0, 0.3]);
-        ylim([-0.3, 0.3]);
-        zlim([-0.3, 0.3]);
-        set(gca, 'ZDir','reverse');
-
         %title
         title(strcat('Kinematic Data --',...
             ' Subject #', num2str(subjectNum(j)),...
@@ -747,8 +750,6 @@ for j = 1%:numSubjects
         xlabel('X'); ylabel('Y'); zlabel('Z');
         legend("Cube", "Index Finger", "Thumb", "Location", "northeast");
 
-        %Set camera azimuth and elevation angles
-        view([-71,33]);
         improvePlot_v2(true, false, 24, 0,0);
         %Save figure as pdf:
         if (saveFigures == true)
@@ -1350,7 +1351,7 @@ targetPos = [0.1, 0.2085, 0.0]; % m
 cubeInitPos = [0.15, -0.2, -0.02]; % X = 0.1 in real exp
 
 % Draw an arc between 3 points 
-arc3_Mod(cubeInitPos, hoopPos, targetPos);
+% arc3_Mod(cubeInitPos, hoopPos, targetPos);
 
 for j = 1%:numSubjects
     for k = 1%:numTrials
