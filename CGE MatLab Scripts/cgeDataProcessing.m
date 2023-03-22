@@ -12,14 +12,14 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 %Initialization of the total number of subjects that were run in
 %the experiment
-totalNumSubjects = 1;
+totalNumSubjects = 2;
 %Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1];
+subjectNum = [1 2];
 
 %Load data from folder
 %Folder contatining all data:
