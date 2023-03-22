@@ -297,6 +297,8 @@ void MainWindow::writeSerialData()
 
         }
 
+        //dev0Mag = QString::number(10.0, 'f', 1);
+        //dev1Mag = QString::number(10.0, 'f', 1);
         //Dispay in GUI:
         //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\n); //device 0//device 0 _prev
         //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
@@ -306,6 +308,8 @@ void MainWindow::writeSerialData()
 
     //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
     //device0Y = QString::number(20.0, 'f', 1);
+
+
     QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
 
     /*temp*/

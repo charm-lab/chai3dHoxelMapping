@@ -5,7 +5,7 @@ clear; close all; clc;
 %#ok<*NOPTS>
 
 %Number of mappings tested
-numMappings = 1;
+numMappings = 5;
 %Number of trials per mapping
 numTrialsPerMapping = 10;
 %Total number of trials each subject did
