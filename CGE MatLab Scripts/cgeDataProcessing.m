@@ -12,14 +12,14 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 %Initialization of the total number of subjects that were run in
 %the experiment
-totalNumSubjects = 2;
+totalNumSubjects = 3;
 %Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1 2];
+subjectNum = 1:3;
 
 %Load data from folder
 %Folder contatining all data:
@@ -708,6 +708,7 @@ for j = 1%:numSubjects
         boxPosY = subjectData{j}.boxPosY(t_i);
         boxPosZ = subjectData{j}.boxPosZ(t_i);
 
+        %Plot all the positions of the cube, index, and thumb in the trial
         plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); 
         plot3(indexPosX, indexPosY, indexPosZ,'k-',"LineWidth", 4);
         plot3(thumbPosX, thumbPosY, thumbPosZ,'Color', [0.5 0.5 0.5],"LineWidth", 4);
@@ -1346,15 +1347,42 @@ end
 
 %% Path Error Calculations
 close all;
-hoopPos = [0.1, 0.085, -0.15]; % m
-targetPos = [0.1, 0.2085, 0.0]; % m
-cubeInitPos = [0.15, -0.2, -0.02]; % X = 0.1 in real exp
 
 % Draw an arc between 3 points 
 % arc3_Mod(cubeInitPos, hoopPos, targetPos);
 
 for j = 1%:numSubjects
     for k = 1%:numTrials
+        hold on;
+        %get initial cube position
+        if (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 1)
+            cubeInitPos = [0.2, 0.1, -0.02];
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+        elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 2)
+            cubeInitPos = [0.1, -0.2, -0.02];
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+        elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 3)
+            cubeInitPos = [-0.05, 0.3, -0.02];
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+        elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 4)
+            cubeInitPos = [0.2, -0.1, -0.02];
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+        elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 5)
+            cubeInitPos = [-0.1, 0.2, -0.02];
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+        else 
+            cubeInitPos = [0.0, 0.0, -0.02];
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+        end
+        
+        % Axis limits
+        xlim([-0.15, 0.3]);
+        ylim([-0.3, 0.4]);
+        zlim([-0.3, 0.3]);
+        set(gca, 'ZDir','reverse');
+        %Set camera azimuth and elevation angles
+        view([-71,33]);
+
         t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
         %index position x, y, z subject j, any trial k
         indexPosX = subjectData{j}.indexPosX(t_i);
@@ -1369,52 +1397,45 @@ for j = 1%:numSubjects
         boxPosY = subjectData{j}.boxPosY(t_i);
         boxPosZ = subjectData{j}.boxPosZ(t_i);
 
-        plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); hold on;
-        %plot3(indexPosX, indexPosY, indexPosZ,'k-',"LineWidth", 4);
-        %plot3(thumbPosX, thumbPosY, thumbPosZ,'Color', [0.5 0.5 0.5],"LineWidth", 4);
-
-        %Initial finger points
-%         plot3(subjectData{j}.indexPosX(trialStartTime_index(k,j)),...
-%             subjectData{j}.indexPosY(trialStartTime_index(k,j)),...
-%             subjectData{j}.indexPosZ(trialStartTime_index(k,j)),...
-%             'r*',"LineWidth", 10);
-%         plot3(subjectData{j}.thumbPosX(trialStartTime_index(k,j)),...
-%             subjectData{j}.thumbPosY(trialStartTime_index(k,j)),...
-%             subjectData{j}.thumbPosZ(trialStartTime_index(k,j)),...
-%             'c*',"LineWidth", 10);
+        %Plot all the positions of the cube in the trial
+        plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); 
 
         % hoopPos = -hoopPos; targetPos = -targetPos;
         textXOffset = 0.01;
         textYOffset = 0.04;
         textZOffset = 0.05;
 
-        plot3(hoopPos(1), hoopPos(2), hoopPos(3), "ro", "LineWidth", 2); 
-        plot3(targetPos(1), targetPos(2), targetPos(3), "ro", "LineWidth", 2);
-        plot3(cubeInitPos(1), cubeInitPos(2), cubeInitPos(3), "ro", "LineWidth", 2);
+        %Hoop text:
+        text(hoopPos(1), hoopPos(2), hoopPos(3) - textZOffset,...
+            "Hoop", "Color", "k", "fontSize", 18);
+
+        %Start point text:
+        text(cubeInitPos(1) + textXOffset, cubeInitPos(2) + textYOffset, cubeInitPos(3) + textZOffset,...
+            "Start" + newline +"Point", "Color", "k", "fontSize", 18);
+
+        %Line between cube and hoop
+        v=[cubeInitPos; hoopPos]; %temp variable
+        plot3(v(:,1),v(:,2),v(:,3),'ro-', "LineWidth", 2, "MarkerSize", 8)
         hold off;
 
-        % Axis limits
-        xlim([0, 0.3]);
-        ylim([-0.3, 0.3]);
-        zlim([-0.3, 0.3]);
-        set(gca, 'ZDir','reverse');
-
         %title
-        title(strcat('Kinematic Data --',...
+        title(strcat('Path Error Comparision --',...
             ' Subject #', num2str(subjectNum(j)),...
             ' Trial #', num2str(k)));
 
         % Axis labels
         xlabel('X'); ylabel('Y'); zlabel('Z');
 
-        %Set camera azimuth and elevation angles
-        view([-71,33]);
         improvePlot_v2(true, false, 24, 0,0);
-
+        %Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf, strcat('figures\errorComps\',...
+                'Subject',num2str(subjectNum(j)),'_Trial', num2str(k),...
+                '_ErrorComps'),'-dpdf','-fillpage'); %close;
+        end
     end
 end
-
-improvePlot;
 
 
 

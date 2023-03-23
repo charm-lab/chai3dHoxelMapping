@@ -34,19 +34,7 @@ QString device1X; //X
 QString device1Y; //Y
 QString device1Z; //Z
 QString dev1Mag;
-/*
-//Prev values needed for IIR filter:
-Eigen::Vector3d localDesiredPos0_prev;
-Eigen::Vector3d localDesiredPos1_prev;
-Eigen::Vector3d localForce0_prev;
-Eigen::Vector3d localForce1_prev;
-QString device0X_prev; //X
-QString device0Y_prev; //Y
-QString device0Z_prev; //Z
-QString device1X_prev; //X
-QString device1Y_prev; //Y
-QString device1Z_prev; //Z
-*/
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
