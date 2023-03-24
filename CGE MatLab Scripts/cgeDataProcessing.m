@@ -12,14 +12,14 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 %Initialization of the total number of subjects that were run in
 %the experiment
-totalNumSubjects = 3;
+totalNumSubjects = 4;
 %Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = 1:3;
+subjectNum = 1:4;
 
 %Load data from folder
 %Folder contatining all data:
@@ -90,7 +90,7 @@ disp("***Data Upload and Merge Complete***")
 plotVis = "on";
 saveFigures = false;
 
-for j = 1:numSubjects
+for j = 4%1:numSubjects
     figure; plot(subjectData{j}.time , subjectData{j}.trialSuccess, "b-");
     title(strcat('Subject ',num2str(subjectNum(j)), ' All Trials'));
     xlabel("Time"); ylabel("success/fail");
@@ -662,8 +662,8 @@ animateData = false;
 % Also display position of hoop and target zone
 % Environment Objects:
 
-for j = 1%:numSubjects
-    for k = 5%:numTrials
+for j = 4%:numSubjects
+    for k = 16%:numTrials
         hold on;
         %get initial cube position
         if (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 1)
