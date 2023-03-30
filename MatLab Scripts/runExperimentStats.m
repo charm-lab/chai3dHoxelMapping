@@ -13,12 +13,11 @@ function runExperimentStats()
 
     % Groups:
     %Mapping group:
-    N = numSubjects*numTrialsPerMapping;
-    mappings(1     : N,   1) = {'1'};
-    mappings(N+1   : 2*N, 1) = {'2'};
-    mappings(2*N+1 : 3*N, 1) = {'3'};
-    mappings(3*N+1 : 4*N, 1) = {'4'};
-    mappings(4*N+1 : 5*N, 1) = {'5'};
+    mappings(1:20,1)  = {'1'};
+    mappings(21:40,1) = {'2'};
+    mappings(41:60,1) = {'3'};
+    mappings(61:80,1) = {'4'};
+    mappings(81:100,1) = {'5'};
 
     %Convert matrix of subject results to column vectors
     %CompletionTime Mapping 1 visCube group

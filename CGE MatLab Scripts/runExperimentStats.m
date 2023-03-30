@@ -13,11 +13,12 @@ function runExperimentStats()
 
     % Groups:
     %Mapping group:
-    mappings(1:20,1)  = {'1'};
-    mappings(21:40,1) = {'2'};
-    mappings(41:60,1) = {'3'};
-    mappings(61:80,1) = {'4'};
-    mappings(81:100,1) = {'5'};
+    N = numSubjects*numTrialsPerMapping;
+    mappings(1     : N,   1) = {'1'};
+    mappings(N+1   : 2*N, 1) = {'2'};
+    mappings(2*N+1 : 3*N, 1) = {'3'};
+    mappings(3*N+1 : 4*N, 1) = {'4'};
+    mappings(4*N+1 : 5*N, 1) = {'5'};
 
     %Convert matrix of subject results to column vectors
     %CompletionTime Mapping 1 visCube group
@@ -119,6 +120,28 @@ function runExperimentStats()
 %     %BoxDrops Mapping 5 visCube group
 %     yBD_visMap5 = reshape(boxDropsMapping5(:,1:numSubjects),[],1);
     
+    %boxRMSXMapping Mapping 1
+    yRMSX_Map1 = reshape(boxRMSXMapping1(:,1:numSubjects),[],1);
+    %boxRMSXMapping Mapping 2
+    yRMSX_Map2 = reshape(boxRMSXMapping2(:,1:numSubjects),[],1);
+    %boxRMSXMapping Mapping 3
+    yRMSX_Map3 = reshape(boxRMSXMapping3(:,1:numSubjects),[],1);
+    %boxRMSXMapping Mapping 4
+    yRMSX_Map4 = reshape(boxRMSXMapping4(:,1:numSubjects),[],1);
+    %boxRMSXMapping Mapping 5
+    yRMSX_Map5 = reshape(boxRMSXMapping5(:,1:numSubjects),[],1);
+
+    %boxRMSYMapping Mapping 1
+    yRMSY_Map1 = reshape(boxRMSYMapping1(:,1:numSubjects),[],1);
+    %boxRMSYMapping Mapping 2
+    yRMSY_Map2 = reshape(boxRMSYMapping2(:,1:numSubjects),[],1);
+    %boxRMSYMapping Mapping 3
+    yRMSY_Map3 = reshape(boxRMSYMapping3(:,1:numSubjects),[],1);
+    %boxRMSYMapping Mapping 4
+    yRMSY_Map4 = reshape(boxRMSYMapping4(:,1:numSubjects),[],1);
+    %boxRMSYMapping Mapping 5
+    yRMSY_Map5 = reshape(boxRMSYMapping5(:,1:numSubjects),[],1);
+
     %Find p-values
     %vertically concatenate columns of the same metric
     yCT = [yCT_visMap1; yCT_visMap2; yCT_visMap3; yCT_visMap4; yCT_visMap5];
@@ -157,6 +180,14 @@ function runExperimentStats()
 %     yBD = [yBD_visMap1; yBD_visMap2; yBD_visMap3; yBD_visMap4; yBD_visMap5];
 %     [p_BoxDrops, ~, stats_BoxDrops] = anovan(yBD,  {mappings},...
 %         "Model","interaction", "Varnames", "mappings", "display",showStats);
+
+    yRMSX = [yRMSX_Map1; yRMSX_Map2; yRMSX_Map3; yRMSX_Map4; yRMSX_Map5];
+    [p_BoxRMSX, ~, stats_BoxRMSX] = anovan(yRMSX, {mappings},...
+        "Model","interaction", "Varnames", "mappings", "display",showStats);
+
+    yRMSY = [yRMSY_Map1; yRMSY_Map2; yRMSY_Map3; yRMSY_Map4; yRMSY_Map5];
+    [p_BoxRMSY, ~, stats_BoxRMSY] = anovan(yRMSY, {mappings},...
+        "Model","interaction", "Varnames", "mappings", "display",showStats);
 
     %Compare signifcance with control group only:
     if(interactableCompare == false)
@@ -225,6 +256,21 @@ function runExperimentStats()
 %             "ControlGroup", 5, "Alpha", 0.05);        
 %         improvePlot_v2(false, true, fontSize, width, height)
 %         title("BoxDrops -- Control")
+
+        %Box RMSX
+        figure(2)
+        subplot(1,2,1)    
+        compRMSX = multcompare(stats_BoxRMSX, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
+        improvePlot_v2(false, true, fontSize, width, height) 
+        title("Box RMS X -- Control")
+
+        %Box RMSY
+        subplot(1,2,2)    
+        compRMSY = multcompare(stats_BoxRMSY, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
+        improvePlot_v2(false, true, fontSize, width, height) 
+        title("Box RMS Y -- Control")
     
         %Tables with Mapping 5 as Control:    
         tbl_CompletionTime = array2table(compCT,"VariableNames", ...
@@ -254,6 +300,13 @@ function runExperimentStats()
 %         tbl_BoxDrops = array2table(compBD,"VariableNames", ...
 %         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
 %     
+
+        tbl_BoxRMSX = array2table(compRMSX,"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+
+        tbl_BoxRMSY = array2table(compRMSY,"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+
     %Interactable comparison with any group:
     else    
         close all;
@@ -304,6 +357,19 @@ function runExperimentStats()
 %         title("BoxDrops -- Interactable")
 %         improvePlot_v2(false, true, fontSize, width, height)    
         
+        %Box RMSX
+        figure(2)
+        subplot(1,2,1)    
+        compRMSX = multcompare(stats_BoxRMSX);
+        improvePlot_v2(false, true, fontSize, width, height) 
+        title("Box RMS X -- Interactable")
+
+        %Box RMSY
+        subplot(1,2,2)    
+        compRMSY = multcompare(stats_BoxRMSY);
+        improvePlot_v2(false, true, fontSize, width, height) 
+        title("Box RMS Y -- Interactable")
+
         %Tables with Variable Control:    
         tbl_CompletionTime = array2table(compCT,"VariableNames", ...
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
@@ -331,6 +397,12 @@ function runExperimentStats()
     
 %         tbl_BoxDrops = array2table(compBD,"VariableNames", ...
 %         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+
+        tbl_BoxRMSX = array2table(compRMSX,"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+
+        tbl_BoxRMSY = array2table(compRMSY,"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
     end
 
     if (showStats == "on")
@@ -343,5 +415,7 @@ function runExperimentStats()
         p_ThumbShearForce
         p_ThumbNormalForce
 %         p_BoxDrops
+        p_BoxRMSX
+        p_BoxRMSY
     end       
 end

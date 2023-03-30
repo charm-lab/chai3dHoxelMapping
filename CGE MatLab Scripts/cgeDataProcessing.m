@@ -12,14 +12,14 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 %Initialization of the total number of subjects that were run in
 %the experiment
-totalNumSubjects = 4;
+totalNumSubjects = 5;
 %Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = 1:4;
+subjectNum = 1:5;
 
 %Load data from folder
 %Folder contatining all data:
@@ -152,8 +152,8 @@ disp("find trial start and end times -- done")
 
 %Modification to look at local initial contact values
 
-% trialEndTime_index=trialStartTime_index+1000;
-% trialStartTime_index=trialStartTime_index-2500;
+% trialEndTime_index=trialEndTime_index+1000;
+%  trialStartTime_index=trialStartTime_index-2500;
 
 %% Parse Data *************************************************************
 %% Completion Time Calculation
@@ -542,7 +542,7 @@ figure(2);
 subplot(1,3,1)
 markerSize = 12;
 jitterVal = 0.14;
-minY = 0.4; maxY = 2.1;
+minY = 0.0; maxY = 0.8;
 [h3, visIndexPathLength, visIndexPathLengthStdVals] = ...
     createErrorBarPlot(indexPathLengthMapping1, indexPathLengthMapping2,...
     indexPathLengthMapping3, indexPathLengthMapping4, indexPathLengthMapping5,...
@@ -1347,17 +1347,20 @@ end
 
 %% Path Error Calculations
 close all;
+plotVis = "off";
+saveFigures = true;
 
-% Draw an arc between 3 points 
-% arc3_Mod(cubeInitPos, hoopPos, targetPos);
+rmsXVals = zeros(numTrials, numSubjects);
+rmsYVals = zeros(numTrials, numSubjects);
 
-for j = 1%:numSubjects
-    for k = 1%:numTrials
+for j = 1:numSubjects
+    for k = 1:numTrials            
+        figure(1); clf;
         hold on;
         %get initial cube position
         if (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 1)
             cubeInitPos = [0.2, 0.1, -0.02];
-            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m    
         elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 2)
             cubeInitPos = [0.1, -0.2, -0.02];
             hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
@@ -1366,13 +1369,13 @@ for j = 1%:numSubjects
             hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
         elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 4)
             cubeInitPos = [0.2, -0.1, -0.02];
-            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m  
         elseif (subjectData{j}.boxInitParam(trialStartTime_index(k,j)) == 5)
             cubeInitPos = [-0.1, 0.2, -0.02];
-            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m  
         else 
             cubeInitPos = [0.0, 0.0, -0.02];
-            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m
+            hoopPos = [cubeInitPos(1),cubeInitPos(2), -0.15]; % m    
         end
         
         % Axis limits
@@ -1384,6 +1387,7 @@ for j = 1%:numSubjects
         view([-71,33]);
 
         t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
+        timeVec = subjectData{j}.time(t_i);
         %index position x, y, z subject j, any trial k
         indexPosX = subjectData{j}.indexPosX(t_i);
         indexPosY = subjectData{j}.indexPosY(t_i);
@@ -1398,7 +1402,7 @@ for j = 1%:numSubjects
         boxPosZ = subjectData{j}.boxPosZ(t_i);
 
         %Plot all the positions of the cube in the trial
-        plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); 
+        h1 = plot3(boxPosX, boxPosY, boxPosZ, '-b', "MarkerSize", 5, "LineWidth", 8); 
 
         % hoopPos = -hoopPos; targetPos = -targetPos;
         textXOffset = 0.01;
@@ -1414,7 +1418,7 @@ for j = 1%:numSubjects
             "Start" + newline +"Point", "Color", "k", "fontSize", 18);
 
         %Line between cube and hoop
-        v=[cubeInitPos; hoopPos]; %temp variable
+        v = [cubeInitPos; hoopPos]; %temp variable
         plot3(v(:,1),v(:,2),v(:,3),'ro-', "LineWidth", 2, "MarkerSize", 8)
         hold off;
 
@@ -1427,6 +1431,9 @@ for j = 1%:numSubjects
         xlabel('X'); ylabel('Y'); zlabel('Z');
 
         improvePlot_v2(true, false, 24, 0,0);
+        %Hide/Show Figure at Runtime
+        set(gcf,'Visible', plotVis); 
+
         %Save figure as pdf:
         if (saveFigures == true)
             set(gcf,'PaperOrientation','landscape');
@@ -1434,12 +1441,62 @@ for j = 1%:numSubjects
                 'Subject',num2str(subjectNum(j)),'_Trial', num2str(k),...
                 '_ErrorComps'),'-dpdf','-fillpage'); %close;
         end
+
+        % get Error Calculations and plot
+        figure(2);               
+        [h2, boxPosErrorX, boxPosErrorY] = getBoxPosError(cubeInitPos, timeVec, boxPosX, boxPosY);
+        %Hide/Show Figure at Runtime
+        set(gcf,'Visible', plotVis); 
+
+        %Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf, strcat('figures\errorCalcs\',...
+                'Subject',num2str(subjectNum(j)),'_Trial', num2str(k),...
+                '_ErrorCalcs'),'-dpdf','-fillpage'); %close;
+        end
+
+        %populate matrix of RMS vals
+        rmsXVals(k,j) = boxPosErrorX;
+        rmsYVals(k,j) = boxPosErrorY;
     end
 end
 
+%Sort RMS values by Mapping
+%X
+boxRMSXMapping1 = sortByMapping(rmsXVals, mapping1);
+boxRMSXMapping2 = sortByMapping(rmsXVals, mapping2);
+boxRMSXMapping3 = sortByMapping(rmsXVals, mapping3);
+boxRMSXMapping4 = sortByMapping(rmsXVals, mapping4);
+boxRMSXMapping5 = sortByMapping(rmsXVals, mapping5);
+%Y
+boxRMSYMapping1 = sortByMapping(rmsYVals, mapping1);
+boxRMSYMapping2 = sortByMapping(rmsYVals, mapping2);
+boxRMSYMapping3 = sortByMapping(rmsYVals, mapping3);
+boxRMSYMapping4 = sortByMapping(rmsYVals, mapping4);
+boxRMSYMapping5 = sortByMapping(rmsYVals, mapping5);
 
+figure(3);
+minY = 0.0; maxY = 0.05;
+hold on;
+subplot(1,2,1);
+%RMS Plots
+[h3, boxRMSXMean, boxRMSXStdVals] = ...
+    createErrorBarPlot(boxRMSXMapping1, boxRMSXMapping2,...
+    boxRMSXMapping3, boxRMSXMapping4, boxRMSXMapping5,...
+    "Box RMS X", "Mapping", "RMS [~~]");
+ylim([minY,maxY]);
+subplot(1,2,2);
+[h4, boxRMSYMean, boxRMSYStdVals] = ...
+    createErrorBarPlot(boxRMSYMapping1, boxRMSYMapping2,...
+    boxRMSYMapping3, boxRMSYMapping4, boxRMSYMapping5,...
+    "Box RMS Y", "Mapping", "RMS [~~]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 14, 1200, 650); hold off;
 
-
-
-
-
+%Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, strcat('figures\RMSPlots\',...
+        'RMSPlots'),'-dpdf','-fillpage'); %close;
+end
