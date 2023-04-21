@@ -225,7 +225,7 @@ typedef enum
     StiffnessMassExperiment,
     FingerMappingExperiment,
     HoxelMappingExperiment,
-    MultiMassExperiment,
+    CrumblyCubeExperiment,
     CubeGuidanceExperiment,
     dynamicMagnitudeExp,
 } dynamicObject_states;
@@ -756,6 +756,8 @@ typedef struct
     double randBoxPosX;
     double randBoxPosY;
 
+    //For CrumblyCube to see if grasp force is too high
+    bool manipForceTooHigh;
 } shared_data;
 
 #endif // SHARED_DATA_H

@@ -150,7 +150,7 @@ public:
     QPushButton *FingerMappingExp;
     QPushButton *dynamicEnvironment;
     QPushButton *HoxelMappingExp;
-    QPushButton *MultiMassExp;
+    QPushButton *CrumblyCubeExp;
     QPushButton *CubeGuidanceExp;
     QGroupBox *groupBox_6;
     QWidget *layoutWidget8;
@@ -237,7 +237,7 @@ public:
         font.setPointSize(12);
         MainWindow->setFont(font);
         QIcon icon;
-        icon.addFile(QStringLiteral("D:/Pictures/Icon.jpg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral("../../../../Pictures/Icon.jpg"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindow->setWindowIcon(icon);
         MainWindow->setAutoFillBackground(true);
         centralWidget = new QWidget(MainWindow);
@@ -953,12 +953,12 @@ public:
 
         gridLayout_12->addWidget(HoxelMappingExp, 1, 1, 1, 1);
 
-        MultiMassExp = new QPushButton(layoutWidget7);
-        MultiMassExp->setObjectName(QStringLiteral("MultiMassExp"));
-        sizePolicy3.setHeightForWidth(MultiMassExp->sizePolicy().hasHeightForWidth());
-        MultiMassExp->setSizePolicy(sizePolicy3);
+        CrumblyCubeExp = new QPushButton(layoutWidget7);
+        CrumblyCubeExp->setObjectName(QStringLiteral("CrumblyCubeExp"));
+        sizePolicy3.setHeightForWidth(CrumblyCubeExp->sizePolicy().hasHeightForWidth());
+        CrumblyCubeExp->setSizePolicy(sizePolicy3);
 
-        gridLayout_12->addWidget(MultiMassExp, 2, 1, 1, 1);
+        gridLayout_12->addWidget(CrumblyCubeExp, 2, 1, 1, 1);
 
         CubeGuidanceExp = new QPushButton(layoutWidget7);
         CubeGuidanceExp->setObjectName(QStringLiteral("CubeGuidanceExp"));
@@ -1395,8 +1395,9 @@ public:
 "Bodies", 0));
         HoxelMappingExp->setText(QApplication::translate("MainWindow", "Wire Guide\n"
 "Experiment", 0));
-        MultiMassExp->setText(QApplication::translate("MainWindow", "Multi-Mass\n"
-"Experiment", 0));
+        CrumblyCubeExp->setText(QApplication::translate("MainWindow", "Crumbly Cube\n"
+"Experiment\n"
+"\360\237\215\252", 0));
         CubeGuidanceExp->setText(QApplication::translate("MainWindow", "~TEST ENVIRONMENTS~\n"
 "Experiment", 0));
         groupBox_6->setTitle(QApplication::translate("MainWindow", "Mine's Experiments", 0));

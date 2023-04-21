@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[29];
-    char stringdata0[552];
+    char stringdata0[554];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -51,13 +51,13 @@ QT_MOC_LITERAL(18, 288, 29), // "on_StiffnMassCombined_clicked"
 QT_MOC_LITERAL(19, 318, 27), // "on_FingerMappingExp_clicked"
 QT_MOC_LITERAL(20, 346, 26), // "on_HoxelMappingExp_clicked"
 QT_MOC_LITERAL(21, 373, 27), // "on_SetTrialNoButton_clicked"
-QT_MOC_LITERAL(22, 401, 23), // "on_MultiMassExp_clicked"
-QT_MOC_LITERAL(23, 425, 17), // "on_Manual_clicked"
-QT_MOC_LITERAL(24, 443, 26), // "on_CubeGuidanceExp_clicked"
-QT_MOC_LITERAL(25, 470, 28), // "on_resetCameraButton_clicked"
-QT_MOC_LITERAL(26, 499, 21), // "on_openButton_clicked"
-QT_MOC_LITERAL(27, 521, 14), // "readSerialData"
-QT_MOC_LITERAL(28, 536, 15) // "writeSerialData"
+QT_MOC_LITERAL(22, 401, 25), // "on_CrumblyCubeExp_clicked"
+QT_MOC_LITERAL(23, 427, 17), // "on_Manual_clicked"
+QT_MOC_LITERAL(24, 445, 26), // "on_CubeGuidanceExp_clicked"
+QT_MOC_LITERAL(25, 472, 28), // "on_resetCameraButton_clicked"
+QT_MOC_LITERAL(26, 501, 21), // "on_openButton_clicked"
+QT_MOC_LITERAL(27, 523, 14), // "readSerialData"
+QT_MOC_LITERAL(28, 538, 15) // "writeSerialData"
 
     },
     "MainWindow\0progressPickAndPlaceExperiment\0"
@@ -72,7 +72,7 @@ QT_MOC_LITERAL(28, 536, 15) // "writeSerialData"
     "on_FingerMappingExp_clicked\0"
     "on_HoxelMappingExp_clicked\0"
     "on_SetTrialNoButton_clicked\0"
-    "on_MultiMassExp_clicked\0on_Manual_clicked\0"
+    "on_CrumblyCubeExp_clicked\0on_Manual_clicked\0"
     "on_CubeGuidanceExp_clicked\0"
     "on_resetCameraButton_clicked\0"
     "on_openButton_clicked\0readSerialData\0"
@@ -174,7 +174,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 14: _t->on_FingerMappingExp_clicked(); break;
         case 15: _t->on_HoxelMappingExp_clicked(); break;
         case 16: _t->on_SetTrialNoButton_clicked(); break;
-        case 17: _t->on_MultiMassExp_clicked(); break;
+        case 17: _t->on_CrumblyCubeExp_clicked(); break;
         case 18: _t->on_Manual_clicked(); break;
         case 19: _t->on_CubeGuidanceExp_clicked(); break;
         case 20: _t->on_resetCameraButton_clicked(); break;

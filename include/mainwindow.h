@@ -31,6 +31,8 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+//Finger force limit in Newtons -- only for CrumblyCubeExp
+#define FINGER_FORCE_LIMIT 10
 
 using namespace chai3d;
 using namespace std;
@@ -207,7 +209,7 @@ private slots:
     void on_FingerMappingExp_clicked();
     void on_HoxelMappingExp_clicked();
     void on_SetTrialNoButton_clicked();
-    void on_MultiMassExp_clicked();
+    void on_CrumblyCubeExp_clicked();
     void on_Manual_clicked();
     void on_CubeGuidanceExp_clicked();
     void on_resetCameraButton_clicked();

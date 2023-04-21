@@ -36,7 +36,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>D:/Pictures/Icon.jpg</normaloff>D:/Pictures/Icon.jpg</iconset>
+    <normaloff>../../../../Pictures/Icon.jpg</normaloff>../../../../Pictures/Icon.jpg</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -1595,7 +1595,7 @@ Experiment</string>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QPushButton" name="MultiMassExp">
+       <widget class="QPushButton" name="CrumblyCubeExp">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -1603,8 +1603,9 @@ Experiment</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Multi-Mass
-Experiment</string>
+         <string>Crumbly Cube
+Experiment
+🍪</string>
         </property>
        </widget>
       </item>

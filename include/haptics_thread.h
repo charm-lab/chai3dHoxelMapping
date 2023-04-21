@@ -73,7 +73,7 @@ public:
     void SetDynEnvironStiffMassExp();
     void SetDynEnvironFingerMappingExp();
     void SetDynEnvironHoxelMappingExp();
-    void SetDynEnvironMultiMassExp();    
+    void SetDynEnvironCrumblyCubeExp();
     void SetDynEnvironCubeGuidanceExp();
     void SetDynEnvironAdjust();
     void SetManualAdjust();

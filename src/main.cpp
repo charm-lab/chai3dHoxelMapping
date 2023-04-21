@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     qDebug()<<"experimentThread initialized";
 
     magTrackerThread.initialize();
-    qDebug()<<"magTrackerThread initialized";
+    qDebug()<<"magTrackerThread initialized";/**/
 
     //VibrotactileThread.initialize();
     //qDebug()<<"VibrotactileThread initialized";

@@ -294,16 +294,24 @@ void MainWindow::writeSerialData()
         ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n" + "Mag: " + dev1Mag + "N\r\n"); //device 1 //device 1_prev
     }
 
+
     //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
     //device0Y = QString::number(20.0, 'f', 1);
 
 
     QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
 
-    /*temp*/
-    //QString serialData = device0X + " " + device0Y + " " + device0Z + "\n";
-    //QString serialData = "*2,0,0\n";
-    /*temp*/
+
+    //Set limit for CrumblyCubeExp
+    if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
+    {
+        p_CommonData->manipForceTooHigh = true;
+    }
+    else
+    {
+        p_CommonData->manipForceTooHigh = false;
+    }
+
     payloadBuffer = payloadBuffer.append(serialData);
 
     //qDebug() << payloadBuffer << " " << serial->isWritable();
@@ -675,7 +683,7 @@ void MainWindow::UpdateGUIInfo()
         points2.removeFirst();
 #endif
 
-    // index device
+    // index device - send local values
     ui->StrokeLCD1_0->display((localOutputStrokes0));
     ui->DesX0->display(localDesiredPos0[0]);
     ui->DesY0->display(localDesiredPos0[1]);
@@ -689,7 +697,7 @@ void MainWindow::UpdateGUIInfo()
     //ui->StiY0->display(localStiffn0_1);
     //ui->StiZ0->display(localStiffn0_2);
 
-    // thumb device
+    // thumb device - send local values
     ui->StrokeLCD1_1->display((localOutputStrokes1));
     ui->DesX1->display(localDesiredPos1[0]);
     ui->DesY1->display(localDesiredPos1[1]);
@@ -920,7 +928,7 @@ bool MainWindow::readExpStuffIn()
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
-    if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
@@ -1277,10 +1285,10 @@ bool MainWindow::readExpStuffIn()
         }
     }
 
-    //For Jasmin's MultiMass Experiment
-    if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    //For Jasmin's CrumblyCube Experiment
+    if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
-        qDebug() << "Reading In MultiMassExperiment Protocol";
+        qDebug() << "Reading In CrumblyCubeExperiment Protocol";
         //Training trials
         if (p_CommonData->TrialType=="training")
         {
@@ -1302,11 +1310,11 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
             p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
-            p_CommonData->stiffness2    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness2", NULL /*default*/));
-            p_CommonData->mass2         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass2", NULL /*default*/));
-            p_CommonData->stiffness3    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness3", NULL /*default*/));
-            p_CommonData->mass3         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass3", NULL /*default*/));
-            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+//            p_CommonData->stiffness2    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness2", NULL /*default*/));
+//            p_CommonData->mass2         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass2", NULL /*default*/));
+//            p_CommonData->stiffness3    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness3", NULL /*default*/));
+//            p_CommonData->mass3         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass3", NULL /*default*/));
+//            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
 
             /*
@@ -1375,7 +1383,7 @@ bool MainWindow::readExpStuffIn()
         //Trial Over
         else if (p_CommonData->TrialType=="end"){
             p_CommonData->currentExperimentState = endExperiment;
-            qDebug()<<"MultiMassExperiment DONE!!";
+            qDebug()<<"CrumblyCubeExperiment DONE!!";
             return false;
         }
         else if (p_CommonData->TrialType==""){
@@ -2272,13 +2280,13 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             progressPickAndPlaceExperiment(mistake);
         }
 
-        if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+        if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
         {
             //mistake boolean for incase the user presses "H" prematurely
             mistake = false;
             p_CommonData->flagMassExp = false;
 
-            qDebug("advance MultiMassExp");
+            qDebug("advance CrumblyCubeExperiment");
             //if(CheckFingers()&& (p_CommonData->fingerTouching == false && p_CommonData->thumbTouching == false))
             //{
             //PRE-TRIAL******
@@ -2437,7 +2445,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             //}
 
             //Set Mapping Text
-            if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+            if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
             {
                 mappingVal = p_CommonData->mapping;
                 QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
@@ -2507,9 +2515,9 @@ QString MainWindow::getSubjectDirectory()
     {
         return  "./HME_Subject_Data/";
     }
-    if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
-        return  "./MME_Subject_Data/";
+        return  "./CCE_Subject_Data/";
     }
     else if (p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
     {
@@ -2545,7 +2553,7 @@ void MainWindow::WriteDataToFile()
     }
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == MultiMassExperiment ||
+            p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment ||
             p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment){
         if(p_CommonData->TrialType == "training")
         {
@@ -2590,7 +2598,7 @@ void MainWindow::WriteDataToFile()
     //File names for Jasmin's Experiments
     else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
              p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-             p_CommonData->currentDynamicObjectState == MultiMassExperiment||
+             p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment||
              p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment )
     {
         //Sort data by trialName
@@ -2907,7 +2915,7 @@ void MainWindow::WriteDataToFile()
             << std::endl;
     }
 
-    else if (p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+    else if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
@@ -3373,7 +3381,7 @@ void MainWindow::WriteDataToFile()
                 << std::endl;
         }
 
-        else if(p_CommonData->currentDynamicObjectState == MultiMassExperiment)
+        else if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                    //"time = "
@@ -3653,7 +3661,7 @@ void MainWindow::on_StiffnessExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->MultiMassExp->setEnabled(false);
+    ui->CrumblyCubeExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3693,7 +3701,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
     //ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->MultiMassExp->setEnabled(false);
+    ui->CrumblyCubeExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3733,7 +3741,8 @@ void MainWindow::on_FingerMappingExp_clicked()
     p_CommonData->currentEnvironmentState   = dynamicBodies;
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
-    ui->JakeRenderCheckBox->setChecked(true);
+    //ui->JakeRenderCheckBox->setChecked(true);
+    ui->JakeRenderCheckBox->setChecked(false);
     qDebug()<<"FingerMapping Button finished";
 
     //**GUI Prompt****
@@ -3752,7 +3761,7 @@ void MainWindow::on_FingerMappingExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     //ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->MultiMassExp->setEnabled(false);
+    ui->CrumblyCubeExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3787,7 +3796,8 @@ void MainWindow::on_HoxelMappingExp_clicked()
     p_CommonData->currentEnvironmentState   = dynamicBodies;
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
-    ui->JakeRenderCheckBox->setChecked(true);
+    //ui->JakeRenderCheckBox->setChecked(true);
+    ui->JakeRenderCheckBox->setChecked(false);
     qDebug()<<"HoxelMapping Button finished";
 
     //**GUI Prompt****
@@ -3806,7 +3816,7 @@ void MainWindow::on_HoxelMappingExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     //ui->HoxelMappingExp->setEnabled(false);
-    ui->MultiMassExp->setEnabled(false);
+    ui->CrumblyCubeExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3836,9 +3846,9 @@ void MainWindow::on_SetTrialNoButton_clicked()
 
 }
 
-void MainWindow::on_MultiMassExp_clicked()
+void MainWindow::on_CrumblyCubeExp_clicked()
 {
-    QString protocolFolder = "./MultiMassProtocols/";
+    QString protocolFolder = "./CrumblyCubeProtocols/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
     p_CommonData->protocolFileLocation = temp;
@@ -3857,13 +3867,14 @@ void MainWindow::on_MultiMassExp_clicked()
     }
 */
     p_CommonData->environmentChange         = true;
-    p_CommonData->currentDynamicObjectState = MultiMassExperiment;
+    p_CommonData->currentDynamicObjectState = CrumblyCubeExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;
     p_CommonData->currentEnvironmentState   = dynamicBodies;
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
-    ui->JakeRenderCheckBox->setChecked(true);
-    qDebug()<<"Multi-Mass Button finished";
+    //ui->JakeRenderCheckBox->setChecked(true);
+    ui->JakeRenderCheckBox->setChecked(false);
+    qDebug()<<"CrumblyCubeExp Button finished";
 
     //**GUI Prompt****
     QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
@@ -3908,7 +3919,8 @@ void MainWindow::on_CubeGuidanceExp_clicked()
     p_CommonData->currentEnvironmentState   = dynamicBodies;
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
-    ui->JakeRenderCheckBox->setChecked(true);
+    //ui->JakeRenderCheckBox->setChecked(true);
+    ui->JakeRenderCheckBox->setChecked(false);
     qDebug()<<"CubeGuidance Button finished";
 
     //**GUI Prompt****
@@ -3927,7 +3939,7 @@ void MainWindow::on_CubeGuidanceExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->MultiMassExp->setEnabled(false);
+    ui->CrumblyCubeExp->setEnabled(false);
     //ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3950,7 +3962,7 @@ void MainWindow::on_Manual_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->MultiMassExp->setEnabled(false);
+    ui->CrumblyCubeExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     //ui->Manual->setEnabled(false);
 
