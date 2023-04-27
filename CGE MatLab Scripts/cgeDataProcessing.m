@@ -87,7 +87,7 @@ disp("***Data Upload and Merge Complete***")
 %Now each row will represent a subject
 
 %% Plot Success/Fails
-plotVis = "on";
+plotVis = "off";
 saveFigures = false;
 
 for j = 4%1:numSubjects
@@ -322,17 +322,128 @@ for j = 1:numSubjects
         set(forceMagFig,'PaperOrientation','landscape');
 
         print(indexForceXYZFig, strcat('figures\indexForceXYZProfiles\',...
-            'Subject',num2str(subjectNum(j)),'_IndexForceXYZProfileFig'),'-dpdf','-fillpage');
+            'Subject',num2str(subjectNum(j)),'_IndexGlobalForceXYZProfileFig'),'-dpdf','-fillpage');
 
         print(thumbforceXYZFig, strcat('figures\thumbForceXYZProfiles\',...
-            'Subject',num2str(subjectNum(j)),'_ThumbForceXYZProfileFig'),'-dpdf','-fillpage');
+            'Subject',num2str(subjectNum(j)),'_ThumbGlobalForceXYZProfileFig'),'-dpdf','-fillpage');
 
         print(forceMagFig, strcat('figures\forceMagProfiles\',...
-            'Subject',num2str(subjectNum(j)),'_forceMagProfileFig'),'-dpdf','-fillpage');
+            'Subject',num2str(subjectNum(j)),'_forceGlobalMagProfileFig'),'-dpdf','-fillpage');
     end
     hold off;
 end
 disp("compute finger global force magnitudes -- done")
+
+%% Finger Local Force Magnitudes
+close all;
+plotVis = "off";
+saveFigures = false;
+%It takes a *really* long time to render the force profiles
+renderForceProfiles = false;
+
+indexForceLocalMag = cell(numTrials, numSubjects);
+thumbForceLocalMag = cell(numTrials, numSubjects);
+for j = 1:numSubjects
+    close all;
+    for k = 1:numTrials
+        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
+        %index position x, y, z for each subject and trial
+        indexForceLocalX = subjectData{j}.indexForceX(t_i);
+        indexForceLocalY = subjectData{j}.indexForceY(t_i);
+        indexForceLocalZ = subjectData{j}.indexForceZ(t_i);
+
+        %thumb position x, y, z for each subject and trial
+        thumbForceLocalX = subjectData{j}.thumbForceX(t_i);
+        thumbForceLocalY = subjectData{j}.thumbForceY(t_i);
+        thumbForceLocalZ = subjectData{j}.thumbForceZ(t_i);
+
+        %Caluate force magnitudes for each subject and trial
+        indexForceLocalMag{k,j} = sqrt(indexForceLocalX.^2 ...
+            + indexForceLocalY.^2 + indexForceLocalZ.^2);
+
+        %Caluate force magnitudes for each subject and trial
+        thumbForceLocalMag{k,j} = sqrt(thumbForceLocalX.^2 ...
+            + thumbForceLocalY.^2 + thumbForceLocalZ.^2);
+
+        % Plot Index XYZ Force Profiles
+        if(renderForceProfiles == true)
+            indexForceXYZFig = figure(1);
+            sgtitle(strcat('Subject ',num2str(subjectNum(j)), ' All Trials Index Force XYZ Profile'));
+            timeVec = subjectData{j}.time(t_i);
+
+            subplot(3,1,1)
+            plot(timeVec, indexForceLocalX);
+            xlabel("Time [sec]"); ylabel("indexLocalForceX [N]"); hold on;
+            subplot(3,1,2);
+            plot(timeVec, indexForceLocalY);
+            xlabel("Time [sec]"); ylabel("indexLocalForceY [N]"); hold on;
+            subplot(3,1,3);
+            plot(timeVec, indexForceLocalZ);
+            xlabel("Time [sec]"); ylabel("indexLocalForceZ [N]"); hold on;
+
+            improvePlot_v2(false, true, 12, 1250, 650);
+
+            %Hide/Show Figure at Runtime
+            set(gcf,'Visible', plotVis);
+
+            % Plot Thumb XYZ Force Profiles
+            thumbforceXYZFig = figure(2);
+            sgtitle(strcat('Subject ',num2str(subjectNum(j)), ' All Trials Thumb Force XYZ Profile'));
+            timeVec = subjectData{j}.time(t_i);
+
+            subplot(3,1,1)
+            plot(timeVec, thumbForceLocalX);
+            xlabel("Time [sec]"); ylabel("thumbLocalForceX [N]"); hold on;
+            subplot(3,1,2);
+            plot(timeVec, thumbForceLocalY);
+            xlabel("Time [sec]"); ylabel("thumbLocalForceY [N]"); hold on;
+            subplot(3,1,3);
+            plot(timeVec, thumbForceLocalZ);
+            xlabel("Time [sec]"); ylabel("thumbLocalForceZ [N]"); hold on;
+
+            improvePlot_v2(false, true, 12, 1250, 650);
+            % max(thumbForceLocalX)
+
+            %Hide/Show Figure at Runtime
+            set(gcf,'Visible', plotVis);
+
+            % Plot Thumb XYZ Force Profiles
+            forceMagFig = figure(3);
+            sgtitle(strcat('Subject ',num2str(subjectNum(j)), ' All Trials Force Mag Profile'));
+            timeVec = subjectData{j}.time(t_i);
+
+            subplot(2,1,1)
+            plot(timeVec, indexForceLocalMag{k,j});
+            xlabel("Time [sec]"); ylabel("indexLocalForceMag [N]"); hold on;
+
+            subplot(2,1,2)
+            plot(timeVec, thumbForceLocalMag{k,j});
+            xlabel("Time [sec]"); ylabel("thumbLocalForceMag [N]"); hold on;
+            improvePlot_v2(false, true, 12, 1250, 650);
+
+            %Hide/Show Figure at Runtime
+            set(gcf,'Visible', plotVis);
+        end
+    end
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(indexForceXYZFig,'PaperOrientation','landscape');
+        set(thumbforceXYZFig,'PaperOrientation','landscape');
+        set(forceMagFig,'PaperOrientation','landscape');
+
+        print(indexForceXYZFig, strcat('figures\indexForceXYZProfiles\',...
+            'Subject',num2str(subjectNum(j)),'_IndexLocalForceXYZProfileFig'),'-dpdf','-fillpage');
+
+        print(thumbforceXYZFig, strcat('figures\thumbForceXYZProfiles\',...
+            'Subject',num2str(subjectNum(j)),'_ThumbLocalForceXYZProfileFig'),'-dpdf','-fillpage');
+
+        print(forceMagFig, strcat('figures\forceMagProfiles\',...
+            'Subject',num2str(subjectNum(j)),'_localForceMagProfileFig'),'-dpdf','-fillpage');
+    end
+    hold off;
+end
+disp("compute finger local force magnitudes -- done")
 
 %% Finger Normal and Shear Force Magnitudes
 %Initialize:
@@ -358,6 +469,53 @@ for j = 1:numSubjects
     end
 end
 disp("compute finger normal/shear force magnitudes -- done")
+
+%% Manipulation Force Threshold Plotting
+close all;
+saveFigures = false;
+
+forceLimit = 10; %N
+
+percentTimeTooHigh =  zeros(numTrials, numSubjects);
+
+for j = 1:numSubjects
+    for k = 1:numTrials
+        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
+        timeVec = subjectData{j}.time(t_i);
+
+        manipForceBool = indexForceLocalMag{k,j} ...
+                        + thumbForceLocalMag{k,j} ...
+                        > forceLimit;
+
+        percentTimeTooHigh(k,j) = 100*sum(manipForceBool)/length(manipForceBool);
+
+%         timeHighCompletionTimeRatio(k,j) = percentTimeTooHigh(k,j)/completionTime(k,j);
+
+        plot(timeVec,manipForceBool, 'b');
+        ylim([-0.1, 1.1]);
+
+        %title
+        title(strcat('Manip Force Bool --',...
+            ' Force Limit: ', num2str(forceLimit),'N |' ,... 
+            ' Subject #', num2str(subjectNum(j)),...
+            ' Trial #', num2str(k),...
+            ' -- % Time High: ', num2str(percentTimeTooHigh(k,j))));
+        xlabel("Time [sec]");
+        ylim([-0.2 1.2]); yticks([0 1]);
+        improvePlot;      
+
+        %Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf, strcat('figures\manipForceBool\',...
+                'Subject',num2str(subjectNum(j)),'_Trial',num2str(k),...
+                '_manipForceBool'),'-dpdf','-fillpage'); %close;
+        end
+
+    end
+end
+
+
 
 %% Sort Subject Data by Mapping
 %Mappings cell:
@@ -492,6 +650,13 @@ meanThumbShearForceMapping3 = sortByMapping(meanThumbShearForce, mapping3);
 meanThumbShearForceMapping4 = sortByMapping(meanThumbShearForce, mapping4);
 meanThumbShearForceMapping5 = sortByMapping(meanThumbShearForce, mapping5);
 
+%ManipTooHighBool for each Mapping
+manipForceBoolMapping1 = sortByMapping(percentTimeTooHigh, mapping1);
+manipForceBoolMapping2 = sortByMapping(percentTimeTooHigh, mapping2);
+manipForceBoolMapping3 = sortByMapping(percentTimeTooHigh, mapping3);
+manipForceBoolMapping4 = sortByMapping(percentTimeTooHigh, mapping4);
+manipForceBoolMapping5 = sortByMapping(percentTimeTooHigh, mapping5);
+
 disp("sort subject data by mapping group -- done")
 
 %% Plot Data
@@ -514,9 +679,10 @@ visPlotMarker = "s"; %variable used in createErrorBarPlot
 invisPlotMarker = "s"; %variable used in createErrorBarPlot
 markerSize = 20; %variable used in createErrorBarPlot
 
+
 %% Plot completionTimes
 close all;
-figure(1);
+figure;
 markerSize = 15;
 minY = -0.5; maxY = 8;
 visCubeColor = evalin('base','boxVisColor');
@@ -538,7 +704,7 @@ end
 
 %% Plot pathLengths
 %indexPathLength Plot
-figure(2);
+figure;
 subplot(1,3,1)
 markerSize = 12;
 jitterVal = 0.14;
@@ -574,7 +740,7 @@ if (saveFigures == true)
 end
 
 % close;
-% figure(2);
+% figure;
 % createCombinedErrorBarPlot("pathLengths","Path Lengths", "Mapping", "Path Length [m]");
 % improvePlot_v2(false, true, 18, 1250, 650); hold off;
 
@@ -585,7 +751,7 @@ if (saveFigures == true)
 end
 
 %% Plot Normal and Shear Forces
-figure(3);
+figure;
 subplot(1,2,1)
 markerSize = 10;
 plotMarker = "d";
@@ -654,7 +820,7 @@ disp("Plot Normal and Shear Force Error Bar Plots -- done")
 %% Plot Kinematic Data
 close all;
 %User Path Tracking
-figure(4);
+figure;
 saveFigures = false;
 animateData = false;
 
@@ -782,7 +948,7 @@ for j = 1%1:numSubjects
         timeVec = subjectData{j}.time(t_i)...
             -subjectData{j}.time(trialStartTime_index(k,j));
 
-        figure(1) % --- Separated Plot
+        figure; % --- Separated Plot
         subplot(1,2,1)
         yyaxis left;
         plot(timeVec, indexForceGlobalMag{k,j}, "r"); hold on;
@@ -1499,4 +1665,28 @@ if (saveFigures == true)
     set(gcf,'PaperOrientation','landscape');
     print(gcf, strcat('figures\RMSPlots\',...
         'RMSPlots'),'-dpdf','-fillpage'); %close;
+end
+
+
+
+
+%% Plot ManipForce PercentTimeTooHigh
+close all;
+markerSize = 15;
+minY = 15; maxY = 80;
+visCubeColor = evalin('base','boxVisColor');
+invisCubeColor = evalin('base','boxInvisColor');
+[h1, percentTimeHighMean, percentTimeHighStdVals] = ...
+    createErrorBarPlot(manipForceBoolMapping1, manipForceBoolMapping2,...
+    manipForceBoolMapping3, manipForceBoolMapping4, manipForceBoolMapping5,...
+    "% Time High", "Mapping", "Time [sec]");
+ylim([minY,maxY]);
+% legend("Visible Cube", "Invisible Cube", "Location", "northeast");
+
+improvePlot_v2(false, true, 22, 1150, 500);
+
+%Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\revisedFigs\percentTimeHigh','-dpdf','-r0');
 end

@@ -4874,10 +4874,10 @@
         "-fmacro-backtrace-limit=0",
         "-ferror-limit=1000",
         "/TP",
-        "D:\\Documents\\OneDrive - Stanford\\CHAI3D Research Project\\chai3dHoxelMapping\\ui_mychai3dwindow.h"
+        "D:\\Documents\\OneDrive - Stanford\\CHAI3D Research Project\\chai3dHoxelMapping\\ui_mainwindow.h"
     ],
     "directory": "D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/.qtc_clangd",
-    "file": "D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/ui_mychai3dwindow.h"
+    "file": "D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/ui_mainwindow.h"
 },
 {
     "arguments": [
@@ -4996,9 +4996,9 @@
         "-fmacro-backtrace-limit=0",
         "-ferror-limit=1000",
         "/TP",
-        "D:\\Documents\\OneDrive - Stanford\\CHAI3D Research Project\\chai3dHoxelMapping\\ui_mainwindow.h"
+        "D:\\Documents\\OneDrive - Stanford\\CHAI3D Research Project\\chai3dHoxelMapping\\ui_mychai3dwindow.h"
     ],
     "directory": "D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/.qtc_clangd",
-    "file": "D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/ui_mainwindow.h"
+    "file": "D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/ui_mychai3dwindow.h"
 }
 ]

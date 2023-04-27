@@ -169,6 +169,9 @@ typedef struct
     bool hoopSuccess;
     bool targetSuccess;
     bool trialSuccess;
+
+    //For CrumblyCube:
+    bool manipForceTooHigh;
 } DataRecordStruct;
 
 typedef enum

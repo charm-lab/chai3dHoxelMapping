@@ -142,6 +142,17 @@ function runExperimentStats()
     %boxRMSYMapping Mapping 5
     yRMSY_Map5 = reshape(boxRMSYMapping5(:,1:numSubjects),[],1);
 
+    %percentTimeHigh Mapping 1
+    yPTH_Map1 = reshape(manipForceBoolMapping1(:,1:numSubjects),[],1);
+    %percentTimeHigh Mapping 2
+    yPTH_Map2 = reshape(manipForceBoolMapping2(:,1:numSubjects),[],1);
+    %percentTimeHigh Mapping 3
+    yPTH_Map3 = reshape(manipForceBoolMapping3(:,1:numSubjects),[],1);
+    %percentTimeHigh Mapping 4
+    yPTH_Map4 = reshape(manipForceBoolMapping4(:,1:numSubjects),[],1);
+    %percentTimeHigh Mapping 5
+    yPTH_Map5 = reshape(manipForceBoolMapping5(:,1:numSubjects),[],1);
+
     %Find p-values
     %vertically concatenate columns of the same metric
     yCT = [yCT_visMap1; yCT_visMap2; yCT_visMap3; yCT_visMap4; yCT_visMap5];
@@ -187,6 +198,10 @@ function runExperimentStats()
 
     yRMSY = [yRMSY_Map1; yRMSY_Map2; yRMSY_Map3; yRMSY_Map4; yRMSY_Map5];
     [p_BoxRMSY, ~, stats_BoxRMSY] = anovan(yRMSY, {mappings},...
+        "Model","interaction", "Varnames", "mappings", "display",showStats);
+
+    yPTH = [yPTH_Map1; yPTH_Map2; yPTH_Map3; yPTH_Map4; yPTH_Map5];
+    [p_PTH, ~, stats_PTH] = anovan(yPTH, {mappings},...
         "Model","interaction", "Varnames", "mappings", "display",showStats);
 
     %Compare signifcance with control group only:
@@ -259,18 +274,25 @@ function runExperimentStats()
 
         %Box RMSX
         figure(2)
-        subplot(1,2,1)    
+        subplot(1,3,1)    
         compRMSX = multcompare(stats_BoxRMSX, "CriticalValueType", ...
             "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         improvePlot_v2(false, true, fontSize, width, height) 
         title("Box RMS X -- Control")
 
         %Box RMSY
-        subplot(1,2,2)    
+        subplot(1,3,2)    
         compRMSY = multcompare(stats_BoxRMSY, "CriticalValueType", ...
             "dunnett", "ControlGroup", 5, "Alpha", 0.05);
         improvePlot_v2(false, true, fontSize, width, height) 
         title("Box RMS Y -- Control")
+
+        %Percent Too High
+        subplot(1,3,3)    
+        compPTH = multcompare(stats_PTH, "CriticalValueType", ...
+            "dunnett", "ControlGroup", 5, "Alpha", 0.05);
+        improvePlot_v2(false, true, fontSize, width, height) 
+        title("PercentTooHigh -- Control")
     
         %Tables with Mapping 5 as Control:    
         tbl_CompletionTime = array2table(compCT,"VariableNames", ...
@@ -305,6 +327,9 @@ function runExperimentStats()
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
 
         tbl_BoxRMSY = array2table(compRMSY,"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+
+        tbl_PTH = array2table(compPTH,"VariableNames", ...
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
 
     %Interactable comparison with any group:
@@ -359,16 +384,22 @@ function runExperimentStats()
         
         %Box RMSX
         figure(2)
-        subplot(1,2,1)    
+        subplot(1,3,1)    
         compRMSX = multcompare(stats_BoxRMSX);
         improvePlot_v2(false, true, fontSize, width, height) 
         title("Box RMS X -- Interactable")
 
         %Box RMSY
-        subplot(1,2,2)    
+        subplot(1,3,2)    
         compRMSY = multcompare(stats_BoxRMSY);
         improvePlot_v2(false, true, fontSize, width, height) 
         title("Box RMS Y -- Interactable")
+
+        %Percent Too High
+        subplot(1,3,3)    
+        compPTH = multcompare(stats_PTH);
+        improvePlot_v2(false, true, fontSize, width, height) 
+        title("PercentTooHigh -- Interactable")
 
         %Tables with Variable Control:    
         tbl_CompletionTime = array2table(compCT,"VariableNames", ...
@@ -403,6 +434,9 @@ function runExperimentStats()
 
         tbl_BoxRMSY = array2table(compRMSY,"VariableNames", ...
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+
+        tbl_PTH = array2table(compPTH,"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
     end
 
     if (showStats == "on")
@@ -417,5 +451,6 @@ function runExperimentStats()
 %         p_BoxDrops
         p_BoxRMSX
         p_BoxRMSY
+        p_PTH
     end       
 end
