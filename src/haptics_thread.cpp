@@ -894,8 +894,6 @@ void haptics_thread::UpdateVRGraphics()
             p_CommonData->p_dynamicBox1->setMaterial(mat1);
         }
 
-
-
         //Find distance between box1 and hoop1
         chai3d::cVector3d errBox1Hoop1 = box1Pos - hoop1Pos;
 
@@ -904,11 +902,11 @@ void haptics_thread::UpdateVRGraphics()
         //Find distance between box1 and target1
         chai3d::cVector3d errBox1Target1 = box1Pos - target1Pos;
 
-
-        //If netiher the target or hoop1 are completed
+        /*
+        //If netiher the target, hoop1 are completed
         if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete)
         {
-            //qDebug()<<"target + hoop not complete";
+            //qDebug()<<"target + hoop1 not complete";
 
             if(errBox1Hoop1.length() < targetRadius)
             {
@@ -923,7 +921,7 @@ void haptics_thread::UpdateVRGraphics()
         }
         if(!p_CommonData->target1Complete && !p_CommonData->hoop2Complete)
         {
-            //qDebug()<<"target + hoop not complete";
+            //qDebug()<<"target + hoop2 not complete";
 
             if(errBox1Hoop2.length() < targetRadius)
             {
@@ -935,8 +933,45 @@ void haptics_thread::UpdateVRGraphics()
                 //p_CommonData->hoopSuccess = 1;
             }
             //qDebug()<<err11.length();
+        }*/
+
+
+        //If netiher the target, hoop1, or hoop2 are completed
+        if(!p_CommonData->target1Complete &&
+           !(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete))
+        {
+            //Only check for the first hoop
+            if(errBox1Hoop1.length() < targetRadius)
+            {
+                p_CommonData->hoop1Complete = true;
+                hoop1->setMaterial(matHoop1);
+                hoop1->setTransparencyLevel(0.85, true);
+                qDebug()<<"hoop1 completed";
+
+                p_CommonData->hoopSuccess = 0;
+            }
+        }
+        //if target and hoop 2 not complete, but hoop1 complete
+        if(!p_CommonData->target1Complete &&
+           (p_CommonData->hoop1Complete && !p_CommonData->hoop2Complete))
+        {
+            //Only check for hoop 2
+            //qDebug()<<"target + hoop not complete";
+
+            if(errBox1Hoop2.length() < targetRadius)
+            {
+                p_CommonData->hoop2Complete = true;
+                hoop2->setMaterial(matHoop2);
+                hoop2->setTransparencyLevel(0.85, true);
+                qDebug()<<"hoop2 completed";
+
+                p_CommonData->hoopSuccess = 1;
+            }
+            //qDebug()<<err11.length();
+
         }
 
+        /*
         //Check Hoops
         if(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete)
         {
@@ -945,10 +980,10 @@ void haptics_thread::UpdateVRGraphics()
         else if (!(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete))
         {
             p_CommonData->hoopSuccess = 0;
-        }
+        }*/
 
         //If the target is not completed but the both hoops are completed
-        if(!p_CommonData->target1Complete && (p_CommonData->hoop1Complete && p_CommonData->hoop2Complete))
+        else if(!p_CommonData->target1Complete && p_CommonData->hoopSuccess == 1)
         {
             //qDebug()<<"target not complete, hoop completed earlier";
             if(errBox1Target1.length()< targetRadius)
@@ -956,7 +991,7 @@ void haptics_thread::UpdateVRGraphics()
                 p_CommonData->target1Complete = true;
                 target1->setMaterial(matTarget1);
                 target1->setTransparencyLevel(0.85, true);
-                qDebug()<<"target now completed in addition to hoop";
+                qDebug()<<"target now completed in addition to both hoops";
 
                 p_CommonData->targetSuccess = 1;
                 p_CommonData->trialSuccess = 1;
@@ -3287,11 +3322,11 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     //Create box1 hoop1 -- visual only
     hoop1 = new chai3d::cMesh();
     chai3d::cCreateRing(hoop1, 0.005, targetRadius);
+    hoop1Pos = chai3d::cVector3d(-0.125, -0.15, -0.125);// chai3d::cVector3d(0.1, 0.085, -0.15);
+    hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
     hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);//rotateAboutLocalAxisDeg(1, 0, 0, 90);
     hoop1->rotateAboutLocalAxisDeg(0, 1, 0, 45);
-    hoop1Pos = chai3d::cVector3d(0.1, 0.085, -0.15);
-    hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
-    matHoop1.setBlue();
+    matHoop1.setBlueDeepSky();
     hoop1->setMaterial(matHoop1);
     hoop1->setTransparencyLevel(0.2, true);
     //Add object to the world
@@ -3300,11 +3335,11 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     //Create box1 hoop2 -- visual only
     hoop2 = new chai3d::cMesh();
     chai3d::cCreateRing(hoop2, 0.005, targetRadius);
+    hoop2Pos = chai3d::cVector3d(0.15, 0.15, hoop1Pos.z());
+    hoop2->setLocalPos(hoop2Pos.x(), hoop2Pos.y(), hoop2Pos.z());
     hoop2->rotateAboutLocalAxisDeg(1, 0, 0, 90);//rotateAboutLocalAxisDeg(1, 0, 0, 90);
     hoop2->rotateAboutLocalAxisDeg(0, 1, 0, -45);
-    hoop2Pos = chai3d::cVector3d(0.15, 0.185, hoop1Pos.z());
-    hoop2->setLocalPos(hoop2Pos.x(), hoop2Pos.y(), hoop2Pos.z());
-    matHoop2.setPink();
+    matHoop2.setPinkHot();
     hoop2->setMaterial(matHoop2);
     hoop2->setTransparencyLevel(0.2, true);
     //Add object to the world
@@ -3336,7 +3371,7 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
     // set position of box
-    box1InitPos = chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.5*boxSize1); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
+    box1InitPos = chai3d::cVector3d(0.225, 0.085-0.2, -0.5*boxSize1); //(0.1, 0.085-0.2, -0.5*boxSize1); //chai3d::cVector3d(0.1, hoop1Pos.y()-0.2, -0.02);
     p_CommonData->ODEBody1->setLocalPos(box1InitPos);
     //Set orientation of box
     p_CommonData->ODEBody1->rotateAboutLocalAxisDeg(0, 0, 1, 45);
@@ -3344,9 +3379,9 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     //Create Box1 Target Area
     target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
-    target1Pos = chai3d::cVector3d(0.1, hoop1Pos.y()+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
+    target1Pos = chai3d::cVector3d(-0.05, 0.38, 0.0);//(0.1, 0.085+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
     target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
-    matTarget1.setBlue();
+    matTarget1.setBlueLightSky();
     target1->setMaterial(matTarget1);
     target1->setUseCulling(true);
     target1->setUseTransparency(true);
@@ -3354,8 +3389,6 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     p_CommonData->p_world->addChild(target1);
 
     //WALLS:
-    //Add vertical Wall to world
-    p_CommonData->p_world->addChild(wall);
     //Back Wall properties:
     chai3d::cMaterial matBackWall;
     //matBackWall.setBlueMediumSlate();
@@ -3373,19 +3406,20 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     sideWall2->setMaterial(matSideWall2);
 
     //Make fingers collide with walls
-    wall->createAABBCollisionDetector(toolRadius);
+    //wall->createAABBCollisionDetector(toolRadius);
     backWall->createAABBCollisionDetector(toolRadius);
     sideWall1->createAABBCollisionDetector(toolRadius);
     //sideWall2->createAABBCollisionDetector(toolRadius);
     //Add objects to the world
-    p_CommonData->p_world->addChild(wall);
+    //p_CommonData->p_world->addChild(wall);
     p_CommonData->p_world->addChild(backWall);
     p_CommonData->p_world->addChild(sideWall1);
     p_CommonData->p_world->addChild(sideWall2);
 
     //Set Trial Logic Booleans
     p_CommonData->target1Complete = false;
-    p_CommonData->hoop1Complete = false;
+    p_CommonData->hoop1Complete = false;    
+    p_CommonData->hoop2Complete = false;
     p_CommonData->explorationComplete = false;
     p_CommonData->answer1 = false;
     p_CommonData->answerComplete = false;

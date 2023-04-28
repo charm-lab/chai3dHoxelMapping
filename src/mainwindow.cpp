@@ -35,7 +35,6 @@ QString device1Y; //Y
 QString device1Z; //Z
 QString dev1Mag;
 
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -1577,7 +1576,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             if(p_CommonData->TrialType == "training" || p_CommonData->TrialType == "testing")
             {
                 //If cube passed hoop and target, advance trial
-                if(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
+                if(p_CommonData->target1Complete && p_CommonData->hoopSuccess)//(p_CommonData->target1Complete && p_CommonData->hoop1Complete)
                 {
                     //advance
                     p_CommonData->trialNo++;
@@ -1588,31 +1587,6 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     {
                         qDebug()<<"_readExpStuffIn() SUCCESS 2_";
                     }
-
-                    /*
-                    //ADVANCE to next trial
-                    if(p_CommonData->trialNo == p_CommonData->AdjustedTrialNo && ui->SetTrialNo->value()!=1)
-                    {
-                        //stay at same value for this trial becuase you adjusted the trial number already
-                        qDebug()<< "~~Trial No. Adjusted To " << p_CommonData->trialNo;
-                        //read in with trial No as is
-
-                        if (readExpStuffIn())
-                        {
-                            qDebug()<<"_readExpStuffIn() SUCCESS 2_";
-                        }
-                    }
-                    else
-                    {
-                        //advance
-                        p_CommonData->trialNo++;
-                        //then read in
-                        if (readExpStuffIn())
-                        {
-                            qDebug()<<"_readExpStuffIn() SUCCESS 2_";
-                        }
-                    }
-                    */
 
                     //GUI Indication of completed trial
                     if (p_CommonData->TrialType == "training")
@@ -1665,11 +1639,6 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     }
                     qDebug()<<"Progress to FME Trial #"<<p_CommonData->trialNo<<"  Type "<< p_CommonData->TrialType;
                     p_CommonData->environmentChange = true;
-
-
-                    //p_CommonData->hoopSuccess = 1;
-                    //p_CommonData->targetSuccess = 1;
-                    //p_CommonData->trialSuccess = 1;
                 }
 
                 //If cube has not passed *both* hoop and target
@@ -1694,7 +1663,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     else if(!p_CommonData->target1Complete)
                     {
                         //If the object has gone through the hoop but not target
-                        if(p_CommonData->hoop1Complete)
+                        if(p_CommonData->hoopSuccess) //(p_CommonData->hoop1Complete)
                         {
                             //qDebug()<< "Through the Blue Hoop but not in target area yet";
                             QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
@@ -1708,11 +1677,9 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                             mistake = true;
                             p_CommonData->mistakeCounter++;
                             //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                            //p_CommonData->hoopSuccess = 1;
                         }
                         //If the object hit neither the target or hoop
-                        else if(!p_CommonData->hoop1Complete)
+                        else if(!p_CommonData->hoopSuccess) //
                         {
                             //qDebug()<< "Did not hit target area and did not pass through Blue Hoop";
                             QString labelText1 = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
@@ -1727,12 +1694,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                             mistake = true;
                             p_CommonData->mistakeCounter++;
                             //qDebug()<<"___"<<p_CommonData->trialNo;
-
-                            //p_CommonData->hoopSuccess = 0;
                         }
-                        //p_CommonData->targetSuccess = 0;
                     }
-                    //p_CommonData->trialSuccess = 0;
                 }
             }
 
@@ -1749,37 +1712,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 {
                     qDebug()<<"successful read -- back from break";
                 }
-
-                /*
-                //ADVANCE to next trial
-                if(p_CommonData->trialNo == p_CommonData->AdjustedTrialNo && ui->SetTrialNo->value()!=1)
-                {
-                    //stay at same value for this trial becuase you adjusted the trial number already
-                    qDebug()<< "~~Trial No. Adjusted To " << p_CommonData->trialNo;
-                    //read in with trial No as is
-                    if (readExpStuffIn())
-                    {
-                        qDebug()<<"successful read -- back from break";
-                    }
-                }
-                else
-                {
-                    //advance
-                    p_CommonData->trialNo++;
-                    //then read in
-                    if (readExpStuffIn())
-                    {
-                        qDebug()<<"successful read -- back from break";
-                    }
-                }
-                */
                 //GUI Stuff
-                /*
-                if (readExpStuffIn())
-                {
-                    qDebug()<<"successful read -- back from break";
-                }
-                */
                 //Logic after break
                 if (p_CommonData->TrialType == "training")
                 {
@@ -1790,7 +1723,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     //qDebug()<<"___"<<p_CommonData->trialNo;
                 }
 
-                else if (p_CommonData->TrialType == "testing"){
+                else if (p_CommonData->TrialType == "testing")
+                {
                     QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
                     labelText.append("Testing -- back from break");
                     labelText.append("</P></br>");
@@ -1798,14 +1732,16 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     //qDebug()<<"___"<<p_CommonData->trialNo;
                 }
 
-                else if (p_CommonData->TrialType == "break"){
+                else if (p_CommonData->TrialType == "break")
+                {
                     QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
                     labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
                     labelText.append("</b></P></br>");
                     ui->text->setText(labelText);
                 }
 
-                else if (p_CommonData->TrialType == "breakbreak"){
+                else if (p_CommonData->TrialType == "breakbreak")
+                {
                     QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
                     labelText.append("TIME TO CHANGE THE GROUNDING -- back from break");
                     labelText.append("</b></P></br>");
@@ -1813,7 +1749,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     // qDebug()<<"___"<<p_CommonData->trialNo;
                 }
 
-                else if (p_CommonData->TrialType == "end"){
+                else if (p_CommonData->TrialType == "end")
+                {
                     QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 10>";
                     labelText.append("END OF THE EXPERIMENT -- back from break");
                     labelText.append("</b></P></br>");
@@ -2006,7 +1943,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                 if(p_CommonData->trialNo<1)
                 {
                     p_CommonData->trialNo = 1;
-                    p_CommonData->recordFlag==true;
+                    p_CommonData->recordFlag = true;
 
                     //Read in protocol file and check if the read is successful
                     if (readExpStuffIn())
@@ -2288,7 +2225,6 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
             qDebug("advance HoxelMappingExp");
             progressPickAndPlaceExperiment(mistake);
-
         }
 
         else if (p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
