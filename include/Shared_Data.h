@@ -265,6 +265,11 @@ typedef struct
     double camRadius;
     double offset;
 
+    //camere vars for cartesian camera movement
+    double lookatPosX;
+    double lookatPosY;
+    double lookatPosZ;
+
     QMutex sharedMutex;
     QMutex dataRecordMutex;
     QMutex resetRenderMutex;

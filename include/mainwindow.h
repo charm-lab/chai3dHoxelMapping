@@ -32,7 +32,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 
 //Finger force limit in Newtons -- only for CrumblyCubeExp
-#define FINGER_FORCE_LIMIT 11
+#define FINGER_FORCE_LIMIT 20
 
 using namespace chai3d;
 using namespace std;
@@ -105,6 +105,9 @@ public:
     double initPolar;
     double initCamRadius;
     double initAzimuth;
+    double initCamPosX;
+    double initCamPosY;
+    double initCamPosZ;
 
     //------------------------------------------------------------------------------
     // DECLARED MACROS

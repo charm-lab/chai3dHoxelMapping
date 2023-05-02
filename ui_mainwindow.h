@@ -75,20 +75,23 @@ public:
     QLabel *label_56;
     QLabel *label_51;
     QCheckBox *planarCheckBox;
-    QGroupBox *groupBox;
-    QRadioButton *forceControlButton;
-    QRadioButton *positionControlButton;
     QGroupBox *groupBox_2;
     QWidget *layoutWidget3;
     QGridLayout *gridLayout_11;
-    QDoubleSpinBox *cameraRadius_Box;
-    QLabel *label_65;
+    QLabel *label_62;
+    QLabel *label_66;
     QDoubleSpinBox *cameraPolar_Box;
+    QLabel *label_70;
+    QCheckBox *lockCameraBox;
+    QLabel *label_68;
     QDoubleSpinBox *cameraAzimuth_Box;
     QPushButton *resetCameraButton;
-    QLabel *label_62;
+    QDoubleSpinBox *cameraRadius_Box;
+    QLabel *label_65;
     QLabel *label_63;
-    QCheckBox *lockCameraBox;
+    QDoubleSpinBox *cameraXPosBox;
+    QDoubleSpinBox *cameraYPosBox;
+    QDoubleSpinBox *cameraZPosBox;
     QGroupBox *groupBox_3;
     QWidget *layoutWidget4;
     QGridLayout *gridLayout_2;
@@ -210,11 +213,6 @@ public:
     QLCDNumber *direction;
     QLCDNumber *condition;
     QRadioButton *Condition1;
-    QGroupBox *groupBox_9;
-    QWidget *layoutWidget14;
-    QGridLayout *gridLayout_8;
-    QLabel *label_46;
-    QDoubleSpinBox *alphaBox;
     QPushButton *SetTrialNoButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -486,26 +484,85 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(planarCheckBox->sizePolicy().hasHeightForWidth());
         planarCheckBox->setSizePolicy(sizePolicy1);
-        groupBox = new QGroupBox(centralWidget);
-        groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(1410, 1020, 341, 271));
-        forceControlButton = new QRadioButton(groupBox);
-        forceControlButton->setObjectName(QStringLiteral("forceControlButton"));
-        forceControlButton->setGeometry(QRect(20, 40, 191, 101));
-        positionControlButton = new QRadioButton(groupBox);
-        positionControlButton->setObjectName(QStringLiteral("positionControlButton"));
-        positionControlButton->setGeometry(QRect(20, 150, 191, 101));
         groupBox_2 = new QGroupBox(centralWidget);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(880, 1020, 511, 271));
+        groupBox_2->setGeometry(QRect(880, 1020, 591, 271));
         layoutWidget3 = new QWidget(groupBox_2);
         layoutWidget3->setObjectName(QStringLiteral("layoutWidget3"));
-        layoutWidget3->setGeometry(QRect(10, 40, 491, 221));
+        layoutWidget3->setGeometry(QRect(10, 40, 571, 221));
         gridLayout_11 = new QGridLayout(layoutWidget3);
         gridLayout_11->setSpacing(6);
         gridLayout_11->setContentsMargins(11, 11, 11, 11);
         gridLayout_11->setObjectName(QStringLiteral("gridLayout_11"));
         gridLayout_11->setContentsMargins(0, 0, 0, 0);
+        label_62 = new QLabel(layoutWidget3);
+        label_62->setObjectName(QStringLiteral("label_62"));
+        sizePolicy1.setHeightForWidth(label_62->sizePolicy().hasHeightForWidth());
+        label_62->setSizePolicy(sizePolicy1);
+        label_62->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_11->addWidget(label_62, 3, 0, 1, 1);
+
+        label_66 = new QLabel(layoutWidget3);
+        label_66->setObjectName(QStringLiteral("label_66"));
+        sizePolicy1.setHeightForWidth(label_66->sizePolicy().hasHeightForWidth());
+        label_66->setSizePolicy(sizePolicy1);
+        label_66->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_11->addWidget(label_66, 1, 2, 1, 1);
+
+        cameraPolar_Box = new QDoubleSpinBox(layoutWidget3);
+        cameraPolar_Box->setObjectName(QStringLiteral("cameraPolar_Box"));
+        sizePolicy1.setHeightForWidth(cameraPolar_Box->sizePolicy().hasHeightForWidth());
+        cameraPolar_Box->setSizePolicy(sizePolicy1);
+        cameraPolar_Box->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        cameraPolar_Box->setMinimum(-360);
+        cameraPolar_Box->setMaximum(360);
+        cameraPolar_Box->setSingleStep(1);
+        cameraPolar_Box->setValue(1);
+
+        gridLayout_11->addWidget(cameraPolar_Box, 1, 1, 1, 1);
+
+        label_70 = new QLabel(layoutWidget3);
+        label_70->setObjectName(QStringLiteral("label_70"));
+        sizePolicy1.setHeightForWidth(label_70->sizePolicy().hasHeightForWidth());
+        label_70->setSizePolicy(sizePolicy1);
+        label_70->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_11->addWidget(label_70, 3, 2, 1, 1);
+
+        lockCameraBox = new QCheckBox(layoutWidget3);
+        lockCameraBox->setObjectName(QStringLiteral("lockCameraBox"));
+        lockCameraBox->setEnabled(true);
+        lockCameraBox->setChecked(true);
+
+        gridLayout_11->addWidget(lockCameraBox, 4, 1, 1, 1);
+
+        label_68 = new QLabel(layoutWidget3);
+        label_68->setObjectName(QStringLiteral("label_68"));
+        sizePolicy1.setHeightForWidth(label_68->sizePolicy().hasHeightForWidth());
+        label_68->setSizePolicy(sizePolicy1);
+        label_68->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_11->addWidget(label_68, 2, 2, 1, 1);
+
+        cameraAzimuth_Box = new QDoubleSpinBox(layoutWidget3);
+        cameraAzimuth_Box->setObjectName(QStringLiteral("cameraAzimuth_Box"));
+        sizePolicy1.setHeightForWidth(cameraAzimuth_Box->sizePolicy().hasHeightForWidth());
+        cameraAzimuth_Box->setSizePolicy(sizePolicy1);
+        cameraAzimuth_Box->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        cameraAzimuth_Box->setMinimum(-360);
+        cameraAzimuth_Box->setMaximum(360);
+        cameraAzimuth_Box->setSingleStep(1);
+        cameraAzimuth_Box->setValue(1);
+
+        gridLayout_11->addWidget(cameraAzimuth_Box, 2, 1, 1, 1);
+
+        resetCameraButton = new QPushButton(layoutWidget3);
+        resetCameraButton->setObjectName(QStringLiteral("resetCameraButton"));
+
+        gridLayout_11->addWidget(resetCameraButton, 4, 0, 1, 1);
+
         cameraRadius_Box = new QDoubleSpinBox(layoutWidget3);
         cameraRadius_Box->setObjectName(QStringLiteral("cameraRadius_Box"));
         sizePolicy1.setHeightForWidth(cameraRadius_Box->sizePolicy().hasHeightForWidth());
@@ -525,43 +582,6 @@ public:
 
         gridLayout_11->addWidget(label_65, 2, 0, 1, 1);
 
-        cameraPolar_Box = new QDoubleSpinBox(layoutWidget3);
-        cameraPolar_Box->setObjectName(QStringLiteral("cameraPolar_Box"));
-        sizePolicy1.setHeightForWidth(cameraPolar_Box->sizePolicy().hasHeightForWidth());
-        cameraPolar_Box->setSizePolicy(sizePolicy1);
-        cameraPolar_Box->setButtonSymbols(QAbstractSpinBox::PlusMinus);
-        cameraPolar_Box->setMinimum(-360);
-        cameraPolar_Box->setMaximum(360);
-        cameraPolar_Box->setSingleStep(1);
-        cameraPolar_Box->setValue(1);
-
-        gridLayout_11->addWidget(cameraPolar_Box, 1, 1, 1, 1);
-
-        cameraAzimuth_Box = new QDoubleSpinBox(layoutWidget3);
-        cameraAzimuth_Box->setObjectName(QStringLiteral("cameraAzimuth_Box"));
-        sizePolicy1.setHeightForWidth(cameraAzimuth_Box->sizePolicy().hasHeightForWidth());
-        cameraAzimuth_Box->setSizePolicy(sizePolicy1);
-        cameraAzimuth_Box->setButtonSymbols(QAbstractSpinBox::PlusMinus);
-        cameraAzimuth_Box->setMinimum(-360);
-        cameraAzimuth_Box->setMaximum(360);
-        cameraAzimuth_Box->setSingleStep(1);
-        cameraAzimuth_Box->setValue(1);
-
-        gridLayout_11->addWidget(cameraAzimuth_Box, 2, 1, 1, 1);
-
-        resetCameraButton = new QPushButton(layoutWidget3);
-        resetCameraButton->setObjectName(QStringLiteral("resetCameraButton"));
-
-        gridLayout_11->addWidget(resetCameraButton, 4, 0, 1, 1);
-
-        label_62 = new QLabel(layoutWidget3);
-        label_62->setObjectName(QStringLiteral("label_62"));
-        sizePolicy1.setHeightForWidth(label_62->sizePolicy().hasHeightForWidth());
-        label_62->setSizePolicy(sizePolicy1);
-        label_62->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-
-        gridLayout_11->addWidget(label_62, 3, 0, 1, 1);
-
         label_63 = new QLabel(layoutWidget3);
         label_63->setObjectName(QStringLiteral("label_63"));
         sizePolicy1.setHeightForWidth(label_63->sizePolicy().hasHeightForWidth());
@@ -570,12 +590,41 @@ public:
 
         gridLayout_11->addWidget(label_63, 1, 0, 1, 1);
 
-        lockCameraBox = new QCheckBox(layoutWidget3);
-        lockCameraBox->setObjectName(QStringLiteral("lockCameraBox"));
-        lockCameraBox->setEnabled(true);
-        lockCameraBox->setChecked(true);
+        cameraXPosBox = new QDoubleSpinBox(layoutWidget3);
+        cameraXPosBox->setObjectName(QStringLiteral("cameraXPosBox"));
+        sizePolicy1.setHeightForWidth(cameraXPosBox->sizePolicy().hasHeightForWidth());
+        cameraXPosBox->setSizePolicy(sizePolicy1);
+        cameraXPosBox->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        cameraXPosBox->setMinimum(-360);
+        cameraXPosBox->setMaximum(360);
+        cameraXPosBox->setSingleStep(0.05);
+        cameraXPosBox->setValue(1);
 
-        gridLayout_11->addWidget(lockCameraBox, 4, 1, 1, 1);
+        gridLayout_11->addWidget(cameraXPosBox, 1, 3, 1, 1);
+
+        cameraYPosBox = new QDoubleSpinBox(layoutWidget3);
+        cameraYPosBox->setObjectName(QStringLiteral("cameraYPosBox"));
+        sizePolicy1.setHeightForWidth(cameraYPosBox->sizePolicy().hasHeightForWidth());
+        cameraYPosBox->setSizePolicy(sizePolicy1);
+        cameraYPosBox->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        cameraYPosBox->setMinimum(-360);
+        cameraYPosBox->setMaximum(360);
+        cameraYPosBox->setSingleStep(0.05);
+        cameraYPosBox->setValue(1);
+
+        gridLayout_11->addWidget(cameraYPosBox, 2, 3, 1, 1);
+
+        cameraZPosBox = new QDoubleSpinBox(layoutWidget3);
+        cameraZPosBox->setObjectName(QStringLiteral("cameraZPosBox"));
+        sizePolicy1.setHeightForWidth(cameraZPosBox->sizePolicy().hasHeightForWidth());
+        cameraZPosBox->setSizePolicy(sizePolicy1);
+        cameraZPosBox->setButtonSymbols(QAbstractSpinBox::PlusMinus);
+        cameraZPosBox->setMinimum(-360);
+        cameraZPosBox->setMaximum(360);
+        cameraZPosBox->setSingleStep(0.05);
+        cameraZPosBox->setValue(1);
+
+        gridLayout_11->addWidget(cameraZPosBox, 3, 3, 1, 1);
 
         groupBox_3 = new QGroupBox(centralWidget);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
@@ -1277,33 +1326,6 @@ public:
 
         gridLayout_3->addWidget(Condition1, 1, 2, 1, 1);
 
-        groupBox_9 = new QGroupBox(centralWidget);
-        groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
-        groupBox_9->setEnabled(false);
-        groupBox_9->setGeometry(QRect(110, 1220, 281, 81));
-        layoutWidget14 = new QWidget(groupBox_9);
-        layoutWidget14->setObjectName(QStringLiteral("layoutWidget14"));
-        layoutWidget14->setGeometry(QRect(10, 30, 261, 41));
-        gridLayout_8 = new QGridLayout(layoutWidget14);
-        gridLayout_8->setSpacing(6);
-        gridLayout_8->setContentsMargins(11, 11, 11, 11);
-        gridLayout_8->setObjectName(QStringLiteral("gridLayout_8"));
-        gridLayout_8->setContentsMargins(0, 0, 0, 0);
-        label_46 = new QLabel(layoutWidget14);
-        label_46->setObjectName(QStringLiteral("label_46"));
-        label_46->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-
-        gridLayout_8->addWidget(label_46, 0, 0, 1, 1);
-
-        alphaBox = new QDoubleSpinBox(layoutWidget14);
-        alphaBox->setObjectName(QStringLiteral("alphaBox"));
-        alphaBox->setButtonSymbols(QAbstractSpinBox::PlusMinus);
-        alphaBox->setMaximum(1);
-        alphaBox->setSingleStep(0.01);
-        alphaBox->setValue(1);
-
-        gridLayout_8->addWidget(alphaBox, 0, 1, 1, 1);
-
         SetTrialNoButton = new QPushButton(centralWidget);
         SetTrialNoButton->setObjectName(QStringLiteral("SetTrialNoButton"));
         SetTrialNoButton->setGeometry(QRect(1230, 970, 381, 41));
@@ -1344,15 +1366,15 @@ public:
         label_51->setText(QApplication::translate("MainWindow", "Subject No.", 0));
         planarCheckBox->setText(QApplication::translate("MainWindow", "Enable HME\n"
 "Planar Constraint", 0));
-        groupBox->setTitle(QApplication::translate("MainWindow", "Control Method Toggle:", 0));
-        forceControlButton->setText(QApplication::translate("MainWindow", "Force Control", 0));
-        positionControlButton->setText(QApplication::translate("MainWindow", "Position Control", 0));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Camera Control:", 0));
-        label_65->setText(QApplication::translate("MainWindow", "Azimuth:", 0));
-        resetCameraButton->setText(QApplication::translate("MainWindow", "Reset Camera", 0));
         label_62->setText(QApplication::translate("MainWindow", "Radius:", 0));
-        label_63->setText(QApplication::translate("MainWindow", "Polar:", 0));
+        label_66->setText(QApplication::translate("MainWindow", "XPos:", 0));
+        label_70->setText(QApplication::translate("MainWindow", "ZPos:", 0));
         lockCameraBox->setText(QApplication::translate("MainWindow", "Lock Camera", 0));
+        label_68->setText(QApplication::translate("MainWindow", "YPos:", 0));
+        resetCameraButton->setText(QApplication::translate("MainWindow", "Reset Camera", 0));
+        label_65->setText(QApplication::translate("MainWindow", "Azimuth:", 0));
+        label_63->setText(QApplication::translate("MainWindow", "Polar:", 0));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "SERIAL", 0));
         label_41->setText(QApplication::translate("MainWindow", "BITNUM", 0));
         BitNumBox->setCurrentText(QApplication::translate("MainWindow", "8", 0));
@@ -1397,7 +1419,7 @@ public:
 "Experiment", 0));
         CrumblyCubeExp->setText(QApplication::translate("MainWindow", "Crumbly Cube\n"
 "Experiment\n"
-"\360\237\215\252", 0));
+"\360\237\215\252\360\237\215\252\360\237\215\252", 0));
         CubeGuidanceExp->setText(QApplication::translate("MainWindow", "~TEST ENVIRONMENTS~\n"
 "Experiment", 0));
         groupBox_6->setTitle(QApplication::translate("MainWindow", "Mine's Experiments", 0));
@@ -1424,8 +1446,6 @@ public:
         label_36->setText(QApplication::translate("MainWindow", "Direction:", 0));
         label_37->setText(QApplication::translate("MainWindow", "Condtion No.:", 0));
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));
-        groupBox_9->setTitle(QApplication::translate("MainWindow", "IIR Filter:", 0));
-        label_46->setText(QApplication::translate("MainWindow", "Alpha = ", 0));
         SetTrialNoButton->setText(QApplication::translate("MainWindow", "Set New Trial Number", 0));
     } // retranslateUi
 

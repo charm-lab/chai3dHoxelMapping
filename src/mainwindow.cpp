@@ -75,9 +75,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->BitNumBox->setCurrentIndex(0);
     ui->ParityBox->setCurrentIndex(0);
     ui->StopBox->setCurrentIndex(0);
-    //Sett IIR Filter tunaable aplha value:
-    //ui->alphaBox->setValue(0.23);
-    ui->alphaBox->setValue(1.00);
     qDebug() << tr("The interface is set successfully!");
 }
 
@@ -94,209 +91,97 @@ MainWindow::~MainWindow()
 void MainWindow::writeSerialData()
 {
     QByteArray payloadBuffer;
-
-    //IIR Filter:
-    //double alpha = ui->alphaBox->value(); //get value from input box - 0.23 seems good so far
-    //qDebug() << alpha;
-
-    if(ui->positionControlButton->isChecked())
+    //Mappings:
+    //Normal Mapping
+    if(p_CommonData->mapping == 1)
     {
-        //localDesiredPos0 = alpha*localDesiredPos0 + (1.0-alpha)*localDesiredPos0_prev;
-        //localDesiredPos1 = alpha*localDesiredPos1 + (1.0-alpha)*localDesiredPos1_prev;
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        //Ventral - thumb desired forces:
+        device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+        device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+        device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+        dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+    }
+    //Reverse Mapping
+    if(p_CommonData->mapping == 2)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - thumb desired forces:
+        device0X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
+        device0Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
+        device0Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
+        dev0Mag = QString::number(localForce1.norm(), 'f', 1);
+        //Ventral - index desired forces:
+        device1X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+        device1Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+        device1Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+        dev1Mag = QString::number(localForce0.norm(), 'f', 1);
+    }
+    //Single Mapping
+    if(p_CommonData->mapping == 3)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        //Ventral - thumb desired forces:
+        //localForce1[0] = 0.0;
+        //localForce1[1] = 0.0;
+        //localForce1[2] = 0.0;
+        device1X = QString::number(0.0); //localForce1[0] //X
+        device1Y = QString::number(0.0); //localForce1[1] //Y
+        device1Z = QString::number(0.0); //localForce1[2] //Z
+        dev1Mag = QString::number(0.0, 'f', 1);
+    }
+    //Averaged
+    if(p_CommonData->mapping == 4)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(0.5*(localForce0[0] + localForce1[0]), 'f', 1); //localForce0[0] //X
+        device0Y = QString::number(0.5*(localForce0[1] + localForce1[1]), 'f', 1); //localForce0[1] //Y
+        device0Z = QString::number(0.5*(localForce0[2] + localForce1[2]), 'f', 1); //localForce0[2] //Z
+        dev0Mag = QString::number(0.5*(localForce0.norm() + localForce1.norm()), 'f', 1);
+        //Ventral - thumb desired forces:
+        device1X = QString::number(0.0); //localForce1[0] //X
+        device1Y = QString::number(0.0); //localForce1[1] //Y
+        device1Z = QString::number(0.0); //localForce1[2] //Z
+        dev1Mag = QString::number(0.0, 'f', 1);
+    }
+    //Control - No Haptic Feedback
+    if(p_CommonData->mapping == 5)
+    {
+        //Set Device Desired Forces:
+        //Dorsal - index desired forces:
+        device0X = QString::number(0.0); //localForce0[0] //X
+        device0Y = QString::number(0.0); //localForce0[1] //Y
+        device0Z = QString::number(0.0); //localForce0[2] //Z
+        dev0Mag = QString::number(0.0, 'f', 1);
+        //Ventral - thumb desired forces:
+        device1X = QString::number(0.0); //localForce1[0] //X
+        device1Y = QString::number(0.0); //localForce1[1] //Y
+        device1Z = QString::number(0.0); //localForce1[2] //Z
+        dev1Mag = QString::number(0.0, 'f', 1);
+    }
+    else
+    {
 
-        //Mappings:
-        //Normal Mapping
-        if(p_CommonData->mapping == 1)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
-            device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
-            device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
-            dev0Mag = QString::number(localDesiredPos0.norm(), 'f', 1);
-            //Ventral - thumb desired forces:
-            device1X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
-            device1Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
-            device1Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
-            dev1Mag = QString::number(localDesiredPos1.norm(), 'f', 1);
-        }
-        //Reverse Mapping
-        if(p_CommonData->mapping == 2)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - thumb desired forces:
-            device0X = QString::number(localDesiredPos1[0], 'f', 1); //localDesiredPos1[0] //X
-            device0Y = QString::number(localDesiredPos1[1], 'f', 1); //localDesiredPos1[1] //Y
-            device0Z = QString::number(localDesiredPos1[2], 'f', 1); //localDesiredPos1[2] //Z
-            dev0Mag = QString::number(localDesiredPos1.norm(), 'f', 1);
-            //Ventral - index desired forces:
-            device1X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
-            device1Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
-            device1Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
-            dev1Mag = QString::number(localDesiredPos0.norm(), 'f', 1);
-        }
-        //Single Mapping
-        if(p_CommonData->mapping == 3)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(localDesiredPos0[0], 'f', 1); //localDesiredPos0[0] //X
-            device0Y = QString::number(localDesiredPos0[1], 'f', 1); //localDesiredPos0[1] //Y
-            device0Z = QString::number(localDesiredPos0[2], 'f', 1); //localDesiredPos0[2] //Z
-            dev0Mag = QString::number(localDesiredPos0.norm(), 'f', 1);
-            //Ventral - thumb desired forces:
-            //localDesiredPos1[0] = 0.0;
-            //localDesiredPos1[1] = 0.0;
-            //localDesiredPos1[2] = 0.0;
-            device1X = QString::number(0.0); //localDesiredPos1[0] //X
-            device1Y = QString::number(0.0); //localDesiredPos1[1] //Y
-            device1Z = QString::number(0.0); //localDesiredPos1[2] //Z
-            dev1Mag = QString::number(0.0, 'f', 1);
-        }
-        //Averaged
-        if(p_CommonData->mapping == 4)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(0.5*(localDesiredPos0[0] + localDesiredPos1[0]), 'f', 1); //localDesiredPos0[0] //X
-            device0Y = QString::number(0.5*(localDesiredPos0[1] + localDesiredPos1[1]), 'f', 1); //localDesiredPos0[1] //Y
-            device0Z = QString::number(0.5*(localDesiredPos0[2] + localDesiredPos1[2]), 'f', 1); //localDesiredPos0[2] //Z
-            dev0Mag = QString::number(0.5*(localDesiredPos0.norm() + localDesiredPos1.norm()), 'f', 1);
-            //Ventral - thumb desired forces:
-            device1X = QString::number(0.0); //localDesiredPos1[0] //X
-            device1Y = QString::number(0.0); //localDesiredPos1[1] //Y
-            device1Z = QString::number(0.0); //localDesiredPos1[2] //Z
-            dev1Mag = QString::number(0.0, 'f', 1);
-        }
-        //Control - No Haptic Feedback
-        if(p_CommonData->mapping == 5)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(0.0); //localDesiredPos0[0] //X
-            device0Y = QString::number(0.0); //localDesiredPos0[1] //Y
-            device0Z = QString::number(0.0); //localDesiredPos0[2] //Z
-            dev0Mag = QString::number(0.0, 'f', 1);
-            //Ventral - thumb desired forces:
-            device1X = QString::number(0.0); //localDesiredPos1[0] //X
-            device1Y = QString::number(0.0); //localDesiredPos1[1] //Y
-            device1Z = QString::number(0.0); //localDesiredPos1[2] //Z
-            dev1Mag = QString::number(0.0, 'f', 1);
-        }
-        else
-        {
-
-        }
-
-        //Dispay in GUI:
-        //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "mm\r\nMag: " + dev0Mag + "mm"); //device 0//device 0 _prev
-        //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "mm\r\nMag: " + dev1Mag + "mm");//device 1 //device 1_prev
-        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "mm\r\n"); //device 0//device 0 _prev
-        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "mm\r\n");//device 1 //device 1_prev
     }
 
-    if (ui->forceControlButton->isChecked())
-    {
-        //localForce0 = alpha*localForce0 + (1.0-alpha)*localForce0_prev;
-        //localForce1 = alpha*localForce1 + (1.0-alpha)*localForce1_prev;
-
-        //Mappings:
-        //Normal Mapping
-        if(p_CommonData->mapping == 1)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-            device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-            device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-            dev0Mag = QString::number(localForce0.norm(), 'f', 1);
-            //Ventral - thumb desired forces:
-            device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
-            device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
-            device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
-            dev1Mag = QString::number(localForce1.norm(), 'f', 1);
-        }
-        //Reverse Mapping
-        if(p_CommonData->mapping == 2)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - thumb desired forces:
-            device0X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
-            device0Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
-            device0Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
-            dev0Mag = QString::number(localForce1.norm(), 'f', 1);
-            //Ventral - index desired forces:
-            device1X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-            device1Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-            device1Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-            dev1Mag = QString::number(localForce0.norm(), 'f', 1);
-        }
-        //Single Mapping
-        if(p_CommonData->mapping == 3)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
-            device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
-            device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
-            dev0Mag = QString::number(localForce0.norm(), 'f', 1);
-            //Ventral - thumb desired forces:
-            //localForce1[0] = 0.0;
-            //localForce1[1] = 0.0;
-            //localForce1[2] = 0.0;
-            device1X = QString::number(0.0); //localForce1[0] //X
-            device1Y = QString::number(0.0); //localForce1[1] //Y
-            device1Z = QString::number(0.0); //localForce1[2] //Z
-            dev1Mag = QString::number(0.0, 'f', 1);
-        }
-        //Averaged
-        if(p_CommonData->mapping == 4)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(0.5*(localForce0[0] + localForce1[0]), 'f', 1); //localForce0[0] //X
-            device0Y = QString::number(0.5*(localForce0[1] + localForce1[1]), 'f', 1); //localForce0[1] //Y
-            device0Z = QString::number(0.5*(localForce0[2] + localForce1[2]), 'f', 1); //localForce0[2] //Z
-            dev0Mag = QString::number(0.5*(localForce0.norm() + localForce1.norm()), 'f', 1);
-            //Ventral - thumb desired forces:
-            device1X = QString::number(0.0); //localForce1[0] //X
-            device1Y = QString::number(0.0); //localForce1[1] //Y
-            device1Z = QString::number(0.0); //localForce1[2] //Z
-            dev1Mag = QString::number(0.0, 'f', 1);
-        }
-        //Control - No Haptic Feedback
-        if(p_CommonData->mapping == 5)
-        {
-            //Set Device Desired Forces:
-            //Dorsal - index desired forces:
-            device0X = QString::number(0.0); //localForce0[0] //X
-            device0Y = QString::number(0.0); //localForce0[1] //Y
-            device0Z = QString::number(0.0); //localForce0[2] //Z
-            dev0Mag = QString::number(0.0, 'f', 1);
-            //Ventral - thumb desired forces:
-            device1X = QString::number(0.0); //localForce1[0] //X
-            device1Y = QString::number(0.0); //localForce1[1] //Y
-            device1Z = QString::number(0.0); //localForce1[2] //Z
-            dev1Mag = QString::number(0.0, 'f', 1);
-        }
-        else
-        {
-
-        }
-
-        //dev0Mag = QString::number(10.0, 'f', 1);
-        //dev1Mag = QString::number(10.0, 'f', 1);
-        //Dispay in GUI:
-        //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\n); //device 0//device 0 _prev
-        //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
-        ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z + "N\r\n" + "Mag: " + dev0Mag + "N\r\n"); //device 0 //device 0 _prev
-        ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n" + "Mag: " + dev1Mag + "N\r\n"); //device 1 //device 1_prev
-    }
-
-
-    //QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
-    //device0Y = QString::number(20.0, 'f', 1);
-
+    //dev0Mag = QString::number(10.0, 'f', 1);
+    //dev1Mag = QString::number(10.0, 'f', 1);
+    //Dispay in GUI:
+    //ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z +  "N\r\nOld: " + device0X_prev + " | " + device0Y_prev + " | " + device0Z_prev + "N\r\n); //device 0//device 0 _prev
+    //ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nOld: " + device1X_prev + " | " + device1Y_prev + " | " + device1Z_prev + "N\r\nMag: " + dev1Mag + "N");//device 1 //device 1_prev
+    ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z + "N\r\n" + "Mag: " + dev0Mag + "N\r\n"); //device 0 //device 0 _prev
+    ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n" + "Mag: " + dev1Mag + "N\r\n"); //device 1 //device 1_prev
 
     QString serialData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
 
@@ -324,32 +209,6 @@ void MainWindow::writeSerialData()
         payloadBuffer = payloadBuffer.append(serialData);
         serial->write(payloadBuffer, payloadBuffer.size());
     }
-
-    /*
-    //Set previous values:
-    if(ui->positionControlButton->isChecked())
-    {
-        device0X_prev = device0X;
-        device0Y_prev = device0Y;
-        device0Z_prev = device0Z;
-        device1X_prev = device1X;
-        device1Y_prev = device1Y;
-        device1Z_prev = device1Z;
-        localDesiredPos0_prev = localDesiredPos0;
-        localDesiredPos1_prev = localDesiredPos1;
-    }
-    if(ui->forceControlButton->isChecked())
-    {
-        device0X_prev = device0X;
-        device0Y_prev = device0Y;
-        device0Z_prev = device0Z;
-        device1X_prev = device1X;
-        device1Y_prev = device1Y;
-        device1Z_prev = device1Z;
-        localForce0_prev = localForce0;
-        localForce1_prev = localForce1;
-    }
-    */
 }
 
 //Read received data
@@ -556,16 +415,27 @@ void MainWindow::Initialize()
     ui->cameraPolar_Box->setValue(p_CommonData->polar);
     ui->cameraRadius_Box->setValue(p_CommonData->camRadius);
     ui->cameraAzimuth_Box->setValue(p_CommonData->azimuth);
+    //Cartesian:
+
     // Save initial camera values for reset
-    initOffset= p_CommonData->offset;
+    initOffset = p_CommonData->offset;
     initPolar = p_CommonData->polar;
     initCamRadius = p_CommonData->camRadius;
     initAzimuth = p_CommonData->azimuth;
+
+    initCamPosX = 0.0;
+    initCamPosY = 0.1;
+    initCamPosZ = 0.1;
+
+    p_CommonData->lookatPosX = initCamPosX;
+    p_CommonData->lookatPosY = initCamPosY;
+    p_CommonData->lookatPosZ = initCamPosZ;
+
+    ui->cameraXPosBox->setValue(p_CommonData->lookatPosX);
+    ui->cameraYPosBox->setValue(p_CommonData->lookatPosY);
+    ui->cameraZPosBox->setValue(p_CommonData->lookatPosZ);
     //Initilize planar constraint box
     ui->planarCheckBox->setChecked(false);
-    //Initialize Force control button:
-    ui->forceControlButton->setChecked(true);
-    ui->positionControlButton->setChecked(false);
 
     ui->SetTrialNoButton->setEnabled(false);
 
@@ -742,16 +612,34 @@ void MainWindow::UpdateGUIInfo()
         ui->cameraRadius_Box->setEnabled(true);
         ui->cameraAzimuth_Box->setEnabled(true);
 
-        //Set the new values to change the camera
+        ui->cameraXPosBox->setEnabled(true);
+        ui->cameraYPosBox->setEnabled(true);
+        ui->cameraZPosBox->setEnabled(true);
+
+        //Set the new values to change the camera polar angles
         p_CommonData->polar = ui->cameraPolar_Box->value();
         p_CommonData->camRadius = ui->cameraRadius_Box->value();
         p_CommonData->azimuth = ui->cameraAzimuth_Box->value();
+
+        //Set the new values to change the camera Cartesian coordiantes
+
+        // Update camera Pos
+        p_CommonData->lookatPosX = ui->cameraXPosBox->value();
+        p_CommonData->lookatPosY = ui->cameraYPosBox->value();
+        p_CommonData->lookatPosZ = ui->cameraZPosBox->value();
+        //Rest of camera update occures in haptics_thread::UpdateVRGraphics()
+
+
     }
     else //disable boxes to lock camera
     {
         ui->cameraPolar_Box->setEnabled(false);
         ui->cameraRadius_Box->setEnabled(false);
         ui->cameraAzimuth_Box->setEnabled(false);
+
+        ui->cameraXPosBox->setEnabled(false);
+        ui->cameraYPosBox->setEnabled(false);
+        ui->cameraZPosBox->setEnabled(false);
     }
 
     //Disable planar constraint if not using HME:
@@ -1309,11 +1197,11 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
             p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
-//            p_CommonData->stiffness2    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness2", NULL /*default*/));
-//            p_CommonData->mass2         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass2", NULL /*default*/));
-//            p_CommonData->stiffness3    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness3", NULL /*default*/));
-//            p_CommonData->mass3         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass3", NULL /*default*/));
-//            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+            //            p_CommonData->stiffness2    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness2", NULL /*default*/));
+            //            p_CommonData->mass2         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass2", NULL /*default*/));
+            //            p_CommonData->stiffness3    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness3", NULL /*default*/));
+            //            p_CommonData->mass3         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass3", NULL /*default*/));
+            //            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
 
             /*
@@ -1764,8 +1652,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
     }
 
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-       p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-       p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
+            p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
         //Set Mapping Text
         QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
@@ -3749,4 +3637,8 @@ void MainWindow::on_resetCameraButton_clicked()
     ui->cameraPolar_Box->setValue(initPolar);
     ui->cameraRadius_Box->setValue(initCamRadius);
     ui->cameraAzimuth_Box->setValue(initAzimuth);
+    ui->cameraXPosBox->setValue(initCamPosX);
+    ui->cameraYPosBox->setValue(initCamPosY);
+    ui->cameraZPosBox->setValue(initCamPosZ);
+
 }

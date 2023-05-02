@@ -117,7 +117,6 @@ void haptics_thread::run()
             //Eigen::Vector3d inputAxis(0,1,0); // input axis for sin control and circ control modes
             switch(p_CommonData->currentControlState)
             {
-
             case idleControl:
                 UpdateVRGraphics();
                 p_CommonData->wearableDelta0->TurnOffControl();
@@ -193,7 +192,8 @@ void haptics_thread::UpdateVRGraphics()
 #endif
 
 #ifndef OCULUS
-    p_CommonData->lookatPos.set(0.0, 0.1, 0.1);
+    //p_CommonData->lookatPos.set(0.0, 0.1, 0.1);
+    p_CommonData->lookatPos.set(p_CommonData->lookatPosX, p_CommonData->lookatPosY, p_CommonData->lookatPosZ);
 #endif
     // update camera parameters
     p_CommonData->p_camera->set( p_CommonData->cameraPos,
@@ -3317,12 +3317,21 @@ void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Wir
 void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experiment
 {
     qDebug() << "start SetDynEnvironCrumblyCubeExp()";
+
+    //p_CommonData->lookatPos.set(1.0, 0.0, 0.0);
+    //p_CommonData->cameraPos.set(0.5, 0.0, 0.0);
+//    p_CommonData->upVector.set(0.0, 0.0, -1.0);
+
+    p_CommonData->p_camera->set( p_CommonData->cameraPos,
+                                 p_CommonData->lookatPos,
+                                 p_CommonData->upVector);
+
     targetRadius = 0.05;
 
     //Create box1 hoop1 -- visual only
     hoop1 = new chai3d::cMesh();
     chai3d::cCreateRing(hoop1, 0.005, targetRadius);
-    hoop1Pos = chai3d::cVector3d(-0.125, -0.15, -0.125);// chai3d::cVector3d(0.1, 0.085, -0.15);
+    hoop1Pos = chai3d::cVector3d(-0.1, -0.15, -0.125);// chai3d::cVector3d(0.1, 0.085, -0.15);
     hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
     hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);//rotateAboutLocalAxisDeg(1, 0, 0, 90);
     hoop1->rotateAboutLocalAxisDeg(0, 1, 0, 45);
@@ -3379,9 +3388,9 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     //Create Box1 Target Area
     target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
-    target1Pos = chai3d::cVector3d(-0.05, 0.38, 0.0);//(0.1, 0.085+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
+    target1Pos = chai3d::cVector3d(0.0, 0.38, 0.0);//(0.1, 0.085+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
     target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
-    matTarget1.setBlueLightSky();
+    matTarget1.setGreenMediumSpring();
     target1->setMaterial(matTarget1);
     target1->setUseCulling(true);
     target1->setUseTransparency(true);
