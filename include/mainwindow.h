@@ -127,6 +127,8 @@ private:
     void keyPressEvent(QKeyEvent* a_event);
 
 private slots:
+    QString mapFingersToDevices();
+    //double forceLimitPulse(double);
     void progressPickAndPlaceExperiment(bool mistake);
     void UpdateGUIInfo();
     //void on_CalibratePushButton_clicked();
