@@ -85,12 +85,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//double MainWindow::forceLimitPulse(double F)
-//{
-
-//}
-
-double oscilationFreq = 10.0;
 QString MainWindow::mapFingersToDevices()
 {
     //Normal Mapping
@@ -176,20 +170,6 @@ QString MainWindow::mapFingersToDevices()
 
     }
 
-    //Rewrite force output to oscillate
-    if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
-    {
-        if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
-        {
-            dev0Mag = QString::number(localForce0.norm()*sin(oscilationFreq*(1/p_CommonData->hapticRateEstimate)), 'f', 1);
-            dev1Mag = QString::number(localForce1.norm()*sin(oscilationFreq*(1/p_CommonData->hapticRateEstimate)), 'f', 1);
-        }
-        else
-        {
-
-        }
-    }
-
     //dev0Mag = QString::number(10.0, 'f', 1);
     //dev1Mag = QString::number(10.0, 'f', 1);
     //Dispay in GUI:
@@ -197,9 +177,7 @@ QString MainWindow::mapFingersToDevices()
     ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z + "N\r\n" + "Mag: " + dev0Mag + "N\r\n"); //device 0 //device 0 _prev
     ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n" + "Mag: " + dev1Mag + "N\r\n"); //device 1 //device 1_prev
 
-
     QString deviceData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
-
     return deviceData;
 }
 
@@ -228,7 +206,7 @@ void MainWindow::writeSerialData()
     }
     payloadBuffer = payloadBuffer.append(serialData);
 
-    //qDebug() << payloadBuffer << " " << serial->isWritable();
+    qDebug() << payloadBuffer << " " << serial->isWritable();
 
     //qDebug() << p_CommonData->mapping;
 

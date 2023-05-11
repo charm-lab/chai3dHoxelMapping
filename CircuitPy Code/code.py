@@ -119,7 +119,7 @@ def pumps_on(d):
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
 
-#Everything is off and air id released from the line
+# Everything is off and air id released from the line
 def exhaust0():
     pwm_pump1.duty_cycle = 0
     pwm_pump2.duty_cycle = 0
@@ -242,8 +242,6 @@ def x_neg(d):
     valve7.value = False
     valve8.value = False
 
-
-
 def y_pos(d):
     pwm_pump1.duty_cycle = 0
     pwm_pump2.duty_cycle = d
@@ -281,10 +279,6 @@ def y_neg(d):
     valve6.value = False
     valve7.value = False
     valve8.value = True
-
-
-
-
 
 # ------ Hoxel 0 ------
 
@@ -342,17 +336,25 @@ def hoxel1Off():
 #     valve8.value = False
 #     valve1c.value = False
 
-def moveHoxel0(current_val0, prev_val0):
-    # if extending, use positive axes| if contracting, use negative axes
-    if current_val0 <= min_force:
-        exhaust0()
+def moveHoxel0(current_val0, prev_val0, pulseBool):
+    if pulseBool == 0:
+        # if extending, use positive axes| if contracting, use negative axes
+        if current_val0 <= min_force:
+            exhaust0()
+        else:
+            if current_val0 >= prev_val0:
+                #EXTEND
+                z0_neg(duty2bits(get_pump_Speed(current_val0)))
+            else:
+                #CONTRACT
+                z0_pos(duty2bits(get_pump_Speed(current_val0)))
     else:
         if current_val0 >= prev_val0:
-        #EXTEND
-            z0_neg(duty2bits(get_pump_Speed(current_val0)))
+            #EXTEND
+            z0_neg(duty2bits(100))
         else:
-        #CONTRACT
-            z0_pos(duty2bits(get_pump_Speed(current_val0)))
+            #CONTRACT
+            z0_pos(duty2bits(100))
 
 #     elif current_val0 >= prev_val0:
 #         Z0_axis_pos(get_pump_Speed(current_val0))
@@ -361,18 +363,19 @@ def moveHoxel0(current_val0, prev_val0):
 #     elif current_val0 >= max_force:
 #         Z0_axis_pos(get_pump_Speed(max_force))
 
-
-def moveHoxel1(current_val1, prev_val1):
-    # if extending, use positive axes | if contracting, use negative axes
-    if current_val1 <= min_force:
-        exhaust1()
-    else:
-        if current_val1 >= prev_val1:
-            #EXTEND
-            z1_neg(duty2bits(get_pump_Speed(current_val1)))
+def moveHoxel1(current_val1, prev_val1, pulseBool):
+    if pulseBool == 0:
+        # if extending, use positive axes | if contracting, use negative axes
+        if current_val1 <= min_force:
+            exhaust1()
         else:
-            #CONTRACT
-            z1_pos(duty2bits(get_pump_Speed(current_val1)))
+            if current_val1 >= prev_val1:
+                #EXTEND
+                z1_neg(duty2bits(get_pump_Speed(current_val1)))
+            else:
+                #CONTRACT
+                z1_pos(duty2bits(get_pump_Speed(current_val1)))
+    else:
 
 #     elif current_val1 >= prev_val1:
 #         Z1_axis_pos(get_pump_Speed(current_val1))
@@ -415,6 +418,7 @@ while True:
         Y1 = float(data_list[5])
         Z1 = float(data_list[6])
         magF1 = float(data_list[7])
+        pulseBool = float(data_list[8])
 
         # Change Z0 and Z1 depending on rendering choice
         if renderChoice == 1:
@@ -429,9 +433,9 @@ while True:
             prev_val1 = Z1_prev
 
         # Hoxel 0:
-        moveHoxel0(current_val0, prev_val0)
+        moveHoxel0(current_val0, prev_val0, pulseBool)
         # Hoxel 1:
-        moveHoxel1(current_val1, prev_val1)
+        moveHoxel1(current_val1, prev_val1, pulseBool)
 
         # Set prev values for each device direction
         X0_prev = X0
