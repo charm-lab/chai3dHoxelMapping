@@ -171,6 +171,7 @@ typedef struct
     bool trialSuccess;
 
     //For CrumblyCube:
+    int cceExpType;
     bool manipForceTooHigh;
 } DataRecordStruct;
 
@@ -766,6 +767,7 @@ typedef struct
 
     //For CrumblyCube to see if grasp force is too high
     bool manipForceTooHigh;
+    int cceExpType;
 } shared_data;
 
 #endif // SHARED_DATA_H

@@ -181,7 +181,6 @@ QString MainWindow::mapFingersToDevices()
     return deviceData;
 }
 
-
 //START SERIAL
 
 //Serial data writing happens here:
@@ -195,18 +194,18 @@ void MainWindow::writeSerialData()
     //Set limit for CrumblyCubeExp
     if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
-        if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
-        {
-            p_CommonData->manipForceTooHigh = true;
-        }
-        else
-        {
-            p_CommonData->manipForceTooHigh = false;
-        }
+//        if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
+//        {
+//            p_CommonData->manipForceTooHigh = true;
+//        }
+//        else
+//        {
+//            p_CommonData->manipForceTooHigh = false;
+//        }
     }
     payloadBuffer = payloadBuffer.append(serialData);
 
-    qDebug() << payloadBuffer << " " << serial->isWritable();
+    //qDebug() << payloadBuffer << " " << serial->isWritable();
 
     //qDebug() << p_CommonData->mapping;
 
@@ -713,6 +712,42 @@ void MainWindow::UpdateGUIInfo()
         p_CommonData->calibClock.stop();
         p_CommonData->calibClock.reset();
     }
+
+    //Set manip Boolean for CCE
+    if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
+    {
+        p_CommonData->manipForceTooHigh = true;        
+        if(p_CommonData->cceExpType == 3)
+        {
+            //Force Trial Progression if force limit is exceeded
+            p_CommonData->trialNo = p_CommonData->trialNo++;
+            if (readExpStuffIn())
+            {
+                qDebug()<<"readExpStuffIn() SUCCESS -- Forced Trial Prgoression complete";
+            }
+
+            qDebug() << "New TrialNo: " << p_CommonData->trialNo;
+            QString text = "New TrialNo: ";
+            text.append(QString::number(p_CommonData->trialNo));
+            text.append("\nNew Mapping: ");
+            text.append(QString::number(p_CommonData->mapping));
+            ui->text->setText(text);
+
+            //Mapping text
+            QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+            mappingText.append(QString::number(p_CommonData->mapping));
+            mappingText.append("</P></br>");
+            mappingText.append("CCE Exp Type: ");
+            mappingText.append(QString::number(p_CommonData->cceExpType));
+            ui->mappingTextBox->setText(mappingText);
+
+        }
+    }
+    else
+    {
+        p_CommonData->manipForceTooHigh = false;
+    }
+
 }
 
 void MainWindow::onGUIchanged()
@@ -1205,12 +1240,9 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
             p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
-            //            p_CommonData->stiffness2    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness2", NULL /*default*/));
-            //            p_CommonData->mass2         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass2", NULL /*default*/));
-            //            p_CommonData->stiffness3    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness3", NULL /*default*/));
-            //            p_CommonData->mass3         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass3", NULL /*default*/));
-            //            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
+            p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+            p_CommonData->cceExpType	= std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "cceExpType", NULL /*default*/));
 
             /*
             if(p_CommonData->TrialMode == 1)
@@ -1245,6 +1277,7 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
             p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
+            p_CommonData->cceExpType	= std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "cceExpType", NULL /*default*/));
 
             if(p_CommonData->TrialMode == 1)
             {
@@ -1269,6 +1302,7 @@ bool MainWindow::readExpStuffIn()
         //Trial Break
         else if (p_CommonData->TrialType=="break"){
             p_CommonData->currentExperimentState = trialBreak;
+            p_CommonData->cceExpType	= 0; // placeholder to stop code running through break transistions;
             return true;
         }
         else if (p_CommonData->TrialType=="breakbreak"){
@@ -1664,9 +1698,11 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
         //Set Mapping Text
-        QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+        QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3> Mapping #";
         mappingText.append(QString::number(p_CommonData->mapping));
-        mappingText.append("</P></br>");
+        mappingText.append("</P></br>\n");
+        mappingText.append("CCE Exp Type: ");
+        mappingText.append(QString::number(p_CommonData->cceExpType));
         ui->mappingTextBox->setText(mappingText);
     }
 
@@ -1807,6 +1843,9 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                     labelText .append("PRESS NEXT AFTER THE BREAK");
                     labelText .append("</b></P></br>");
                     ui->text->setText(labelText);
+
+
+
                 }
 
                 else if (p_CommonData->TrialType == "breakbreak")
@@ -2184,7 +2223,23 @@ QString MainWindow::getSubjectDirectory()
     }
     if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
-        return  "./CCE_Subject_Data/";
+        if(p_CommonData->cceExpType == 1)
+        {
+            return  "./CCE_Subject_Data/CCE_ExpType1/";
+        }
+        if(p_CommonData->cceExpType == 2)
+        {
+            return  "./CCE_Subject_Data/CCE_ExpType2/";
+        }
+        if(p_CommonData->cceExpType == 3)
+        {
+            return  "./CCE_Subject_Data/CCE_ExpType3/";
+        }
+        // This shouldn't happen but just in case:
+        else
+        {
+            return  "./CCE_Subject_Data/";
+        }
     }
     else if (p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
     {
@@ -2596,12 +2651,14 @@ void MainWindow::WriteDataToFile()
             << "box1PosX" << "," << " " //in m
             << "box1PosY" << "," << " " //in m
             << "box1PosZ" << "," << " " //in m
+               /*
             << "box2PosX" << "," << " " //in m
             << "box2PosY" << "," << " " //in m
             << "box2PosZ" << "," << " " //in m
             << "box3PosX" << "," << " " //in m
             << "box3PosY" << "," << " " //in m
             << "box3PosZ" << "," << " " //in m
+               */
 
                //box1 local rotation Matrix
             << "box1LocalRot_11" << "," << " "
@@ -2623,7 +2680,7 @@ void MainWindow::WriteDataToFile()
             << "box1GlobalRot_31" << "," << " "
             << "box1GlobalRot_32" << "," << " "
             << "box1GlobalRot_33" << "," << " "
-
+            /*
                //box2 local rotation Matrix
             << "box2LocalRot_11" << "," << " "
             << "box2LocalRot_12" << "," << " "
@@ -2665,7 +2722,7 @@ void MainWindow::WriteDataToFile()
             << "box3GlobalRot_31" << "," << " "
             << "box3GlobalRot_32" << "," << " "
             << "box3GlobalRot_33" << "," << " "
-
+            */
                //interaction forces in local coordinates
             << "indexForceX" << "," << " " //in N
             << "indexForceY" << "," << " " //in N
@@ -2725,12 +2782,12 @@ void MainWindow::WriteDataToFile()
             << "thumbRot_33" << "," << " "
 
             << "manipForceTooHigh" << "," << " " //bool
+            << "cceExpType" << "," << " "
             << "mapping" << "," << " "
             << "trialSuccess" << "," << " " //bool
 
             << std::endl;
     }
-
 
     //Parse through localDataVector to more easily readable form in .txt or .csv file
     for (int i = 0; i < localDataRecorderVector.size(); i++)
@@ -3066,8 +3123,8 @@ void MainWindow::WriteDataToFile()
 
                    //Cube position
                 << localDataRecorderVector[i].box1Pos << "," << " " //Each needs 3 headers
-                << localDataRecorderVector[i].box2Pos << "," << " " //Each needs 3 headers
-                << localDataRecorderVector[i].box3Pos << "," << " " //Each needs 3 headers
+                //<< localDataRecorderVector[i].box2Pos << "," << " " //Each needs 3 headers
+                //<< localDataRecorderVector[i].box3Pos << "," << " " //Each needs 3 headers
 
                    //Box1 -- Cube local orientation
                 << localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
@@ -3090,7 +3147,7 @@ void MainWindow::WriteDataToFile()
                 << localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
                 << localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
                 << localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
-
+                /*
                    //Box2 --Cube local orientation
                 << localDataRecorderVector[i].box2LocalRotMat(0,0) << "," << " "  //Matrix 1st row
                 << localDataRecorderVector[i].box2LocalRotMat(0,1) << "," << " "
@@ -3134,7 +3191,7 @@ void MainWindow::WriteDataToFile()
                 << localDataRecorderVector[i].box3GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
                 << localDataRecorderVector[i].box3GlobalRotMat(2,1) << "," << " "
                 << localDataRecorderVector[i].box3GlobalRotMat(2,2) << "," << " "
-
+                */
                    //"cond = "
                    //<< localDataRecorderVector[i].conditionNo<< "," << " "
 
@@ -3188,6 +3245,8 @@ void MainWindow::WriteDataToFile()
 
                    //ManipForceTooHigh Threshold Bool
                 << localDataRecorderVector[i].manipForceTooHigh << "," << " "
+                   //CCE Experiment Type
+                << localDataRecorderVector[i].cceExpType << "," << " "
                    //mapping
                 << localDataRecorderVector[i].mapping << "," << " "
                    //Trial success booleans

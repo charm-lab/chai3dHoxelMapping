@@ -880,18 +880,36 @@ void haptics_thread::UpdateVRGraphics()
 
     if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
-        //Check finger forces don't exceed force limit
-        if(p_CommonData->manipForceTooHigh == true)
+        // Change box color to red when force limit is exceeded for cceExpType 1
+        if(p_CommonData->cceExpType == 1)
         {
-            //Change box color if limit exceeded
-            mat1.setRed();
-            p_CommonData->p_dynamicBox1->setMaterial(mat1);
+            //Check finger forces don't exceed force limit
+            if(p_CommonData->manipForceTooHigh == true)
+            {
+                //Change box color if limit exceeded
+                mat1.setRed();
+                p_CommonData->p_dynamicBox1->setMaterial(mat1);
+            }
+            else
+            {
+                //Change box color if limit not exceeded
+                mat1.setBlue();
+                p_CommonData->p_dynamicBox1->setMaterial(mat1);
+            }
         }
-        else
+
+        if(p_CommonData->cceExpType == 2)
         {
-            //Change box color if limit not exceeded
-            mat1.setBlue();
-            p_CommonData->p_dynamicBox1->setMaterial(mat1);
+
+            //cceExpType 2 or 3 has no visual indicator
+            //cceExpType 2 allows trial to proceed
+        }
+
+        if(p_CommonData->cceExpType == 3)
+        {
+
+            //cceExpType 3 forces trial to progress
+
         }
 
         //Find distance between box1 and hoop1
@@ -1605,6 +1623,7 @@ void haptics_thread::RecordData()
         //p_CommonData->dataRecorder.hoopSuccess        = p_CommonData->hoopSuccess;
         //p_CommonData->dataRecorder.targetSuccess      = p_CommonData->targetSuccess;
         p_CommonData->dataRecorder.manipForceTooHigh     = p_CommonData->manipForceTooHigh;
+        p_CommonData->dataRecorder.cceExpType           = p_CommonData->cceExpType;
         p_CommonData->dataRecorder.mapping               = p_CommonData->mapping;
         p_CommonData->dataRecorder.trialSuccess          = p_CommonData->trialSuccess;
     }
