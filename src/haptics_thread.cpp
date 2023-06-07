@@ -3435,8 +3435,8 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
 
     //Make fingers collide with walls
     //wall->createAABBCollisionDetector(toolRadius);
-    backWall->createAABBCollisionDetector(toolRadius);
-    sideWall1->createAABBCollisionDetector(toolRadius);
+    //backWall->createAABBCollisionDetector(toolRadius);
+    //sideWall1->createAABBCollisionDetector(toolRadius);
     //sideWall2->createAABBCollisionDetector(toolRadius);
     //Add objects to the world
     //p_CommonData->p_world->addChild(wall);

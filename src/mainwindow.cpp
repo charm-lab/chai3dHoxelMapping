@@ -7,6 +7,9 @@
 #include <iomanip>
 #include <string>
 #include <QTime>
+#include <QMessageBox>
+
+#include "breaktimedialog.h"
 
 //***Define directory/folder for Subjects' experiment info***
 //Make sure this directory exists before runtime or else the data will not save
@@ -76,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->ParityBox->setCurrentIndex(0);
     ui->StopBox->setCurrentIndex(0);
     qDebug() << tr("The interface is set successfully!");
+
 }
 
 MainWindow::~MainWindow()
@@ -724,23 +728,54 @@ void MainWindow::UpdateGUIInfo()
             if (readExpStuffIn())
             {
                 qDebug()<<"readExpStuffIn() SUCCESS -- Forced Trial Prgoression complete";
+
+                if(p_CommonData->TrialType == "break")
+                {
+                    // Change and then show message box
+                    QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                    labelText.append("PRESS NEXT AFTER THE BREAK --");
+                    labelText.append("</b></P></br>");
+
+                    ui->text->setText(labelText);
+                    qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                    // Pop up countdown timer:
+                    showBreakTimeMessageBox(); // This has to remain in UpdateGUIInfo to act as an interrput
+                }
+                else
+                {
+                    qDebug() << "New TrialNo: " << p_CommonData->trialNo;
+                    QString text = "New TrialNo: ";
+                    text.append(QString::number(p_CommonData->trialNo));
+                    text.append("\nNew Mapping: ");
+                    text.append(QString::number(p_CommonData->mapping));
+                    ui->text->setText(text);
+                }
+
+                //Mapping text
+                QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+                mappingText.append(QString::number(p_CommonData->mapping));
+                mappingText.append("</P></br>");
+                mappingText.append("CCE Exp Type: ");
+                mappingText.append(QString::number(p_CommonData->cceExpType));
+                ui->mappingTextBox->setText(mappingText);
             }
+            else
+            {                
+                qDebug() << "New TrialNo: " << p_CommonData->trialNo;
+                QString text = "New TrialNo: ";
+                text.append(QString::number(p_CommonData->trialNo));
+                text.append("\nNew Mapping: ");
+                text.append(QString::number(p_CommonData->mapping));
+                ui->text->setText(text);
 
-            qDebug() << "New TrialNo: " << p_CommonData->trialNo;
-            QString text = "New TrialNo: ";
-            text.append(QString::number(p_CommonData->trialNo));
-            text.append("\nNew Mapping: ");
-            text.append(QString::number(p_CommonData->mapping));
-            ui->text->setText(text);
-
-            //Mapping text
-            QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-            mappingText.append(QString::number(p_CommonData->mapping));
-            mappingText.append("</P></br>");
-            mappingText.append("CCE Exp Type: ");
-            mappingText.append(QString::number(p_CommonData->cceExpType));
-            ui->mappingTextBox->setText(mappingText);
-
+                //Mapping text
+                QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
+                mappingText.append(QString::number(p_CommonData->mapping));
+                mappingText.append("</P></br>");
+                mappingText.append("CCE Exp Type: ");
+                mappingText.append(QString::number(p_CommonData->cceExpType));
+                ui->mappingTextBox->setText(mappingText);
+            }
         }
     }
     else
@@ -1302,7 +1337,7 @@ bool MainWindow::readExpStuffIn()
         //Trial Break
         else if (p_CommonData->TrialType=="break"){
             p_CommonData->currentExperimentState = trialBreak;
-            p_CommonData->cceExpType	= 0; // placeholder to stop code running through break transistions;
+            p_CommonData->cceExpType = 0; // placeholder to stop code running through break transistions;
             return true;
         }
         else if (p_CommonData->TrialType=="breakbreak"){
@@ -1467,6 +1502,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 labelText .append("</b></P></br>");
                 ui->text->setText(labelText);
                 qDebug()<<"BREAK "<<p_CommonData->trialNo;
+
             }
             else if (p_CommonData->TrialType == "breakbreak")
             {
@@ -1547,6 +1583,9 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                         labelText .append("</b></P></br>");
                         ui->text->setText(labelText);
                         qDebug()<<"BREAK "<<p_CommonData->trialNo;
+
+                        // Pop up countdown timer:
+                        showBreakTimeMessageBox();
                     }
                     else if (p_CommonData->TrialType == "breakbreak")
                     {
@@ -1668,6 +1707,9 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     labelText.append("PRESS NEXT AFTER THE BREAK -- back from break");
                     labelText.append("</b></P></br>");
                     ui->text->setText(labelText);
+
+                    // Pop up countdown timer:
+                    showBreakTimeMessageBox();
                 }
 
                 else if (p_CommonData->TrialType == "breakbreak")
@@ -1697,6 +1739,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
             p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
+
         //Set Mapping Text
         QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3> Mapping #";
         mappingText.append(QString::number(p_CommonData->mapping));
@@ -1721,8 +1764,22 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
     }
 }
 
+void MainWindow::showBreakTimeMessageBox()
+{
+    BreakTimeDialog dialog(&windowGLDisplay);
+    dialog.exec();
+    // Perform any necessary actions to continue using the application after the dialog is closed
+
+    //qDebug()<<"NOW I'M CLOSED";
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *a_event)
 {
+    if (a_event->key() == Qt::Key_B)
+    {
+       // showBreakTimeMessageBox();
+
+    }
     /***Environment Adjustment Buttons***/
     //Hide/Show finger interaction forces
     if (a_event->key() == Qt::Key_Y)

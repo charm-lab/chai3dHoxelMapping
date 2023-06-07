@@ -31,6 +31,10 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+//Added for message box popups:
+#include <QMessageBox>
+#include "mychai3dwindow.h"
+
 //Finger force limit in Newtons -- only for CrumblyCubeExp
 #define FINGER_FORCE_LIMIT 20
 
@@ -126,7 +130,15 @@ private:
 
     void keyPressEvent(QKeyEvent* a_event);
 
+    // Added for Break Countdown timer
+    myCHAI3DWindow windowGLDisplay;
+    void showBreakTimeMessageBox();
+
 private slots:
+    //Added for message box popups:
+
+
+
     QString mapFingersToDevices();
     void progressPickAndPlaceExperiment(bool mistake);
     void UpdateGUIInfo();

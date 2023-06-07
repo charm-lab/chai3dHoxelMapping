@@ -5,21 +5,21 @@ clear; close all; clc;
 %#ok<*NOPTS>
 
 %Number of mappings tested
-numMappings = 5;
+numMappings = 1;
 %Number of trials per mapping
-numTrialsPerMapping = 10;
+numTrialsPerMapping = 5;
 %Total number of trials each subject did
 numTrials = numMappings*numTrialsPerMapping;
 %Initialization of the total number of subjects that were run in
 %the experiment
-totalNumSubjects = 5;
+totalNumSubjects = 2;
 %Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = 1;
+subjectNum = [1 2];
 
 %Load data from folder
 %Folder contatining all data:

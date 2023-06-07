@@ -13,6 +13,7 @@ TEMPLATE = app
 CONFIG += qwt
 
 SOURCES += ./src/main.cpp
+SOURCES += ./src/breaktimedialog.cpp
 SOURCES += ./src/mainwindow.cpp
 SOURCES += ./src/cMotorController.cpp
 SOURCES += ./src/haptics_thread.cpp
@@ -34,6 +35,7 @@ SOURCES += ./src/Vibrotactile_thread.cpp
 SOURCES += ./src/mychai3dwindow.cpp
 
 HEADERS  += ./include/mainwindow.h
+HEADERS  += ./include/breaktimedialog.h
 HEADERS  += ./include/haptics_thread.h
 HEADERS  += ./include/cMotorController.h
 HEADERS  += ./include/shared_data.h

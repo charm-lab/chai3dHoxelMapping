@@ -44,6 +44,7 @@ OBJECTS_DIR   = release
 ####### Files
 
 SOURCES       = src\main.cpp \
+		src\breaktimedialog.cpp \
 		src\mainwindow.cpp \
 		src\cMotorController.cpp \
 		src\haptics_thread.cpp \
@@ -61,6 +62,7 @@ SOURCES       = src\main.cpp \
 		External\chai3d-3.1.1\modules\OCULUS\src\OVRRenderContext.cpp \
 		src\Vibrotactile_thread.cpp \
 		src\mychai3dwindow.cpp release\moc_mainwindow.cpp \
+		release\moc_breaktimedialog.cpp \
 		release\moc_haptics_thread.cpp \
 		release\moc_Widget_OpenGLDisplay.cpp \
 		release\moc_experiment_thread.cpp \
@@ -68,6 +70,7 @@ SOURCES       = src\main.cpp \
 		release\moc_mychai3dwindow.cpp \
 		release\moc_Vibrotactile_thread.cpp
 OBJECTS       = release\main.obj \
+		release\breaktimedialog.obj \
 		release\mainwindow.obj \
 		release\cMotorController.obj \
 		release\haptics_thread.obj \
@@ -86,6 +89,7 @@ OBJECTS       = release\main.obj \
 		release\Vibrotactile_thread.obj \
 		release\mychai3dwindow.obj \
 		release\moc_mainwindow.obj \
+		release\moc_breaktimedialog.obj \
 		release\moc_haptics_thread.obj \
 		release\moc_Widget_OpenGLDisplay.obj \
 		release\moc_experiment_thread.obj \
@@ -94,6 +98,7 @@ OBJECTS       = release\main.obj \
 		release\moc_Vibrotactile_thread.obj
 
 DIST          =  include\mainwindow.h \
+		include\breaktimedialog.h \
 		include\haptics_thread.h \
 		include\cMotorController.h \
 		include\shared_data.h \
@@ -114,6 +119,7 @@ DIST          =  include\mainwindow.h \
 		include\autoGenHashMatrix.h \
 		include\pugiconfig.hpp \
 		include\Vibrotactile_thread.h src\main.cpp \
+		src\breaktimedialog.cpp \
 		src\mainwindow.cpp \
 		src\cMotorController.cpp \
 		src\haptics_thread.cpp \
@@ -239,7 +245,7 @@ dist:
 	$(ZIP) TactileDevice.zip $(SOURCES) $(DIST) TactileDevice.pro C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\spec_pre.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\common\angle.conf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\common\msvc-base.conf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\common\msvc-desktop.conf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\qconfig.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_clucene_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_platformsupport_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_purchasing.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_purchasing_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webengine.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webengine_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webenginecore.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webenginecore_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webenginecoreheaders_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webenginewidgets.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webenginewidgets_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webview.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_webview_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\modules\qt_lib_zlib_private.pri C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\qt_functions.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\qt_config.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\win32\qt_config.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\win32-msvc2013\qmake.conf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\spec_post.prf .qmake.stash C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\default_pre.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\resolve_config.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\default_post.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\build_pass.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\qml_debug.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\win32\rtti.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\precompile_header.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\warn_on.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\qt.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\resources.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\moc.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\uic.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\file_copies.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\win32\windows.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\exceptions.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\yacc.prf C:\Qt\Qt5.7.0\5.7\msvc2013\mkspecs\features\lex.prf TactileDevice.pro C:\Qt\Qt5.7.0\5.7\msvc2013\lib\qtmain.prl C:\Qt\Qt5.7.0\5.7\msvc2013\lib\Qt5OpenGL.prl C:\Qt\Qt5.7.0\5.7\msvc2013\lib\Qt5Widgets.prl C:\Qt\Qt5.7.0\5.7\msvc2013\lib\Qt5Gui.prl C:\Qt\Qt5.7.0\5.7\msvc2013\lib\Qt5SerialPort.prl C:\Qt\Qt5.7.0\5.7\msvc2013\lib\Qt5Core.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) release\main.obj release\mainwindow.obj release\cMotorController.obj release\haptics_thread.obj release\c3DOFdevice.obj release\Widget_OpenGLDisplay.obj release\c3dofChaiDevice.obj release\trakSTAR.obj release\magtracker.obj release\experiment_thread.obj release\magTracker_thread.obj release\TappingParameters.obj release\AccSynthHashMatrix.obj release\pugixml.obj release\OVRDevice.obj release\OVRRenderContext.obj release\Vibrotactile_thread.obj release\mychai3dwindow.obj release\moc_mainwindow.obj release\moc_haptics_thread.obj release\moc_Widget_OpenGLDisplay.obj release\moc_experiment_thread.obj release\moc_magTracker_thread.obj release\moc_mychai3dwindow.obj release\moc_Vibrotactile_thread.obj
+	-$(DEL_FILE) release\main.obj release\breaktimedialog.obj release\mainwindow.obj release\cMotorController.obj release\haptics_thread.obj release\c3DOFdevice.obj release\Widget_OpenGLDisplay.obj release\c3dofChaiDevice.obj release\trakSTAR.obj release\magtracker.obj release\experiment_thread.obj release\magTracker_thread.obj release\TappingParameters.obj release\AccSynthHashMatrix.obj release\pugixml.obj release\OVRDevice.obj release\OVRRenderContext.obj release\Vibrotactile_thread.obj release\mychai3dwindow.obj release\moc_mainwindow.obj release\moc_breaktimedialog.obj release\moc_haptics_thread.obj release\moc_Widget_OpenGLDisplay.obj release\moc_experiment_thread.obj release\moc_magTracker_thread.obj release\moc_mychai3dwindow.obj release\moc_Vibrotactile_thread.obj
 	-$(DEL_FILE) release\TactileDevice.exp
 
 distclean: clean 
@@ -259,9 +265,9 @@ compiler_no_pch_compiler_make_all:
 compiler_no_pch_compiler_clean:
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: release\moc_mainwindow.cpp release\moc_haptics_thread.cpp release\moc_Widget_OpenGLDisplay.cpp release\moc_experiment_thread.cpp release\moc_magTracker_thread.cpp release\moc_mychai3dwindow.cpp release\moc_Vibrotactile_thread.cpp
+compiler_moc_header_make_all: release\moc_mainwindow.cpp release\moc_breaktimedialog.cpp release\moc_haptics_thread.cpp release\moc_Widget_OpenGLDisplay.cpp release\moc_experiment_thread.cpp release\moc_magTracker_thread.cpp release\moc_mychai3dwindow.cpp release\moc_Vibrotactile_thread.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) release\moc_mainwindow.cpp release\moc_haptics_thread.cpp release\moc_Widget_OpenGLDisplay.cpp release\moc_experiment_thread.cpp release\moc_magTracker_thread.cpp release\moc_mychai3dwindow.cpp release\moc_Vibrotactile_thread.cpp
+	-$(DEL_FILE) release\moc_mainwindow.cpp release\moc_breaktimedialog.cpp release\moc_haptics_thread.cpp release\moc_Widget_OpenGLDisplay.cpp release\moc_experiment_thread.cpp release\moc_magTracker_thread.cpp release\moc_mychai3dwindow.cpp release\moc_Vibrotactile_thread.cpp
 release\moc_mainwindow.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMainWindow \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmainwindow.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qwidget.h \
@@ -865,7 +871,119 @@ release\moc_mainwindow.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMainWi
 		External\Qwt-6.1.3\include\qwt_plot_grid.h \
 		include\mainwindow.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\mainwindow.h -o release\moc_mainwindow.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\mainwindow.h -o release\moc_mainwindow.cpp
+
+release\moc_breaktimedialog.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QDialog \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qdialog.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qwidget.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qglobal.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qconfig.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qfeatures.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsystemdetection.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qprocessordetection.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcompilerdetection.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtypeinfo.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtypetraits.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qisenum.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsysinfo.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qlogging.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qflags.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbasicatomic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qgenericatomic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic_cxx11.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic_msvc.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qglobalstatic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmutex.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qnumeric.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qversiontagging.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobjectdefs.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qnamespace.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstring.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qchar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbytearray.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qrefcount.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qarraydata.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstringbuilder.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qlist.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qalgorithms.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qiterator.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qhashfunctions.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qpair.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbytearraylist.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstringlist.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qregexp.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstringmatcher.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcoreevent.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qscopedpointer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmetatype.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qvarlengtharray.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcontainerfwd.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject_impl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmargins.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpaintdevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qrect.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsize.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qpoint.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpalette.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qcolor.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qrgb.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qrgba64.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qbrush.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qvector.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qmatrix.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpolygon.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qregion.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdatastream.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qiodevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qtransform.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpainterpath.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qimage.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpixelformat.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpixmap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsharedpointer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qshareddata.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qhash.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qfont.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qfontmetrics.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qfontinfo.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qsizepolicy.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qcursor.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qkeysequence.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qevent.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qvariant.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdebug.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtextstream.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qlocale.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qset.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcontiguouscache.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qurl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qurlquery.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qfile.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qfiledevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qvector2d.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qtouchdevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLabel \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlabel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qframe.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QPushButton \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qpushbutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractbutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qicon.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTimer \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtimer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbasictimer.h \
+		include\breaktimedialog.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\breaktimedialog.h -o release\moc_breaktimedialog.cpp
 
 release\moc_haptics_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QObject \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject.h \
@@ -1367,7 +1485,7 @@ release\moc_haptics_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QObjec
 		include\APP626.h \
 		include\haptics_thread.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\haptics_thread.h -o release\moc_haptics_thread.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\haptics_thread.h -o release\moc_haptics_thread.cpp
 
 release\moc_Widget_OpenGLDisplay.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QThread \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qthread.h \
@@ -1882,7 +2000,7 @@ release\moc_Widget_OpenGLDisplay.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\
 		External\chai3d-3.1.1\extras\freeglut\include\GL\freeglut_std.h \
 		include\Widget_OpenGLDisplay.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\Widget_OpenGLDisplay.h -o release\moc_Widget_OpenGLDisplay.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\Widget_OpenGLDisplay.h -o release\moc_Widget_OpenGLDisplay.cpp
 
 release\moc_experiment_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QThread \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qthread.h \
@@ -2377,7 +2495,7 @@ release\moc_experiment_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTh
 		External\chai3d-3.1.1\modules\ODE\src\CODEGenericBody.h \
 		include\experiment_thread.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\experiment_thread.h -o release\moc_experiment_thread.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\experiment_thread.h -o release\moc_experiment_thread.cpp
 
 release\moc_magTracker_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QObject \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject.h \
@@ -2877,7 +2995,7 @@ release\moc_magTracker_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QOb
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbasictimer.h \
 		include\magTracker_thread.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\magTracker_thread.h -o release\moc_magTracker_thread.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\magTracker_thread.h -o release\moc_magTracker_thread.cpp
 
 release\moc_mychai3dwindow.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QWidget \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qwidget.h \
@@ -3394,7 +3512,7 @@ release\moc_mychai3dwindow.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QWi
 		External\chai3d-3.1.1\extras\freeglut\include\GL\freeglut_std.h \
 		include\mychai3dwindow.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\mychai3dwindow.h -o release\moc_mychai3dwindow.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\mychai3dwindow.h -o release\moc_mychai3dwindow.cpp
 
 release\moc_Vibrotactile_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QObject \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject.h \
@@ -4588,7 +4706,7 @@ release\moc_Vibrotactile_thread.cpp: C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\Q
 		External\boost_1_64_0\boost\random\weibull_distribution.hpp \
 		include\Vibrotactile_thread.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe
-	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"C:/Users/Jasmin/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\Vibrotactile_thread.h -o release\moc_Vibrotactile_thread.cpp
+	C:\Qt\Qt5.7.0\5.7\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.7.0/5.7/msvc2013/mkspecs/win32-msvc2013 -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/Qwt-6.1.3/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/s826_3.3.9/api" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/glew/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/extras/freeglut/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/external/Eigen" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/external/ODE/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/ODE/obj/Debug/Win32" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/src" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/SDL/include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/chai3d-3.1.1/modules/OCULUS/external/oculusSDK/LibOVR/Include" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost" -I"D:/Documents/OneDrive - Stanford/CHAI3D Research Project/chai3dHoxelMapping/External/boost_1_64_0/boost/random" -IC:/Qt/Qt5.7.0/5.7/msvc2013/include -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtOpenGL -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtWidgets -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtGui -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtANGLE -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtSerialPort -IC:/Qt/Qt5.7.0/5.7/msvc2013/include/QtCore include\Vibrotactile_thread.h -o release\moc_Vibrotactile_thread.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -5921,6 +6039,121 @@ release\main.obj: src\main.cpp C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QApp
 		External\boost_1_64_0\boost\random\uniform_smallint.hpp \
 		External\boost_1_64_0\boost\random\weibull_distribution.hpp
 
+release\breaktimedialog.obj: src\breaktimedialog.cpp C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QVBoxLayout \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qboxlayout.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlayout.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobjectdefs.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qnamespace.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qglobal.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qconfig.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qfeatures.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsystemdetection.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qprocessordetection.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcompilerdetection.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtypeinfo.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtypetraits.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qisenum.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsysinfo.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qlogging.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qflags.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbasicatomic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qgenericatomic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic_cxx11.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qatomic_msvc.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qglobalstatic.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmutex.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qnumeric.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qversiontagging.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstring.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qchar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbytearray.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qrefcount.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qarraydata.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstringbuilder.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qlist.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qalgorithms.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qiterator.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qhashfunctions.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qpair.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbytearraylist.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstringlist.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qregexp.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qstringmatcher.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcoreevent.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qscopedpointer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmetatype.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qvarlengtharray.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcontainerfwd.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qobject_impl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlayoutitem.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qsizepolicy.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qrect.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmargins.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsize.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qpoint.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qgridlayout.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qwidget.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qwindowdefs_win.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpaintdevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpalette.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qcolor.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qrgb.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qrgba64.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qbrush.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qvector.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qmatrix.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpolygon.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qregion.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdatastream.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qiodevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qline.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qtransform.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpainterpath.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qimage.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpixelformat.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qpixmap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsharedpointer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qshareddata.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qhash.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qfont.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qfontmetrics.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qfontinfo.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qcursor.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qkeysequence.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qevent.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qvariant.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qmap.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdebug.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtextstream.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qlocale.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qset.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcontiguouscache.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qurl.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qurlquery.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qfile.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qfiledevice.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qvector2d.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qtouchdevice.h \
+		include/breaktimedialog.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QDialog \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qdialog.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLabel \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlabel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qframe.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QPushButton \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qpushbutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractbutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qicon.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTimer \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qtimer.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qbasictimer.h
+
 release\mainwindow.obj: src\mainwindow.cpp include/mainwindow.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMainWindow \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmainwindow.h \
@@ -6524,8 +6757,77 @@ release\mainwindow.obj: src\mainwindow.cpp include/mainwindow.h \
 		External\Qwt-6.1.3\include\qwt_series_store.h \
 		External\Qwt-6.1.3\include\qwt_plot_grid.h \
 		ui_mainwindow.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QVariant \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QAction \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qaction.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qactiongroup.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QApplication \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qapplication.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcoreapplication.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qeventloop.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qdesktopwidget.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qguiapplication.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qinputmethod.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QButtonGroup \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qbuttongroup.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QCheckBox \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qcheckbox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractbutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QComboBox \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qcombobox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractitemdelegate.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstyleoption.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractspinbox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qvalidator.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qregularexpression.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qslider.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractslider.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstyle.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtabbar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qrubberband.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qabstractitemmodel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QDoubleSpinBox \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qspinbox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QGridLayout \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qgridlayout.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlayout.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlayoutitem.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qboxlayout.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QGroupBox \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qgroupbox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QHeaderView \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qheaderview.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractitemview.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractscrollarea.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qitemselectionmodel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLCDNumber \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlcdnumber.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLabel \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qlabel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QLineEdit \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QMenuBar \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmenubar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qmenu.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QPushButton \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qpushbutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QRadioButton \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qradiobutton.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QSlider \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QSpacerItem \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QSpinBox \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QStatusBar \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstatusbar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QTextBrowser \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtextbrowser.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtextedit.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qtextdocument.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QTextEdit \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QToolBar \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtoolbar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QWidget \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QTime \
-		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdatetime.h
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qdatetime.h \
+		include/breaktimedialog.h
 
 release\cMotorController.obj: src\cMotorController.cpp include/shared_data.h \
 		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qDebug \
@@ -12826,9 +13128,44 @@ release\mychai3dwindow.obj: src\mychai3dwindow.cpp include/mychai3dwindow.h \
 		External\chai3d-3.1.1\modules\ODE\src\CODEGenericBody.h \
 		External\chai3d-3.1.1\extras\freeglut\include\GL\glut.h \
 		External\chai3d-3.1.1\extras\freeglut\include\GL\freeglut_std.h \
-		ui_mychai3dwindow.h
+		ui_mychai3dwindow.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\QVariant \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QAction \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qaction.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qicon.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qactiongroup.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QApplication \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qapplication.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qcoreapplication.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qeventloop.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qdesktopwidget.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qguiapplication.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qinputmethod.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QButtonGroup \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qbuttongroup.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QHeaderView \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qheaderview.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractitemview.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractscrollarea.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qabstractitemmodel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qitemselectionmodel.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractitemdelegate.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstyleoption.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractspinbox.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtGui\qvalidator.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtCore\qregularexpression.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qslider.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qabstractslider.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qstyle.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtabbar.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qtabwidget.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qrubberband.h \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\QOpenGLWidget \
+		C:\Qt\Qt5.7.0\5.7\msvc2013\include\QtWidgets\qopenglwidget.h
 
 release\moc_mainwindow.obj: release\moc_mainwindow.cpp 
+
+release\moc_breaktimedialog.obj: release\moc_breaktimedialog.cpp 
 
 release\moc_haptics_thread.obj: release\moc_haptics_thread.cpp 
 
