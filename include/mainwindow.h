@@ -134,12 +134,14 @@ private:
     myCHAI3DWindow windowGLDisplay;
     void showBreakTimeMessageBox();
 
+    // Added for Exp Type Display
+    void showExpTypeMessageBox();
+
 private slots:
     //Added for message box popups:
 
-
-
     QString mapFingersToDevices();
+    void setMappingText();
     void progressPickAndPlaceExperiment(bool mistake);
     void UpdateGUIInfo();
     //void on_CalibratePushButton_clicked();

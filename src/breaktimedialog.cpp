@@ -38,6 +38,11 @@ BreakTimeDialog::BreakTimeDialog(QWidget *parent) : QDialog(parent)
     resize(800, 400);  // Adjust the width and height of the dialog as needed
 }
 
+BreakTimeDialog::~BreakTimeDialog()
+{
+
+}
+
 void BreakTimeDialog::updateRemainingTime()
 {
     remainingTimeInSeconds--;
@@ -64,5 +69,6 @@ void BreakTimeDialog::keyPressEvent(QKeyEvent *event)
         handleContinueButtonClick(); // Click the "Continue" button
     }
     QDialog::keyPressEvent(event); // Allow default key press handling
+    QDialog::keyPressEvent(event);
 }
 

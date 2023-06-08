@@ -964,7 +964,7 @@ void haptics_thread::UpdateVRGraphics()
                 p_CommonData->hoop1Complete = true;
                 hoop1->setMaterial(matHoop1);
                 hoop1->setTransparencyLevel(0.85, true);
-                qDebug()<<"hoop1 completed";
+                //qDebug()<<"hoop1 completed";
 
                 p_CommonData->hoopSuccess = 0;
             }
