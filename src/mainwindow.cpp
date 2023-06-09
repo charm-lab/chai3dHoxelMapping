@@ -1302,7 +1302,7 @@ bool MainWindow::readExpStuffIn()
             */
             onGUIchanged();
 
-            qDebug() << "Address of cceExpType: " << &(p_CommonData->cceExpType);
+            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 1 Address of cceExpType: " << &(p_CommonData->cceExpType);
             return true;
         }
         //Testing trials
@@ -1336,7 +1336,7 @@ bool MainWindow::readExpStuffIn()
             //qDebug() << "test" << "st1" << p_CommonData->stiffness1<< "st2" << p_CommonData->stiffness2 << "cond" << p_CommonData->cond;
             onGUIchanged();
 
-            qDebug() << "Address of cceExpType: " << &(p_CommonData->cceExpType);
+            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 2 Address of cceExpType: " << &(p_CommonData->cceExpType);
             return true;
         }
         //Trial Break
@@ -1344,7 +1344,7 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->currentExperimentState = trialBreak;
             p_CommonData->cceExpType = 0; // placeholder to stop code running through break transistions;
 
-            qDebug() << "Address of cceExpType: " << &(p_CommonData->cceExpType);
+            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 3 Address of cceExpType: " << &(p_CommonData->cceExpType);
             return true;
         }
         else if (p_CommonData->TrialType=="breakbreak"){
@@ -1798,11 +1798,9 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
 
 void MainWindow::showExpTypeMessageBox()
 {
-    //ExpTypeDialog dialog(&windowGLDisplay);
-    // dialog.exec();
-
-    cceExpTypeDialog dialog(&windowGLDisplay);
-    dialog.exec();
+    // Create an instance of cceExpTypeDialog
+    cceExpTypeDialog* dialog = new cceExpTypeDialog(p_CommonData->cceExpType, &windowGLDisplay); // Use 'this' as the parent widget
+    dialog->exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
     // qDebug()<<"NOW I'M CLOSED";
 }

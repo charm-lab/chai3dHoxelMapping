@@ -1,21 +1,17 @@
 #include <QVBoxLayout>
 
 #include "cceExpTypeDialog.h"
-#include "mainwindow.h"
-#include "mychai3dwindow.h"
 
-int cceExpTypeVal = 0;
-
-cceExpTypeDialog::cceExpTypeDialog(QWidget *parent) : QDialog(parent)
+cceExpTypeDialog::cceExpTypeDialog(int& cceExpType, QWidget* parent) : QDialog(parent), cceExpType(cceExpType)
 {
     // Adjust the font size as needed
     QFont font;
     font.setPointSize(20);
 
     // Create and set the text label
-    cceExpTypeVal = p_CommonData->cceExpType;
-
-    textLabel = new QLabel(getCCEExpTypePrompt(cceExpTypeVal), this);
+    //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~cceExpTypeDialog.cpp Address of cceExpType: " << &(p_CommonData->cceExpType);
+    textLabel = new QLabel(getCCEExpTypePrompt(cceExpType), this);
+    //textLabel = new QLabel("Hi", this);
     textLabel->setAlignment(Qt::AlignCenter);
     textLabel->setFont(font);
 
@@ -31,7 +27,6 @@ cceExpTypeDialog::cceExpTypeDialog(QWidget *parent) : QDialog(parent)
     mainLayout->addWidget(continueButton, 1, 0, 1, 1, Qt::AlignCenter);
 
     setWindowTitle("Experiment Type Prompt");
-    //setModal(true);
 
     resize(800, 400);  // Adjust the width and height of the dialog as needed
 }
@@ -58,7 +53,6 @@ void cceExpTypeDialog::keyPressEvent(QKeyEvent *event)
 QString cceExpTypeDialog::getCCEExpTypePrompt(int val)
 {
     // p_CommonData->cceExpType
-    qDebug() << "Address of cceExpType: " << &(p_CommonData->cceExpType);
     QString message;
 
     qDebug()<<val;

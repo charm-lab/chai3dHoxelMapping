@@ -1,8 +1,6 @@
 #include <QVBoxLayout>
 
 #include "breaktimedialog.h"
-#include "mychai3dwindow.h"
-#include "mainwindow.h"
 
 // Set break timer length:
 double breakTimeLength = 10.0;
@@ -69,6 +67,5 @@ void BreakTimeDialog::keyPressEvent(QKeyEvent *event)
         handleContinueButtonClick(); // Click the "Continue" button
     }
     QDialog::keyPressEvent(event); // Allow default key press handling
-    QDialog::keyPressEvent(event);
 }
 

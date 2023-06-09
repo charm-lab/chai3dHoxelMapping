@@ -880,6 +880,8 @@ void haptics_thread::UpdateVRGraphics()
 
     if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
+
+        //qDebug() << "haptics_thread.cpp Address of cceExpType: " << &(p_CommonData->cceExpType);
         // Change box color to red when force limit is exceeded for cceExpType 1
         if(p_CommonData->cceExpType == 1)
         {

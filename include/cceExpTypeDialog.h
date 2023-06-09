@@ -16,16 +16,21 @@ class cceExpTypeDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit cceExpTypeDialog(QWidget *parent = nullptr);
+//    explicit cceExpTypeDialog(int& cceExpType, QWidget* parent = nullptr);
+    cceExpTypeDialog(int& cceExpType, QWidget* parent = nullptr);
     ~cceExpTypeDialog();
-    shared_data* p_CommonData;
+//    shared_data* p_CommonData;
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
+
+    int& cceExpType;
+
     QLabel *textLabel;
     QPushButton *continueButton;
+
 
     QString getCCEExpTypePrompt(int expType);
 
