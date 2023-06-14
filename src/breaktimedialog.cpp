@@ -8,7 +8,7 @@ double breakTimeLength = 10.0;
 BreakTimeDialog::BreakTimeDialog(QWidget *parent) : QDialog(parent)
 {
     remainingTimeLabel = new QLabel(this);
-    remainingTimeLabel->setText("Take a break!\nRemaining time: " +  QString::number(breakTimeLength) + " seconds");
+    remainingTimeLabel->setText("Take a break!\n<~(￣︶￣)~>\nRemaining time: " +  QString::number(breakTimeLength) + " seconds");
     remainingTimeLabel->setAlignment(Qt::AlignCenter);
 
     QFont font;
@@ -25,6 +25,8 @@ BreakTimeDialog::BreakTimeDialog(QWidget *parent) : QDialog(parent)
     QGridLayout *mainLayout = new QGridLayout(this);
     mainLayout->addWidget(remainingTimeLabel, 0, 0, 1, 1, Qt::AlignCenter);
     mainLayout->addWidget(continueButton, 1, 0, 1, 1, Qt::AlignCenter);
+
+    setWindowTitle("Break Time!");
 
     // Countdown Timer Stuff:
     countdownTimer = new QTimer(this);
@@ -52,7 +54,7 @@ void BreakTimeDialog::updateRemainingTime()
     }
 
     QString timeText = QString::number(remainingTimeInSeconds) + " seconds";
-    remainingTimeLabel->setText("Take a break!\nRemaining time: " + timeText);
+    remainingTimeLabel->setText("Take a break!\n<~(￣︶￣)~>\nRemaining time: " + timeText);
 }
 
 void BreakTimeDialog::handleContinueButtonClick()

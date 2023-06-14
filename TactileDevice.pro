@@ -12,8 +12,7 @@ TARGET = TactileDevice
 TEMPLATE = app
 CONFIG += qwt
 
-SOURCES += ./src/main.cpp \
-    src/cceExpTypeDialog.cpp
+SOURCES += ./src/main.cpp
 SOURCES += ./src/mainwindow.cpp
 SOURCES += ./src/cMotorController.cpp
 SOURCES += ./src/haptics_thread.cpp
@@ -34,10 +33,10 @@ SOURCES += ./External/chai3d-3.1.1/modules/OCULUS/src/OVRRenderContext.cpp
 SOURCES += ./src/Vibrotactile_thread.cpp
 SOURCES += ./src/mychai3dwindow.cpp
 SOURCES += ./src/breaktimedialog.cpp
-#SOURCES += ./src/exptypedialog.cpp
+SOURCES += ./src/cceExpTypeDialog.cpp
+SOURCES += ./src/trialNotification.cpp
 
-HEADERS  += ./include/mainwindow.h \
-    include/cceExpTypeDialog.h
+HEADERS  += ./include/mainwindow.h
 HEADERS  += ./include/haptics_thread.h
 HEADERS  += ./include/cMotorController.h
 HEADERS  += ./include/shared_data.h
@@ -52,7 +51,8 @@ HEADERS  += ./include/experiment_thread.h
 HEADERS  += ./include/magTracker_thread.h
 HEADERS  += ./include/mychai3dwindow.h
 HEADERS  += ./include/breaktimedialog.h
-#HEADERS  += ./include/exptypedialog.h
+HEADERS  += ./include/cceExpTypeDialog.h
+HEADERS  += ./include/trialNotification.h
 
 # Heathers Vibration
 HEADERS  += ./include/TappingParameters.h

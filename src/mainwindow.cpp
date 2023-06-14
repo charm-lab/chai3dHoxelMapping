@@ -11,6 +11,7 @@
 
 #include "breaktimedialog.h"
 #include "cceExpTypeDialog.h"
+#include "trialNotification.h"
 #include "mychai3dwindow.h"
 
 //***Define directory/folder for Subjects' experiment info***
@@ -722,67 +723,56 @@ void MainWindow::UpdateGUIInfo()
     //Set manip Boolean for CCE
     if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
     {
-        p_CommonData->manipForceTooHigh = true;        
+        p_CommonData->manipForceTooHigh = true;
+
         if(p_CommonData->cceExpType == 3)
         {
+            // Show user they failed the trial
+            showTrialNotification();
             //Force Trial Progression if force limit is exceeded
             p_CommonData->trialNo = p_CommonData->trialNo++;
             if (readExpStuffIn())
             {
                 qDebug()<<"readExpStuffIn() SUCCESS -- Forced Trial Prgoression complete";
+            }
+            if(p_CommonData->TrialType == "break")
+            {
+                // Change and then show message box
+                QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                labelText.append("PRESS NEXT AFTER THE BREAK --");
+                labelText.append("</b></P></br>");
 
-                if(p_CommonData->TrialType == "break")
-                {
-                    // Change and then show message box
-                    QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
-                    labelText.append("PRESS NEXT AFTER THE BREAK --");
-                    labelText.append("</b></P></br>");
-
-                    ui->text->setText(labelText);
-                    qDebug()<<"BREAK "<<p_CommonData->trialNo;
-                    // Pop up countdown timer:
-                    showBreakTimeMessageBox(); // This has to remain in UpdateGUIInfo to act as an interrput
-                }
-                else
-                {
-                    qDebug() << "New TrialNo: " << p_CommonData->trialNo;
-                    QString text = "New TrialNo: ";
-                    text.append(QString::number(p_CommonData->trialNo));
-                    text.append("\nNew Mapping: ");
-                    text.append(QString::number(p_CommonData->mapping));
-                    ui->text->setText(text);
-                }
-
-                //Mapping text
-                QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-                mappingText.append(QString::number(p_CommonData->mapping));
-                mappingText.append("</P></br>");
-                mappingText.append("CCE Exp Type: ");
-                mappingText.append(QString::number(p_CommonData->cceExpType));
-                ui->mappingTextBox->setText(mappingText);
+                ui->text->setText(labelText);
+                qDebug()<<"BREAK "<<p_CommonData->trialNo;
+                // Pop up countdown timer:
+                showBreakTimeMessageBox(); // This has to remain in UpdateGUIInfo to act as an interrput
             }
             else
-            {                
+            {
                 qDebug() << "New TrialNo: " << p_CommonData->trialNo;
-                QString text = "New TrialNo: ";
+                QString text = "<P><FONT COLOR='#7abfe4' FONT SIZE = 5> ";
+                text.append(p_CommonData->TrialType);
+                text.append(" -- ");
+                text.append("New TrialNo: ");
                 text.append(QString::number(p_CommonData->trialNo));
                 text.append("\nNew Mapping: ");
                 text.append(QString::number(p_CommonData->mapping));
+                text.append("</P></br>");
                 ui->text->setText(text);
-
-                //Mapping text
-                QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3>";
-                mappingText.append(QString::number(p_CommonData->mapping));
-                mappingText.append("</P></br>");
-                mappingText.append("CCE Exp Type: ");
-                mappingText.append(QString::number(p_CommonData->cceExpType));
-                ui->mappingTextBox->setText(mappingText);
             }
+
+            //Mapping text
+            setMappingText();
         }
     }
     else
     {
         p_CommonData->manipForceTooHigh = false;
+    }
+
+    if (p_CommonData->TrialType == "end")
+    {
+        showTrialNotification();
     }
 }
 
@@ -1813,6 +1803,17 @@ void MainWindow::showBreakTimeMessageBox()
     // qDebug()<<"NOW I'M CLOSED";
 }
 
+void MainWindow::showTrialNotification()
+{
+    qDebug()<<"YOU FAILED";
+    TrialNotification dialog(&windowGLDisplay);
+    dialog.exec();
+    // Perform any necessary actions to continue using the application after the dialog is closed
+    qDebug()<<"NOW I'M CLOSED";
+
+    p_CommonData->environmentChange = true;
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *a_event)
 {
     // Button test key
@@ -1820,8 +1821,15 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
     {
         // showBreakTimeMessageBox();
         showExpTypeMessageBox();
-
+        // showTrialNotification();
     }
+    if (a_event->key() == Qt::Key_A)
+    {
+        // showBreakTimeMessageBox();
+        // showExpTypeMessageBox();
+        showTrialNotification();
+    }
+
     /***Environment Adjustment Buttons***/
     //Hide/Show finger interaction forces
     if (a_event->key() == Qt::Key_Y)
