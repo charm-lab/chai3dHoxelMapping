@@ -1578,12 +1578,7 @@ void haptics_thread::RecordData()
 
         //Box mass/stiffness properties
         p_CommonData->dataRecorder.box1Stiffness    = stiffness1;
-//        p_CommonData->dataRecorder.box2Stiffness    = stiffness2;
-//        p_CommonData->dataRecorder.box3Stiffness    = stiffness3;
         p_CommonData->dataRecorder.box1Mass         = mass1;
-//        p_CommonData->dataRecorder.box2Mass         = mass2;
-//        p_CommonData->dataRecorder.box3Mass         = mass3;
-        //p_CommonData->dataRecorder.dir              = p_CommonData->direct;
 
         //Rotation matrices of trackers
         p_CommonData->dataRecorder.deviceRotation0  = rotation0;
@@ -1595,39 +1590,19 @@ void haptics_thread::RecordData()
 
         //Box positions
         p_CommonData->dataRecorder.box1Pos          = p_CommonData->ODEBody1->getLocalPos();
-//        p_CommonData->dataRecorder.box2Pos          = p_CommonData->ODEBody2->getLocalPos();
-//        p_CommonData->dataRecorder.box3Pos          = p_CommonData->ODEBody3->getLocalPos();
-
         //Experiment information
-        //p_CommonData->dataRecorder.pairNo           = p_CommonData->pairNo;
         p_CommonData->dataRecorder.conditionNo          = p_CommonData->cond;
         p_CommonData->dataRecorder.strokeScale          = p_CommonData->strokeScale;
-        //p_CommonData->dataRecorder.success          = p_CommonData->targetSuccess; //for Mine's old experiment (not for Jasmin's Experiments)
         p_CommonData->dataRecorder.box1GlobalRotMat     = p_CommonData->ODEBody1->getGlobalRot();
         p_CommonData->dataRecorder.box1LocalRotMat      = p_CommonData->ODEBody1->getLocalRot();
-//        p_CommonData->dataRecorder.box2GlobalRotMat     = p_CommonData->ODEBody2->getGlobalRot();
-//        p_CommonData->dataRecorder.box2LocalRotMat      = p_CommonData->ODEBody2->getLocalRot();
-//        p_CommonData->dataRecorder.box3GlobalRotMat     = p_CommonData->ODEBody3->getGlobalRot();
-//        p_CommonData->dataRecorder.box3LocalRotMat      = p_CommonData->ODEBody3->getLocalRot();
-
-        //p_CommonData->dataRecorder.compMass         = p_CommonData->compMass;
-        p_CommonData->dataRecorder.compCD               = p_CommonData->compCD;
-        //p_CommonData->dataRecorder.compInertia      = p_CommonData->compInertia;
-
-        //p_CommonData->dataRecorder.CDVert           = p_CommonData->cdVertScaleOn;
-
-        //p_CommonData->dataRecorder.training         = p_CommonData->trainingOn;
-        //p_CommonData->dataRecorder.expMass          = p_CommonData->expMass;
-        //p_CommonData->dataRecorder.expCD            = p_CommonData->expCD;
-        //p_CommonData->dataRecorder.expInertia       = p_CommonData->expInertia;
 
         //Added variables for Jasmin's Experiments
-        //p_CommonData->dataRecorder.hoopSuccess        = p_CommonData->hoopSuccess;
-        //p_CommonData->dataRecorder.targetSuccess      = p_CommonData->targetSuccess;
+        p_CommonData->dataRecorder.boxInteractionForce = p_CommonData->boxInteractionForce;
         p_CommonData->dataRecorder.manipForceTooHigh     = p_CommonData->manipForceTooHigh;
         p_CommonData->dataRecorder.cceExpType           = p_CommonData->cceExpType;
         p_CommonData->dataRecorder.mapping               = p_CommonData->mapping;
         p_CommonData->dataRecorder.trialSuccess          = p_CommonData->trialSuccess;
+        p_CommonData->dataRecorder.trialNo          = p_CommonData->trialNo;
     }
 
 

@@ -173,6 +173,11 @@ typedef struct
     //For CrumblyCube:
     int cceExpType;
     bool manipForceTooHigh;
+    chai3d::cVector3d boxInteractionForce;
+
+    // the trial number of the experiment
+    int trialNo;
+
 } DataRecordStruct;
 
 typedef enum
@@ -768,6 +773,7 @@ typedef struct
     //For CrumblyCube to see if grasp force is too high
     bool manipForceTooHigh;
     int cceExpType;
+    chai3d::cVector3d boxInteractionForce;
 } shared_data;
 
 #endif // SHARED_DATA_H

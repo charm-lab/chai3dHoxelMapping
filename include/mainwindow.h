@@ -32,7 +32,6 @@
 #include <QtSerialPort/QSerialPortInfo>
 
 //Added for message box popups:
-#include <QMessageBox>
 #include "mychai3dwindow.h"
 
 //Finger force limit in Newtons -- only for CrumblyCubeExp

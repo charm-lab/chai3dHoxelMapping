@@ -112,9 +112,9 @@ public:
     QTextEdit *serialWrite1;
     QLabel *label_45;
     QTextEdit *serialWrite2;
-    QTextEdit *serialRead;
     QLabel *label_49;
     QLabel *label_50;
+    QTextEdit *serialRead;
     QGroupBox *groupBox_4;
     QWidget *layoutWidget6;
     QGridLayout *gridLayout_7;
@@ -734,11 +734,6 @@ public:
 
         gridLayout_6->addWidget(serialWrite2, 2, 1, 1, 1);
 
-        serialRead = new QTextEdit(layoutWidget5);
-        serialRead->setObjectName(QStringLiteral("serialRead"));
-
-        gridLayout_6->addWidget(serialRead, 4, 1, 1, 1);
-
         label_49 = new QLabel(layoutWidget5);
         label_49->setObjectName(QStringLiteral("label_49"));
         label_49->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
@@ -750,6 +745,11 @@ public:
         label_50->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_6->addWidget(label_50, 0, 0, 1, 1);
+
+        serialRead = new QTextEdit(layoutWidget5);
+        serialRead->setObjectName(QStringLiteral("serialRead"));
+
+        gridLayout_6->addWidget(serialRead, 4, 1, 1, 1);
 
         groupBox_4 = new QGroupBox(centralWidget);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));

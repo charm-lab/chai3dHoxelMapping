@@ -94,6 +94,10 @@ MainWindow::~MainWindow()
 
 QString MainWindow::mapFingersToDevices()
 {
+
+//    if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment &&
+//        p_CommonData->cceExpType == 3 && p_CommonData -> manipForceTooHigh ==true)
+
     //Normal Mapping
     if(p_CommonData->mapping == 1)
     {
@@ -198,18 +202,6 @@ void MainWindow::writeSerialData()
     //Mappings:
     QString serialData = mapFingersToDevices();
 
-    //Set limit for CrumblyCubeExp
-    if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
-    {
-        //        if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
-        //        {
-        //            p_CommonData->manipForceTooHigh = true;
-        //        }
-        //        else
-        //        {
-        //            p_CommonData->manipForceTooHigh = false;
-        //        }
-    }
     payloadBuffer = payloadBuffer.append(serialData);
 
     //qDebug() << payloadBuffer << " " << serial->isWritable();
@@ -287,7 +279,7 @@ void MainWindow::on_openButton_clicked()
         ui->StopBox->setEnabled(false);
         ui->openButton->setText(tr("Close\nSerial\nPort"));
         //Connecting signal slot
-        QObject::connect(serial, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
+        //QObject::connect(serial, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
 
         QTimer *timer0 = new QTimer(this);
         connect(timer0, SIGNAL(timeout()), this, SLOT(writeSerialData()));
@@ -729,6 +721,18 @@ void MainWindow::UpdateGUIInfo()
         {
             // Show user they failed the trial
             showTrialNotification();
+
+            //Save the datae from CCE Exp Type3
+            if(p_CommonData->recordFlag)
+            {
+                p_CommonData->dataRecordMutex.lock();
+                localDataRecorderVector = p_CommonData->dataRecorderVector;
+                p_CommonData->dataRecorderVector.clear();
+                p_CommonData->dataRecordMutex.unlock();
+                WriteDataToFile();
+                p_CommonData->recordFlag = false;
+            }
+
             //Force Trial Progression if force limit is exceeded
             p_CommonData->trialNo = p_CommonData->trialNo++;
             if (readExpStuffIn())
@@ -744,8 +748,16 @@ void MainWindow::UpdateGUIInfo()
 
                 ui->text->setText(labelText);
                 qDebug()<<"BREAK "<<p_CommonData->trialNo;
+
                 // Pop up countdown timer:
                 showBreakTimeMessageBox(); // This has to remain in UpdateGUIInfo to act as an interrput
+            }
+            if (p_CommonData->TrialType == "end")
+            {
+                QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+                labelText.append("END OF THE EXPERIMENT --");
+                labelText.append("</b></P></br>");
+                ui->text->setText(labelText);
             }
             else
             {
@@ -772,7 +784,10 @@ void MainWindow::UpdateGUIInfo()
 
     if (p_CommonData->TrialType == "end")
     {
-        showTrialNotification();
+        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+        labelText .append("END OF THE EXPERIMENT --");
+        labelText .append("</b></P></br>");
+        ui->text->setText(labelText);
     }
 }
 
@@ -1549,7 +1564,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 labelText .append("END OF THE EXPERIMENT --");
                 labelText .append("</b></P></br>");
                 ui->text->setText(labelText);
-                qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;
+                qDebug()<<"EXPERIMENT OVER "<<p_CommonData->trialNo;               
             }
             p_CommonData->environmentChange = true;
 
@@ -1797,14 +1812,22 @@ void MainWindow::showExpTypeMessageBox()
 
 void MainWindow::showBreakTimeMessageBox()
 {
+    //Zero out force commands to the devices
+    localForce0 << 0.0,0.0,0.0;
+    localForce1 << 0.0,0.0,0.0;
+
     BreakTimeDialog dialog(&windowGLDisplay);
     dialog.exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
-    // qDebug()<<"NOW I'M CLOSED";
+    // qDebug()<<"NOW I'M CLOSED";    
 }
 
 void MainWindow::showTrialNotification()
 {
+    //Zero out force commands to the devices
+    localForce0 << 0.0,0.0,0.0;
+    localForce1 << 0.0,0.0,0.0;
+
     qDebug()<<"YOU FAILED";
     TrialNotification dialog(&windowGLDisplay);
     dialog.exec();
@@ -2489,60 +2512,12 @@ void MainWindow::WriteDataToFile()
     p_CommonData->fileName = "VTACC_CAL";
 #endif
 
-
     //Create Headers for files depending on experiment
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment ||
         p_CommonData->currentDynamicObjectState == StiffnessMassExperiment)
     {
         //none for now
     }
-    /*
-    if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment)
-    {
-        //These ~MUST~ match the order of variables saved below:
-        file <<std::setprecision(9)
-            << "time" << "," << " " //time in seconds
-
-            << "realDorsalTactorPos" << "," << " "//in mm
-
-            << "realVentralTactorPos" << "," << " " //in mm
-
-               //boxPos is a vector and will need 3 headers
-            << "boxPosX" << "," << " " //in m
-            << "boxPosY" << "," << " " //in m
-            << "boxPosZ" << "," << " " //in m
-
-               //magTrackerPos vectors will need 3 headers each
-            << "indexPosX" << "," << " " //in m
-            << "indexPosY" << "," << " " //in m
-            << "indexPosZ" << "," << " " //in m
-            << "indexContact" << "," << " " //bool
-            << "indexForceX" << "," << " " //in N
-            << "indexForceY" << "," << " " //in N
-            << "indexForceZ" << "," << " " //in N
-            << "indexForceGlobalX" << "," << " " //in N
-            << "indexForceGlobalY" << "," << " " //in N
-            << "indexForceGlobalZ" << "," << " " //in N
-
-               //magTrackerPos vectors will need 3 headers each
-            << "thumbPosX" << "," << " " //in m
-            << "thumbPosY" << "," << " " //in m
-            << "thumbPosZ" << "," << " " //in m
-            << "thumbContact" << "," << " " //bool
-            << "thumbForceX" << "," << " " //in N
-            << "thumbForceY" << "," << " " //in N
-            << "thumbForceZ" << "," << " " //in N
-            << "thumbForceGlobalX" << "," << " " //in N
-            << "thumbForceGlobalY" << "," << " " //in N
-            << "thumbForceGlobalZ" << "," << " " //in N
-
-            << "hoopSuccess" << "," << " " //bool
-            << "targetSuccess" << "," << " " //bool
-            << "trialSuccess" << "," << " " //bool
-
-            << std::endl;
-    }
-    */
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
         p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
@@ -2749,7 +2724,7 @@ void MainWindow::WriteDataToFile()
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
              << "time" << "," << " " //time in seconds
-
+             << "trialNum" << "," << " " //trialNo
              << "realDorsalTactorPos" << "," << " "//in mm
 
              << "realVentralTactorPos" << "," << " " //in mm
@@ -2758,14 +2733,6 @@ void MainWindow::WriteDataToFile()
              << "box1PosX" << "," << " " //in m
              << "box1PosY" << "," << " " //in m
              << "box1PosZ" << "," << " " //in m
-             /*
-            << "box2PosX" << "," << " " //in m
-            << "box2PosY" << "," << " " //in m
-            << "box2PosZ" << "," << " " //in m
-            << "box3PosX" << "," << " " //in m
-            << "box3PosY" << "," << " " //in m
-            << "box3PosZ" << "," << " " //in m
-               */
 
              //box1 local rotation Matrix
              << "box1LocalRot_11" << "," << " "
@@ -2787,49 +2754,7 @@ void MainWindow::WriteDataToFile()
              << "box1GlobalRot_31" << "," << " "
              << "box1GlobalRot_32" << "," << " "
              << "box1GlobalRot_33" << "," << " "
-             /*
-               //box2 local rotation Matrix
-            << "box2LocalRot_11" << "," << " "
-            << "box2LocalRot_12" << "," << " "
-            << "box2LocalRot_13" << "," << " "
-            << "box2LocalRot_21" << "," << " "
-            << "box2LocalRot_22" << "," << " "
-            << "box2LocalRot_23" << "," << " "
-            << "box2LocalRot_31" << "," << " "
-            << "box2LocalRot_32" << "," << " "
-            << "box2LocalRot_33" << "," << " "
-               //box2 global rotation Matrix
-            << "box2GlobalRot_11" << "," << " "
-            << "box2GlobalRot_12" << "," << " "
-            << "box2GlobalRot_13" << "," << " "
-            << "box2GlobalRot_21" << "," << " "
-            << "box2GlobalRot_22" << "," << " "
-            << "box2GlobalRot_23" << "," << " "
-            << "box2GlobalRot_31" << "," << " "
-            << "box2GlobalRot_32" << "," << " "
-            << "box2GlobalRot_33" << "," << " "
 
-               //box3 local rotation Matrix
-            << "box3LocalRot_11" << "," << " "
-            << "box3LocalRot_12" << "," << " "
-            << "box3LocalRot_13" << "," << " "
-            << "box3LocalRot_21" << "," << " "
-            << "box3LocalRot_22" << "," << " "
-            << "box3LocalRot_23" << "," << " "
-            << "box3LocalRot_31" << "," << " "
-            << "box3LocalRot_32" << "," << " "
-            << "box3LocalRot_33" << "," << " "
-               //box3 global rotation Matrix
-            << "box3GlobalRot_11" << "," << " "
-            << "box3GlobalRot_12" << "," << " "
-            << "box3GlobalRot_13" << "," << " "
-            << "box3GlobalRot_21" << "," << " "
-            << "box3GlobalRot_22" << "," << " "
-            << "box3GlobalRot_23" << "," << " "
-            << "box3GlobalRot_31" << "," << " "
-            << "box3GlobalRot_32" << "," << " "
-            << "box3GlobalRot_33" << "," << " "
-            */
              //interaction forces in local coordinates
              << "indexForceX" << "," << " " //in N
              << "indexForceY" << "," << " " //in N
@@ -2877,7 +2802,6 @@ void MainWindow::WriteDataToFile()
              << "thumbPosZ" << "," << " " //in m
 
              //Tracker orientation:
-
              << "thumbRot_11" << "," << " "
              << "thumbRot_12" << "," << " "
              << "thumbRot_13" << "," << " "
@@ -3212,13 +3136,13 @@ void MainWindow::WriteDataToFile()
 
                  << std::endl;
         }
-
         else if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
         {
-            file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
+            file <<std::setprecision(9)<< ""
                  //"time = "
                  << localDataRecorderVector[i].time << "," << " "
-
+                 //Trial#
+                 << localDataRecorderVector[i].trialNo << "," << " "
                  //"des0 = "
                  << localDataRecorderVector[i].desiredStroke0 << "," << " "
                  //"real0 = "
@@ -3230,8 +3154,6 @@ void MainWindow::WriteDataToFile()
 
                  //Cube position
                  << localDataRecorderVector[i].box1Pos << "," << " " //Each needs 3 headers
-                 //<< localDataRecorderVector[i].box2Pos << "," << " " //Each needs 3 headers
-                 //<< localDataRecorderVector[i].box3Pos << "," << " " //Each needs 3 headers
 
                  //Box1 -- Cube local orientation
                  << localDataRecorderVector[i].box1LocalRotMat(0,0) << "," << " "  //Matrix 1st row
@@ -3244,7 +3166,7 @@ void MainWindow::WriteDataToFile()
                  << localDataRecorderVector[i].box1LocalRotMat(2,1) << "," << " "
                  << localDataRecorderVector[i].box1LocalRotMat(2,2) << "," << " "
 
-                 //Box1 --Cube Global orientation
+                 //Box1 -- Cube Global orientation
                  << localDataRecorderVector[i].box1GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
                  << localDataRecorderVector[i].box1GlobalRotMat(0,1) << "," << " "
                  << localDataRecorderVector[i].box1GlobalRotMat(0,2) << "," << " "
@@ -3254,53 +3176,6 @@ void MainWindow::WriteDataToFile()
                  << localDataRecorderVector[i].box1GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
                  << localDataRecorderVector[i].box1GlobalRotMat(2,1) << "," << " "
                  << localDataRecorderVector[i].box1GlobalRotMat(2,2) << "," << " "
-                 /*
-                   //Box2 --Cube local orientation
-                << localDataRecorderVector[i].box2LocalRotMat(0,0) << "," << " "  //Matrix 1st row
-                << localDataRecorderVector[i].box2LocalRotMat(0,1) << "," << " "
-                << localDataRecorderVector[i].box2LocalRotMat(0,2) << "," << " "
-                << localDataRecorderVector[i].box2LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
-                << localDataRecorderVector[i].box2LocalRotMat(1,1) << "," << " "
-                << localDataRecorderVector[i].box2LocalRotMat(1,2) << "," << " "
-                << localDataRecorderVector[i].box2LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
-                << localDataRecorderVector[i].box2LocalRotMat(2,1) << "," << " "
-                << localDataRecorderVector[i].box2LocalRotMat(2,2) << "," << " "
-
-                   //Box2 --Cube Global orientation
-                << localDataRecorderVector[i].box2GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
-                << localDataRecorderVector[i].box2GlobalRotMat(0,1) << "," << " "
-                << localDataRecorderVector[i].box2GlobalRotMat(0,2) << "," << " "
-                << localDataRecorderVector[i].box2GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
-                << localDataRecorderVector[i].box2GlobalRotMat(1,1) << "," << " "
-                << localDataRecorderVector[i].box2GlobalRotMat(1,2) << "," << " "
-                << localDataRecorderVector[i].box2GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
-                << localDataRecorderVector[i].box2GlobalRotMat(2,1) << "," << " "
-                << localDataRecorderVector[i].box2GlobalRotMat(2,2) << "," << " "
-
-                   //Box3 --Cube local orientation
-                << localDataRecorderVector[i].box3LocalRotMat(0,0) << "," << " "  //Matrix 1st row
-                << localDataRecorderVector[i].box3LocalRotMat(0,1) << "," << " "
-                << localDataRecorderVector[i].box3LocalRotMat(0,2) << "," << " "
-                << localDataRecorderVector[i].box3LocalRotMat(1,0) << "," << " "  //Matrix 2nd row
-                << localDataRecorderVector[i].box3LocalRotMat(1,1) << "," << " "
-                << localDataRecorderVector[i].box3LocalRotMat(1,2) << "," << " "
-                << localDataRecorderVector[i].box3LocalRotMat(2,0) << "," << " "  //Matrix 3rd row
-                << localDataRecorderVector[i].box3LocalRotMat(2,1) << "," << " "
-                << localDataRecorderVector[i].box3LocalRotMat(2,2) << "," << " "
-
-                   //Box3 --Cube Global orientation
-                << localDataRecorderVector[i].box3GlobalRotMat(0,0) << "," << " "  //Matrix 1st row
-                << localDataRecorderVector[i].box3GlobalRotMat(0,1) << "," << " "
-                << localDataRecorderVector[i].box3GlobalRotMat(0,2) << "," << " "
-                << localDataRecorderVector[i].box3GlobalRotMat(1,0) << "," << " "  //Matrix 2nd row
-                << localDataRecorderVector[i].box3GlobalRotMat(1,1) << "," << " "
-                << localDataRecorderVector[i].box3GlobalRotMat(1,2) << "," << " "
-                << localDataRecorderVector[i].box3GlobalRotMat(2,0) << "," << " "  //Matrix 3rd row
-                << localDataRecorderVector[i].box3GlobalRotMat(2,1) << "," << " "
-                << localDataRecorderVector[i].box3GlobalRotMat(2,2) << "," << " "
-                */
-                 //"cond = "
-                 //<< localDataRecorderVector[i].conditionNo<< "," << " "
 
                  //INDEX:
                  // last force on tool0:

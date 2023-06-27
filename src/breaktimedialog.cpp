@@ -3,7 +3,7 @@
 #include "breaktimedialog.h"
 
 // Set break timer length:
-double breakTimeLength = 10.0;
+double breakTimeLength = 60.0;
 
 BreakTimeDialog::BreakTimeDialog(QWidget *parent) : QDialog(parent)
 {
