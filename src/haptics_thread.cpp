@@ -3314,20 +3314,20 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
 {
     qDebug() << "start SetDynEnvironCrumblyCubeExp()";
 
-    //p_CommonData->lookatPos.set(1.0, 0.0, 0.0);
-    //p_CommonData->cameraPos.set(0.5, 0.0, 0.0);
-//    p_CommonData->upVector.set(0.0, 0.0, -1.0);
+//    //p_CommonData->lookatPos.set(1.0, 0.0, 0.0);
+//    //p_CommonData->cameraPos.set(0.5, 0.0, 0.0);
+////    p_CommonData->upVector.set(0.0, 0.0, -1.0);
 
-    p_CommonData->p_camera->set( p_CommonData->cameraPos,
-                                 p_CommonData->lookatPos,
-                                 p_CommonData->upVector);
+//    p_CommonData->p_camera->set( p_CommonData->cameraPos,
+//                                 p_CommonData->lookatPos,
+//                                 p_CommonData->upVector);
 
     targetRadius = 0.05;
 
     //Create box1 hoop1 -- visual only
     hoop1 = new chai3d::cMesh();
     chai3d::cCreateRing(hoop1, 0.005, targetRadius);
-    hoop1Pos = chai3d::cVector3d(-0.1, -0.15, -0.125);// chai3d::cVector3d(0.1, 0.085, -0.15);
+    hoop1Pos = chai3d::cVector3d(0.0, -0.15, -0.125);// chai3d::cVector3d(0.1, 0.085, -0.15);
     hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
     hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);//rotateAboutLocalAxisDeg(1, 0, 0, 90);
     hoop1->rotateAboutLocalAxisDeg(0, 1, 0, 45);
