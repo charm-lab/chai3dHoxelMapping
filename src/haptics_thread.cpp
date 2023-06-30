@@ -3386,7 +3386,8 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     chai3d::cCreateEllipsoid(target1, targetRadius, targetRadius, targetRadius);
     target1Pos = chai3d::cVector3d(0.0, 0.38, 0.0);//(0.1, 0.085+0.2, 0.0); //(0.05, 0.0, -0.24);  (0.1,-0.05,-0.02);
     target1->setLocalPos(target1Pos.x(), target1Pos.y(), target1Pos.z());
-    matTarget1.setGreenMediumSpring();
+    //matTarget1.setGreenMediumSpring();
+    matTarget1.setBlue();
     target1->setMaterial(matTarget1);
     target1->setUseCulling(true);
     target1->setUseTransparency(true);

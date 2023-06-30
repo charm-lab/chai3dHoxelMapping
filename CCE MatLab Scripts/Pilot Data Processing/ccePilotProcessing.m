@@ -5,31 +5,31 @@ clear; close all; clc;
 %#ok<*NOPTS>
 
 % Number of mappings tested
-numMappings = 1;
+numMappings = 2;
 % Number of trials per mapping
-numTrialsPerMapping = 5;
+numTrialsPerMapping = 10;
 % Total number of trials each subject did
 numTrials = numMappings*numTrialsPerMapping;
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 2;
+totalNumSubjects = 1;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1 2];
+subjectNum = [1];
 
 % Load data from folder
 % Folder contatining all data:
-dataFolders = ["..\..\CCE_Subject_Data\CCE_ExpType1"
-                "..\..\CCE_Subject_Data\CCE_ExpType2"
-                 "..\..\CCE_Subject_Data\CCE_ExpType3"];
+dataFolders = ["..\CCE_Subject_Data\CCE_ExpType1"
+    "..\CCE_Subject_Data\CCE_ExpType2"
+    "..\CCE_Subject_Data\CCE_ExpType3"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
-numExperimentTypes =  length(dataFolders);
+numExperimentTypes = length(dataFolders);
 numSubjects = totalNumSubjects - numRemovedSubjects;
 % Initialize Cell Arrays of Trial Data by Experiment Type:
 subjectFiles = cell(numSubjects, numExperimentTypes);
@@ -92,12 +92,14 @@ disp("***Data Upload and Merge Complete***")
 % Now each metric of interest will be represented by a cell. Within that
 % cell every row represents a subject, every column the experiment type.
 % Selcting an entry will select the data from a particular experiment.
-% Therefore within cell: 
+% Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
 
 %% Finding acutal Trial Start and End Times:
-trialStartTime_index = zeros(numTrials, numSubjects); %fallingEdgeTime index
-trialEndTime_index = zeros(numTrials, numSubjects); %risingEdgeTime index
+trialStartTime_indexTemp = zeros(numTrials, numSubjects); %fallingEdgeTime index
+trialEndTime_indexTemp = zeros(numTrials, numSubjects); %risingEdgeTime index
+trialStartTime_index = cell(numSubjects, numExperimentTypes);
+trialEndTime_index = cell(numSubjects, numExperimentTypes);
 trialStartTime = cell(numSubjects, numExperimentTypes); %fallingEdgeTime in sec
 trialEndTime = cell(numSubjects, numExperimentTypes); %risingEdgeTime in sec
 firstIndexContactTime_index = zeros(numTrials, numSubjects);
@@ -112,9 +114,9 @@ for p = 1:numExperimentTypes % Addition for each experiment type
 
         for k = 1:numTrials
             %Trial success to no success
-            trialStartTime_index(k,j) = startTimes(k); % fallingEdgeTime
+            trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
             %Trial no success to success
-            trialEndTime_index(k,j) = endTimes(k); % risingEdgeTime
+            trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
 
             %Find first instance of contact with cube after:
             firstIndexContactTime_index = find(subjectData{j,p}.indexContact(startTimes(k):end)==1) + startTimes(k)-1;
@@ -122,12 +124,15 @@ for p = 1:numExperimentTypes % Addition for each experiment type
 
             %Set start time for analysis at the soonest simultaneous contact time for both fingers:
             val = intersect(firstIndexContactTime_index,firstThumbContactTime_index);
-            trialStartTime_index(k,j) = val(1);
+            trialStartTime_indexTemp(k,j) = val(1);
         end
-        % Now the trial start time is at the point of initial contact
-        trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_index(:,j));
-        trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_index(:,j)); % risingEdgeTime
 
+        % Now the trial start time is at the point of initial contact
+        trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_indexTemp(:,j));
+        trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_indexTemp(:,j)); % risingEdgeTime
+
+        trialStartTime_index{j,p} = trialStartTime_indexTemp;
+        trialEndTime_index{j,p} = trialEndTime_indexTemp;
     end
 end
 disp("find trial start and end times -- done")
@@ -140,7 +145,7 @@ completionTime = cell(numSubjects, numExperimentTypes); % Addition for each expe
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
         for k = 1:numTrials
-           completionTimeVec(k,j) = trialEndTime{j,p}(k)-trialStartTime{j,p}(k);
+            completionTimeVec(k,j) = trialEndTime{j,p}(k)-trialStartTime{j,p}(k);
         end
         completionTime{j,p} = completionTimeVec(:,j);
     end
@@ -154,64 +159,367 @@ thumbPathLengthVec = zeros(numTrials, numSubjects);
 boxPathLengthVec = zeros(numTrials, numSubjects);
 
 % Addition for each experiment type
-indexPathLength = cell(numSubjects, numExperimentTypes); 
+indexPathLength = cell(numSubjects, numExperimentTypes);
 thumbPathLength = cell(numSubjects, numExperimentTypes);
 boxPathLength = cell(numSubjects, numExperimentTypes);
 
 for p = 1:numExperimentTypes % Addition for each experiment type
-for j = 1:numSubjects
-    for k = 1:numTrials
-        t_i = trialStartTime_index(k,j):trialEndTime_index(k,j);
-        %index position x, y, z subject j, any trial k
-        indexPosX = subjectData{j,p}.indexPosX(t_i);
-        indexPosY = subjectData{j,p}.indexPosY(t_i);
-        indexPosZ = subjectData{j,p}.indexPosZ(t_i);
-        
-        %thumb position x, y, z subject j, any trial k
-        thumbPosX = subjectData{j,p}.thumbPosX(t_i);
-        thumbPosY = subjectData{j,p}.thumbPosY(t_i);
-        thumbPosZ = subjectData{j,p}.thumbPosZ(t_i);
+    for j = 1:numSubjects
+        for k = 1:numTrials
+            t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
+            %index position x, y, z subject j, any trial k
+            indexPosX = subjectData{j,p}.indexPosX(t_i);
+            indexPosY = subjectData{j,p}.indexPosY(t_i);
+            indexPosZ = subjectData{j,p}.indexPosZ(t_i);
 
-        %box position x, y, z subject j, any trial k
-        boxPosX = subjectData{j,p}.boxPosX(t_i);
-        boxPosY = subjectData{j,p}.boxPosY(t_i);
-        boxPosZ = subjectData{j,p}.boxPosZ(t_i);
+            %thumb position x, y, z subject j, any trial k
+            thumbPosX = subjectData{j,p}.thumbPosX(t_i);
+            thumbPosY = subjectData{j,p}.thumbPosY(t_i);
+            thumbPosZ = subjectData{j,p}.thumbPosZ(t_i);
 
-        %Find path length by taking the sum of the absolute difference
-        % between each point
-        for i = 1:length(indexPosX)-1
-            indexPathLengthVec(k,j) = indexPathLengthVec(k,j) + ...
-                sqrt((indexPosX(i+1)-indexPosX(i))^2 + ...
-                (indexPosY(i+1)-indexPosY(i))^2 +...
-                (indexPosZ(i+1)-indexPosZ(i))^2);
+            %box position x, y, z subject j, any trial k
+            boxPosX = subjectData{j,p}.box1PosX(t_i);
+            boxPosY = subjectData{j,p}.box1PosY(t_i);
+            boxPosZ = subjectData{j,p}.box1PosZ(t_i);
+
+            %Find path length by taking the sum of the absolute difference
+            % between each point
+            for i = 1:length(indexPosX)-1
+                indexPathLengthVec(k,j) = indexPathLengthVec(k,j) + ...
+                    sqrt((indexPosX(i+1)-indexPosX(i))^2 + ...
+                    (indexPosY(i+1)-indexPosY(i))^2 +...
+                    (indexPosZ(i+1)-indexPosZ(i))^2);
+            end
+
+            %Find path length by taking the sum of the absolute difference
+            % between each point
+            for i = 1:length(thumbPosX)-1
+                thumbPathLengthVec(k,j) = thumbPathLengthVec(k,j) + ...
+                    sqrt((thumbPosX(i+1)-thumbPosX(i))^2 + ...
+                    (thumbPosY(i+1)-thumbPosY(i))^2 +...
+                    (thumbPosZ(i+1)-thumbPosZ(i))^2);
+            end
+
+            %Find path length by taking the sum of the absolute difference
+            % between each point
+            for i = 1:length(boxPosX)-1
+                boxPathLengthVec(k,j) = boxPathLengthVec(k,j) + ...
+                    sqrt((boxPosX(i+1)-boxPosX(i))^2 + ...
+                    (boxPosY(i+1)-boxPosY(i))^2 +...
+                    (boxPosZ(i+1)-boxPosZ(i))^2);
+            end
         end
-
-        %Find path length by taking the sum of the absolute difference
-        % between each point
-        for i = 1:length(thumbPosX)-1
-            thumbPathLengthVec(k,j) = thumbPathLengthVec(k,j) + ...
-                sqrt((thumbPosX(i+1)-thumbPosX(i))^2 + ...
-                (thumbPosY(i+1)-thumbPosY(i))^2 +...
-                (thumbPosZ(i+1)-thumbPosZ(i))^2);
-        end
-
-        %Find path length by taking the sum of the absolute difference
-        % between each point
-        for i = 1:length(boxPosX)-1
-            boxPathLengthVec(k,j) = boxPathLengthVec(k,j) + ...
-                sqrt((boxPosX(i+1)-boxPosX(i))^2 + ...
-                (boxPosY(i+1)-boxPosY(i))^2 +...
-                (boxPosZ(i+1)-boxPosZ(i))^2);
-        end
+        indexPathLength{j,p} = indexPathLengthVec(:,j);
+        thumbPathLength{j,p} = thumbPathLengthVec(:,j);
+        boxPathLength{j,p} = boxPathLengthVec(:,j);
     end
-indexPathLength{j,p} = indexPathLengthVec(:,j);
-thumbPathLength{j,p} = thumbPathLengthVec(:,j);
-boxPathLength{j,p} = boxPathLengthVec(:,j);
-end
 end
 
 disp("compute path lengths -- done")
 
+%% Finger Global Force Magnitudes
+close all;
+plotVis = "off";
+saveFigures = false;
+% It takes a *really* long time to render the force profiles
+renderForceProfiles = false;
+
+indexForceGlobalMagVec = cell(numTrials, numSubjects);
+thumbForceGlobalMagVec = cell(numTrials, numSubjects);
+
+% Addition for each experiment type
+indexForceGlobalMag = cell(numSubjects, numExperimentTypes);
+thumbForceGlobalMag = cell(numSubjects, numExperimentTypes);
+
+for p = 1:numExperimentTypes % Addition for each experiment type
+    for j = 1:numSubjects
+        close all;
+        for k = 1:numTrials
+            t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
+            % index position x, y, z for each subject and trial
+            indexForceGlobalX = subjectData{j,p}.indexForceGlobalX(t_i);
+            indexForceGlobalY = subjectData{j,p}.indexForceGlobalY(t_i);
+            indexForceGlobalZ = subjectData{j,p}.indexForceGlobalZ(t_i);
+
+            % thumb position x, y, z for each subject and trial
+            thumbForceGlobalX = subjectData{j,p}.thumbForceGlobalX(t_i);
+            thumbForceGlobalY = subjectData{j,p}.thumbForceGlobalY(t_i);
+            thumbForceGlobalZ = subjectData{j,p}.thumbForceGlobalZ(t_i);
+
+            % Caluate force magnitudes for each subject and trial
+            indexForceGlobalMagVec{k,j} = sqrt(indexForceGlobalX.^2 ...
+                + indexForceGlobalY.^2 + indexForceGlobalZ.^2);
+
+            % Caluate force magnitudes for each subject and trial
+            thumbForceGlobalMagVec{k,j} = sqrt(thumbForceGlobalX.^2 ...
+                + thumbForceGlobalY.^2 + thumbForceGlobalZ.^2);
+
+            % Plot Index XYZ Force Profiles
+            if(renderForceProfiles == true)
+                indexForceXYZFig = figure(1);
+                sgtitle(strcat('Subject ',num2str(subjectNum(j)),...
+                    ' All Trials Index Force XYZ Profile'));
+                timeVec = subjectData{j,p}.time(t_i);
+
+                subplot(3,1,1)
+                plot(timeVec, indexForceGlobalX);
+                xlabel("Time [sec]"); ylabel("indexGlobalForceX [N]");
+                hold on;
+                subplot(3,1,2);
+                plot(timeVec, indexForceGlobalY);
+                xlabel("Time [sec]"); ylabel("indexGlobalForceY [N]");
+                hold on;
+                subplot(3,1,3);
+                plot(timeVec, indexForceGlobalZ);
+                xlabel("Time [sec]"); ylabel("indexGlobalForceZ [N]");
+                hold on;
+
+                improvePlot_v2(false, true, 12, 1250, 650);
+
+                % Hide/Show Figure at Runtime
+                set(gcf,'Visible', plotVis);
+
+                % Plot Thumb XYZ Force Profiles
+                thumbforceXYZFig = figure(2);
+                sgtitle(strcat('Subject ',num2str(subjectNum(j)),...
+                    ' All Trials Thumb Force XYZ Profile'));
+                timeVec = subjectData{j,p}.time(t_i);
+
+                subplot(3,1,1)
+                plot(timeVec, thumbForceGlobalX);
+                xlabel("Time [sec]"); ylabel("thumbGlobalForceX [N]");
+                hold on;
+                subplot(3,1,2);
+                plot(timeVec, thumbForceGlobalY);
+                xlabel("Time [sec]"); ylabel("thumbGlobalForceY [N]");
+                hold on;
+                subplot(3,1,3);
+                plot(timeVec, thumbForceGlobalZ);
+                xlabel("Time [sec]"); ylabel("thumbGlobalForceZ [N]");
+                hold on;
+
+                improvePlot_v2(false, true, 12, 1250, 650);
+                % max(thumbForceGlobalX)
+
+                % Hide/Show Figure at Runtime
+                set(gcf,'Visible', plotVis);
+
+                % Plot Thumb XYZ Force Profiles
+                forceMagFig = figure(3);
+                sgtitle(strcat('Subject ',num2str(subjectNum(j)),...
+                    ' All Trials Force Mag Profile'));
+                timeVec = subjectData{j,p}.time(t_i);
+
+                subplot(2,1,1)
+                plot(timeVec, indexForceGlobalMagVec{k,j});
+                xlabel("Time [sec]"); ylabel("indexGlobalForceMag [N]");
+                hold on;
+
+                subplot(2,1,2)
+                plot(timeVec, thumbForceGlobalMagVec{k,j});
+                xlabel("Time [sec]"); ylabel("thumbGlobalForceMag [N]");
+                hold on;
+                improvePlot_v2(false, true, 12, 1250, 650);
+
+                % Hide/Show Figure at Runtime
+                set(gcf,'Visible', plotVis);
+            end
+        end
+
+        %Save figure as pdf:
+        if (saveFigures == true)
+            set(indexForceXYZFig,'PaperOrientation','landscape');
+            set(thumbforceXYZFig,'PaperOrientation','landscape');
+            set(forceMagFig,'PaperOrientation','landscape');
+
+            print(indexForceXYZFig, strcat('figures\indexForceXYZProfiles\',...
+                'Subject',num2str(subjectNum(j)),'_IndexForceXYZProfileFig'),...
+                '-dpdf','-fillpage');
+
+            print(thumbforceXYZFig, strcat('figures\thumbForceXYZProfiles\',...
+                'Subject',num2str(subjectNum(j)),'_ThumbForceXYZProfileFig'),...
+                '-dpdf','-fillpage');
+
+            print(forceMagFig, strcat('figures\forceMagProfiles\',...
+                'Subject',num2str(subjectNum(j)),'_forceMagProfileFig'),...
+                '-dpdf','-fillpage');
+        end
+        hold off;
+
+        indexForceGlobalMag{j,p} = indexForceGlobalMagVec(:,j);
+        thumbForceGlobalMag{j,p} = thumbForceGlobalMagVec(:,j);
+    end
+end
+disp("compute finger global force magnitudes -- done")
 
 
+%% Finger Normal and Shear Force Magnitudes
+%Initialize:
+indexNormalForceMagVec = cell(numTrials, numSubjects);
+indexShearForceMagVec = cell(numTrials, numSubjects);
+thumbNormalForceMagVec = cell(numTrials, numSubjects);
+thumbShearForceMagVec = cell(numTrials, numSubjects);
 
+% Addition for each experiment type
+indexNormalForceMag = cell(numSubjects, numExperimentTypes);
+indexShearForceMag = cell(numSubjects, numExperimentTypes);
+thumbNormalForceMag = cell(numSubjects, numExperimentTypes);
+thumbShearForceMag = cell(numSubjects, numExperimentTypes);
+
+%Get average magnitudes of normal and shear forces for each subject and each trial
+for p = 1:numExperimentTypes % Addition for each experiment type
+    for j = 1:numSubjects
+        for k = 1:numTrials
+            %time index vector
+            t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
+
+            indexNormalForceMagVec{k,j} = abs(subjectData{j,p}.indexForceZ(t_i));
+
+            indexShearForceMagVec{k,j} = subjectData{j,p}.indexForceX(t_i).^2 + ...
+                subjectData{j,p}.indexForceY(t_i).^2;
+
+            thumbNormalForceMagVec{k,j} = abs(subjectData{j,p}.thumbForceZ(t_i));
+            thumbShearForceMagVec{k,j} = subjectData{j,p}.thumbForceX(t_i).^2 + ...
+                subjectData{j,p}.thumbForceY(t_i).^2;
+        end
+    end
+
+    indexNormalForceMag{j,p} = indexNormalForceMagVec(:,j);
+    indexShearForceMag{j,p} = indexShearForceMagVec(:,j);
+    thumbNormalForceMag{j,p} = thumbNormalForceMagVec(:,j);
+    thumbShearForceMag{j,p} = thumbShearForceMagVec(:,j);
+
+end
+disp("compute finger normal/shear force magnitudes -- done")
+
+%% Sort Subject Data by Mapping
+% mappingsVec = cell(numTrials, numSubjects);
+% mappings = cell(numSubjects, numExperimentTypes);
+%
+% for p = 1:numExperimentTypes % Addition for each experiment type
+%     for j = 1:numSubjects
+%         for k = 1:numTrials
+%             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
+%             mappingsVec{k,j} = mean(subjectData{j,p}.mapping(t_i));
+%         end
+%     end
+%     mappings{j,p} = mappingsVec(:,j);
+% end
+
+% Mapping1 -- mapping1TimeIndexRows
+mapping1 = [1:10];
+% Mapping5 -- mapping5TimeIndexRows
+mapping5 = [11:20];
+
+
+for p = 1:numExperimentTypes % Addition for each experiment type
+    for j = 1:numSubjects
+            % Completion Time for each Mapping
+            completionTimeMapping1{j,p} = sortByMapping(completionTime{j,p}, mapping1);
+            completionTimeMapping5{j,p} = sortByMapping(completionTime{j,p}, mapping5);
+
+            %Index Path length for each Mapping
+            indexPathLengthMapping1{j,p} = sortByMapping(indexPathLength{j,p}, mapping1);
+            indexPathLengthMapping5{j,p} = sortByMapping(indexPathLength{j,p}, mapping5);
+
+            %Thumb Path length for each Mapping
+            thumbPathLengthMapping1{j,p} = sortByMapping(thumbPathLength{j,p}, mapping1);
+            thumbPathLengthMapping5{j,p} = sortByMapping(thumbPathLength{j,p}, mapping5);
+
+            %Box Path length for each Mapping
+            boxPathLengthMapping1{j,p} = sortByMapping(boxPathLength{j,p}, mapping1);
+            boxPathLengthMapping5{j,p} = sortByMapping(boxPathLength{j,p}, mapping5);
+
+            %Index Normal and Shear Force profiles for each Mapping
+            indexNormalForceMagMapping1{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping1);
+            indexNormalForceMagMapping5{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping5);
+
+            indexShearForceMagMapping1{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping1);
+            indexShearForceMagMapping5{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping5);
+
+            %Thumb Normal and Shear Force profiles for each Mapping
+            thumbNormalForceMagMapping1{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping1);
+            thumbNormalForceMagMapping5{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping5);
+
+            thumbShearForceMagMapping1{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping1);
+            thumbShearForceMagMapping5{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping5);
+
+            %Mean Normal and Shear Force for each Mapping
+            meanIndexNormalForceVec = zeros(numTrials, numSubjects);
+            meanIndexShearForceVec = zeros(numTrials, numSubjects);
+            meanThumbNormalForceVec = zeros(numTrials, numSubjects);
+            meanThumbShearForceVec = zeros(numTrials, numSubjects);
+
+            for k = 1:numTrials
+                meanIndexNormalForceVec(k,j) = mean(indexNormalForceMag{j,p}{k,1});
+                meanIndexShearForceVec(k,j) = mean(indexShearForceMag{j,p}{k,1});
+                meanThumbNormalForceVec(k,j) = mean(thumbNormalForceMag{j,p}{k,1});
+                meanThumbShearForceVec(k,j) = mean(thumbShearForceMag{j,p}{k,1});
+            end
+
+            meanIndexNormalForce{j,p} = meanIndexNormalForceVec(:,j);
+            meanIndexShearForce{j,p} = meanIndexShearForceVec(:,j);
+            meanThumbNormalForce{j,p} = meanThumbNormalForceVec(:,j);
+            meanThumbShearForce{j,p} = meanThumbShearForceVec(:,j);
+
+            meanIndexNormalForceMapping1{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping1);
+            meanIndexNormalForceMapping5{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping5);
+
+            meanIndexShearForceMapping1{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping1);
+            meanIndexShearForceMapping5{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping5);
+
+            meanThumbNormalForceMapping1{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping1);
+            meanThumbNormalForceMapping5{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping5);
+
+            meanThumbShearForceMapping1{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping1);
+            meanThumbShearForceMapping5{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping5);
+    end
+%     mappings{j,p} = mappingsVec(:,j);
+end
+
+disp("sort subject data by mapping group -- done")
+
+%% Plot Cosmetics:
+close all;
+saveFigures = true;
+%Old color scheme:
+visCubeColor = "[0 0 0]";
+% invisCubeColor = "[0.5 0.5 0.5]";
+%New Color Scheme:
+indexVisColor = "[0.8 0 0]";
+% indexInvisColor = "[1 0.7 0.8]";
+thumbVisColor = "[0.3 0.6 0.1]";
+% thumbInvisColor = "[0.7 0.8 0.5 ]";
+boxVisColor = "[0.2 0.2 0.7]";
+% boxInvisColor = "[0.7 0.8 0.9]";
+
+jitterVal = 0.0;
+plotMarker = "s"; %variable used in createErrorBarPlot
+visPlotMarker = "s"; %variable used in createErrorBarPlot
+invisPlotMarker = "s"; %variable used in createErrorBarPlot
+markerSize = 20; %variable used in createErrorBarPlot
+
+%% Plot completionTimes
+close all;
+figure;
+markerSize = 15;
+minY = -0.5; maxY = 8;
+visCubeColor = evalin('base','boxVisColor');
+
+for p = 1:numExperimentTypes 
+    [h1, completionTime, completionTimeStdVals] = ...
+        createErrorBarPlot(completionTimeMapping1{:,p}, ...
+        completionTimeMapping5{:,p},...
+        "Completion Time", "Mapping", "Time [sec]");
+    ylim([minY,maxY]);
+    legend("Visible Cube", "Location", "northeast");
+%     improvePlot;
+    improvePlot_v2(false, true, 22, 1150, 500);
+    
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\completionTime','-dpdf','-r0');
+    end
+
+end

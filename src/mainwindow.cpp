@@ -2730,30 +2730,30 @@ void MainWindow::WriteDataToFile()
              << "realVentralTactorPos" << "," << " " //in mm
 
              //boxPos is a vector and will need 3 headers per box
-             << "box1PosX" << "," << " " //in m
-             << "box1PosY" << "," << " " //in m
-             << "box1PosZ" << "," << " " //in m
+             << "boxPosX" << "," << " " //in m
+             << "boxPosY" << "," << " " //in m
+             << "boxPosZ" << "," << " " //in m
 
              //box1 local rotation Matrix
-             << "box1LocalRot_11" << "," << " "
-             << "box1LocalRot_12" << "," << " "
-             << "box1LocalRot_13" << "," << " "
-             << "box1LocalRot_21" << "," << " "
-             << "box1LocalRot_22" << "," << " "
-             << "box1LocalRot_23" << "," << " "
-             << "box1LocalRot_31" << "," << " "
-             << "box1LocalRot_32" << "," << " "
-             << "box1LocalRot_33" << "," << " "
+             << "boxLocalRot_11" << "," << " "
+             << "boxLocalRot_12" << "," << " "
+             << "boxLocalRot_13" << "," << " "
+             << "boxLocalRot_21" << "," << " "
+             << "boxLocalRot_22" << "," << " "
+             << "boxLocalRot_23" << "," << " "
+             << "boxLocalRot_31" << "," << " "
+             << "boxLocalRot_32" << "," << " "
+             << "boxLocalRot_33" << "," << " "
              //box1 global rotation Matrix
-             << "box1GlobalRot_11" << "," << " "
-             << "box1GlobalRot_12" << "," << " "
-             << "box1GlobalRot_13" << "," << " "
-             << "box1GlobalRot_21" << "," << " "
-             << "box1GlobalRot_22" << "," << " "
-             << "box1GlobalRot_23" << "," << " "
-             << "box1GlobalRot_31" << "," << " "
-             << "box1GlobalRot_32" << "," << " "
-             << "box1GlobalRot_33" << "," << " "
+             << "boxGlobalRot_11" << "," << " "
+             << "boxGlobalRot_12" << "," << " "
+             << "boxGlobalRot_13" << "," << " "
+             << "boxGlobalRot_21" << "," << " "
+             << "boxGlobalRot_22" << "," << " "
+             << "boxGlobalRot_23" << "," << " "
+             << "boxGlobalRot_31" << "," << " "
+             << "boxGlobalRot_32" << "," << " "
+             << "boxGlobalRot_33" << "," << " "
 
              //interaction forces in local coordinates
              << "indexForceX" << "," << " " //in N
