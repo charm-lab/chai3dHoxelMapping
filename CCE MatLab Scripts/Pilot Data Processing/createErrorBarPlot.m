@@ -42,8 +42,8 @@ hold on;
 %Plot Details
 % xlim([0 6]); tickLabels = ["1", "2", "3", "4", "Control"];
 % xticks(0:6); set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
-xlim([0 6]);
-xticks([1 5]);
+xlim([0 3]);
+xticks([1 3]);
 tickLabels = ["1", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);

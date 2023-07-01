@@ -34,7 +34,7 @@ SOURCES += ./src/Vibrotactile_thread.cpp
 SOURCES += ./src/mychai3dwindow.cpp
 SOURCES += ./src/breaktimedialog.cpp
 SOURCES += ./src/cceExpTypeDialog.cpp
-SOURCES += ./src/trialNotification.cpp
+SOURCES += ./src/trialFailNotification.cpp
 
 HEADERS  += ./include/mainwindow.h
 HEADERS  += ./include/haptics_thread.h
@@ -52,7 +52,7 @@ HEADERS  += ./include/magTracker_thread.h
 HEADERS  += ./include/mychai3dwindow.h
 HEADERS  += ./include/breaktimedialog.h
 HEADERS  += ./include/cceExpTypeDialog.h
-HEADERS  += ./include/trialNotification.h
+HEADERS  += ./include/trialFailNotification.h
 
 # Heathers Vibration
 HEADERS  += ./include/TappingParameters.h

@@ -720,9 +720,9 @@ void MainWindow::UpdateGUIInfo()
         if(p_CommonData->cceExpType == 3)
         {
             // Show user they failed the trial
-            showTrialNotification();
+            showTrialFailNotification();
 
-            //Save the datae from CCE Exp Type3
+            //Save the data from CCE Exp Type3
             if(p_CommonData->recordFlag)
             {
                 p_CommonData->dataRecordMutex.lock();
@@ -784,7 +784,7 @@ void MainWindow::UpdateGUIInfo()
 
     if (p_CommonData->TrialType == "end")
     {
-        QString labelText = "<P><b><FONT COLOR='#7abfe4' FONT SIZE = 5>";
+        QString labelText = "<P><b><FONT COLOR='#ff0000' FONT SIZE = 5>";
         labelText .append("END OF THE EXPERIMENT --");
         labelText .append("</b></P></br>");
         ui->text->setText(labelText);
@@ -1822,14 +1822,16 @@ void MainWindow::showBreakTimeMessageBox()
     // qDebug()<<"NOW I'M CLOSED";    
 }
 
-void MainWindow::showTrialNotification()
+void MainWindow::showTrialFailNotification()
 {
+    // More explicit trial fail parameter setting
+    p_CommonData->manipForceTooHigh = true;
     //Zero out force commands to the devices
     localForce0 << 0.0,0.0,0.0;
     localForce1 << 0.0,0.0,0.0;
 
     qDebug()<<"YOU FAILED";
-    TrialNotification dialog(&windowGLDisplay);
+    TrialFailNotification dialog(&windowGLDisplay);
     dialog.exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
     qDebug()<<"NOW I'M CLOSED";
@@ -1844,13 +1846,13 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
     {
         // showBreakTimeMessageBox();
         showExpTypeMessageBox();
-        // showTrialNotification();
+        // showTrialFailNotification();
     }
     if (a_event->key() == Qt::Key_A)
     {
         // showBreakTimeMessageBox();
         // showExpTypeMessageBox();
-        showTrialNotification();
+        showTrialFailNotification();
     }
 
     /***Environment Adjustment Buttons***/

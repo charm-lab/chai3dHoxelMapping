@@ -23,13 +23,13 @@ subjectNum = [1];
 
 % Load data from folder
 % Folder contatining all data:
-dataFolders = ["..\CCE_Subject_Data\CCE_ExpType1"
-    "..\CCE_Subject_Data\CCE_ExpType2"
-    "..\CCE_Subject_Data\CCE_ExpType3"];
+dataFolders = ["..\..\CCE_Subject_Data\CCE_ExpType1"
+    "..\..\CCE_Subject_Data\CCE_ExpType2"
+    "..\..\CCE_Subject_Data\CCE_ExpType3"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
-numExperimentTypes = length(dataFolders);
+numExperimentTypes = 2%length(dataFolders);
 numSubjects = totalNumSubjects - numRemovedSubjects;
 % Initialize Cell Arrays of Trial Data by Experiment Type:
 subjectFiles = cell(numSubjects, numExperimentTypes);
@@ -107,23 +107,41 @@ firstThumbContactTime_index = zeros(numTrials, numSubjects);
 
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
+
+        % For CCE Exp Tpyes 1 and 2:
+        if (p == 1 || p == 2)
+        % For all experiment types:
         startTimes = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
-        %^^+1 to actually get to the 1st instance of trialSucecess == 0
+        %^^+1 to actually get to the 1st instance of trialSuccess == 0
         endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
-        %^^+1 to actually get to the 1st instance of trialSucecess == 1
+        %^^+1 to actually get to the 1st instance of trialSuccess == 1
+       
+        % For CCE Exp Tpye 3: if (p == 3)
+        else
+        %         
+        %             endTimes = strfind(subjectData{j,p}.manipForceTooHigh',[0 1])'+ 1;
+        %         %^^+1 to actually get to the 1st instance of manipForceTooHigh == 1
+        %         end
+        end
 
         for k = 1:numTrials
-            %Trial success to no success
+            % Trial success to no success
             trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
-            %Trial no success to success
+            % Trial no success to success
             trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
 
             %Find first instance of contact with cube after:
-            firstIndexContactTime_index = find(subjectData{j,p}.indexContact(startTimes(k):end)==1) + startTimes(k)-1;
-            firstThumbContactTime_index = find(subjectData{j,p}.thumbContact(startTimes(k):end)==1) + startTimes(k)-1 ;
+            firstIndexContactTime_index = ...
+                find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
+                + startTimes(k)-1;
+            firstThumbContactTime_index = ...
+                find(subjectData{j,p}.thumbContact(startTimes(k):end)==1)...
+                + startTimes(k)-1 ;
 
-            %Set start time for analysis at the soonest simultaneous contact time for both fingers:
-            val = intersect(firstIndexContactTime_index,firstThumbContactTime_index);
+            % Set start time for analysis at the soonest simultaneous
+            % contact time for both fingers:
+            val = intersect(firstIndexContactTime_index,...
+                firstThumbContactTime_index);
             trialStartTime_indexTemp(k,j) = val(1);
         end
 
@@ -145,7 +163,8 @@ completionTime = cell(numSubjects, numExperimentTypes); % Addition for each expe
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
         for k = 1:numTrials
-            completionTimeVec(k,j) = trialEndTime{j,p}(k)-trialStartTime{j,p}(k);
+            completionTimeVec(k,j) = ...
+                trialEndTime{j,p}(k) - trialStartTime{j,p}(k);
         end
         completionTime{j,p} = completionTimeVec(:,j);
     end
@@ -178,9 +197,9 @@ for p = 1:numExperimentTypes % Addition for each experiment type
             thumbPosZ = subjectData{j,p}.thumbPosZ(t_i);
 
             %box position x, y, z subject j, any trial k
-            boxPosX = subjectData{j,p}.box1PosX(t_i);
-            boxPosY = subjectData{j,p}.box1PosY(t_i);
-            boxPosZ = subjectData{j,p}.box1PosZ(t_i);
+            boxPosX = subjectData{j,p}.boxPosX(t_i);
+            boxPosY = subjectData{j,p}.boxPosY(t_i);
+            boxPosZ = subjectData{j,p}.boxPosZ(t_i);
 
             %Find path length by taking the sum of the absolute difference
             % between each point
@@ -414,67 +433,67 @@ mapping5 = [11:20];
 
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
-            % Completion Time for each Mapping
-            completionTimeMapping1{j,p} = sortByMapping(completionTime{j,p}, mapping1);
-            completionTimeMapping5{j,p} = sortByMapping(completionTime{j,p}, mapping5);
+        % Completion Time for each Mapping
+        completionTimeMapping1{j,p} = sortByMapping(completionTime{j,p}, mapping1);
+        completionTimeMapping5{j,p} = sortByMapping(completionTime{j,p}, mapping5);
 
-            %Index Path length for each Mapping
-            indexPathLengthMapping1{j,p} = sortByMapping(indexPathLength{j,p}, mapping1);
-            indexPathLengthMapping5{j,p} = sortByMapping(indexPathLength{j,p}, mapping5);
+        %Index Path length for each Mapping
+        indexPathLengthMapping1{j,p} = sortByMapping(indexPathLength{j,p}, mapping1);
+        indexPathLengthMapping5{j,p} = sortByMapping(indexPathLength{j,p}, mapping5);
 
-            %Thumb Path length for each Mapping
-            thumbPathLengthMapping1{j,p} = sortByMapping(thumbPathLength{j,p}, mapping1);
-            thumbPathLengthMapping5{j,p} = sortByMapping(thumbPathLength{j,p}, mapping5);
+        %Thumb Path length for each Mapping
+        thumbPathLengthMapping1{j,p} = sortByMapping(thumbPathLength{j,p}, mapping1);
+        thumbPathLengthMapping5{j,p} = sortByMapping(thumbPathLength{j,p}, mapping5);
 
-            %Box Path length for each Mapping
-            boxPathLengthMapping1{j,p} = sortByMapping(boxPathLength{j,p}, mapping1);
-            boxPathLengthMapping5{j,p} = sortByMapping(boxPathLength{j,p}, mapping5);
+        %Box Path length for each Mapping
+        boxPathLengthMapping1{j,p} = sortByMapping(boxPathLength{j,p}, mapping1);
+        boxPathLengthMapping5{j,p} = sortByMapping(boxPathLength{j,p}, mapping5);
 
-            %Index Normal and Shear Force profiles for each Mapping
-            indexNormalForceMagMapping1{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping1);
-            indexNormalForceMagMapping5{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping5);
+        %Index Normal and Shear Force profiles for each Mapping
+        indexNormalForceMagMapping1{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping1);
+        indexNormalForceMagMapping5{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping5);
 
-            indexShearForceMagMapping1{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping1);
-            indexShearForceMagMapping5{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping5);
+        indexShearForceMagMapping1{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping1);
+        indexShearForceMagMapping5{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping5);
 
-            %Thumb Normal and Shear Force profiles for each Mapping
-            thumbNormalForceMagMapping1{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping1);
-            thumbNormalForceMagMapping5{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping5);
+        %Thumb Normal and Shear Force profiles for each Mapping
+        thumbNormalForceMagMapping1{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping1);
+        thumbNormalForceMagMapping5{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping5);
 
-            thumbShearForceMagMapping1{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping1);
-            thumbShearForceMagMapping5{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping5);
+        thumbShearForceMagMapping1{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping1);
+        thumbShearForceMagMapping5{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping5);
 
-            %Mean Normal and Shear Force for each Mapping
-            meanIndexNormalForceVec = zeros(numTrials, numSubjects);
-            meanIndexShearForceVec = zeros(numTrials, numSubjects);
-            meanThumbNormalForceVec = zeros(numTrials, numSubjects);
-            meanThumbShearForceVec = zeros(numTrials, numSubjects);
+        %Mean Normal and Shear Force for each Mapping
+        meanIndexNormalForceVec = zeros(numTrials, numSubjects);
+        meanIndexShearForceVec = zeros(numTrials, numSubjects);
+        meanThumbNormalForceVec = zeros(numTrials, numSubjects);
+        meanThumbShearForceVec = zeros(numTrials, numSubjects);
 
-            for k = 1:numTrials
-                meanIndexNormalForceVec(k,j) = mean(indexNormalForceMag{j,p}{k,1});
-                meanIndexShearForceVec(k,j) = mean(indexShearForceMag{j,p}{k,1});
-                meanThumbNormalForceVec(k,j) = mean(thumbNormalForceMag{j,p}{k,1});
-                meanThumbShearForceVec(k,j) = mean(thumbShearForceMag{j,p}{k,1});
-            end
+        for k = 1:numTrials
+            meanIndexNormalForceVec(k,j) = mean(indexNormalForceMag{j,p}{k,1});
+            meanIndexShearForceVec(k,j) = mean(indexShearForceMag{j,p}{k,1});
+            meanThumbNormalForceVec(k,j) = mean(thumbNormalForceMag{j,p}{k,1});
+            meanThumbShearForceVec(k,j) = mean(thumbShearForceMag{j,p}{k,1});
+        end
 
-            meanIndexNormalForce{j,p} = meanIndexNormalForceVec(:,j);
-            meanIndexShearForce{j,p} = meanIndexShearForceVec(:,j);
-            meanThumbNormalForce{j,p} = meanThumbNormalForceVec(:,j);
-            meanThumbShearForce{j,p} = meanThumbShearForceVec(:,j);
+        meanIndexNormalForce{j,p} = meanIndexNormalForceVec(:,j);
+        meanIndexShearForce{j,p} = meanIndexShearForceVec(:,j);
+        meanThumbNormalForce{j,p} = meanThumbNormalForceVec(:,j);
+        meanThumbShearForce{j,p} = meanThumbShearForceVec(:,j);
 
-            meanIndexNormalForceMapping1{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping1);
-            meanIndexNormalForceMapping5{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping5);
+        meanIndexNormalForceMapping1{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping1);
+        meanIndexNormalForceMapping5{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping5);
 
-            meanIndexShearForceMapping1{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping1);
-            meanIndexShearForceMapping5{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping5);
+        meanIndexShearForceMapping1{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping1);
+        meanIndexShearForceMapping5{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping5);
 
-            meanThumbNormalForceMapping1{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping1);
-            meanThumbNormalForceMapping5{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping5);
+        meanThumbNormalForceMapping1{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping1);
+        meanThumbNormalForceMapping5{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping5);
 
-            meanThumbShearForceMapping1{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping1);
-            meanThumbShearForceMapping5{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping5);
+        meanThumbShearForceMapping1{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping1);
+        meanThumbShearForceMapping5{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping5);
     end
-%     mappings{j,p} = mappingsVec(:,j);
+    %     mappings{j,p} = mappingsVec(:,j);
 end
 
 disp("sort subject data by mapping group -- done")
@@ -501,25 +520,176 @@ markerSize = 20; %variable used in createErrorBarPlot
 
 %% Plot completionTimes
 close all;
-figure;
 markerSize = 15;
 minY = -0.5; maxY = 8;
 visCubeColor = evalin('base','boxVisColor');
 
-for p = 1:numExperimentTypes 
+for p = 1:numExperimentTypes
+    figure;
     [h1, completionTime, completionTimeStdVals] = ...
         createErrorBarPlot(completionTimeMapping1{:,p}, ...
         completionTimeMapping5{:,p},...
-        "Completion Time", "Mapping", "Time [sec]");
+        strcat("Completion Time CCE ExpType",num2str(p)), ...
+        "Mapping", "Time [sec]");
     ylim([minY,maxY]);
-    legend("Visible Cube", "Location", "northeast");
-%     improvePlot;
+    %     legend("Visible Cube", "Location", "northeast");
+    %     improvePlot;
     improvePlot_v2(false, true, 22, 1150, 500);
-    
-    %Save figure as pdf:
+
+    % Save figure as pdf:
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
         print(gcf, 'figures\completionTime','-dpdf','-r0');
     end
 
 end
+
+%% Plot pathLengths
+close all;
+markerSize = 12;
+jitterVal = 0.14;
+minY = 0.0; maxY = 4.0;
+
+for p = 1:numExperimentTypes
+    % indexPathLength Plot
+    figure;
+    subplot(1,3,1)
+    [h3, indexPathLength, indexPathLengthStdVals] = ...
+        createErrorBarPlot(indexPathLengthMapping1{:,p},...
+        indexPathLengthMapping5{:,p},...
+        strcat("Index Path Length CCE ExpType",num2str(p)),...
+        "Mapping", "Path Length [m]"); hold on;
+    ylim([minY,maxY]);
+
+    % thumbPathLength Plot
+    subplot(1,3,2)
+    [h5, thumbPathLength, thumbPathLengthStdVals] = ...
+        createErrorBarPlot(thumbPathLengthMapping1{:,p},...
+        thumbPathLengthMapping5{:,p},...
+        strcat("Thumb Path Length CCE ExpType",num2str(p)),...
+        "Mapping", "Path Length [m]");
+    ylim([minY,maxY]);
+
+    % boxPathLength Plot
+    subplot(1,3,3)
+    [h7, boxPathLength, boxPathLengthStdVals] = ...
+        createErrorBarPlot(boxPathLengthMapping1{:,p},...
+        boxPathLengthMapping5{:,p},...
+        strcat("Cube Path Length CCE ExpType",num2str(p)),...
+        "Mapping", "Path Length [m]");
+
+    ylim([minY,maxY]);
+    improvePlot_v2(false, true, 14, 1500, 650); hold off;
+
+    % Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\pathLengths','-dpdf','-r0');
+    end
+
+    % Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\pathLengthsCombined','-dpdf','-r0');
+    end
+end
+
+%% Plot Normal and Shear Forces
+close all;
+markerSize = 10;
+plotMarker = "d";
+minY = 0; maxY = 55;
+
+for p = 1:numExperimentTypes
+    figure;
+    subplot(1,2,1)
+    [h9, indexNormalMean, indexNormalMeanStdVals] = ...
+        createErrorBarPlot(meanIndexNormalForceMapping1{:,p},...
+        meanIndexNormalForceMapping5{:,p},...
+        strcat("Index Fingertip Forces CCE ExpType",num2str(p)),...
+        "Mapping", "Force [N]"); hold on;
+    plotMarker = "s";
+    [h11, indexShearMean, indexShearMeanStdVals] = ...
+        createErrorBarPlot(meanIndexShearForceMapping1{:,p},...
+        meanIndexShearForceMapping5{:,p},...
+        strcat("Index Fingertip Forces CCE ExpType",num2str(p)),...
+        "Mapping", "Force [N]");
+    ylim([minY,maxY]);
+
+    subplot(1,2,2)
+    plotMarker = "d";
+    [h13, thumbNormalMean, thumbNormalMeanStdVals] = ...
+        createErrorBarPlot(meanThumbNormalForceMapping1{:,p},...
+        meanThumbNormalForceMapping5{:,p},...
+        strcat("Thumb Fingertip Forces CCE ExpType",num2str(p)),...
+        "Mapping", "Force [N]"); hold on;
+    plotMarker = "s";
+    [h15, thumbShearMean, thumbShearMeanStdVals] = ...
+        createErrorBarPlot(meanThumbShearForceMapping1{:,p},...
+        meanThumbShearForceMapping5{:,p},...
+        strcat("Thumb Fingertip Forces CCE ExpType",num2str(p)),...
+        "Mapping", "Force [N]");
+    ylim([minY,maxY])
+
+    improvePlot_v2(false, true, 18, 1200, 700); hold off;
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\normalShearForces','-dpdf','-r0');
+    end
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\normalShearForcesCombined','-dpdf','-r0');
+    end
+end
+
+disp("Plot Normal and Shear Force Error Bar Plots -- done")
+
+%% Manipulation Force Threshold Plotting
+
+close all;
+saveFigures = false;
+
+forceLimit = 20; %N
+figure;
+
+for j = 1:numSubjects
+    for p = 1:numExperimentTypes
+        for k = 1:numTrials
+            t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
+
+            if(p == 1)
+                h1 = plot(subjectData{j,p}.time(t_i),...
+                    subjectData{j,p}.manipForceTooHigh(t_i),'r'); hold on;
+            end
+            if(p == 2)
+                h2 = plot(subjectData{j,p}.time(t_i),...
+                    subjectData{j,p}.manipForceTooHigh(t_i),'g'); hold on;
+            end
+            if (p == 3)
+                h3 = plot(subjectData{j,p}.time(t_i),....
+                    subjectData{j,p}.manipForceTooHigh(t_i),'b'); hold on;
+            end
+        end
+ end
+        ylim([-0.2 1.2]); yticks([0 1]);
+        improvePlot_v2(false, true, 18, 1500, 700);
+        xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
+        title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
+        
+        legend([h1(1), h2(1), h3(1)],...
+            "Exp Type 1", "Exp Type 2","Exp Type 3",...
+            "Location","northeast");
+        hold off;  
+end
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, strcat('figures\manipForceThreshold\',...
+        'Subject',num2str(subjectNum(j)),...
+        '_manipForceThreshold'),'-dpdf','-fillpage'); %close;
+end
+
+disp("Plot Manipulation Force Threshold Plots -- done")

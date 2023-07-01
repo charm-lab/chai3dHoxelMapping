@@ -136,7 +136,7 @@ private:
     // Added for Exp Type Display
     void showExpTypeMessageBox();
 
-    void showTrialNotification();
+    void showTrialFailNotification();
 
 private slots:
     //Added for message box popups:
