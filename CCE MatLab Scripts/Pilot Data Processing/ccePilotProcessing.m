@@ -29,7 +29,7 @@ dataFolders = ["..\..\CCE_Subject_Data\CCE_ExpType1"
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
-numExperimentTypes = 2%length(dataFolders);
+numExperimentTypes = length(dataFolders);
 numSubjects = totalNumSubjects - numRemovedSubjects;
 % Initialize Cell Arrays of Trial Data by Experiment Type:
 subjectFiles = cell(numSubjects, numExperimentTypes);
@@ -95,6 +95,111 @@ disp("***Data Upload and Merge Complete***")
 % Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
 
+%% Remove Training Trial Data
+
+% This will always be for CCE Exp Type1 so p=1
+p=1;
+for j = 1:numSubjects
+    % Trial # for 1st testing Trial
+    firstTestingTrialNum = str2num(subjectFiles{j,p}(1).name([15:16]));
+
+    % Get 1st instance of data from testing trial:
+    testingTrialStart = find(subjectData{j,p}.trialNum ...
+        == firstTestingTrialNum, 1);
+
+    % Remove the data:
+    subjectData{j,p}(1:testingTrialStart-1,:) = [];
+end
+
+%% Plot Success/Fails
+plotVis = "on";
+saveFigures = false;
+figure;
+for j = 1:numSubjects
+    for p = 1:numExperimentTypes
+        if(p == 1)
+            h1 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'r'); hold on;
+        end
+        if(p == 2)
+            h2 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'g'); hold on;
+        end
+        if (p == 3)
+            h3 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'b'); hold on;
+        end
+    end
+
+    title(strcat('Subject ', num2str(subjectNum(j)), ' All Trials'));
+    xlabel("Time [sec]"); ylabel("success/fail");
+    ylim([-0.2 1.2]); yticks([0 1]);
+    improvePlot_v2(false, true, 18, 1200,800);
+    % Hide/Show Figure at Runtime
+    set(gcf,'Visible', plotVis);
+
+    legend([h1(1), h2(1), h3(1)],...
+        "Exp Type 1", "Exp Type 2","Exp Type 3",...
+        "Location","northeast");
+    hold off;
+
+end
+
+figure;
+for j = 1:numSubjects
+    for p = 1:numExperimentTypes
+        if(p == 1)
+            h1 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.manipForceTooHigh,'r'); hold on;
+        end
+        if(p == 2)
+            h2 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.manipForceTooHigh,'g'); hold on;
+        end
+        if (p == 3)
+            h3 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.manipForceTooHigh,'b'); hold on;
+        end
+    end
+
+    title(strcat('Subject ', num2str(subjectNum(j)), ' All Trials'));
+    xlabel("Time [sec]"); ylabel("manipForceTooHigh");
+    ylim([-0.2 1.2]); yticks([0 1]);
+    improvePlot_v2(false, true, 18, 1200, 800);
+    % Hide/Show Figure at Runtime
+    set(gcf,'Visible', plotVis);
+
+    legend([h1(1), h2(1), h3(1)],...
+        "Exp Type 1", "Exp Type 2","Exp Type 3",...
+        "Location","northeast");
+    hold off;
+
+end
+
+
+% for p = 1:numExperimentTypes % Addition for each experiment type
+%     for j = 1:numSubjects
+%         figure; plot(subjectData{j,p}.time, subjectData{j,p}.trialSuccess, "b-");
+%         title(strcat('Subject ', num2str(subjectNum(j)), ' All Trials'));
+%         xlabel("Time"); ylabel("success/fail");
+%         ylim([-0.2 1.2]); yticks([0 1]);
+%         improvePlot_v2(false, true, 18, 1200,800);
+%         % Hide/Show Figure at Runtime
+%         set(gcf,'Visible', plotVis);
+%
+%         % Save figure as image:
+%         if (saveFigures == true)
+%             %imwrite(getframe(gcf).cdata, strcat('dummyFigures\success-fails\',...
+%             %'Subject',num2str(subjectNum(j)),'-success-fail-Fig.png'))
+%             imwrite(getframe(gcf).cdata, strcat('figures\success-fails\',...
+%                 'Subject',num2str(subjectNum(j)),'-success-fail-Fig.png'));
+%         end
+%     end
+% end
+disp("sucess-fail figure rendering -- done")
+
+
+
 %% Finding acutal Trial Start and End Times:
 trialStartTime_indexTemp = zeros(numTrials, numSubjects); %fallingEdgeTime index
 trialEndTime_indexTemp = zeros(numTrials, numSubjects); %risingEdgeTime index
@@ -107,21 +212,66 @@ firstThumbContactTime_index = zeros(numTrials, numSubjects);
 
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
+        % For CCE Exp Tpye 3: if (p == 3)
+        if (p == 3)
+            startTimesCandidate1 = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
+            startTimesCandidate2 = strfind(subjectData{j,p}.manipForceTooHigh',[1 0])' + 1;
+
+            endTimesCandidate1 = ...
+                strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+            %^^+1 to actually get to the 1st instance of trialSuccess == 1
+
+            endTimesCandidate2 = ...
+                strfind(subjectData{j,p}.manipForceTooHigh',[0 1])'+ 1;
+            %^^+1 to actually get to the 1st instance of manipForceTooHigh == 1
+
+            startTimes = sort([startTimesCandidate1; startTimesCandidate2]);
+
+            endTimes = sort([endTimesCandidate1; endTimesCandidate2]);
+
+            for k = 1:numTrials
+                % Trial success to no success
+                trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
+                % Trial no success to success
+                trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
+
+                %Find first instance of contact with cube after:
+                firstIndexContactTime_index = ...
+                    find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
+                    + startTimes(k)-1;
+                firstThumbContactTime_index = ...
+                    find(subjectData{j,p}.thumbContact(startTimes(k):end)==1)...
+                    + startTimes(k)-1 ;
+
+                % Set start time for analysis at the soonest simultaneous
+                % contact time for both fingers:
+                val = intersect(firstIndexContactTime_index,...
+                    firstThumbContactTime_index);
+                trialStartTime_indexTemp(k,j) = val(1);
+            end
+
+            % Now the trial start time is at the point of initial contact
+            trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_indexTemp(:,j));
+            trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_indexTemp(:,j)); % risingEdgeTime
+
+            trialStartTime_index{j,p} = trialStartTime_indexTemp;
+            trialEndTime_index{j,p} = trialEndTime_indexTemp;
+
+        end
 
         % For CCE Exp Tpyes 1 and 2:
-        if (p == 1 || p == 2)
-        % For all experiment types:
-        startTimes = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
-        %^^+1 to actually get to the 1st instance of trialSuccess == 0
-        endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
-        %^^+1 to actually get to the 1st instance of trialSuccess == 1
-       
-        % For CCE Exp Tpye 3: if (p == 3)
-        else
-        %         
-        %             endTimes = strfind(subjectData{j,p}.manipForceTooHigh',[0 1])'+ 1;
-        %         %^^+1 to actually get to the 1st instance of manipForceTooHigh == 1
-        %         end
+        if (p == 1)
+            % 1 will be the 1st instance of trialSuccess==0 for CCE because of
+            % the design of Type 3
+            startTimes = [1; strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1];
+            %^^+1 to actually get to the 1st instance of trialSuccess == 0
+            endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+            %^^+1 to actually get to the 1st instance of trialSuccess == 1
+        elseif (p == 2)
+            startTimes = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
+            %^^+1 to actually get to the 1st instance of trialSuccess == 0
+            endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+            %^^+1 to actually get to the 1st instance of trialSuccess == 1
         end
 
         for k = 1:numTrials
@@ -130,7 +280,7 @@ for p = 1:numExperimentTypes % Addition for each experiment type
             % Trial no success to success
             trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
 
-            %Find first instance of contact with cube after:
+            % Find first instance of contact with cube after:
             firstIndexContactTime_index = ...
                 find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
                 + startTimes(k)-1;
@@ -151,6 +301,7 @@ for p = 1:numExperimentTypes % Addition for each experiment type
 
         trialStartTime_index{j,p} = trialStartTime_indexTemp;
         trialEndTime_index{j,p} = trialEndTime_indexTemp;
+
     end
 end
 disp("find trial start and end times -- done")
@@ -519,7 +670,7 @@ invisPlotMarker = "s"; %variable used in createErrorBarPlot
 markerSize = 20; %variable used in createErrorBarPlot
 
 %% Plot completionTimes
-close all;
+% close all;
 markerSize = 15;
 minY = -0.5; maxY = 8;
 visCubeColor = evalin('base','boxVisColor');
@@ -545,7 +696,7 @@ for p = 1:numExperimentTypes
 end
 
 %% Plot pathLengths
-close all;
+% close all;
 markerSize = 12;
 jitterVal = 0.14;
 minY = 0.0; maxY = 4.0;
@@ -595,24 +746,24 @@ for p = 1:numExperimentTypes
 end
 
 %% Plot Normal and Shear Forces
-close all;
+% close all;
 markerSize = 10;
-plotMarker = "d";
 minY = 0; maxY = 55;
 
 for p = 1:numExperimentTypes
     figure;
     subplot(1,2,1)
+    plotMarker = "d";
     [h9, indexNormalMean, indexNormalMeanStdVals] = ...
         createErrorBarPlot(meanIndexNormalForceMapping1{:,p},...
         meanIndexNormalForceMapping5{:,p},...
-        strcat("Index Fingertip Forces CCE ExpType",num2str(p)),...
+        strcat("Index Forces CCE ExpType",num2str(p)),...
         "Mapping", "Force [N]"); hold on;
     plotMarker = "s";
     [h11, indexShearMean, indexShearMeanStdVals] = ...
         createErrorBarPlot(meanIndexShearForceMapping1{:,p},...
         meanIndexShearForceMapping5{:,p},...
-        strcat("Index Fingertip Forces CCE ExpType",num2str(p)),...
+        strcat("Index Forces CCE ExpType",num2str(p)),...
         "Mapping", "Force [N]");
     ylim([minY,maxY]);
 
@@ -621,13 +772,13 @@ for p = 1:numExperimentTypes
     [h13, thumbNormalMean, thumbNormalMeanStdVals] = ...
         createErrorBarPlot(meanThumbNormalForceMapping1{:,p},...
         meanThumbNormalForceMapping5{:,p},...
-        strcat("Thumb Fingertip Forces CCE ExpType",num2str(p)),...
+        strcat("Thumb Forces CCE ExpType",num2str(p)),...
         "Mapping", "Force [N]"); hold on;
     plotMarker = "s";
     [h15, thumbShearMean, thumbShearMeanStdVals] = ...
         createErrorBarPlot(meanThumbShearForceMapping1{:,p},...
         meanThumbShearForceMapping5{:,p},...
-        strcat("Thumb Fingertip Forces CCE ExpType",num2str(p)),...
+        strcat("Thumb Forces CCE ExpType",num2str(p)),...
         "Mapping", "Force [N]");
     ylim([minY,maxY])
 
@@ -649,8 +800,7 @@ end
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
-
-close all;
+% close all;
 saveFigures = false;
 
 forceLimit = 20; %N
@@ -674,16 +824,16 @@ for j = 1:numSubjects
                     subjectData{j,p}.manipForceTooHigh(t_i),'b'); hold on;
             end
         end
- end
-        ylim([-0.2 1.2]); yticks([0 1]);
-        improvePlot_v2(false, true, 18, 1500, 700);
-        xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
-        title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
-        
-        legend([h1(1), h2(1), h3(1)],...
-            "Exp Type 1", "Exp Type 2","Exp Type 3",...
-            "Location","northeast");
-        hold off;  
+    end
+    ylim([-0.2 1.2]); yticks([0 1]);
+    improvePlot_v2(false, true, 18, 1500, 700);
+    xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
+    title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
+
+    legend([h1(1), h2(1), h3(1)],...
+        "Exp Type 1", "Exp Type 2","Exp Type 3",...
+        "Location","northeast");
+    hold off;
 end
 if (saveFigures == true)
     set(gcf,'PaperOrientation','landscape');
