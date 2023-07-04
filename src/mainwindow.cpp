@@ -34,11 +34,13 @@ int defaultStopBit = 1;
 QString device0X; //X
 QString device0Y; //Y
 QString device0Z; //Z
+QString dev0Shear;
 QString dev0Mag;
 //Ventral desiered values:
 QString device1X; //X
 QString device1Y; //Y
 QString device1Z; //Z
+QString dev1Shear;
 QString dev1Mag;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
@@ -107,11 +109,13 @@ QString MainWindow::mapFingersToDevices()
         device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
         device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
         dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        dev0Shear = QString::number(sqrt(pow(localForce0[0],2.0) + pow(localForce0[1],2.0)), 'f', 1);
         //Ventral - thumb desired forces:
         device1X = QString::number(localForce1[0], 'f', 1); //localForce1[0] //X
         device1Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
         device1Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
         dev1Mag = QString::number(localForce1.norm(), 'f', 1);
+        dev1Shear = QString::number(sqrt(pow(localForce1[0],2.0) + pow(localForce1[1],2.0)), 'f', 1);
     }
     //Reverse Mapping
     if(p_CommonData->mapping == 2)
@@ -122,11 +126,13 @@ QString MainWindow::mapFingersToDevices()
         device0Y = QString::number(localForce1[1], 'f', 1); //localForce1[1] //Y
         device0Z = QString::number(localForce1[2], 'f', 1); //localForce1[2] //Z
         dev0Mag = QString::number(localForce1.norm(), 'f', 1);
+        dev0Shear = QString::number(sqrt(pow(localForce1[0],2.0) + pow(localForce1[1],2.0)), 'f', 1);
         //Ventral - index desired forces:
         device1X = QString::number(localForce0[0], 'f', 1); //localForce0[0] //X
         device1Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
         device1Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
         dev1Mag = QString::number(localForce0.norm(), 'f', 1);
+        dev1Shear = QString::number(sqrt(pow(localForce0[0],2.0) + pow(localForce0[1],2.0)), 'f', 1);
     }
     //Single Mapping
     if(p_CommonData->mapping == 3)
@@ -137,6 +143,7 @@ QString MainWindow::mapFingersToDevices()
         device0Y = QString::number(localForce0[1], 'f', 1); //localForce0[1] //Y
         device0Z = QString::number(localForce0[2], 'f', 1); //localForce0[2] //Z
         dev0Mag = QString::number(localForce0.norm(), 'f', 1);
+        dev0Shear = QString::number(sqrt(pow(localForce0[0],2.0) + pow(localForce0[1],2.0)), 'f', 1);
         //Ventral - thumb desired forces:
         //localForce1[0] = 0.0;
         //localForce1[1] = 0.0;
@@ -145,6 +152,7 @@ QString MainWindow::mapFingersToDevices()
         device1Y = QString::number(0.0); //localForce1[1] //Y
         device1Z = QString::number(0.0); //localForce1[2] //Z
         dev1Mag = QString::number(0.0, 'f', 1);
+        dev1Shear = QString::number(0.0, 'f', 1);
     }
     //Averaged
     if(p_CommonData->mapping == 4)
@@ -155,11 +163,13 @@ QString MainWindow::mapFingersToDevices()
         device0Y = QString::number(0.5*(localForce0[1] + localForce1[1]), 'f', 1); //localForce0[1] //Y
         device0Z = QString::number(0.5*(localForce0[2] + localForce1[2]), 'f', 1); //localForce0[2] //Z
         dev0Mag = QString::number(0.5*(localForce0.norm() + localForce1.norm()), 'f', 1);
+        dev0Shear = QString::number(0.5*(sqrt(pow(localForce0[0],2.0) + pow(localForce0[1],2.0)) + sqrt(pow(localForce1[0],2.0) + pow(localForce1[1],2.0))), 'f', 1);
         //Ventral - thumb desired forces:
         device1X = QString::number(0.0); //localForce1[0] //X
         device1Y = QString::number(0.0); //localForce1[1] //Y
         device1Z = QString::number(0.0); //localForce1[2] //Z
         dev1Mag = QString::number(0.0, 'f', 1);
+        dev1Shear = QString::number(0.0, 'f', 1);
     }
     //Control - No Haptic Feedback
     if(p_CommonData->mapping == 5)
@@ -170,11 +180,13 @@ QString MainWindow::mapFingersToDevices()
         device0Y = QString::number(0.0); //localForce0[1] //Y
         device0Z = QString::number(0.0); //localForce0[2] //Z
         dev0Mag = QString::number(0.0, 'f', 1);
+        dev0Shear = QString::number(0.0, 'f', 1);
         //Ventral - thumb desired forces:
         device1X = QString::number(0.0); //localForce1[0] //X
         device1Y = QString::number(0.0); //localForce1[1] //Y
         device1Z = QString::number(0.0); //localForce1[2] //Z
         dev1Mag = QString::number(0.0, 'f', 1);
+        dev1Shear = QString::number(0.0, 'f', 1);
     }
     else
     {
@@ -184,11 +196,10 @@ QString MainWindow::mapFingersToDevices()
     //dev0Mag = QString::number(10.0, 'f', 1);
     //dev1Mag = QString::number(10.0, 'f', 1);
     //Dispay in GUI:
+    ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z + "N\r\nMag: " + dev0Mag + "N\r\nShear: " + dev0Shear +"N\r\n"); //device 0 //device 0 _prev
+    ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nMag: " + dev1Mag + "N\r\nShear: " + dev1Shear +"N\r\n"); //device 1 //device 1_prev
 
-    ui->serialWrite1->setText("New: " + device0X + " | " + device0Y + " | " + device0Z + "N\r\n" + "Mag: " + dev0Mag + "N\r\n"); //device 0 //device 0 _prev
-    ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\n" + "Mag: " + dev1Mag + "N\r\n"); //device 1 //device 1_prev
-
-    QString deviceData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + "\r\n";
+    QString deviceData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + dev0Shear + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + " " + dev1Shear +"\r\n";
     return deviceData;
 }
 

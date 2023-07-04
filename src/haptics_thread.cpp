@@ -2501,7 +2501,7 @@ void haptics_thread::RenderDynamicBodies()
     // choose which type of dynamic object environment to render
     switch(p_CommonData->currentDynamicObjectState)
     {
-    case standard:
+    case standard: // Dynamic Bodies button
         boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
         friction1 = 2; friction2 = 2; friction3 = 2; //EXPERIMENTFRICTION;
         mass1 = 0.2; mass2 = 0.2; mass3 = 0.2;
@@ -3553,9 +3553,14 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp() // Jasmin Cube Guidance Expe
     qDebug()<<"Finished CGE Setup";
 }
 
+//Dynamic Bodies Button:
 // general mass demo with adjustable parameters
 void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 {
+    //Increase Size:
+    boxSize1 = 1.25*boxSize1;
+    boxSize2 = boxSize1;
+    boxSize3 = boxSize1;
     // create the visual boxes on the dynamicbox meshes
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
     cCreateBox(p_CommonData->p_dynamicBox2, boxSize2, boxSize2, boxSize2); // make mesh a box
@@ -3614,10 +3619,14 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     p_CommonData->ODEBody2->setMass(mass2);
     p_CommonData->ODEBody3->setMass(mass3);
 
-    // set position of box
-    p_CommonData->ODEBody1->setLocalPos(0.15,-0.2,-0.3);
-    p_CommonData->ODEBody2->setLocalPos(0.20,-0.1,-0.2);
-    p_CommonData->ODEBody3->setLocalPos(0.25,0.0,-0.1);
+    // set position of box -- Changed for WHC demo
+    //    p_CommonData->ODEBody1->setLocalPos(0.15,-0.2,-0.3);
+    //    p_CommonData->ODEBody2->setLocalPos(0.20,-0.1,-0.2);
+    //    p_CommonData->ODEBody3->setLocalPos(0.25,0.0,-0.1);
+
+    p_CommonData->ODEBody3->setLocalPos(0.25, -0.15, -0.3); //red
+    p_CommonData->ODEBody2->setLocalPos(0.20, 0.10, -0.2); //blue
+    p_CommonData->ODEBody1->setLocalPos(0.15, 0.35, -0.1); //green
 
     // define some material properties for wall
     wall = new chai3d::cMesh();
@@ -3631,7 +3640,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
     wall->setLocalPos(0.05, 0.085, -0.05);
 
-    p_CommonData->p_world->addChild(wall);
+   //  p_CommonData->p_world->addChild(wall);  // Remove for WHC Demo
 
     double hoopX = 0.35;
     double hoopY = 0.65;
@@ -3648,7 +3657,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     matHoop1.setRed();
     hoop1->setMaterial(matHoop1);
 
-    p_CommonData->p_world->addChild(hoop1);
+    // p_CommonData->p_world->addChild(hoop1);  // Remove for WHC Demo
 
     hoop2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop2, 0.07, 0.01, 0.07);
@@ -3664,7 +3673,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     chai3d::cMaterial matHoop3;
     matHoop3.setRed();
     hoop3->setMaterial(matHoop3);
-    p_CommonData->p_world->addChild(hoop3);
+    // p_CommonData->p_world->addChild(hoop3); // Remove for WHC Demo
 
     hoop4 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(hoop4, 0.055, 0.01, 0.055);
@@ -3672,7 +3681,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     chai3d::cMaterial matHoop4;
     matHoop4.setWhite();
     hoop4->setMaterial(matHoop4);
-    p_CommonData->p_world->addChild(hoop4);
+    // p_CommonData->p_world->addChild(hoop4);  // Remove for WHC Demo
 
     targetRadius = 0.08;
 
@@ -3686,7 +3695,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     target3->setUseCulling(true);
     target3->setUseTransparency(true);
     target3->setTransparencyLevel(0.35, true);
-    p_CommonData->p_world->addChild(target3);
+    // p_CommonData->p_world->addChild(target3);  // Remove for WHC Demo
 
     target2 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);
@@ -3697,7 +3706,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     target2->setUseCulling(true);
     target2->setUseTransparency(true);
     target2->setTransparencyLevel(0.35, true);
-    p_CommonData->p_world->addChild(target2);
+    // p_CommonData->p_world->addChild(target2);  // Remove for WHC Demo
 
     target1 = new chai3d::cMesh();
     chai3d::cCreateEllipsoid(target1, targetRadius*sc, targetRadius*sc, targetRadius*sc);
@@ -3708,9 +3717,9 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     target1->setUseCulling(true);
     target1->setUseTransparency(true);
     target1->setTransparencyLevel(0.35, true);
-    p_CommonData->p_world->addChild(target1);
+    // p_CommonData->p_world->addChild(target1); // Remove for WHC Demo
 
-    //p_CommonData->target1Complete = false;
+    p_CommonData->target1Complete = false;
     p_CommonData->target2Complete = false;
     p_CommonData->target3Complete = false;
 
