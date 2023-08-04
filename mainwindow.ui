@@ -2183,6 +2183,27 @@ Experiment</string>
      <string>Set New Trial Number</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="WHCDemoBox">
+    <property name="geometry">
+     <rect>
+      <x>880</x>
+      <y>477</y>
+      <width>181</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>WHC Demo</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

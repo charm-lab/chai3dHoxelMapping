@@ -23,9 +23,9 @@ subjectNum = [1];
 
 % Load data from folder
 % Folder contatining all data:
-dataFolders = ["..\..\CCE_Subject_Data\CCE_ExpType1"
-    "..\..\CCE_Subject_Data\CCE_ExpType2"
-    "..\..\CCE_Subject_Data\CCE_ExpType3"];
+dataFolders = ["..\..\CCE_Subject_Data\z_old Pilot Data\CCE_ExpType1"
+    "..\..\CCE_Subject_Data\z_old Pilot Data\CCE_ExpType2"
+    "..\..\CCE_Subject_Data\z_old Pilot Data\CCE_ExpType3"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -98,7 +98,7 @@ disp("***Data Upload and Merge Complete***")
 %% Remove Training Trial Data
 
 % This will always be for CCE Exp Type1 so p=1
-p=1;
+p = 1;
 for j = 1:numSubjects
     % Trial # for 1st testing Trial
     firstTestingTrialNum = str2num(subjectFiles{j,p}(1).name([15:16]));
@@ -651,7 +651,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Cosmetics:
 close all;
-saveFigures = true;
+saveFigures = false;
 %Old color scheme:
 visCubeColor = "[0 0 0]";
 % invisCubeColor = "[0.5 0.5 0.5]";
@@ -670,132 +670,292 @@ invisPlotMarker = "s"; %variable used in createErrorBarPlot
 markerSize = 20; %variable used in createErrorBarPlot
 
 %% Plot completionTimes
-% close all;
+close all;
 markerSize = 15;
 minY = -0.5; maxY = 8;
 visCubeColor = evalin('base','boxVisColor');
 
+% Cells to store parameter basic statistics
+completionTimeMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+completionTimeStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+
 for p = 1:numExperimentTypes
-    figure;
-    [h1, completionTime, completionTimeStdVals] = ...
-        createErrorBarPlot(completionTimeMapping1{:,p}, ...
-        completionTimeMapping5{:,p},...
-        strcat("Completion Time CCE ExpType",num2str(p)), ...
-        "Mapping", "Time [sec]");
-    ylim([minY,maxY]);
-    %     legend("Visible Cube", "Location", "northeast");
-    %     improvePlot;
-    improvePlot_v2(false, true, 22, 1150, 500);
-
-    % Save figure as pdf:
-    if (saveFigures == true)
-        set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\completionTime','-dpdf','-r0');
+    [completionTimeMean, completionTimeStd] = ...
+        getParamStats(completionTimeMapping1{:,p}, ...
+        completionTimeMapping5{:,p});
+    % To plot all experiments in separate figures:
+    %     figure;
+    %     [h1] = createErrorBarPlot(completionTimeMean, completionTimeStd,...
+    %         strcat("Completion Time CCE ExpType",num2str(p)), ...
+    %         "Mapping", "Time [sec]");
+    %     ylim([minY,maxY]);
+    %     %     legend("Visible Cube", "Location", "northeast");
+    %     %     improvePlot;
+    %     improvePlot_v2(false, true, 22, 1150, 500);
+    %
+    %     % Save figure as pdf:
+    %     if (saveFigures == true)
+    %         set(gcf,'PaperOrientation','landscape');
+    %         print(gcf, 'figures\completionTime','-dpdf','-r0');
+    %     end
+    for j = 1:numSubjects
+        completionTimeMeanStats{j,p} = completionTimeMean;
+        completionTimeStdStats{j,p} = completionTimeStd;
     end
-
 end
+
+jitterVal = 0.1;
+createMultiExpErrorBarPlot(completionTimeMeanStats, completionTimeStdStats,...
+    "Completion Time", "Mapping", "Time [sec]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 22, 1400, 500);
+legend("Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \otimes",...
+    "Location","northeast");
 
 %% Plot pathLengths
 % close all;
 markerSize = 12;
-jitterVal = 0.14;
-minY = 0.0; maxY = 4.0;
+jitterVal = 0.1;
+minY = 0.5; maxY = 4.1;
+
+% Cells to store parameter basic statistics
+indexPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+indexPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+thumbPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+thumbPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+boxPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+boxPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
 
 for p = 1:numExperimentTypes
-    % indexPathLength Plot
-    figure;
-    subplot(1,3,1)
-    [h3, indexPathLength, indexPathLengthStdVals] = ...
-        createErrorBarPlot(indexPathLengthMapping1{:,p},...
-        indexPathLengthMapping5{:,p},...
-        strcat("Index Path Length CCE ExpType",num2str(p)),...
-        "Mapping", "Path Length [m]"); hold on;
-    ylim([minY,maxY]);
+    [indexPathLengthMean, indexPathLengthStd] = ...
+        getParamStats(indexPathLengthMapping1{:,p}, ...
+        indexPathLengthMapping5{:,p});
+    [thumbPathLengthMean, thumbPathLengthStd] = ...
+        getParamStats(thumbPathLengthMapping1{:,p}, ...
+        thumbPathLengthMapping5{:,p});
+    [boxPathLengthMean, boxPathLengthStd] = ...
+        getParamStats(boxPathLengthMapping1{:,p}, ...
+        boxPathLengthMapping5{:,p});
 
-    % thumbPathLength Plot
-    subplot(1,3,2)
-    [h5, thumbPathLength, thumbPathLengthStdVals] = ...
-        createErrorBarPlot(thumbPathLengthMapping1{:,p},...
-        thumbPathLengthMapping5{:,p},...
-        strcat("Thumb Path Length CCE ExpType",num2str(p)),...
-        "Mapping", "Path Length [m]");
-    ylim([minY,maxY]);
 
-    % boxPathLength Plot
-    subplot(1,3,3)
-    [h7, boxPathLength, boxPathLengthStdVals] = ...
-        createErrorBarPlot(boxPathLengthMapping1{:,p},...
-        boxPathLengthMapping5{:,p},...
-        strcat("Cube Path Length CCE ExpType",num2str(p)),...
-        "Mapping", "Path Length [m]");
+    % To plot all experiments in separate figures:
+    %     % indexPathLength Plot
+    %     figure;
+    %     subplot(1,3,1)
+    %     [h3, indexPathLength, indexPathLengthStdVals] = ...
+    %         createErrorBarPlot(indexPathLengthMapping1{:,p},...
+    %         indexPathLengthMapping5{:,p},...
+    %         strcat("Index Path Length CCE ExpType",num2str(p)),...
+    %         "Mapping", "Path Length [m]"); hold on;
+    %     ylim([minY,maxY]);
+    %
+    %     % thumbPathLength Plot
+    %     subplot(1,3,2)
+    %     [h5, thumbPathLength, thumbPathLengthStdVals] = ...
+    %         createErrorBarPlot(thumbPathLengthMapping1{:,p},...
+    %         thumbPathLengthMapping5{:,p},...
+    %         strcat("Thumb Path Length CCE ExpType",num2str(p)),...
+    %         "Mapping", "Path Length [m]");
+    %     ylim([minY,maxY]);
+    %
+    %     % boxPathLength Plot
+    %     subplot(1,3,3)
+    %     [h7, boxPathLength, boxPathLengthStdVals] = ...
+    %         createErrorBarPlot(boxPathLengthMapping1{:,p},...
+    %         boxPathLengthMapping5{:,p},...
+    %         strcat("Cube Path Length CCE ExpType",num2str(p)),...
+    %         "Mapping", "Path Length [m]");
+    %
+    %     ylim([minY,maxY]);
+    %     improvePlot_v2(false, true, 14, 1500, 650); hold off;
+    %
+    %     % Save figure as pdf:
+    %     if (saveFigures == true)
+    %         set(gcf,'PaperOrientation','landscape');
+    %         print(gcf, 'figures\pathLengths','-dpdf','-r0');
+    %     end
+    %
+    %     % Save figure as pdf:
+    %     if (saveFigures == true)
+    %         set(gcf,'PaperOrientation','landscape');
+    %         print(gcf, 'figures\pathLengthsCombined','-dpdf','-r0');
+    %     end
 
-    ylim([minY,maxY]);
-    improvePlot_v2(false, true, 14, 1500, 650); hold off;
-
-    % Save figure as pdf:
-    if (saveFigures == true)
-        set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\pathLengths','-dpdf','-r0');
+    for j = 1:numSubjects
+        indexPathLengthMeanStats{j,p} = indexPathLengthMean;
+        indexPathLengthStdStats{j,p} = indexPathLengthStd;
+        thumbPathLengthMeanStats{j,p} = thumbPathLengthMean;
+        thumbPathLengthStdStats{j,p} = thumbPathLengthStd;
+        boxPathLengthMeanStats{j,p} = boxPathLengthMean;
+        boxPathLengthStdStats{j,p} = boxPathLengthStd;
     end
 
-    % Save figure as pdf:
-    if (saveFigures == true)
-        set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\pathLengthsCombined','-dpdf','-r0');
-    end
 end
+
+jitterVal = 0.1;
+plotMarker = "s";
+% Index Plot
+figure;
+createMultiExpErrorBarPlot(indexPathLengthMeanStats, indexPathLengthStdStats,...
+    "Index Path Length", "Mapping", "Path Length [m]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 22, 1500, 650); hold off;
+
+legend("Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \otimes",...
+    "Location","northeast");
+% Thumb Plot
+figure;
+createMultiExpErrorBarPlot(thumbPathLengthMeanStats, thumbPathLengthStdStats,...
+    "Thumb Path Length", "Mapping", "Path Length [m]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 22, 1500, 650); hold off;
+
+legend("Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \otimes",...
+    "Location","northeast");
+% Box Plot
+figure;
+createMultiExpErrorBarPlot(boxPathLengthMeanStats, boxPathLengthStdStats,...
+    "Box Path Length", "Mapping", "Path Length [m]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 22, 1500, 650); hold off;
+
+legend("Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \otimes",...
+    "Location","northeast");
+
 
 %% Plot Normal and Shear Forces
-% close all;
+close all;
 markerSize = 10;
-minY = 0; maxY = 55;
+minY = 0; maxY = 75;
+
+% Cells to store parameter basic statistics
+indexNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+indexNormalStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+indexShearMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+indexShearStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+
+thumbNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+thumbNormalStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+thumbShearMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+thumbShearStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
 
 for p = 1:numExperimentTypes
-    figure;
-    subplot(1,2,1)
-    plotMarker = "d";
-    [h9, indexNormalMean, indexNormalMeanStdVals] = ...
-        createErrorBarPlot(meanIndexNormalForceMapping1{:,p},...
-        meanIndexNormalForceMapping5{:,p},...
-        strcat("Index Forces CCE ExpType",num2str(p)),...
-        "Mapping", "Force [N]"); hold on;
-    plotMarker = "s";
-    [h11, indexShearMean, indexShearMeanStdVals] = ...
-        createErrorBarPlot(meanIndexShearForceMapping1{:,p},...
-        meanIndexShearForceMapping5{:,p},...
-        strcat("Index Forces CCE ExpType",num2str(p)),...
-        "Mapping", "Force [N]");
-    ylim([minY,maxY]);
+    [indexNormalMean, indexNormalMeanStdVals] = ...
+        getParamStats(meanIndexNormalForceMapping1{:,p}, ...
+        meanIndexNormalForceMapping5{:,p});
+    [indexShearMean, indexShearMeanStdVals] = ...
+        getParamStats(meanIndexShearForceMapping1{:,p}, ...
+        meanIndexShearForceMapping5{:,p});
 
-    subplot(1,2,2)
-    plotMarker = "d";
-    [h13, thumbNormalMean, thumbNormalMeanStdVals] = ...
-        createErrorBarPlot(meanThumbNormalForceMapping1{:,p},...
-        meanThumbNormalForceMapping5{:,p},...
-        strcat("Thumb Forces CCE ExpType",num2str(p)),...
-        "Mapping", "Force [N]"); hold on;
-    plotMarker = "s";
-    [h15, thumbShearMean, thumbShearMeanStdVals] = ...
-        createErrorBarPlot(meanThumbShearForceMapping1{:,p},...
-        meanThumbShearForceMapping5{:,p},...
-        strcat("Thumb Forces CCE ExpType",num2str(p)),...
-        "Mapping", "Force [N]");
-    ylim([minY,maxY])
+    [thumbNormalMean, thumbNormalMeanStdVals] = ...
+        getParamStats(meanThumbNormalForceMapping1{:,p}, ...
+        meanThumbNormalForceMapping5{:,p});
+    [thumbShearMean, thumbShearMeanStdVals] = ...
+        getParamStats(meanThumbShearForceMapping1{:,p}, ...
+        meanThumbShearForceMapping5{:,p});
 
-    improvePlot_v2(false, true, 18, 1200, 700); hold off;
+    % To plot all experiments in separate figures:
+    %     figure;
+    %     subplot(1,2,1)
+    %     plotMarker = "d";
+    %     [h9, indexNormalMean, indexNormalMeanStdVals] = ...
+    %         createErrorBarPlot(meanIndexNormalForceMapping1{:,p},...
+    %         meanIndexNormalForceMapping5{:,p},...
+    %         strcat("Index Forces CCE ExpType",num2str(p)),...
+    %         "Mapping", "Force [N]"); hold on;
+    %     plotMarker = "s";
+    %     [h11, indexShearMean, indexShearMeanStdVals] = ...
+    %         createErrorBarPlot(meanIndexShearForceMapping1{:,p},...
+    %         meanIndexShearForceMapping5{:,p},...
+    %         strcat("Index Forces CCE ExpType",num2str(p)),...
+    %         "Mapping", "Force [N]");
+    %     ylim([minY,maxY]);
+    %
+    %     subplot(1,2,2)
+    %     plotMarker = "d";
+    %     [h13, thumbNormalMean, thumbNormalMeanStdVals] = ...
+    %         createErrorBarPlot(meanThumbNormalForceMapping1{:,p},...
+    %         meanThumbNormalForceMapping5{:,p},...
+    %         strcat("Thumb Forces CCE ExpType",num2str(p)),...
+    %         "Mapping", "Force [N]"); hold on;
+    %     plotMarker = "s";
+    %     [h15, thumbShearMean, thumbShearMeanStdVals] = ...
+    %         createErrorBarPlot(meanThumbShearForceMapping1{:,p},...
+    %         meanThumbShearForceMapping5{:,p},...
+    %         strcat("Thumb Forces CCE ExpType",num2str(p)),...
+    %         "Mapping", "Force [N]");
+    %     ylim([minY,maxY])
+    %
+    %     improvePlot_v2(false, true, 18, 1200, 700); hold off;
+    %
+    %     %Save figure as pdf:
+    %     if (saveFigures == true)
+    %         set(gcf,'PaperOrientation','landscape');
+    %         print(gcf, 'figures\normalShearForces','-dpdf','-r0');
+    %     end
+    %
+    %     %Save figure as pdf:
+    %     if (saveFigures == true)
+    %         set(gcf,'PaperOrientation','landscape');
+    %         print(gcf, 'figures\normalShearForcesCombined','-dpdf','-r0');
+    %     end
 
-    %Save figure as pdf:
-    if (saveFigures == true)
-        set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\normalShearForces','-dpdf','-r0');
-    end
+    for j = 1:numSubjects
+        indexNormalMeanStats{j,p} = indexNormalMean;
+        indexNormalStdStats{j,p} = indexNormalMeanStdVals;
+        indexShearMeanStats{j,p} = indexShearMean;
+        indexShearStdStats{j,p} = indexShearMeanStdVals;
 
-    %Save figure as pdf:
-    if (saveFigures == true)
-        set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\normalShearForcesCombined','-dpdf','-r0');
+        thumbNormalMeanStats{j,p} = thumbNormalMean;
+        thumbNormalStdStats{j,p} = thumbNormalMeanStdVals;
+        thumbShearMeanStats{j,p} = thumbShearMean;
+        thumbShearStdStats{j,p} = thumbShearMeanStdVals;
     end
 end
+jitterVal = 0.1;
+% Index Plot
+figure;
+plotMarker = "d";
+createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
+    "Index Forces", "Mapping", "Path Length [m]");
+hold on;
+plotMarker = "s";
+createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
+    "Index Forces", "Mapping", "Path Length [m]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 22, 1500, 650); hold off;
+
+
+% legend("Color \Delta, Trial \Rightarrow",...
+%     "No Color \Delta, Trial \Rightarrow",...
+%     "No Color \Delta, Trial \otimes",...
+%     "Location","northeast");
+
+
+% Thumb Plot
+figure;
+plotMarker = "d";
+createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
+    "Thumb Forces", "Mapping", "Path Length [m]");
+hold on;
+plotMarker = "s";
+createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
+    "Thumb Forces", "Mapping", "Path Length [m]");
+ylim([minY,maxY]);
+improvePlot_v2(false, true, 22, 1500, 650); hold off;
+
+% legend("Color \Delta, Trial \Rightarrow",...
+%     "No Color \Delta, Trial \Rightarrow",...
+%     "No Color \Delta, Trial \otimes",...
+%     "Location","northeast");
 
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
@@ -804,34 +964,53 @@ disp("Plot Normal and Shear Force Error Bar Plots -- done")
 saveFigures = false;
 
 forceLimit = 20; %N
-figure;
 
+timeBroken = cell(numSubjects, numExperimentTypes);
+
+figure;
 for j = 1:numSubjects
     for p = 1:numExperimentTypes
         for k = 1:numTrials
+            % Get the time vector of an individual trial:
             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
+            timeVec = subjectData{j,p}.time(t_i);
+            % Find times where threshold exceeded if that happened in
+            % trial:
+            if sum(subjectData{j,p}.manipForceTooHigh(t_i) == 1) == 0
+                timeBroken{j,p}(k,j) = 0;
+            else
+                timeVec(subjectData{j,p}.manipForceTooHigh(t_i) == 1);
+                timeBroken{j,p}(k,j) = timeVec(end) - timeVec(1);
+            end
 
+            % Color code plot based on exp type:
             if(p == 1)
-                h1 = plot(subjectData{j,p}.time(t_i),...
+                h1 = plot(timeVec,...
                     subjectData{j,p}.manipForceTooHigh(t_i),'r'); hold on;
             end
             if(p == 2)
-                h2 = plot(subjectData{j,p}.time(t_i),...
+                h2 = plot(timeVec,...
                     subjectData{j,p}.manipForceTooHigh(t_i),'g'); hold on;
             end
             if (p == 3)
-                h3 = plot(subjectData{j,p}.time(t_i),....
+                h3 = plot(timeVec,...
                     subjectData{j,p}.manipForceTooHigh(t_i),'b'); hold on;
             end
         end
     end
-    ylim([-0.2 1.2]); yticks([0 1]);
+
+    ylim([-0.02 1.25]); yticks([0 1]);
     improvePlot_v2(false, true, 18, 1500, 700);
     xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
     title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
 
+    %     legend([h1(1), h2(1), h3(1)],...
+    %         "Exp Type 1", "Exp Type 2","Exp Type 3",...
+    %         "Location","northeastoutside");
     legend([h1(1), h2(1), h3(1)],...
-        "Exp Type 1", "Exp Type 2","Exp Type 3",...
+        "Color \Delta, Trial \Rightarrow",...
+        "No Color \Delta, Trial \Rightarrow",...
+        "No Color \Delta, Trial \otimes",...
         "Location","northeast");
     hold off;
 end

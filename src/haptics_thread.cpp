@@ -217,12 +217,12 @@ void haptics_thread::UpdateVRGraphics()
             p_CommonData->p_world->clearAllChildren();
             RenderDynamicBodies();
             break;
-       case experimentInertia: //addded to avoid warnings
+        case experimentInertia: //addded to avoid warnings
             qDebug() << "Experiment State not Implemented";
             p_CommonData->p_world->clearAllChildren();
             break;
 
-       case experimentVt: //addded to avoid warnings
+        case experimentVt: //addded to avoid warnings
             qDebug() << "Experiment State not Implemented";
             p_CommonData->p_world->clearAllChildren();
             break;
@@ -284,7 +284,7 @@ void haptics_thread::UpdateVRGraphics()
     p_CommonData->thumbTouchingLast = p_CommonData->thumbTouching;
 
     chai3d::cVector3d gravity_force1(0.0, 0.0, 0.0);
-    chai3d::cVector3d gravity_force2(0.0, 0.0, 0.0);    
+    chai3d::cVector3d gravity_force2(0.0, 0.0, 0.0);
     chai3d::cVector3d gravity_force3(0.0, 0.0, 0.0);
 
     // set fingers to non initially touching
@@ -303,6 +303,7 @@ void haptics_thread::UpdateVRGraphics()
 
     chai3d::cVector3d box1Pos = p_CommonData->ODEBody1->getLocalPos();
     chai3d::cVector3d box2Pos = p_CommonData->ODEBody2->getLocalPos();
+    chai3d::cVector3d box3Pos = p_CommonData->ODEBody3->getLocalPos();
 
     // perform our dynamic body updates if we are in a dynamic environment
     if(p_CommonData->currentEnvironmentState == dynamicBodies)
@@ -571,10 +572,10 @@ void haptics_thread::UpdateVRGraphics()
 
     lastTime = currTime;
 
-    // update scaled positions
-    UpdateScaledCursors();
-    UpdateScaledFingers();
-    UpdateScaledBoxes();
+//    // update scaled positions
+//    UpdateScaledCursors();
+//    UpdateScaledFingers();
+//    UpdateScaledBoxes();
 
     //VR Updates for Mine's StiffnessExperiment
     if(p_CommonData->currentDynamicObjectState == StiffnessExperiment)
@@ -958,7 +959,7 @@ void haptics_thread::UpdateVRGraphics()
 
         //If netiher the target, hoop1, or hoop2 are completed
         if(!p_CommonData->target1Complete &&
-           !(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete))
+                !(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete))
         {
             //Only check for the first hoop
             if(errBox1Hoop1.length() < targetRadius)
@@ -973,7 +974,7 @@ void haptics_thread::UpdateVRGraphics()
         }
         //if target and hoop 2 not complete, but hoop1 complete
         if(!p_CommonData->target1Complete &&
-           (p_CommonData->hoop1Complete && !p_CommonData->hoop2Complete))
+                (p_CommonData->hoop1Complete && !p_CommonData->hoop2Complete))
         {
             //Only check for hoop 2
             //qDebug()<<"target + hoop not complete";
@@ -1023,8 +1024,8 @@ void haptics_thread::UpdateVRGraphics()
     else if(p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
     {
         //Find distance between box1 and hoop1
-       chai3d::cVector3d cubeToHoopDist = box1Pos - hoop1->getLocalPos();
-       if(p_CommonData->target1Complete == false)
+        chai3d::cVector3d cubeToHoopDist = box1Pos - hoop1->getLocalPos();
+        if(p_CommonData->target1Complete == false)
         {
             //if cube is lifted high enough:
             if(cubeToHoopDist.length() < 0.05)
@@ -1042,9 +1043,56 @@ void haptics_thread::UpdateVRGraphics()
                 p_CommonData->trialSuccess = 1;
             }
         }
-       //qDebug()<<cubeToHoopDist.length();
+        //qDebug()<<cubeToHoopDist.length();
     }
 
+    if (p_CommonData->whcDemo == true)
+    {
+        double radius = 0.65;
+
+        chai3d::cVector3d indexToCube1Dist = box1Pos - finger->getLocalPos();
+        chai3d::cVector3d indexToCube2Dist = box2Pos - finger->getLocalPos();
+        chai3d::cVector3d indexToCube3Dist = box3Pos - finger->getLocalPos();
+
+        chai3d::cVector3d thumbToCube1Dist = box1Pos - thumb->getLocalPos();
+        chai3d::cVector3d thumbToCube2Dist = box2Pos - thumb->getLocalPos();
+        chai3d::cVector3d thumbToCube3Dist = box3Pos - thumb->getLocalPos();
+
+        if(indexToCube1Dist.length() <= radius*1.25*boxSize1)
+        {
+            p_CommonData->cubeID0 = "red";
+        }
+        else if(indexToCube2Dist.length() <= radius*1.25*boxSize1)
+        {
+            p_CommonData->cubeID0 = "green";
+        }
+        else if(indexToCube3Dist.length() <= radius*1.25*boxSize1)
+        {
+            p_CommonData->cubeID0 = "blue";
+        }
+        else
+        {
+            p_CommonData->cubeID0 = "none";
+        }
+
+        if(thumbToCube1Dist.length() <= radius*1.25*boxSize1)
+        {
+            p_CommonData->cubeID1 = "red";
+        }
+        else if(thumbToCube2Dist.length() <= radius*1.25*boxSize1)
+        {
+            p_CommonData->cubeID1 = "green";
+        }
+        else if(thumbToCube3Dist.length() <= radius*1.25*boxSize1)
+        {
+            p_CommonData->cubeID1 = "blue";
+        }
+        else
+        {
+            p_CommonData->cubeID1 = "none";
+        }
+
+    }
 
     // if fingers reset in box, fix it and reset the environment again
     if(p_CommonData->resetBoxPosFlag)
@@ -1109,7 +1157,7 @@ void haptics_thread::UpdateVRGraphics()
     }
     */
 }
-
+/*
 void haptics_thread::UpdateScaledCursors()
 {
     curCenter = (m_tool0->m_hapticPoint->getGlobalPosProxy() + m_tool1->m_hapticPoint->getGlobalPosProxy())/2.0;
@@ -1168,7 +1216,7 @@ void haptics_thread::UpdateScaledBoxes()
     p_CommonData->p_dynamicScaledBox1->setLocalPos(scaledBox1Pos);
     p_CommonData->p_dynamicScaledBox1->setLocalRot(p_CommonData->ODEBody1->getLocalRot());
 }
-
+*/
 void haptics_thread::ComputeVRDesiredDevicePos()
 {
     // perform transformation to get "device forces"
@@ -1705,6 +1753,7 @@ void haptics_thread::InitFingerAndTool()
     m_curSphere1->setFrameSize(0.05);
 
     // add display scaled visual representations
+    /*
     m_dispScaleCurSphere0 = new chai3d::cShapeSphere(toolRadius);
     p_CommonData->p_world->addChild(m_dispScaleCurSphere0);
     m_dispScaleCurSphere0->m_material->setGrayDarkSlate();
@@ -1716,6 +1765,7 @@ void haptics_thread::InitFingerAndTool()
     m_dispScaleCurSphere1->m_material->setBlueAqua();
     m_dispScaleCurSphere1->setShowFrame(false);
     m_dispScaleCurSphere1->setFrameSize(0.05);
+    */
 
     //--------------------------------------------------------------------------
     // CREATING OBJECTS
@@ -1768,6 +1818,7 @@ void haptics_thread::InitFingerAndTool()
     ////////////////////////////////////////////
     // CREATE POSITION SCALED OBJECTS
     /////////////////////////////////////////////
+    /*
     scaledFinger = new chai3d::cMultiMesh(); // create a virtual mesh
     p_CommonData->p_world->addChild(scaledFinger); // add object to world
     scaledFinger->setShowFrame(false);
@@ -1810,6 +1861,7 @@ void haptics_thread::InitFingerAndTool()
     scaledThumb->m_material->m_specular.set(1.0, 1.0, 1.0);
     scaledThumb->setUseMaterial(true);
     scaledThumb->setHapticEnabled(false);
+    */
 }
 
 //Must add new body here or else environment *will* crash
@@ -1845,7 +1897,7 @@ void haptics_thread::InitDynamicBodies()
     p_CommonData->p_boxWithHole = new chai3d::cMultiMesh(); // added for HME
 
     // create the scaled virtual objects
-    p_CommonData->p_dynamicScaledBox1 = new chai3d::cMesh();
+    //p_CommonData->p_dynamicScaledBox1 = new chai3d::cMesh();
     //p_CommonData->p_dynamicScaledBox2 = new chai3d::cMesh();
     //p_CommonData->p_dynamicScaledBox3 = new chai3d::cMesh();
     //p_CommonData->p_dynamicScaledBox4 = new chai3d::cMesh();
@@ -1942,7 +1994,7 @@ void haptics_thread::InitDynamicBodies()
     force2_show->m_colorPointA=LineColor;
     force2_show->m_colorPointB=LineColor;
     p_CommonData->p_world->addChild(force1_show);
-    p_CommonData->p_world->addChild(force2_show);       
+    p_CommonData->p_world->addChild(force2_show);
 
     //Define lines for CGE
     /*
@@ -2281,15 +2333,15 @@ void haptics_thread::DeleteDynamicBodies()
         delete p_CommonData->ODEAdjustBody1;
 
         delete p_CommonData->ODEBody1;
-//        delete p_CommonData->ODEBody2;
-//        delete p_CommonData->ODEBody3;
+        //        delete p_CommonData->ODEBody2;
+        //        delete p_CommonData->ODEBody3;
         //delete p_CommonData->ODEBody4;
 
         delete p_CommonData->adjustBox;
         delete p_CommonData->adjustBox1;
         delete p_CommonData->p_dynamicBox1;
-//        delete p_CommonData->p_dynamicBox2;
-//        delete p_CommonData->p_dynamicBox3;
+        //        delete p_CommonData->p_dynamicBox2;
+        //        delete p_CommonData->p_dynamicBox3;
 
         delete ODEGPlane0;
         delete ground;
@@ -2298,8 +2350,8 @@ void haptics_thread::DeleteDynamicBodies()
         delete globe;
 
         p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox1);
-//        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox2);
-//        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox3);
+        //        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox2);
+        //        p_CommonData->p_world->removeChild(p_CommonData->p_dynamicBox3);
         p_CommonData->p_world->removeChild(p_CommonData->p_dynamicScaledBox1);
         p_CommonData->p_world->removeChild(ODEWorld);
         p_CommonData->p_world->removeChild(ground);
@@ -2528,7 +2580,7 @@ void haptics_thread::RenderDynamicBodies()
         break;
     case HoxelMappingExperiment:  // Jasmin HoxelMapping Experiment
         boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
-        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;        
+        friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
         mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
         stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
@@ -2615,6 +2667,7 @@ void haptics_thread::RenderDynamicBodies()
     p_CommonData->p_world->addChild(m_curSphere1);
 
     // add scaled bodies for altering display ratio
+    /*
     m_dispScaleCurSphere0->setHapticEnabled(false);
     m_dispScaleCurSphere1->setHapticEnabled(false);
     scaledFinger->setHapticEnabled(false);
@@ -2623,6 +2676,7 @@ void haptics_thread::RenderDynamicBodies()
     p_CommonData->p_world->addChild(m_dispScaleCurSphere1);
     p_CommonData->p_world->addChild(scaledFinger);
     p_CommonData->p_world->addChild(scaledThumb);
+    */
 
     p_CommonData->clutchedOffset.set(0,0,0);
     p_CommonData->fingerScalePoint.set(0,0,0);
@@ -2630,9 +2684,9 @@ void haptics_thread::RenderDynamicBodies()
     m_tool0->setTransparencyLevel(0);
     m_tool1->setTransparencyLevel(0);
     m_curSphere0->setTransparencyLevel(0);
+//    m_dispScaleCurSphere0->setTransparencyLevel(0);
+//    m_dispScaleCurSphere1->setTransparencyLevel(0);
     m_curSphere1->setTransparencyLevel(0);
-    m_dispScaleCurSphere0->setTransparencyLevel(0);
-    m_dispScaleCurSphere1->setTransparencyLevel(0);
 }
 
 /*Change Environment for each particular setup*/
@@ -3131,7 +3185,7 @@ void haptics_thread::SetDynEnvironFingerMappingExp()   // Jasmin FingerMapping P
 void haptics_thread::SetDynEnvironHoxelMappingExp()   // Jasmin HoxelMapping Wire Guide Experiment
 {   
     qDebug() << "start SetDynEnvironWireGuidanceExp()";
-    targetRadius = 0.05;    
+    targetRadius = 0.05;
     double scaleFactorMMToM = 0.001; //scale stl file from mm unit to meter scale of the environment
 
     //Create box1 hoop -- visual only
@@ -3314,13 +3368,13 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
 {
     qDebug() << "start SetDynEnvironCrumblyCubeExp()";
 
-//    //p_CommonData->lookatPos.set(1.0, 0.0, 0.0);
-//    //p_CommonData->cameraPos.set(0.5, 0.0, 0.0);
-////    p_CommonData->upVector.set(0.0, 0.0, -1.0);
+    //    //p_CommonData->lookatPos.set(1.0, 0.0, 0.0);
+    //    //p_CommonData->cameraPos.set(0.5, 0.0, 0.0);
+    ////    p_CommonData->upVector.set(0.0, 0.0, -1.0);
 
-//    p_CommonData->p_camera->set( p_CommonData->cameraPos,
-//                                 p_CommonData->lookatPos,
-//                                 p_CommonData->upVector);
+    //    p_CommonData->p_camera->set( p_CommonData->cameraPos,
+    //                                 p_CommonData->lookatPos,
+    //                                 p_CommonData->upVector);
 
     targetRadius = 0.05;
 
@@ -3424,7 +3478,7 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
 
     //Set Trial Logic Booleans
     p_CommonData->target1Complete = false;
-    p_CommonData->hoop1Complete = false;    
+    p_CommonData->hoop1Complete = false;
     p_CommonData->hoop2Complete = false;
     p_CommonData->explorationComplete = false;
     p_CommonData->answer1 = false;
@@ -3557,6 +3611,10 @@ void haptics_thread::SetDynEnvironCubeGuidanceExp() // Jasmin Cube Guidance Expe
 // general mass demo with adjustable parameters
 void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 {
+    p_CommonData->stiffness1 = 700;
+    p_CommonData->stiffness2 = 700;
+    p_CommonData->stiffness3 = 700;
+
     //Increase Size:
     boxSize1 = 1.25*boxSize1;
     boxSize2 = boxSize1;
@@ -3573,7 +3631,8 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 
     //define material properties for box 1
     //chai3d::cMaterial mat1;
-    mat1.setGreenLawn();
+    //mat1.setGreenLawn(); // for WHC
+    mat1.setRed();
     mat1.setStiffness(stiffness1);
     //mat1.setLateralStiffness(latStiffness1);
     mat1.setDynamicFriction(dynFriction1);
@@ -3583,8 +3642,9 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     p_CommonData->p_dynamicBox1->setUseMaterial(true);
 
     // define material properties for box 2
-    //chai3d::cMaterial mat2;
-    mat2.setBlueRoyal();
+    // chai3d::cMaterial mat2;
+    //    mat2.setBlueRoyal(); // for WHC
+    mat2.setGreen();
     mat2.setStiffness(stiffness2);
     //mat2.setLateralStiffness(latStiffness2);
     mat2.setDynamicFriction(dynFriction2);
@@ -3595,7 +3655,8 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
 
     // define material properties for box 3
     //chai3d::cMaterial mat3;
-    mat3.setRedSalmon();
+    // mat3.setRedSalmon(); // for WHC
+    mat3.setBlue();
     mat3.setStiffness(stiffness3);
     //mat3.setLateralStiffness(latStiffness3);
     mat3.setDynamicFriction(dynFriction3);
@@ -3624,100 +3685,100 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     //    p_CommonData->ODEBody2->setLocalPos(0.20,-0.1,-0.2);
     //    p_CommonData->ODEBody3->setLocalPos(0.25,0.0,-0.1);
 
-    p_CommonData->ODEBody3->setLocalPos(0.25, -0.15, -0.3); //red
-    p_CommonData->ODEBody2->setLocalPos(0.20, 0.10, -0.2); //blue
-    p_CommonData->ODEBody1->setLocalPos(0.15, 0.35, -0.1); //green
+    p_CommonData->ODEBody1->setLocalPos(0.25, -0.15, -0.3); //red
+    p_CommonData->ODEBody2->setLocalPos(0.20, 0.10, -0.2); //green
+    p_CommonData->ODEBody3->setLocalPos(0.15, 0.35, -0.1); //blue
 
-    // define some material properties for wall
-    wall = new chai3d::cMesh();
-    chai3d::cMaterial matWall;
-    matWall.setBrownSandy();
-    wall->setMaterial(matWall);
-    //create a plane
-    wallHeight = 0.1;
-    wallThickness = 0.01;
+    //    // define some material properties for wall
+    //    wall = new chai3d::cMesh();
+    //    chai3d::cMaterial matWall;
+    //    matWall.setBrownSandy();
+    //    wall->setMaterial(matWall);
+    //    //create a plane
+    //    wallHeight = 0.1;
+    //    wallThickness = 0.01;
 
-    chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
-    wall->setLocalPos(0.05, 0.085, -0.05);
+    //    chai3d::cCreateBox(wall, 1.75*0.3, wallThickness, wallHeight);
+    //    wall->setLocalPos(0.05, 0.085, -0.05);
 
-   //  p_CommonData->p_world->addChild(wall);  // Remove for WHC Demo
+    //   //  p_CommonData->p_world->addChild(wall);  // Remove for WHC Demo
 
-    double hoopX = 0.35;
-    double hoopY = 0.65;
-    double hoopZ = -0.35;
+    //    double hoopX = 0.35;
+    //    double hoopY = 0.65;
+    //    double hoopZ = -0.35;
 
-    hoop1 =new chai3d::cMesh();
-    chai3d::cCreateEllipsoid(hoop1, 0.08, 0.01, 0.08);
+    //    hoop1 =new chai3d::cMesh();
+    //    chai3d::cCreateEllipsoid(hoop1, 0.08, 0.01, 0.08);
+    //    //    hoop1->setLocalPos(hoopX, hoopY, hoopZ);
     //    hoop1->setLocalPos(hoopX, hoopY, hoopZ);
-    hoop1->setLocalPos(hoopX, hoopY, hoopZ);
-    //    chai3d::cCreateEllipsoid(hoop1, 0.08, 0.08, 0.08);
-    //    hoop1->setLocalPos(0, 0, 0.00);
+    //    //    chai3d::cCreateEllipsoid(hoop1, 0.08, 0.08, 0.08);
+    //    //    hoop1->setLocalPos(0, 0, 0.00);
 
-    chai3d::cMaterial matHoop1;
-    matHoop1.setRed();
-    hoop1->setMaterial(matHoop1);
+    //    chai3d::cMaterial matHoop1;
+    //    matHoop1.setRed();
+    //    hoop1->setMaterial(matHoop1);
 
-    // p_CommonData->p_world->addChild(hoop1);  // Remove for WHC Demo
+    //    // p_CommonData->p_world->addChild(hoop1);  // Remove for WHC Demo
 
-    hoop2 = new chai3d::cMesh();
-    chai3d::cCreateEllipsoid(hoop2, 0.07, 0.01, 0.07);
-    hoop2->setLocalPos(hoopX, hoopY - 0.0015, hoopZ);
-    chai3d::cMaterial matHoop2;
-    matHoop2.setWhite();
-    hoop2->setMaterial(matHoop2);
-    p_CommonData->p_world->addChild(hoop2);
+    //    hoop2 = new chai3d::cMesh();
+    //    chai3d::cCreateEllipsoid(hoop2, 0.07, 0.01, 0.07);
+    //    hoop2->setLocalPos(hoopX, hoopY - 0.0015, hoopZ);
+    //    chai3d::cMaterial matHoop2;
+    //    matHoop2.setWhite();
+    //    hoop2->setMaterial(matHoop2);
+    //    // p_CommonData->p_world->addChild(hoop2);  // Remove for WHC Demo
 
-    hoop3 = new chai3d::cMesh();
-    chai3d::cCreateEllipsoid(hoop3, 0.06, 0.01, 0.06);
-    hoop3->setLocalPos(hoopX, hoopY - 0.0025, hoopZ);
-    chai3d::cMaterial matHoop3;
-    matHoop3.setRed();
-    hoop3->setMaterial(matHoop3);
-    // p_CommonData->p_world->addChild(hoop3); // Remove for WHC Demo
+    //    hoop3 = new chai3d::cMesh();
+    //    chai3d::cCreateEllipsoid(hoop3, 0.06, 0.01, 0.06);
+    //    hoop3->setLocalPos(hoopX, hoopY - 0.0025, hoopZ);
+    //    chai3d::cMaterial matHoop3;
+    //    matHoop3.setRed();
+    //    hoop3->setMaterial(matHoop3);
+    //    // p_CommonData->p_world->addChild(hoop3); // Remove for WHC Demo
 
-    hoop4 = new chai3d::cMesh();
-    chai3d::cCreateEllipsoid(hoop4, 0.055, 0.01, 0.055);
-    hoop4->setLocalPos(hoopX, hoopY - 0.0028, hoopZ);
-    chai3d::cMaterial matHoop4;
-    matHoop4.setWhite();
-    hoop4->setMaterial(matHoop4);
-    // p_CommonData->p_world->addChild(hoop4);  // Remove for WHC Demo
+    //    hoop4 = new chai3d::cMesh();
+    //    chai3d::cCreateEllipsoid(hoop4, 0.055, 0.01, 0.055);
+    //    hoop4->setLocalPos(hoopX, hoopY - 0.0028, hoopZ);
+    //    chai3d::cMaterial matHoop4;
+    //    matHoop4.setWhite();
+    //    hoop4->setMaterial(matHoop4);
+    //    // p_CommonData->p_world->addChild(hoop4);  // Remove for WHC Demo
 
-    targetRadius = 0.08;
+    //    targetRadius = 0.08;
 
-    target3 = new chai3d::cMesh();
-    double sc = 0.6;
-    chai3d::cCreateEllipsoid(target3, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target3Pos = chai3d::cVector3d(0.05, 0.18, 0);
-    target3->setLocalPos(0,0,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
-    matTarget3.setRed();
-    target3->setMaterial(matTarget3);
-    target3->setUseCulling(true);
-    target3->setUseTransparency(true);
-    target3->setTransparencyLevel(0.35, true);
-    // p_CommonData->p_world->addChild(target3);  // Remove for WHC Demo
+    //    target3 = new chai3d::cMesh();
+    //    double sc = 0.6;
+    //    chai3d::cCreateEllipsoid(target3, targetRadius*sc, targetRadius*sc, targetRadius*sc);
+    //    target3Pos = chai3d::cVector3d(0.05, 0.18, 0);
+    //    target3->setLocalPos(0,0,0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    //    matTarget3.setRed();
+    //    target3->setMaterial(matTarget3);
+    //    target3->setUseCulling(true);
+    //    target3->setUseTransparency(true);
+    //    target3->setTransparencyLevel(0.35, true);
+    //    // p_CommonData->p_world->addChild(target3);  // Remove for WHC Demo
 
-    target2 = new chai3d::cMesh();
-    chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target2Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
-    target2->setLocalPos(0.1 ,-0.1, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
-    matTarget2.setRed();
-    target2->setMaterial(matTarget2);
-    target2->setUseCulling(true);
-    target2->setUseTransparency(true);
-    target2->setTransparencyLevel(0.35, true);
-    // p_CommonData->p_world->addChild(target2);  // Remove for WHC Demo
+    //    target2 = new chai3d::cMesh();
+    //    chai3d::cCreateEllipsoid(target2, targetRadius*sc, targetRadius*sc, targetRadius*sc);
+    //    target2Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    //    target2->setLocalPos(0.1 ,-0.1, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    //    matTarget2.setRed();
+    //    target2->setMaterial(matTarget2);
+    //    target2->setUseCulling(true);
+    //    target2->setUseTransparency(true);
+    //    target2->setTransparencyLevel(0.35, true);
+    //    // p_CommonData->p_world->addChild(target2);  // Remove for WHC Demo
 
-    target1 = new chai3d::cMesh();
-    chai3d::cCreateEllipsoid(target1, targetRadius*sc, targetRadius*sc, targetRadius*sc);
-    target1Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
-    target1->setLocalPos(0.0 ,-0.2, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
-    matTarget1.setRed();
-    target1->setMaterial(matTarget1);
-    target1->setUseCulling(true);
-    target1->setUseTransparency(true);
-    target1->setTransparencyLevel(0.35, true);
-    // p_CommonData->p_world->addChild(target1); // Remove for WHC Demo
+    //    target1 = new chai3d::cMesh();
+    //    chai3d::cCreateEllipsoid(target1, targetRadius*sc, targetRadius*sc, targetRadius*sc);
+    //    target1Pos = chai3d::cVector3d(0.05, 0.18, 0.0);
+    //    target1->setLocalPos(0.0 ,-0.2, 0.0); //target3Pos.x(), target3Pos.y(), target3Pos.z());
+    //    matTarget1.setRed();
+    //    target1->setMaterial(matTarget1);
+    //    target1->setUseCulling(true);
+    //    target1->setUseTransparency(true);
+    //    target1->setTransparencyLevel(0.35, true);
+    //    // p_CommonData->p_world->addChild(target1); // Remove for WHC Demo
 
     p_CommonData->target1Complete = false;
     p_CommonData->target2Complete = false;
@@ -3726,6 +3787,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     //add one and two indicators
     //p_CommonData->p_world->addChild(p_CommonData->oneModel);
     //p_CommonData->p_world->addChild(p_CommonData->twoModel);
+
 }
 
 // general mass demo with adjustable parameters

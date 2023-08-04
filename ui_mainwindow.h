@@ -214,6 +214,7 @@ public:
     QLCDNumber *condition;
     QRadioButton *Condition1;
     QPushButton *SetTrialNoButton;
+    QCheckBox *WHCDemoBox;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -1329,6 +1330,13 @@ public:
         SetTrialNoButton = new QPushButton(centralWidget);
         SetTrialNoButton->setObjectName(QStringLiteral("SetTrialNoButton"));
         SetTrialNoButton->setGeometry(QRect(1230, 970, 381, 41));
+        WHCDemoBox = new QCheckBox(centralWidget);
+        WHCDemoBox->setObjectName(QStringLiteral("WHCDemoBox"));
+        WHCDemoBox->setGeometry(QRect(880, 477, 181, 51));
+        QFont font5;
+        font5.setPointSize(14);
+        WHCDemoBox->setFont(font5);
+        WHCDemoBox->setChecked(false);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -1447,6 +1455,7 @@ public:
         label_37->setText(QApplication::translate("MainWindow", "Condtion No.:", 0));
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));
         SetTrialNoButton->setText(QApplication::translate("MainWindow", "Set New Trial Number", 0));
+        WHCDemoBox->setText(QApplication::translate("MainWindow", "WHC Demo", 0));
     } // retranslateUi
 
 };

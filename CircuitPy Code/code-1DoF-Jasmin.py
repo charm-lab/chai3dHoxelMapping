@@ -1,3 +1,4 @@
+# Jasmin's ~Official~ 1-DoF Hoxel Control Code
 # Write your code here :-)
 import board
 import time
@@ -292,10 +293,12 @@ while True:
         Y0 = float(data_list[1])
         Z0 = float(data_list[2])
         magF0 = float(data_list[3])
-        X1 = float(data_list[4])
-        Y1 = float(data_list[5])
-        Z1 = float(data_list[6])
-        magF1 = float(data_list[7])
+        shear0 = float(data_list[4])
+        X1 = float(data_list[5])
+        Y1 = float(data_list[6])
+        Z1 = float(data_list[7])
+        magF1 = float(data_list[8])
+        shear1 = float(data_list[9])
 
         # Hoxel 0:
         moveHoxel0(magF0, magF0_prev)

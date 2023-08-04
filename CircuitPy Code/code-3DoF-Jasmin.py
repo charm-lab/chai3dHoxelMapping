@@ -1,4 +1,4 @@
-# Jasmin's ~Official~ 3-DoF Hoxel Control Code
+# Jasmin's ~Official~ 3-DoF Hoxel Control Code -- Version 3
 # Write your code here :-)
 import board
 import time
@@ -139,7 +139,7 @@ def get_pump_Speed(force):
     # return ((b-a)*(force-minVal) / (maxVal-minVal)) + a
 
     # pump_speed cannot exceed 100
-    force = 15* abs(force)
+    force = 15 * abs(force)
     if force >= max_pump_speed:
         pump_Speed = max_pump_speed
     else:
@@ -227,154 +227,98 @@ def hoxel1Off():
 # ------ Actuation ------
 # ------ 3-Dof ------
 kZ = 0.1
-def moveHoxel0(X0, X0_prev, Y0, Y0_prev, Z0, Z0_prev, magF0, magF0_prev):
+scale = 4.0
+def moveHoxel0(X0, Y0, Z0, magF0, shear0):
     if magF0 <= min_force:
         exhaustHoxel0()
     else:
-        if X0 >= 0.0 and Y0 >= 0.0:
-            pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(magF0))
-            + duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-        elif X0 >= 0.0 and Y0 < 0.0:
-            pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(magF0))
-            + duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-        elif X0 < 0.0 and Y0 >= 0.0:
+        if abs(Z0) >= scale * shear0:  # Normal force only
             pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
             pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(magF0))
-            + duty2bits(kZ*get_pump_Speed(Z0))
+            pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
             pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
         else:
-            pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-            pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(magF0))
-            + duty2bits(kZ*get_pump_Speed(Z0))
-#
-#         if X0 >= 0.0 and Y0 >= 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             + duty2bits(get_pump_Speed(X0))
-#             + duty2bits(get_pump_Speed(Y0))
-#             pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#         elif X0 >= 0.0 and Y0 < 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             + duty2bits(get_pump_Speed(X0))
-#             + duty2bits(get_pump_Speed(Y0))
-#             pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#         elif X0 < 0.0 and Y0 >= 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             + duty2bits(get_pump_Speed(X0))
-#             + duty2bits(get_pump_Speed(Y0))
-#             pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#         else:
-#             pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
-#             + duty2bits(get_pump_Speed(X0))
-#             + duty2bits(get_pump_Speed(Y0))
+            if abs(X0) >= scale * abs(Y0):  # X is dominant -> Move X
+                if X0 >= 0.0:
+                    x0_pos(duty2bits(get_pump_Speed(X0)))
+                else:
+                    x0_neg(duty2bits(get_pump_Speed(X0)))
+            elif abs(Y0) >= scale * abs(X0):  # Y is dominant -> Move Y
+                if Y0 >= 0.0:
+                    y0_pos(duty2bits(get_pump_Speed(Y0)))
+                else:
+                    y0_neg(duty2bits(get_pump_Speed(Y0)))
+            else:
+                if X0 >= 0.0 and Y0 >= 0.0:
+                    pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                elif X0 >= 0.0 and Y0 < 0.0:
+                    pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                elif X0 < 0.0 and Y0 >= 0.0:
+                    pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                else:
+                    pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
 
-#         if X0 >= 0.0 and Y0 >= 0.0:
-#             pwm_pump1.duty_cycle = 0
-#             pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(magF0))
-#             pwm_pump3.duty_cycle = 0
-#             pwm_pump4.duty_cycle = 0
-#         elif X0 >= 0.0 and Y0 < 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(magF0))
-#             pwm_pump2.duty_cycle = 0
-#             pwm_pump3.duty_cycle = 0
-#             pwm_pump4.duty_cycle = 0
-#         elif X0 < 0.0 and Y0 >= 0.0:
-#             pwm_pump1.duty_cycle = 0
-#             pwm_pump2.duty_cycle = 0
-#             pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(magF0))
-#             pwm_pump4.duty_cycle = 0
-#         else:
-#             pwm_pump1.duty_cycle = 0
-#             pwm_pump2.duty_cycle = 0
-#             pwm_pump3.duty_cycle = 0
-#             pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(magF0))
-#
-#         if X0 >= 0.0 and Y0 >= 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump4.duty_cycle = 0
-#         if X0 >= 0.0 and Y0 < 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump3.duty_cycle = 0
-#             pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#         if X0 < 0.0 and Y0 < 0.0:
-#             pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump2.duty_cycle = 0
-#             pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#         else:
-#             pwm_pump1.duty_cycle = 0
-#             pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-#             pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(X0)+get_pump_Speed(Y0))
-
-def moveHoxel1(X1, X1_prev, Y1, Y1_prev, Z1, Z1_prev, magF1, magF1_prev):
+def moveHoxel1(X1, Y1, Z1, magF1, shear1):
     if magF1 <= min_force:
         exhaustHoxel1()
     else:
-        if X1 >= 0.0 and Y1 >= 0.0:
-            pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump6.duty_cycle = duty2bits(get_pump_Speed(magF1))
-            + duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-        elif X1 >= 0.0 and Y1 < 0.0:
-            pwm_pump5.duty_cycle = duty2bits(get_pump_Speed(magF1))
-            + duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-        elif X1 < 0.0 and Y1 >= 0.0:
+        if abs(Z1) >= scale * shear1:  # Normal force only
             pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
             pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump7.duty_cycle = duty2bits(get_pump_Speed(magF1))
-            + duty2bits(kZ*get_pump_Speed(Z1))
+            pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
             pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
         else:
-            pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
-            pwm_pump8.duty_cycle = duty2bits(get_pump_Speed(magF1))
-            + duty2bits(kZ*get_pump_Speed(Z1))
-#         if X1 >= 0.0 and Y1 >= 0.0:
-#             pwm_pump5.duty_cycle = 0
-#             pwm_pump6.duty_cycle = duty2bits(get_pump_Speed(magF1))
-#             pwm_pump7.duty_cycle = 0
-#             pwm_pump8.duty_cycle = 0
-#         elif X1 >= 0.0 and Y1 < 0.0:
-#             pwm_pump5.duty_cycle = duty2bits(get_pump_Speed(magF1))
-#             pwm_pump6.duty_cycle = 0
-#             pwm_pump7.duty_cycle = 0
-#             pwm_pump8.duty_cycle = 0
-#         elif X1 < 0.0 and Y1 >= 0.0:
-#             pwm_pump5.duty_cycle = 0
-#             pwm_pump6.duty_cycle = 0
-#             pwm_pump7.duty_cycle = duty2bits(get_pump_Speed(magF1))
-#             pwm_pump8.duty_cycle = 0
-#         else:
-#             pwm_pump5.duty_cycle = 0
-#             pwm_pump6.duty_cycle = 0
-#             pwm_pump7.duty_cycle = 0
-#             pwm_pump8.duty_cycle = duty2bits(get_pump_Speed(magF1))
+            if abs(X1) >= scale * abs(Y1):  # X is dominant -> Move X
+                if X1 >= 0.0:
+                    x1_pos(duty2bits(get_pump_Speed(X1)))
+                else:
+                    x1_neg(duty2bits(get_pump_Speed(X1)))
+            elif abs(Y1) >= scale * abs(X1):  # Y is dominant -> Move Y
+                if Y1 >= 0.0:
+                    y1_pos(duty2bits(get_pump_Speed(Y1)))
+                else:
+                    y1_neg(duty2bits(get_pump_Speed(Y1)))
+            else:
+                if X1 >= 0.0 and Y1 >= 0.0:
+                    pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                elif X1 >= 0.0 and Y1 < 0.0:
+                    pwm_pump5.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                elif X1 < 0.0 and Y1 >= 0.0:
+                    pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                else:
+                    pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
 
 enable_LS.value = False
 enable_LS.value = True
@@ -406,15 +350,17 @@ while True:
         Y0 = float(data_list[1])
         Z0 = float(data_list[2])
         magF0 = float(data_list[3])
-        X1 = float(data_list[4])
-        Y1 = float(data_list[5])
-        Z1 = float(data_list[6])
-        magF1 = float(data_list[7])
+        shear0 = float(data_list[4])
+        X1 = float(data_list[5])
+        Y1 = float(data_list[6])
+        Z1 = float(data_list[7])
+        magF1 = float(data_list[8])
+        shear1 = float(data_list[9])
 
         # Hoxel 0:
-        moveHoxel0(X0, X0_prev, Y0, Y0_prev, Z0, Z0_prev, magF0, magF0_prev)
+        moveHoxel0(X0, Y0, Z0, magF0, shear0)
         # Hoxel 1:
-        moveHoxel1(X1, X1_prev, Y1, Y1_prev, Z1, Z1_prev, magF1, magF1_prev)
+        moveHoxel1(X1, Y1, Z1, magF1, shear1)
 
         # Set prev values for each device direction
         X0_prev = X0

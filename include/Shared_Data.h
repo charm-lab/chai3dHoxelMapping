@@ -774,6 +774,12 @@ typedef struct
     bool manipForceTooHigh;
     int cceExpType;
     chai3d::cVector3d boxInteractionForce;
+
+    //Parameters for WHC Demo
+    bool whcDemo;
+    QString cubeID0;
+    QString cubeID1;
+
 } shared_data;
 
 #endif // SHARED_DATA_H
