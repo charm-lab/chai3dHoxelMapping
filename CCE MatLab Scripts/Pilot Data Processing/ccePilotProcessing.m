@@ -1100,40 +1100,60 @@ end
 figure;
 for j = 1:numSubjects
     for p = 1:numExperimentTypes
-       % Color code plot based on exp type:
-            if(p == 1)
-                h1 = bar(p,...
-                    [mean(numBoxBreaksMapping1{j,p}); ...
-                    mean(numBoxBreaksMapping5{j,p})]); hold on;
-                h1(1).FaceColor = [0.8 0 0];
-                h1(2).FaceColor = [1 0.7 0.8];
+        % Data from each mapping:
+        data1 = numBoxBreaksMapping1{j,p};
+        data5 = numBoxBreaksMapping5{j,p};
+
+        % Color code plot based on exp type:
+        if(p == 1)
+            h1 = bar(p,[mean(data1); mean(data5)]); hold on;
+
+            % Get the x coordinate of the bars
+            for i = 1:numMappings
+                x(i,:) = h1(i).XEndPoints;
             end
-            if(p == 2)
-                h2 = bar(p,...
-                    [mean(numBoxBreaksMapping1{j,p}); ...
-                    mean(numBoxBreaksMapping5{j,p})]); hold on;
-                h2(1).FaceColor = [0.3 0.6 0.1];
-                h2(2).FaceColor = [0.7 0.8 0.5 ];
+            errorbar(x',[mean(data1);mean(data5)],[std(data1); std(data5)],...
+                'k','linestyle','none');
+            % Color the bars:
+            h1(1).FaceColor = [0.8 0 0];
+            h1(2).FaceColor = [1 0.7 0.8];
+        end
+        if(p == 2)
+            h2 = bar(p,[mean(data1); mean(data5)]); hold on;
+            % Get the x coordinate of the bars
+            for i = 1:numMappings
+                x(i,:) = h2(i).XEndPoints;
             end
-            if (p == 3)
-                h3 = bar(p,...
-                    [mean(numBoxBreaksMapping1{j,p}); ...
-                    mean(numBoxBreaksMapping5{j,p})]); hold on;
-                h3(1).FaceColor = [0.2 0.2 0.7];
-                h3(2).FaceColor = [0.7 0.8 0.9];
+            errorbar(x',[mean(data1);mean(data5)],[std(data1); std(data5)],...
+                'k','linestyle','none');
+            % Color the bars:
+            h2(1).FaceColor = [0.3 0.6 0.1];
+            h2(2).FaceColor = [0.7 0.8 0.5 ];
+        end
+        if (p == 3)
+            h3 = bar(p,[mean(data1); mean(data5)]); hold on;
+            % Get the x coordinate of the bars
+            for i = 1:numMappings
+                x(i,:) = h3(i).XEndPoints;
             end
+            errorbar(x',[mean(data1);mean(data5)],[std(data1); std(data5)],...
+                'k','linestyle','none');
+            % Color the bars:
+            h3(1).FaceColor = [0.2 0.2 0.7];
+            h3(2).FaceColor = [0.7 0.8 0.9];
+        end
     end
 end
-    ylim([0 2.0]); 
-    xticks([1:3]);
-    tickLabels = ["Color \Delta, Trial \Rightarrow",...
-        "No Color \Delta, Trial \Rightarrow",...
-        "No Color \Delta, Trial \otimes"];
+ylim([-1 4.0]);
+xticks([1:3]);
+tickLabels = ["Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \Rightarrow",...
+    "No Color \Delta, Trial \otimes"];
 set(gca,'xTick', [1:3],'xticklabel', tickLabels); %#ok<NBRAK>
 
-    improvePlot_v2(false, true, 18, 1000, 700);
-    xlabel("Exp Type"); ylabel("Box Breaks [-]");
-    title("Avg # of Box Breaks");
+improvePlot_v2(false, true, 18, 1000, 700);
+xlabel("Exp Type"); ylabel("Box Breaks [-]");
+title("Avg # of Box Breaks");
 
 %     legend([h1(1), h2(1), h3(1)],...
 %         "Color \Delta, Trial \Rightarrow",...
@@ -1142,10 +1162,10 @@ set(gca,'xTick', [1:3],'xticklabel', tickLabels); %#ok<NBRAK>
 %         "Location","northeast"); hold off;
 
 
-    legend([h1(1), h1(2), h2(1), h2(2), h3(1), h3(2)],...
-        "Mapping 1", "Mapping 5",...
-        "Mapping 1", "Mapping 5",...
-        "Mapping 1", "Mapping 5",...
-        "Location", "northeast"); hold off;
+legend([h1(1), h1(2), h2(1), h2(2), h3(1), h3(2)],...
+    "Mapping 1", "Mapping 5",...
+    "Mapping 1", "Mapping 5",...
+    "Mapping 1", "Mapping 5",...
+    "Location", "northeast"); hold off;
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
