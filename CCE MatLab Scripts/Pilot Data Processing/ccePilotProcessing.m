@@ -960,12 +960,14 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
-% close all;
+close all;
 saveFigures = false;
 
-forceLimit = 20; %N
+forceLimit = 20; % N
 
-timeBroken = cell(numSubjects, numExperimentTypes);
+timeBoxBroken = cell(numSubjects, numExperimentTypes);
+numBoxBreaks = cell(numSubjects, numExperimentTypes);
+markBoxBreaks = true;
 
 figure;
 for j = 1:numSubjects
@@ -974,13 +976,60 @@ for j = 1:numSubjects
             % Get the time vector of an individual trial:
             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
             timeVec = subjectData{j,p}.time(t_i);
+
             % Find times where threshold exceeded if that happened in
             % trial:
-            if sum(subjectData{j,p}.manipForceTooHigh(t_i) == 1) == 0
-                timeBroken{j,p}(k,j) = 0;
+            if (sum(subjectData{j,p}.manipForceTooHigh(t_i) == 1) == 0)
+                timeBoxBroken{j,p}(k,j) = 0;
+                numBoxBreaks{j,p}(k,j) = 0;
             else
-                timeVec(subjectData{j,p}.manipForceTooHigh(t_i) == 1);
-                timeBroken{j,p}(k,j) = timeVec(end) - timeVec(1);
+                % In a trial, provide me a list of the indices wher the
+                % manip force threshold is exceeeded begins
+                manipHighStartIndex = strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[0 1]) + 1;
+
+                % In a trial, provide me a list of the indices wher the
+                % manip force threshold is exceeeded ends
+                manipHighEndIndex = strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[1 0]) + 1;
+
+                % Get the time at which the manip force excceeding starts
+                manipHighTimeStart = timeVec(manipHighStartIndex);
+
+                % Get the time at which the manip force excceeding end
+                manipHighTimeEnd = timeVec(manipHighEndIndex);
+
+                % Get the elapsed times for the whole trial:
+
+                % If the number of rise times is greater than end times
+                % (happens if continues hold at end of trial above force
+                % threshold - if the difference is more than 1 something is
+                % seriously wrong...
+
+                if (length(manipHighStartIndex) == length(manipHighEndIndex)+1)
+                    % Elapsed time is total time of all the high times and
+                    % for the last high time start until last time index in
+                    % the trial:
+                    manipHighTimeEnd = [manipHighTimeEnd; timeVec(end)];
+
+                    timeBoxBroken{j,p}(k,j) = ...
+                        sum(manipHighTimeEnd-manipHighTimeStart);
+                else % Process normally:
+                    timeBoxBroken{j,p}(k,j) = ...
+                        sum(manipHighTimeEnd-manipHighTimeStart);
+                end
+
+                % In the mean time pull the number of time the box broke
+                % based on number of time the manip threshold is exceeeded
+                numBoxBreaks{j,p}(k,j) = length(manipHighStartIndex);
+
+                % Add markings to plot for manip threshold start and end
+                % time
+                if (markBoxBreaks == true)
+                    h4 = plot(manipHighTimeStart,...
+                        ones(length(manipHighTimeStart)),'k*'); hold on;
+                    h5 = plot(manipHighTimeEnd,...
+                        ones(length(manipHighTimeEnd)),'ko'); hold on;
+                end
+
             end
 
             % Color code plot based on exp type:
@@ -996,10 +1045,12 @@ for j = 1:numSubjects
                 h3 = plot(timeVec,...
                     subjectData{j,p}.manipForceTooHigh(t_i),'b'); hold on;
             end
+
+
         end
     end
 
-    ylim([-0.02 1.25]); yticks([0 1]);
+    ylim([-0.02 1.4]); yticks([0 1]);
     improvePlot_v2(false, true, 18, 1500, 700);
     xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
     title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
@@ -1007,11 +1058,23 @@ for j = 1:numSubjects
     %     legend([h1(1), h2(1), h3(1)],...
     %         "Exp Type 1", "Exp Type 2","Exp Type 3",...
     %         "Location","northeastoutside");
-    legend([h1(1), h2(1), h3(1)],...
-        "Color \Delta, Trial \Rightarrow",...
-        "No Color \Delta, Trial \Rightarrow",...
-        "No Color \Delta, Trial \otimes",...
-        "Location","northeast");
+
+    if (markBoxBreaks == true)
+        legend([h1(1), h2(1), h3(1) h4(1), h5(1)],...
+            "Color \Delta, Trial \Rightarrow",...
+            "No Color \Delta, Trial \Rightarrow",...
+            "No Color \Delta, Trial \otimes",...
+            "Box Break Start",...
+            "Box Break End",...
+            "Location","northeast");
+    else
+        legend([h1(1), h2(1), h3(1)],...
+            "Color \Delta, Trial \Rightarrow",...
+            "No Color \Delta, Trial \Rightarrow",...
+            "No Color \Delta, Trial \otimes",...
+            "Location","northeast");
+    end
+
     hold off;
 end
 if (saveFigures == true)
@@ -1022,3 +1085,67 @@ if (saveFigures == true)
 end
 
 disp("Plot Manipulation Force Threshold Plots -- done")
+
+
+% Other Manip Force Thershold Metrics:
+
+for p = 1:numExperimentTypes % Addition for each experiment type
+    for j = 1:numSubjects
+        % Completion Time for each Mapping
+        numBoxBreaksMapping1{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping1);
+        numBoxBreaksMapping5{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping5);
+    end
+end
+
+figure;
+for j = 1:numSubjects
+    for p = 1:numExperimentTypes
+       % Color code plot based on exp type:
+            if(p == 1)
+                h1 = bar(p,...
+                    [mean(numBoxBreaksMapping1{j,p}); ...
+                    mean(numBoxBreaksMapping5{j,p})]); hold on;
+                h1(1).FaceColor = [0.8 0 0];
+                h1(2).FaceColor = [1 0.7 0.8];
+            end
+            if(p == 2)
+                h2 = bar(p,...
+                    [mean(numBoxBreaksMapping1{j,p}); ...
+                    mean(numBoxBreaksMapping5{j,p})]); hold on;
+                h2(1).FaceColor = [0.3 0.6 0.1];
+                h2(2).FaceColor = [0.7 0.8 0.5 ];
+            end
+            if (p == 3)
+                h3 = bar(p,...
+                    [mean(numBoxBreaksMapping1{j,p}); ...
+                    mean(numBoxBreaksMapping5{j,p})]); hold on;
+                h3(1).FaceColor = [0.2 0.2 0.7];
+                h3(2).FaceColor = [0.7 0.8 0.9];
+            end
+    end
+end
+    ylim([0 2.0]); 
+    xticks([1:3]);
+    tickLabels = ["Color \Delta, Trial \Rightarrow",...
+        "No Color \Delta, Trial \Rightarrow",...
+        "No Color \Delta, Trial \otimes"];
+set(gca,'xTick', [1:3],'xticklabel', tickLabels); %#ok<NBRAK>
+
+    improvePlot_v2(false, true, 18, 1000, 700);
+    xlabel("Exp Type"); ylabel("Box Breaks [-]");
+    title("Avg # of Box Breaks");
+
+%     legend([h1(1), h2(1), h3(1)],...
+%         "Color \Delta, Trial \Rightarrow",...
+%         "No Color \Delta, Trial \Rightarrow",...
+%         "No Color \Delta, Trial \otimes",...
+%         "Location","northeast"); hold off;
+
+
+    legend([h1(1), h1(2), h2(1), h2(2), h3(1), h3(2)],...
+        "Mapping 1", "Mapping 5",...
+        "Mapping 1", "Mapping 5",...
+        "Mapping 1", "Mapping 5",...
+        "Location", "northeast"); hold off;
+
+disp("Plot Other Manipulation Force Threshold Metrics-- done")
