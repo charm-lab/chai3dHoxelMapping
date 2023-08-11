@@ -137,6 +137,7 @@ private:
     void showExpTypeMessageBox();
 
     void showTrialFailNotification();
+    void showEndNotification();
 
 private slots:
     //Added for message box popups:

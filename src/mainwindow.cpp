@@ -12,6 +12,7 @@
 #include "breaktimedialog.h"
 #include "cceExpTypeDialog.h"
 #include "trialNotification.h"
+#include "endNotification.h"
 #include "mychai3dwindow.h"
 
 //***Define directory/folder for Subjects' experiment info***
@@ -308,8 +309,8 @@ void MainWindow::on_openButton_clicked()
 
         QTimer *timer0 = new QTimer(this);
         connect(timer0, SIGNAL(timeout()), this, SLOT(writeSerialData()));
-
         timer0->start(10);
+
         //close PCI control:
 #ifdef SENSORAY826
         S826_SystemClose();
@@ -1390,6 +1391,8 @@ bool MainWindow::readExpStuffIn()
         else if (p_CommonData->TrialType=="end"){
             p_CommonData->currentExperimentState = endExperiment;
             qDebug()<<"CrumblyCubeExperiment DONE!!";
+            //Close the app
+            showEndNotification();
             return false;
         }
         else if (p_CommonData->TrialType==""){
@@ -1867,6 +1870,16 @@ void MainWindow::showTrialFailNotification()
     qDebug()<<"NOW I'M CLOSED";
 
     p_CommonData->environmentChange = true;
+}
+
+void MainWindow::showEndNotification()
+{
+    //qDebug()<<"Experiment OVER";
+    EndNotification dialog(&windowGLDisplay);
+    dialog.exec();
+    // Perform any necessary actions to continue using the application after the dialog is closed
+    //qDebug()<<"NOW I'M CLOSED";
+
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *a_event)

@@ -13,6 +13,7 @@ TEMPLATE = app
 CONFIG += qwt
 
 SOURCES += ./src/main.cpp
+SOURCES += ./src/endNotification.cpp
 SOURCES += ./src/mainwindow.cpp
 SOURCES += ./src/cMotorController.cpp
 SOURCES += ./src/haptics_thread.cpp
@@ -37,6 +38,7 @@ SOURCES += ./src/cceExpTypeDialog.cpp
 SOURCES += ./src/trialFailNotification.cpp
 
 HEADERS  += ./include/mainwindow.h
+HEADERS  += ./include/endNotification.h
 HEADERS  += ./include/haptics_thread.h
 HEADERS  += ./include/cMotorController.h
 HEADERS  += ./include/shared_data.h

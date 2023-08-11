@@ -12,20 +12,20 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 1;
+totalNumSubjects = 2;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1];
+subjectNum = [1:2];
 
 % Load data from folder
 % Folder contatining all data:
-dataFolders = ["..\..\CCE_Subject_Data\z_old Pilot Data\CCE_ExpType1"
-    "..\..\CCE_Subject_Data\z_old Pilot Data\CCE_ExpType2"
-    "..\..\CCE_Subject_Data\z_old Pilot Data\CCE_ExpType3"];
+dataFolders = ["..\..\CCE_Subject_Data\CCE_ExpType1"
+    "..\..\CCE_Subject_Data\CCE_ExpType2"
+    "..\..\CCE_Subject_Data\CCE_ExpType3"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -552,13 +552,13 @@ for p = 1:numExperimentTypes % Addition for each experiment type
             thumbShearForceMagVec{k,j} = subjectData{j,p}.thumbForceX(t_i).^2 + ...
                 subjectData{j,p}.thumbForceY(t_i).^2;
         end
-    end
+    
 
     indexNormalForceMag{j,p} = indexNormalForceMagVec(:,j);
     indexShearForceMag{j,p} = indexShearForceMagVec(:,j);
     thumbNormalForceMag{j,p} = thumbNormalForceMagVec(:,j);
     thumbShearForceMag{j,p} = thumbShearForceMagVec(:,j);
-
+end
 end
 disp("compute finger normal/shear force magnitudes -- done")
 
@@ -832,7 +832,7 @@ legend("Color \Delta, Trial \Rightarrow",...
 
 
 %% Plot Normal and Shear Forces
-close all;
+% close all;
 markerSize = 10;
 minY = 0; maxY = 75;
 
@@ -960,7 +960,7 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
-close all;
+% close all;
 saveFigures = false;
 
 forceLimit = 20; % N
