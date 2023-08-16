@@ -12,14 +12,14 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 2;
+totalNumSubjects = 3;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:2];
+subjectNum = [1:3];
 
 % Load data from folder
 % Folder contatining all data:
@@ -552,13 +552,13 @@ for p = 1:numExperimentTypes % Addition for each experiment type
             thumbShearForceMagVec{k,j} = subjectData{j,p}.thumbForceX(t_i).^2 + ...
                 subjectData{j,p}.thumbForceY(t_i).^2;
         end
-    
 
-    indexNormalForceMag{j,p} = indexNormalForceMagVec(:,j);
-    indexShearForceMag{j,p} = indexShearForceMagVec(:,j);
-    thumbNormalForceMag{j,p} = thumbNormalForceMagVec(:,j);
-    thumbShearForceMag{j,p} = thumbShearForceMagVec(:,j);
-end
+
+        indexNormalForceMag{j,p} = indexNormalForceMagVec(:,j);
+        indexShearForceMag{j,p} = indexShearForceMagVec(:,j);
+        thumbNormalForceMag{j,p} = thumbNormalForceMagVec(:,j);
+        thumbShearForceMag{j,p} = thumbShearForceMagVec(:,j);
+    end
 end
 disp("compute finger normal/shear force magnitudes -- done")
 
@@ -679,10 +679,11 @@ visCubeColor = evalin('base','boxVisColor');
 completionTimeMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
 completionTimeStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
 
+% getParamStats parameters must go in brackets due to being stored as cells
 for p = 1:numExperimentTypes
     [completionTimeMean, completionTimeStd] = ...
-        getParamStats(completionTimeMapping1{:,p}, ...
-        completionTimeMapping5{:,p});
+        getParamStats([completionTimeMapping1{:,p}], ...
+        [completionTimeMapping5{:,p}]);
     % To plot all experiments in separate figures:
     %     figure;
     %     [h1] = createErrorBarPlot(completionTimeMean, completionTimeStd,...
@@ -730,14 +731,14 @@ boxPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for ea
 
 for p = 1:numExperimentTypes
     [indexPathLengthMean, indexPathLengthStd] = ...
-        getParamStats(indexPathLengthMapping1{:,p}, ...
-        indexPathLengthMapping5{:,p});
+        getParamStats([indexPathLengthMapping1{:,p}], ...
+        [indexPathLengthMapping5{:,p}]);
     [thumbPathLengthMean, thumbPathLengthStd] = ...
-        getParamStats(thumbPathLengthMapping1{:,p}, ...
-        thumbPathLengthMapping5{:,p});
+        getParamStats([thumbPathLengthMapping1{:,p}], ...
+        [thumbPathLengthMapping5{:,p}]);
     [boxPathLengthMean, boxPathLengthStd] = ...
-        getParamStats(boxPathLengthMapping1{:,p}, ...
-        boxPathLengthMapping5{:,p});
+        getParamStats([boxPathLengthMapping1{:,p}], ...
+        [boxPathLengthMapping5{:,p}]);
 
 
     % To plot all experiments in separate figures:
@@ -834,7 +835,7 @@ legend("Color \Delta, Trial \Rightarrow",...
 %% Plot Normal and Shear Forces
 % close all;
 markerSize = 10;
-minY = 0; maxY = 75;
+minY = 0; maxY = 85;
 
 % Cells to store parameter basic statistics
 indexNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -849,18 +850,18 @@ thumbShearStdStats = cell(numSubjects, numExperimentTypes); % Addition for each 
 
 for p = 1:numExperimentTypes
     [indexNormalMean, indexNormalMeanStdVals] = ...
-        getParamStats(meanIndexNormalForceMapping1{:,p}, ...
-        meanIndexNormalForceMapping5{:,p});
+        getParamStats([meanIndexNormalForceMapping1{:,p}], ...
+        [meanIndexNormalForceMapping5{:,p}]);
     [indexShearMean, indexShearMeanStdVals] = ...
-        getParamStats(meanIndexShearForceMapping1{:,p}, ...
-        meanIndexShearForceMapping5{:,p});
+        getParamStats([meanIndexShearForceMapping1{:,p}], ...
+        [meanIndexShearForceMapping5{:,p}]);
 
     [thumbNormalMean, thumbNormalMeanStdVals] = ...
-        getParamStats(meanThumbNormalForceMapping1{:,p}, ...
-        meanThumbNormalForceMapping5{:,p});
+        getParamStats([meanThumbNormalForceMapping1{:,p}], ...
+        [meanThumbNormalForceMapping5{:,p}]);
     [thumbShearMean, thumbShearMeanStdVals] = ...
-        getParamStats(meanThumbShearForceMapping1{:,p}, ...
-        meanThumbShearForceMapping5{:,p});
+        getParamStats([meanThumbShearForceMapping1{:,p}], ...
+        [meanThumbShearForceMapping5{:,p}]);
 
     % To plot all experiments in separate figures:
     %     figure;
@@ -969,8 +970,8 @@ timeBoxBroken = cell(numSubjects, numExperimentTypes);
 numBoxBreaks = cell(numSubjects, numExperimentTypes);
 markBoxBreaks = true;
 
-figure;
 for j = 1:numSubjects
+    figure;
     for p = 1:numExperimentTypes
         for k = 1:numTrials
             % Get the time vector of an individual trial:
@@ -980,8 +981,10 @@ for j = 1:numSubjects
             % Find times where threshold exceeded if that happened in
             % trial:
             if (sum(subjectData{j,p}.manipForceTooHigh(t_i) == 1) == 0)
-                timeBoxBroken{j,p}(k,j) = 0;
-                numBoxBreaks{j,p}(k,j) = 0;
+                % (k,1) because we want the cells to remain having only 1
+                % column of data
+                timeBoxBroken{j,p}(k,1) = 0;
+                numBoxBreaks{j,p}(k,1) = 0;
             else
                 % In a trial, provide me a list of the indices wher the
                 % manip force threshold is exceeeded begins
@@ -989,7 +992,7 @@ for j = 1:numSubjects
 
                 % In a trial, provide me a list of the indices wher the
                 % manip force threshold is exceeeded ends
-                manipHighEndIndex = strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[1 0]) + 1;
+                manipHighEndIndex = strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[1 0]);% + 1
 
                 % Get the time at which the manip force excceeding starts
                 manipHighTimeStart = timeVec(manipHighStartIndex);
@@ -1010,16 +1013,16 @@ for j = 1:numSubjects
                     % the trial:
                     manipHighTimeEnd = [manipHighTimeEnd; timeVec(end)];
 
-                    timeBoxBroken{j,p}(k,j) = ...
+                    timeBoxBroken{j,p}(k,1) = ...
                         sum(manipHighTimeEnd-manipHighTimeStart);
                 else % Process normally:
-                    timeBoxBroken{j,p}(k,j) = ...
+                    timeBoxBroken{j,p}(k,1) = ...
                         sum(manipHighTimeEnd-manipHighTimeStart);
                 end
 
                 % In the mean time pull the number of time the box broke
                 % based on number of time the manip threshold is exceeeded
-                numBoxBreaks{j,p}(k,j) = length(manipHighStartIndex);
+                numBoxBreaks{j,p}(k,1) = length(manipHighStartIndex);
 
                 % Add markings to plot for manip threshold start and end
                 % time
@@ -1091,81 +1094,24 @@ disp("Plot Manipulation Force Threshold Plots -- done")
 
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
-        % Completion Time for each Mapping
+        % Number of box breaks for each Mapping
         numBoxBreaksMapping1{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping1);
         numBoxBreaksMapping5{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping5);
+
+        % Amount of time box is broken in each trial for each Mapping
+        timeBoxBrokenMapping1{j,p} = sortByMapping(timeBoxBroken{j,p}, mapping1);
+        timeBoxBrokenMapping5{j,p} = sortByMapping(timeBoxBroken{j,p}, mapping5);
     end
 end
 
 figure;
-for j = 1:numSubjects
-    for p = 1:numExperimentTypes
-        % Data from each mapping:
-        data1 = numBoxBreaksMapping1{j,p};
-        data5 = numBoxBreaksMapping5{j,p};
+% Plot average Num Box Breaks Bar Plot with Error Bars
+createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping5,...
+    "Avg # of Box Breaks", "Exp Type", "Box Breaks [-]",[-0.75 2.5]);
 
-        % Color code plot based on exp type:
-        if(p == 1)
-            h1 = bar(p,[mean(data1); mean(data5)]); hold on;
-
-            % Get the x coordinate of the bars
-            for i = 1:numMappings
-                x(i,:) = h1(i).XEndPoints;
-            end
-            errorbar(x',[mean(data1);mean(data5)],[std(data1); std(data5)],...
-                'k','linestyle','none');
-            % Color the bars:
-            h1(1).FaceColor = [0.8 0 0];
-            h1(2).FaceColor = [1 0.7 0.8];
-        end
-        if(p == 2)
-            h2 = bar(p,[mean(data1); mean(data5)]); hold on;
-            % Get the x coordinate of the bars
-            for i = 1:numMappings
-                x(i,:) = h2(i).XEndPoints;
-            end
-            errorbar(x',[mean(data1);mean(data5)],[std(data1); std(data5)],...
-                'k','linestyle','none');
-            % Color the bars:
-            h2(1).FaceColor = [0.3 0.6 0.1];
-            h2(2).FaceColor = [0.7 0.8 0.5 ];
-        end
-        if (p == 3)
-            h3 = bar(p,[mean(data1); mean(data5)]); hold on;
-            % Get the x coordinate of the bars
-            for i = 1:numMappings
-                x(i,:) = h3(i).XEndPoints;
-            end
-            errorbar(x',[mean(data1);mean(data5)],[std(data1); std(data5)],...
-                'k','linestyle','none');
-            % Color the bars:
-            h3(1).FaceColor = [0.2 0.2 0.7];
-            h3(2).FaceColor = [0.7 0.8 0.9];
-        end
-    end
-end
-ylim([-1 4.0]);
-xticks([1:3]);
-tickLabels = ["Color \Delta, Trial \Rightarrow",...
-    "No Color \Delta, Trial \Rightarrow",...
-    "No Color \Delta, Trial \otimes"];
-set(gca,'xTick', [1:3],'xticklabel', tickLabels); %#ok<NBRAK>
-
-improvePlot_v2(false, true, 18, 1000, 700);
-xlabel("Exp Type"); ylabel("Box Breaks [-]");
-title("Avg # of Box Breaks");
-
-%     legend([h1(1), h2(1), h3(1)],...
-%         "Color \Delta, Trial \Rightarrow",...
-%         "No Color \Delta, Trial \Rightarrow",...
-%         "No Color \Delta, Trial \otimes",...
-%         "Location","northeast"); hold off;
-
-
-legend([h1(1), h1(2), h2(1), h2(2), h3(1), h3(2)],...
-    "Mapping 1", "Mapping 5",...
-    "Mapping 1", "Mapping 5",...
-    "Mapping 1", "Mapping 5",...
-    "Location", "northeast"); hold off;
+figure;
+% Plot average time box broken Bar Plot with Error Bars
+createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping5,...
+    "Avg Time Box Broken", "Exp Type", "Time Broken [sec]",[-0.25 1.3]);
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")

@@ -1,5 +1,9 @@
-function [meanVals, stdVals ] = getParamStats(map1, map5)
+% Returns the mean and std of values passed sorted by mapping
+% getParamStats parameters must go in brackets due to being stored as cells
 
+function [meanVals, stdVals ] = getParamStats(map1, map5)
+% map1
+% map5
 numSubjects = evalin('base','numSubjects');
 
 %Calculate means and standard deviations for Vis Cube Subjects
