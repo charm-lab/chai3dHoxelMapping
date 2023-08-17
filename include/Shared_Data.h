@@ -401,7 +401,6 @@ typedef struct
     // workspace scale factor
     double workspaceScaleFactor;
 
-
     // Which block are we display 1 = Reference, 0 = Comparison
     int Displaying;
 
@@ -774,6 +773,9 @@ typedef struct
     bool manipForceTooHigh;
     int cceExpType;
     chai3d::cVector3d boxInteractionForce;
+
+    //For CCE: deciding which folder to save to depending on device bing tested
+
 
     //Parameters for WHC Demo
     bool whcDemo;

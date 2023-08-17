@@ -23,9 +23,9 @@ subjectNum = [1:3];
 
 % Load data from folder
 % Folder contatining all data:
-dataFolders = ["..\..\CCE_Subject_Data\CCE_ExpType1"
-    "..\..\CCE_Subject_Data\CCE_ExpType2"
-    "..\..\CCE_Subject_Data\CCE_ExpType3"];
+dataFolders = ["..\..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType1"
+    "..\..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType2"
+    "..\..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType3"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis

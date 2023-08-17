@@ -2398,23 +2398,40 @@ QString MainWindow::getSubjectDirectory()
     }
     if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
-        if(p_CommonData->cceExpType == 1)
+        QString subjectDir = "./CCE_Subject_Data/";
+        if(ui->hoxelStudyRadioButton->isChecked() == true)
         {
-            return  "./CCE_Subject_Data/CCE_ExpType1/";
+            subjectDir = subjectDir.append("Hoxels-1DoF/");
+
+            if(p_CommonData->cceExpType == 1)
+            {
+                subjectDir = subjectDir.append("CCE_ExpType1/");
+            }
+            if(p_CommonData->cceExpType == 2)
+            {
+                subjectDir = subjectDir.append("CCE_ExpType2/");
+            }
         }
-        if(p_CommonData->cceExpType == 2)
+        else if(ui->fingerPrintStudyRadioButton->isChecked() == true)
         {
-            return  "./CCE_Subject_Data/CCE_ExpType2/";
-        }
-        if(p_CommonData->cceExpType == 3)
-        {
-            return  "./CCE_Subject_Data/CCE_ExpType3/";
+            subjectDir = subjectDir.append("FingerPrint-1DoF/");
+
+            if(p_CommonData->cceExpType == 1)
+            {
+                subjectDir = subjectDir.append("CCE_ExpType1/");
+            }
+            if(p_CommonData->cceExpType == 2)
+            {
+                subjectDir = subjectDir.append("CCE_ExpType2/");
+            }
         }
         // This shouldn't happen but just in case:
         else
         {
-            return  "./CCE_Subject_Data/";
+            subjectDir = "./CCE_Subject_Data/";
         }
+        //qDebug()<<subjectDir;
+        return subjectDir;
     }
     else if (p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
     {

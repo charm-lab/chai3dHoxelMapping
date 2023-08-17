@@ -215,6 +215,11 @@ public:
     QRadioButton *Condition1;
     QPushButton *SetTrialNoButton;
     QCheckBox *WHCDemoBox;
+    QGroupBox *groupBox;
+    QWidget *widget;
+    QGridLayout *gridLayout_8;
+    QRadioButton *hoxelStudyRadioButton;
+    QRadioButton *fingerPrintStudyRadioButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -1332,11 +1337,36 @@ public:
         SetTrialNoButton->setGeometry(QRect(1230, 970, 381, 41));
         WHCDemoBox = new QCheckBox(centralWidget);
         WHCDemoBox->setObjectName(QStringLiteral("WHCDemoBox"));
-        WHCDemoBox->setGeometry(QRect(880, 477, 181, 51));
+        WHCDemoBox->setGeometry(QRect(1230, 500, 181, 51));
         QFont font5;
         font5.setPointSize(14);
         WHCDemoBox->setFont(font5);
         WHCDemoBox->setChecked(false);
+        groupBox = new QGroupBox(centralWidget);
+        groupBox->setObjectName(QStringLiteral("groupBox"));
+        groupBox->setGeometry(QRect(880, 480, 321, 151));
+        groupBox->setFont(font5);
+        widget = new QWidget(groupBox);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(10, 30, 191, 111));
+        gridLayout_8 = new QGridLayout(widget);
+        gridLayout_8->setSpacing(6);
+        gridLayout_8->setContentsMargins(11, 11, 11, 11);
+        gridLayout_8->setObjectName(QStringLiteral("gridLayout_8"));
+        gridLayout_8->setContentsMargins(0, 0, 0, 0);
+        hoxelStudyRadioButton = new QRadioButton(widget);
+        hoxelStudyRadioButton->setObjectName(QStringLiteral("hoxelStudyRadioButton"));
+        hoxelStudyRadioButton->setFont(font5);
+        hoxelStudyRadioButton->setChecked(true);
+
+        gridLayout_8->addWidget(hoxelStudyRadioButton, 0, 0, 1, 1);
+
+        fingerPrintStudyRadioButton = new QRadioButton(widget);
+        fingerPrintStudyRadioButton->setObjectName(QStringLiteral("fingerPrintStudyRadioButton"));
+        fingerPrintStudyRadioButton->setFont(font5);
+
+        gridLayout_8->addWidget(fingerPrintStudyRadioButton, 1, 0, 1, 1);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -1456,6 +1486,9 @@ public:
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));
         SetTrialNoButton->setText(QApplication::translate("MainWindow", "Set New Trial Number", 0));
         WHCDemoBox->setText(QApplication::translate("MainWindow", "WHC Demo", 0));
+        groupBox->setTitle(QApplication::translate("MainWindow", "Choose Study Device:", 0));
+        hoxelStudyRadioButton->setText(QApplication::translate("MainWindow", "Hoxels", 0));
+        fingerPrintStudyRadioButton->setText(QApplication::translate("MainWindow", "FingerPrint", 0));
     } // retranslateUi
 
 };

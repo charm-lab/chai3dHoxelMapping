@@ -2186,8 +2186,8 @@ Experiment</string>
    <widget class="QCheckBox" name="WHCDemoBox">
     <property name="geometry">
      <rect>
-      <x>880</x>
-      <y>477</y>
+      <x>1230</x>
+      <y>500</y>
       <width>181</width>
       <height>51</height>
      </rect>
@@ -2203,6 +2203,63 @@ Experiment</string>
     <property name="checked">
      <bool>false</bool>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>880</x>
+      <y>480</y>
+      <width>321</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Choose Study Device:</string>
+    </property>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>191</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_8">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="hoxelStudyRadioButton">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Hoxels</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="fingerPrintStudyRadioButton">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>FingerPrint</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
