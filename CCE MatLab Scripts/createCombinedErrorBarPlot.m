@@ -262,7 +262,9 @@ end
 %Plot Details
 n=numCols;
 xlim([0 max(xTickVals)+2*dataSeparation]);
-tickLabels = [" ", repmat(["1", "2", "3", "4", "Control"], 1, n)];
+% tickLabels = [" ", repmat(["1", "2", "3", "4", "Control"], 1, n)];
+
+tickLabels = [" ", repmat(["1", "Control"], 1, n)];
 xticks(xTickVals);
 set(gca, 'xTick', xTickVals, 'xticklabel', tickLabels); %#ok<NBRAK>
 % xticks(0:(6*n-n));

@@ -70,10 +70,10 @@ QString cceExpTypeDialog::getCCEExpTypePrompt(int val)
     {
         message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nExp Type 2 - When force limit is exceeded: \nNo color changes, trial continues.";
     }
-    else if(val == 3)
-    {
-        message =  "(•ᵥᵥ•)\nExp Type 3 - When force limit is exceeded: \nNo color changes, trial ends. Try again next round.";
-    }
+//    else if(val == 3)
+//    {
+//        message =  "(•ᵥᵥ•)\nExp Type 3 - When force limit is exceeded: \nNo color changes, trial ends. Try again next round.";
+//    }
     else
     {
         message = "ERROR (┛ಠ_ಠ)┛彡┻━┻";

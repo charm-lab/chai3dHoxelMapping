@@ -908,13 +908,6 @@ void haptics_thread::UpdateVRGraphics()
             //cceExpType 2 allows trial to proceed
         }
 
-        if(p_CommonData->cceExpType == 3)
-        {
-
-            //cceExpType 3 forces trial to progress
-
-        }
-
         //Find distance between box1 and hoop1
         chai3d::cVector3d errBox1Hoop1 = box1Pos - hoop1Pos;
 
@@ -922,40 +915,6 @@ void haptics_thread::UpdateVRGraphics()
         chai3d::cVector3d errBox1Hoop2 = box1Pos - hoop2Pos;
         //Find distance between box1 and target1
         chai3d::cVector3d errBox1Target1 = box1Pos - target1Pos;
-
-        /*
-        //If netiher the target, hoop1 are completed
-        if(!p_CommonData->target1Complete && !p_CommonData->hoop1Complete)
-        {
-            //qDebug()<<"target + hoop1 not complete";
-
-            if(errBox1Hoop1.length() < targetRadius)
-            {
-                p_CommonData->hoop1Complete = true;
-                hoop1->setMaterial(matHoop1);
-                hoop1->setTransparencyLevel(0.85, true);
-                qDebug()<<"hoop1 completed";
-
-                //p_CommonData->hoopSuccess = 1;
-            }
-            //qDebug()<<err11.length();
-        }
-        if(!p_CommonData->target1Complete && !p_CommonData->hoop2Complete)
-        {
-            //qDebug()<<"target + hoop2 not complete";
-
-            if(errBox1Hoop2.length() < targetRadius)
-            {
-                p_CommonData->hoop2Complete = true;
-                hoop2->setMaterial(matHoop2);
-                hoop2->setTransparencyLevel(0.85, true);
-                qDebug()<<"hoop2 completed";
-
-                //p_CommonData->hoopSuccess = 1;
-            }
-            //qDebug()<<err11.length();
-        }*/
-
 
         //If netiher the target, hoop1, or hoop2 are completed
         if(!p_CommonData->target1Complete &&
@@ -989,19 +948,7 @@ void haptics_thread::UpdateVRGraphics()
                 p_CommonData->hoopSuccess = 1;
             }
             //qDebug()<<err11.length();
-
         }
-
-        /*
-        //Check Hoops
-        if(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete)
-        {
-            p_CommonData->hoopSuccess = 1;
-        }
-        else if (!(p_CommonData->hoop1Complete && p_CommonData->hoop2Complete))
-        {
-            p_CommonData->hoopSuccess = 0;
-        }*/
 
         //If the target is not completed but the both hoops are completed
         else if(!p_CommonData->target1Complete && p_CommonData->hoopSuccess == 1)
@@ -1091,7 +1038,6 @@ void haptics_thread::UpdateVRGraphics()
         {
             p_CommonData->cubeID1 = "none";
         }
-
     }
 
     // if fingers reset in box, fix it and reset the environment again

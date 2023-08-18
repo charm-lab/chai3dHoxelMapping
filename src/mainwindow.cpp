@@ -98,9 +98,6 @@ MainWindow::~MainWindow()
 QString MainWindow::mapFingersToDevices()
 {
 
-    //    if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment &&
-    //        p_CommonData->cceExpType == 3 && p_CommonData -> manipForceTooHigh ==true)
-
     //Normal Mapping
     if(p_CommonData->mapping == 1)
     {
@@ -747,7 +744,7 @@ void MainWindow::UpdateGUIInfo()
     if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
     {
         p_CommonData->manipForceTooHigh = true;
-
+        /* Remove CCE Type 3 functionality
         if(p_CommonData->cceExpType == 3)
         {
             // Show user they failed the trial
@@ -807,6 +804,7 @@ void MainWindow::UpdateGUIInfo()
             //Mapping text
             setMappingText();
         }
+        */
     }
     else
     {
@@ -2428,7 +2426,7 @@ QString MainWindow::getSubjectDirectory()
         // This shouldn't happen but just in case:
         else
         {
-            subjectDir = "./CCE_Subject_Data/";
+            subjectDir = "./CCE_Subject_Data/Other/";
         }
         //qDebug()<<subjectDir;
         return subjectDir;
