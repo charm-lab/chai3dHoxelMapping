@@ -16,6 +16,9 @@ public:
     explicit BreakTimeDialog(QWidget *parent = nullptr);
     ~BreakTimeDialog();
 
+signals:
+    void hKeyPressed();
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 

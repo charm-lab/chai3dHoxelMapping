@@ -1,5 +1,5 @@
-#ifndef TRIALFAILNOTIFICATION_H
-#define TRIALFAILNOTIFICATION_H
+#ifndef TRIALNOTIFICATION_H
+#define TRIALNOTIFICATION_H
 
 #include <QDialog>
 #include <QLabel>
@@ -8,22 +8,30 @@
 #include <QKeyEvent>
 #include <QApplication>
 
-class TrialFailNotification : public QDialog
+class TrialNotification : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TrialFailNotification(QWidget *parent = nullptr);
-    ~TrialFailNotification();
+    //explicit TrialNotification(QWidget *parent = nullptr);
+    TrialNotification(QString& notificationText, QWidget* parent = nullptr);
+    ~TrialNotification();
+
+signals:
+    void hKeyPressed();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
+
+    //QString& notificationText;
+    QString notificationText;
+
     QLabel *textLabel;
     QPushButton *continueButton;
 
     void handleContinueButtonClick();
 };
 
-#endif // TRIALFAILNOTIFICATION_H
+#endif // TRIALNOTIFICATION_H

@@ -774,8 +774,8 @@ typedef struct
     int cceExpType;
     chai3d::cVector3d boxInteractionForce;
 
-    //For CCE: deciding which folder to save to depending on device bing tested
-
+    //For CCE: deciding when to remind subject of experiment conditions
+    bool remindSubject;
 
     //Parameters for WHC Demo
     bool whcDemo;

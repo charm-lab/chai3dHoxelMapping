@@ -17,7 +17,7 @@ class cceExpTypeDialog : public QDialog
 
 public:
 //    explicit cceExpTypeDialog(int& cceExpType, QWidget* parent = nullptr);
-    cceExpTypeDialog(int& cceExpType, QWidget* parent = nullptr);
+    cceExpTypeDialog(int& cceExpType, int& mapping, QWidget* parent = nullptr);
     ~cceExpTypeDialog();
 //    shared_data* p_CommonData;
 
@@ -27,12 +27,12 @@ protected:
 private:
 
     int& cceExpType;
-
+    int& mapping;
     QLabel *textLabel;
     QPushButton *continueButton;
 
 
-    QString getCCEExpTypePrompt(int expType);
+    QString getCCEExpTypePrompt(int expTypeVal, int mappingVal);
 
     void handleContinueButtonClick();
 };

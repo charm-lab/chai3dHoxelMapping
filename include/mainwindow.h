@@ -119,6 +119,8 @@ public:
     // convert to resource path
 #define RESOURCE_PATH(p)    (char*)((resourceRoot+string(p)).c_str())
 
+public slots:
+    void handleHKeyPressed();
 
 private:
     Ui::MainWindow *ui;
@@ -136,7 +138,7 @@ private:
     // Added for Exp Type Display
     void showExpTypeMessageBox();
 
-    void showTrialFailNotification();
+    void showTrialNotification(QString text);
     void showEndNotification();
 
 private slots:
@@ -145,6 +147,7 @@ private slots:
     QString mapFingersToDevices();
     void setMappingText();
     void progressPickAndPlaceExperiment(bool mistake);
+    //void progressPickAndPlaceExperiment();
     void UpdateGUIInfo();
     //void on_CalibratePushButton_clicked();
     //void on_ZeroSliders_clicked();

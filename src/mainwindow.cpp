@@ -15,12 +15,6 @@
 #include "endNotification.h"
 #include "mychai3dwindow.h"
 
-//***Define directory/folder for Subjects' experiment info***
-//Make sure this directory exists before runtime or else the data will not save
-//QString subjectDirectory = "C:/Users/Sam/Desktop/chai3dFingerMapping/Subjects/";
-//QString subjectDirectory = "F:/FME_Subjects/";
-//QString subjectDirectory = "./FME_Subject_Data/";
-
 //Gloabal value to be shared with cMotorController
 int mappingVal;
 
@@ -55,6 +49,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //    //Changes position and size of CHAI3D window:
     //    windowGLDisplay->setGeometry(QRect(0, 0, ui->openGLWidget->geometry().width(), ui->openGLWidget->geometry().height()));
     //#endif
+
+
+//    //Connect Dialog box signals to MainWindow Slots:
+//    QString notificationText = "start";
+//    TrialNotification *notificationDialog = new TrialNotification(notificationText, this);
+
+//    connect(notificationDialog, &TrialNotification::hKeyPressed,
+//            this, &MainWindow::handleHKeyPressed);
+
 
     //Find available serial ports
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -748,7 +751,7 @@ void MainWindow::UpdateGUIInfo()
         if(p_CommonData->cceExpType == 3)
         {
             // Show user they failed the trial
-            showTrialFailNotification();
+            showTrialNotification();
 
             //Save the data from CCE Exp Type3
             if(p_CommonData->recordFlag)
@@ -1306,6 +1309,7 @@ bool MainWindow::readExpStuffIn()
 
             //Read protocal ini file info into the experiment environment
             //for TrialMode, 1 means mass 2 means stiffness
+            p_CommonData->remindSubject = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "reminder", NULL /*default*/));
             p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
             p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
             p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
@@ -1336,6 +1340,11 @@ bool MainWindow::readExpStuffIn()
             */
             onGUIchanged();
 
+            if (p_CommonData->remindSubject == true)
+            {
+                showExpTypeMessageBox();
+            }
+
             qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 1 Address of cceExpType: " << &(p_CommonData->cceExpType);
             return true;
         }
@@ -1343,6 +1352,7 @@ bool MainWindow::readExpStuffIn()
         else if (p_CommonData->TrialType=="testing")
         {
             p_CommonData->currentExperimentState = idleExperiment;
+            p_CommonData->remindSubject = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "reminder", NULL /*default*/));
             p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
             p_CommonData->cond          = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "condition", NULL /*default*/));
             p_CommonData->stiffness1    = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "stiffness1", NULL /*default*/));
@@ -1370,7 +1380,12 @@ bool MainWindow::readExpStuffIn()
             //qDebug() << "test" << "st1" << p_CommonData->stiffness1<< "st2" << p_CommonData->stiffness2 << "cond" << p_CommonData->cond;
             onGUIchanged();
 
-            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 2 Address of cceExpType: " << &(p_CommonData->cceExpType);
+            if (p_CommonData->remindSubject == true)
+            {
+                showExpTypeMessageBox();
+            }
+
+            //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 2 Address of cceExpType: " << &(p_CommonData->cceExpType);
             return true;
         }
         //Trial Break
@@ -1378,7 +1393,11 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->currentExperimentState = trialBreak;
             p_CommonData->cceExpType = 0; // placeholder to stop code running through break transistions;
 
-            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 3 Address of cceExpType: " << &(p_CommonData->cceExpType);
+            //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 3 Address of cceExpType: " << &(p_CommonData->cceExpType);
+            if (p_CommonData->remindSubject == true)
+            {
+                showExpTypeMessageBox();
+            }
             return true;
         }
         else if (p_CommonData->TrialType=="breakbreak"){
@@ -1690,8 +1709,8 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 //If cube has not passed *both* hoop and target
                 else
                 {
-                    if(p_CommonData->target1Complete){//REVALUATE THIS CONDITION
-
+                    if(p_CommonData->target1Complete)
+                    {//REVALUATE THIS CONDITION
                         qDebug()<< "TrialComplete!!";
 
                         QString labelText = "<P><b><FONT COLOR='#4f0080' FONT SIZE = 5>";
@@ -1769,7 +1788,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
                     // Show new instructions after this kind of break:
-                    showExpTypeMessageBox();
+//                    showExpTypeMessageBox();
                 }
 
                 else if (p_CommonData->TrialType == "testing")
@@ -1781,7 +1800,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     //qDebug()<<"___"<<p_CommonData->trialNo;
 
                     // Show new instructions after this kind of break:
-                    showExpTypeMessageBox();
+//                    showExpTypeMessageBox();
                 }
 
                 else if (p_CommonData->TrialType == "break")
@@ -1794,7 +1813,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     // Pop up countdown timer:
                     showBreakTimeMessageBox();
                     // Show new instructions after this kind of break:
-                    showExpTypeMessageBox();
+//                    showExpTypeMessageBox();
                 }
 
                 else if (p_CommonData->TrialType == "breakbreak")
@@ -1806,7 +1825,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                     // qDebug()<<"___"<<p_CommonData->trialNo;
 
                     // Show new instructions after this kind of break:
-                    showExpTypeMessageBox();
+//                    showExpTypeMessageBox();
                 }
 
                 else if (p_CommonData->TrialType == "end")
@@ -1832,10 +1851,18 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
     setMappingText();
 }
 
+void MainWindow::handleHKeyPressed()
+{
+    qDebug() << " handleHKeyPressed() ---- H Key Pressed!";
+    // Handle the key press event here
+    // For example, you can simulate a key press event in the main window
+    // or perform any desired actions.
+    progressPickAndPlaceExperiment(false);
+}
 void MainWindow::showExpTypeMessageBox()
 {
     // Create an instance of cceExpTypeDialog
-    cceExpTypeDialog* dialog = new cceExpTypeDialog(p_CommonData->cceExpType, &windowGLDisplay); // Use 'this' as the parent widget
+    cceExpTypeDialog* dialog = new cceExpTypeDialog(p_CommonData->cceExpType, p_CommonData->mapping, &windowGLDisplay);
     dialog->exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
     // qDebug()<<"NOW I'M CLOSED";
@@ -1847,27 +1874,21 @@ void MainWindow::showBreakTimeMessageBox()
     localForce0 << 0.0,0.0,0.0;
     localForce1 << 0.0,0.0,0.0;
 
-    BreakTimeDialog dialog(&windowGLDisplay);
-    dialog.exec();
+    BreakTimeDialog* dialog = new BreakTimeDialog(&windowGLDisplay);
+    connect(dialog, &BreakTimeDialog::hKeyPressed, this, &MainWindow::handleHKeyPressed);
+    dialog->exec();
+    //BreakTimeDialog dialog(&windowGLDisplay);
+    //dialog.exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
     // qDebug()<<"NOW I'M CLOSED";
 }
 
-void MainWindow::showTrialFailNotification()
+void MainWindow::showTrialNotification(QString text)
 {
-    // More explicit trial fail parameter setting
-    p_CommonData->manipForceTooHigh = true;
-    //Zero out force commands to the devices
-    localForce0 << 0.0,0.0,0.0;
-    localForce1 << 0.0,0.0,0.0;
-
-    qDebug()<<"YOU FAILED";
-    TrialFailNotification dialog(&windowGLDisplay);
-    dialog.exec();
-    // Perform any necessary actions to continue using the application after the dialog is closed
-    qDebug()<<"NOW I'M CLOSED";
-
-    p_CommonData->environmentChange = true;
+    // Create an instance of cceExpTypeDialog
+    TrialNotification* dialog = new TrialNotification(text, &windowGLDisplay);
+    connect(dialog, &TrialNotification::hKeyPressed, this, &MainWindow::handleHKeyPressed);
+    dialog->exec();
 }
 
 void MainWindow::showEndNotification()
@@ -1877,7 +1898,6 @@ void MainWindow::showEndNotification()
     dialog.exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
     //qDebug()<<"NOW I'M CLOSED";
-
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *a_event)
@@ -1886,14 +1906,11 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
     if (a_event->key() == Qt::Key_B)
     {
         // showBreakTimeMessageBox();
-        showExpTypeMessageBox();
-        // showTrialFailNotification();
     }
     if (a_event->key() == Qt::Key_A)
     {
         // showBreakTimeMessageBox();
-        // showExpTypeMessageBox();
-        showTrialFailNotification();
+        showTrialNotification("TEST");
     }
 
     /***Environment Adjustment Buttons***/
@@ -2313,6 +2330,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
             qDebug("advance FingerMappingExp");
             progressPickAndPlaceExperiment(mistake);
+            //progressPickAndPlaceExperiment();
         }
 
         if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
@@ -2323,6 +2341,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
             qDebug("advance HoxelMappingExp");
             progressPickAndPlaceExperiment(mistake);
+            //progressPickAndPlaceExperiment();
         }
 
         if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
@@ -2333,6 +2352,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
             qDebug("advance HoxelMappingExp");
             progressPickAndPlaceExperiment(mistake);
+            //progressPickAndPlaceExperiment();
         }
 
         else if (p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment)
@@ -2343,7 +2363,9 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
 
             qDebug("advance CubeGuidanceExp");
 
+
             progressPickAndPlaceExperiment(mistake);
+            //progressPickAndPlaceExperiment();
             qDebug() << "mistake -- " << mistake << " -- numMistakes:" << p_CommonData->mistakeCounter;
         }
     }
@@ -3518,7 +3540,7 @@ void MainWindow::on_FingerMappingExp_clicked()
 
     //**GUI Prompt****
     QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-    labelText.append("Pre-Training Stage\n");
+    labelText.append("Pre-Experiment Stage\n");
     labelText.append("</P></br>");
     labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
     labelText.append("Press the 'Next' button");
@@ -3649,12 +3671,14 @@ void MainWindow::on_CrumblyCubeExp_clicked()
 
     //**GUI Prompt****
     QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
-    labelText.append("Pre-Training Stage\n");
+    labelText.append("Pre-Experiment Stage\n");
     labelText.append("</P></br>");
     labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
     labelText.append("Press the 'Next' button");
     labelText.append("</P></br>");
     ui->text->setText(labelText);
+
+    showTrialNotification(labelText);
     //****************
 
     QThread::msleep(200);

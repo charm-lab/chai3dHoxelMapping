@@ -2,7 +2,8 @@
 
 #include "cceExpTypeDialog.h"
 
-cceExpTypeDialog::cceExpTypeDialog(int& cceExpType, QWidget* parent) : QDialog(parent), cceExpType(cceExpType)
+cceExpTypeDialog::cceExpTypeDialog(int& cceExpType, int& mapping, QWidget* parent) :
+    QDialog(parent), cceExpType(cceExpType), mapping(mapping)
 {
     // Adjust the font size as needed
     QFont font;
@@ -10,7 +11,7 @@ cceExpTypeDialog::cceExpTypeDialog(int& cceExpType, QWidget* parent) : QDialog(p
 
     // Create and set the text label
     //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~cceExpTypeDialog.cpp Address of cceExpType: " << &(p_CommonData->cceExpType);
-    textLabel = new QLabel(getCCEExpTypePrompt(cceExpType), this);
+    textLabel = new QLabel(getCCEExpTypePrompt(cceExpType, mapping), this);
     //textLabel = new QLabel("Hi", this);
     textLabel->setAlignment(Qt::AlignCenter);
     textLabel->setFont(font);
@@ -50,25 +51,33 @@ void cceExpTypeDialog::keyPressEvent(QKeyEvent *event)
     QDialog::keyPressEvent(event); // Allow default key press handling
 }
 
-QString cceExpTypeDialog::getCCEExpTypePrompt(int val)
+QString cceExpTypeDialog::getCCEExpTypePrompt(int expTypeVal, int mappingVal)
 {
     // p_CommonData->cceExpType
     QString message;
 
-    qDebug()<<val;
+    qDebug()<< expTypeVal << " | " << mappingVal;
 
-    if(val == 0)
+    if(expTypeVal == 0) // Shouldn't happen
     {
         qDebug()<< "Break Activated";
         message =  "Break Activated ( ~˘▾˘)~";
     }
-    else if(val == 1)
+    else if(expTypeVal == 1 && mappingVal == 1)
     {
-        message =  "ʕっ• ᴥ • ʔっ\nExp Type 1 - When force limit is exceeded: \nColor changes, trial continues.";
+        message =  "ʕっ• ᴥ • ʔっ\nExp Type 1 with Feedback! - When force limit is exceeded: \nColor changes.";
     }
-    else if(val == 2)
+    else if(expTypeVal == 1 && mappingVal == 5)
     {
-        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nExp Type 2 - When force limit is exceeded: \nNo color changes, trial continues.";
+        message =  "ʕっ• ᴥ • ʔっ\nExp Type 1 NO Feedback - When force limit is exceeded: \nColor changes.";
+    }
+    else if(expTypeVal == 2 && mappingVal == 1)
+    {
+        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nExp Type 2 with Feedback! - When force limit is exceeded: \nNo color changes, trial continues.";
+    }
+    else if(expTypeVal == 2 && mappingVal == 5)
+    {
+        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nExp Type 2 NO Feedback - When force limit is exceeded: \nNo color changes, trial continues.";
     }
 //    else if(val == 3)
 //    {
