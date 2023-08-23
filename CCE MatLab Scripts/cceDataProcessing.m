@@ -641,7 +641,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Cosmetics:
 close all;
-saveFigures = false;
+saveFigures = true;
 % Old color scheme:
 visCubeColor = "[0 0 0]"; % Black
 % invisCubeColor = "[0.5 0.5 0.5]"; % Gray
@@ -710,6 +710,11 @@ improvePlot_v2(false, true, 22, 1400, 500);
      "Testing, No Color \Delta",...
      "Location","northeast");
 
+ % Save figure as pdf:
+ if (saveFigures == true)
+     set(gcf,'PaperOrientation','landscape');
+     print(gcf, 'figures\completionTime','-dpdf','-r0');
+ end
 %% Plot pathLengths
 % close all;
 markerSize = 12;
@@ -805,6 +810,13 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
  legend("Training, Color \Delta",...
      "Testing, No Color \Delta",...
      "Location","northwest");
+
+ % Save figure as pdf:
+ if (saveFigures == true)
+     set(gcf,'PaperOrientation','landscape');
+     print(gcf, 'figures\indexPathLengths','-dpdf','-r0');
+ end
+
 % Thumb Plot
 figure;
 createMultiExpErrorBarPlot(thumbPathLengthMeanStats, thumbPathLengthStdStats,...
@@ -819,6 +831,13 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
  legend("Training, Color \Delta",...
      "Testing, No Color \Delta",...
      "Location","northwest");
+
+ % Save figure as pdf:
+ if (saveFigures == true)
+     set(gcf,'PaperOrientation','landscape');
+     print(gcf, 'figures\thumbPathLengths','-dpdf','-r0');
+ end
+
 % Box Plot
 figure;
 createMultiExpErrorBarPlot(boxPathLengthMeanStats, boxPathLengthStdStats,...
@@ -833,6 +852,13 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
  legend("Training, Color \Delta",...
      "Testing, No Color \Delta",...
      "Location","northwest");
+
+ % Save figure as pdf:
+ if (saveFigures == true)
+     set(gcf,'PaperOrientation','landscape');
+     print(gcf, 'figures\boxPathLengths','-dpdf','-r0');
+ end
+
 
 %% Plot Normal and Shear Forces
 % close all;
@@ -936,6 +962,11 @@ createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1500, 650); hold off;
 
+%Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\index_Normal-ShearForces','-dpdf','-r0');
+end
 
 % Thumb Plot
 figure;
@@ -949,12 +980,17 @@ createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1500, 650); hold off;
 
+%Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\thumb_Normal-ShearForces','-dpdf','-r0');
+end
 
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
 % close all;
-saveFigures = false;
+saveFigures = true;
 
 forceLimit = 20; % N
 
@@ -1078,14 +1114,14 @@ for j = 1:numSubjects
     end
 
     hold off;
-end
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, strcat('figures\manipForceThreshold\',...
-        'Subject',num2str(subjectNum(j)),...
-        '_manipForceThreshold'),'-dpdf','-fillpage'); %close;
-end
 
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, strcat('figures\manipForceThresholdFigures\',...
+            'Subject',num2str(subjectNum(j)),...
+            '_manipForceThreshold'),'-dpdf','-fillpage'); %close;
+    end
+end
 disp("Plot Manipulation Force Threshold Plots -- done")
 
 
@@ -1108,9 +1144,21 @@ figure;
 createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping5, ...
     "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-0.75 2.5]);
 
+%Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\avgBoxBreaks','-dpdf','-r0');
+end
+
 figure;
 % Plot average time box broken Bar Plot with Error Bars
 createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping5, ...
     "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]",[-0.25 1.3]);
+
+%Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\avgTimeBoxBroken','-dpdf','-r0');
+end
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")

@@ -1394,10 +1394,10 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->cceExpType = 0; // placeholder to stop code running through break transistions;
 
             //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 3 Address of cceExpType: " << &(p_CommonData->cceExpType);
-            if (p_CommonData->remindSubject == true)
-            {
-                showExpTypeMessageBox();
-            }
+//            if (p_CommonData->remindSubject == true)
+//            {
+//                showExpTypeMessageBox();
+//            }
             return true;
         }
         else if (p_CommonData->TrialType=="breakbreak"){
@@ -1859,6 +1859,7 @@ void MainWindow::handleHKeyPressed()
     // or perform any desired actions.
     progressPickAndPlaceExperiment(false);
 }
+
 void MainWindow::showExpTypeMessageBox()
 {
     // Create an instance of cceExpTypeDialog

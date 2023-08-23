@@ -65,19 +65,19 @@ QString cceExpTypeDialog::getCCEExpTypePrompt(int expTypeVal, int mappingVal)
     }
     else if(expTypeVal == 1 && mappingVal == 1)
     {
-        message =  "ʕっ• ᴥ • ʔっ\nExp Type 1 with Feedback! - When force limit is exceeded: \nColor changes.";
+        message =  "ʕっ• ᴥ • ʔっ\nTraining Trials with Feedback!:\nWhen force limit is exceeded\nColor changes.";
     }
     else if(expTypeVal == 1 && mappingVal == 5)
     {
-        message =  "ʕっ• ᴥ • ʔっ\nExp Type 1 NO Feedback - When force limit is exceeded: \nColor changes.";
+        message =  "( ˘︹˘ )\nTraining Trials with NO Feedback:\nWhen force limit is exceeded\nColor changes.";
     }
     else if(expTypeVal == 2 && mappingVal == 1)
     {
-        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nExp Type 2 with Feedback! - When force limit is exceeded: \nNo color changes, trial continues.";
+        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nTesting Trials with Feedback!:\nWhen force limit is exceeded\nNo color change.";
     }
     else if(expTypeVal == 2 && mappingVal == 5)
     {
-        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nExp Type 2 NO Feedback - When force limit is exceeded: \nNo color changes, trial continues.";
+        message =  "༼つ ◕_◕ ༽つ\nTesting Trials with NO Feedback:\nWhen force limit is exceeded\nNo color change.";
     }
 //    else if(val == 3)
 //    {

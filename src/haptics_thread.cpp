@@ -3331,7 +3331,8 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     hoop1->setLocalPos(hoop1Pos.x(), hoop1Pos.y(), hoop1Pos.z());
     hoop1->rotateAboutLocalAxisDeg(1, 0, 0, 90);//rotateAboutLocalAxisDeg(1, 0, 0, 90);
     hoop1->rotateAboutLocalAxisDeg(0, 1, 0, 45);
-    matHoop1.setBlueDeepSky();
+    //matHoop1.setBlueDeepSky();
+    matHoop1.setWhite();
     hoop1->setMaterial(matHoop1);
     hoop1->setTransparencyLevel(0.2, true);
     //Add object to the world
@@ -3344,7 +3345,8 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     hoop2->setLocalPos(hoop2Pos.x(), hoop2Pos.y(), hoop2Pos.z());
     hoop2->rotateAboutLocalAxisDeg(1, 0, 0, 90);//rotateAboutLocalAxisDeg(1, 0, 0, 90);
     hoop2->rotateAboutLocalAxisDeg(0, 1, 0, -45);
-    matHoop2.setPinkHot();
+    //matHoop2.setPinkHot();
+    matHoop2.setBlack();
     hoop2->setMaterial(matHoop2);
     hoop2->setTransparencyLevel(0.2, true);
     //Add object to the world
