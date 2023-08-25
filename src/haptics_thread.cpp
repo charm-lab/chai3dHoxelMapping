@@ -2531,7 +2531,7 @@ void haptics_thread::RenderDynamicBodies()
         stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
         break;
     case CrumblyCubeExperiment:  // Jasmin CrumblyCube Experiment
-        boxSize1 = 0.04; boxSize2 = 0.04; boxSize3 = 0.04;
+        boxSize1 = 0.07; boxSize2 = 0.07; boxSize3 = 0.07; //enlarged to accomodate FingerPrint
         friction1 = EXPERIMENTFRICTION; friction2 = EXPERIMENTFRICTION; friction3 = EXPERIMENTFRICTION;
         mass1 = p_CommonData->mass1; mass2 = p_CommonData->mass2; mass3 = p_CommonData->mass3;
         stiffness1 =  p_CommonData->stiffness1; stiffness2 =  p_CommonData->stiffness2; stiffness3 = p_CommonData->stiffness3;
@@ -3322,7 +3322,10 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     //                                 p_CommonData->lookatPos,
     //                                 p_CommonData->upVector);
 
-    targetRadius = 0.05;
+    //Increase Size -- To accomodate fingertip device usage:
+    //boxSize1 = 1.75*boxSize1; // side length in meters
+
+    targetRadius = boxSize1;//0.05; // diameter in meters
 
     //Create box1 hoop1 -- visual only
     hoop1 = new chai3d::cMesh();
@@ -3356,7 +3359,7 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
 
     // create the visual boxes on the dynamic box meshes
-    cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
+    //cCreateBox(p_CommonData->p_dynamicBox1, boxSize1, boxSize1, boxSize1); // make mesh a box
 
     // setup collision detectors for the dynamic objects
     p_CommonData->p_dynamicBox1->createAABBCollisionDetector(toolRadius);
@@ -3374,7 +3377,7 @@ void haptics_thread::SetDynEnvironCrumblyCubeExp() // Jasmin CrumblyCube Experim
     // add mesh to ODE object
     p_CommonData->ODEBody1->setImageModel(p_CommonData->p_dynamicBox1);
     // create a dynamic model of the ODE object - box1
-    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize3);
+    p_CommonData->ODEBody1->createDynamicBox(boxSize1, boxSize1, boxSize1);
     // set mass of box1
     p_CommonData->ODEBody1->setMass(mass1);
     // set position of box

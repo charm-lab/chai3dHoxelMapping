@@ -6,25 +6,29 @@ clear; close all; clc;
 
 % Number of mappings tested
 numMappings = 2;
-% Number of trials per mapping
+% Number of trials per mapping in each exp type
 numTrialsPerMapping = 10;
 % Total number of trials each subject did
 numTrials = numMappings*numTrialsPerMapping;
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 3;
+totalNumSubjects = 2;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:3];
+subjectNum = [1:2];
 
 % Load data from folder
 % Folder contatining all data:
-dataFolders = ["..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType1"
-               "..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType2"];
+% dataFolders = ["..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType1"
+%                "..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType2"];
+% Folder contatining all data:
+dataFolders = ["..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType1"
+               "..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType2"];
+
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -567,10 +571,17 @@ disp("compute finger normal/shear force magnitudes -- done")
 %     mappings{j,p} = mappingsVec(:,j);
 % end
 
+%Random Method - Protocol 1:
 % Mapping1 -- mapping1TimeIndexRows
 mapping1 = [1:10];
 % Mapping5 -- mapping5TimeIndexRows
 mapping5 = [11:20];
+
+% % ABAB Method - Protocol 1
+% % Mapping1 -- mapping1TimeIndexRows
+% mapping1 = [1:10, 21 23 25 27 29,  31 33 35 37 39] ;
+% % Mapping5 -- mapping5TimeIndexRows
+% mapping5 = [11:20, 22 24 26 28 30, 32 34 36 38 40];
 
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
@@ -641,7 +652,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Cosmetics:
 close all;
-saveFigures = true;
+saveFigures = false;
 % Old color scheme:
 visCubeColor = "[0 0 0]"; % Black
 % invisCubeColor = "[0.5 0.5 0.5]"; % Gray
@@ -990,7 +1001,7 @@ disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
 % close all;
-saveFigures = true;
+saveFigures = false;
 
 forceLimit = 20; % N
 
