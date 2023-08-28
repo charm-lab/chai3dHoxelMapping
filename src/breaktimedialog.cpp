@@ -4,7 +4,7 @@
 #include "breaktimedialog.h"
 
 // Set break timer length:
-double breakTimeLength = 5.0;//60.0;
+double breakTimeLength = 60.0;
 
 BreakTimeDialog::BreakTimeDialog(QWidget *parent) : QDialog(parent)
 {
@@ -16,7 +16,7 @@ BreakTimeDialog::BreakTimeDialog(QWidget *parent) : QDialog(parent)
     font.setPointSize(20);  // Adjust the font size as needed
     remainingTimeLabel->setFont(font);
 
-    continueButton = new QPushButton("Press 'H' to Continue", this);
+    continueButton = new QPushButton("Press ➡️ to Continue", this);
     continueButton->setEnabled(false);
     continueButton->setFixedSize(400, 50); // Adjust the width and height of the button as needed
     connect(continueButton, &QPushButton::clicked, this, &BreakTimeDialog::handleContinueButtonClick);

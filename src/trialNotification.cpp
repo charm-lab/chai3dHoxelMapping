@@ -14,7 +14,7 @@ TrialNotification::TrialNotification(QString& notificationText, QWidget* parent)
     font.setPointSize(20);  // Adjust the font size as needed
     textLabel->setFont(font);
 
-    continueButton = new QPushButton("Press 'H' to Continue", this);
+    continueButton = new QPushButton("Press ➡️ to Continue", this);
     continueButton->setEnabled(true);
     continueButton->setFixedSize(400, 50); // Adjust the width and height of the button as needed
     connect(continueButton, &QPushButton::clicked, this, &TrialNotification::handleContinueButtonClick);

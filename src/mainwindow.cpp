@@ -3675,7 +3675,7 @@ void MainWindow::on_CrumblyCubeExp_clicked()
     labelText.append("Pre-Experiment Stage\n");
     labelText.append("</P></br>");
     labelText.append("<P><FONT COLOR='#000000' FONT SIZE = 2>");
-    labelText.append("Press the 'Next' button");
+    labelText.append("Press the ➡️ button");
     labelText.append("</P></br>");
     ui->text->setText(labelText);
 

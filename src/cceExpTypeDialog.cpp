@@ -16,7 +16,7 @@ cceExpTypeDialog::cceExpTypeDialog(int& cceExpType, int& mapping, QWidget* paren
     textLabel->setAlignment(Qt::AlignCenter);
     textLabel->setFont(font);
 
-    continueButton = new QPushButton("Press 'D' to Continue", this);
+    continueButton = new QPushButton("Press ★ to Continue", this);
     continueButton->setEnabled(true);
     continueButton->setFixedSize(400, 50); // Adjust the width and height of the button as needed
     connect(continueButton, &QPushButton::clicked, this, &cceExpTypeDialog::handleContinueButtonClick);
