@@ -12,23 +12,24 @@ numTrialsPerMapping = 10;
 numTrials = numMappings*numTrialsPerMapping;
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 2;
+totalNumSubjects = 1;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:2];
+subjectNum = [2];
 
 % Load data from folder
 % Folder contatining all data:
 % dataFolders = ["..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType1"
 %                "..\CCE_Subject_Data\z_Pilot Data v2\CCE_ExpType2"];
 % Folder contatining all data:
-dataFolders = ["..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType1"
-               "..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType2"];
-
+% dataFolders = ["..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType1"
+%                "..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType2"];
+dataFolders = ["..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType1"
+               "..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType2"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -571,11 +572,13 @@ disp("compute finger normal/shear force magnitudes -- done")
 %     mappings{j,p} = mappingsVec(:,j);
 % end
 
-%Random Method - Protocol 1:
+%Random Method - Protocol 1 and 2:
 % Mapping1 -- mapping1TimeIndexRows
-mapping1 = [1:10];
+mapping1 = [1:10]; 
+%mapping1 = [1:10; 11:20];
 % Mapping5 -- mapping5TimeIndexRows
-mapping5 = [11:20];
+mapping5 = [11:20]; 
+%mapping5 = [11:20; 1:10];
 
 % % ABAB Method - Protocol 1
 % % Mapping1 -- mapping1TimeIndexRows
@@ -730,7 +733,7 @@ improvePlot_v2(false, true, 22, 1400, 500);
 % close all;
 markerSize = 12;
 jitterVal = 0.1;
-minY = 0.5; maxY = 2.5;
+minY = 0.5; maxY = 6.5;
 
 % Cells to store parameter basic statistics
 indexPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
