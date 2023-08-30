@@ -44,7 +44,7 @@ end
 n=numExperimentTypes;
 xlim([0.5 max(xTickVals)+2*dataSeparation]);
 xticks(xTickVals);
-tickLabels = [" ", repmat(["1", "Control"], 1, n)];
+tickLabels = [" ", repmat(["1", "3", "Control"], 1, n)];
 set(gca, 'xTick', xTickVals, 'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);

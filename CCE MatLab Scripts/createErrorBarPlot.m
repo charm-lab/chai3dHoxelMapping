@@ -28,7 +28,7 @@ hold on;
 % xticks(0:6); set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
 xlim([0 numExperimentTypes]);
 xticks([1 numExperimentTypes]);
-tickLabels = ["1", "Control"];
+tickLabels = ["1", "3", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);

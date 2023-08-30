@@ -63,26 +63,44 @@ QString cceExpTypeDialog::getCCEExpTypePrompt(int expTypeVal, int mappingVal)
         qDebug()<< "Break Activated";
         message =  "Break Activated ( ~˘▾˘)~";
     }
+    // Color change Notifications:
     else if(expTypeVal == 1 && mappingVal == 1)
     {
-        message =  "ʕっ• ᴥ • ʔっ\nTraining Trials with Feedback!:\nWhen force limit is exceeded\nColor changes.";
+        message = "ʕっ• ᴥ • ʔっ\nTraining Trials with Haptics!:\n"
+                  "When cube starts to break,\n"
+                  "it will turn red";
+    }
+    else if(expTypeVal == 1 && mappingVal == 3)
+    {
+        message = "¯\_( ͡❛ ͜ʖ ͡❛)_/¯\nTraining Trials with Haptics!:\n"
+                  "When cube starts to break,\n"
+                  "it will turn red";
     }
     else if(expTypeVal == 1 && mappingVal == 5)
     {
-        message =  "( ˘︹˘ )\nTraining Trials with NO Feedback:\nWhen force limit is exceeded\nColor changes.";
+        message = "( ˘︹˘ )\nTraining Trials with NO Haptics:\n"
+                  "When cube starts to break,\n"
+                  "it will turn red";
     }
+    // No color change Notifications:
     else if(expTypeVal == 2 && mappingVal == 1)
     {
-        message =  "| (• ◡•)| (❍ᴥ❍ʋ)\nTesting Trials with Feedback!:\nWhen force limit is exceeded\nNo color change.";
+        message = "| (• ◡•)| (❍ᴥ❍ʋ)\nTesting Trials with Haptics!:\n"
+                  "When force limit is exceeded,\n"
+                  "no cube color change.";
+    }
+    else if(expTypeVal == 2 && mappingVal == 3)
+    {
+        message = "(ᴗᵔᴥᵔ)\nTesting Trials with Haptics!:\n"
+                  "When force limit is exceeded,\n"
+                  "no cube color change.";
     }
     else if(expTypeVal == 2 && mappingVal == 5)
     {
-        message =  "༼つ ◕_◕ ༽つ\nTesting Trials with NO Feedback:\nWhen force limit is exceeded\nNo color change.";
+        message = "༼つ ◕_◕ ༽つ\nTesting Trials with NO Haptics!:\n"
+                  "When force limit is exceeded,\n"
+                  "no cube color change.";
     }
-//    else if(val == 3)
-//    {
-//        message =  "(•ᵥᵥ•)\nExp Type 3 - When force limit is exceeded: \nNo color changes, trial ends. Try again next round.";
-//    }
     else
     {
         message = "ERROR (┛ಠ_ಠ)┛彡┻━┻";
