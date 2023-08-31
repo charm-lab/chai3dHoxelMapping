@@ -29,7 +29,7 @@ subjectNum = [1:3];
 % dataFolders = ["..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType1"
 %                "..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType2"];
 dataFolders = ["..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType1"
-               "..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType2"];
+    "..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType2"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -99,27 +99,30 @@ disp("***Data Upload and Merge Complete***")
 % Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
 
-%% Remove Training Trial Data
-
-% This will always be for CCE Exp Type1 so p=1
-p = 1;
-for j = 1:numSubjects
-    % Trial # for 1st testing Trial
-    firstTestingTrialNum = str2num(subjectFiles{j,p}(1).name([15:16]));
-
-    % Get 1st instance of data from testing trial:
-    testingTrialStart = find(subjectData{j,p}.trialNum ...
-        == firstTestingTrialNum, 1);
-
-    % Remove the data:
-    subjectData{j,p}(1:testingTrialStart-1,:) = [];
-end
+% %% Remove Training Trial Data
+%
+% % This will always be for CCE Exp Type1 so p=1
+% p = 1;
+% for j = 1:numSubjects
+%     % Trial # for 1st testing Trial
+%     firstTestingTrialNum = str2num(subjectFiles{j,p}(1).name([15:16]));
+%
+%     % Get 1st instance of data from testing trial:
+%     testingTrialStart = find(subjectData{j,p}.trialNum ...
+%         == firstTestingTrialNum, 1);
+%
+%     % Remove the data:
+%     subjectData{j,p}(1:testingTrialStart-1,:) = [];
+% end
 
 %% Plot Success/Fails
 plotVis = "on";
 saveFigures = false;
-figure;
+
+% Target Success Boolean
+% figure;
 for j = 1:numSubjects
+    figure;
     for p = 1:numExperimentTypes
         if(p == 1)
             h1 = plot(subjectData{j,p}.time,...
@@ -131,22 +134,34 @@ for j = 1:numSubjects
         end
     end
 
-    title(strcat('Subject ', num2str(subjectNum(j)), ' All Trials'));
-    xlabel("Time [sec]"); ylabel("success/fail");
+    title(strcat('Trial Success Boolean: Subject ', num2str(subjectNum(j)), ' All Trials'));
+    xlabel("Time [sec]"); ylabel("");
     ylim([-0.2 1.2]); yticks([0 1]);
     improvePlot_v2(false, true, 18, 1200,800);
     % Hide/Show Figure at Runtime
     set(gcf,'Visible', plotVis);
 
-    legend([h1(1), h2(1)],...
-        "Exp Type 1", "Exp Type 2",...
+    %     legend([h1(1), h2(1)],...
+    %         "Exp Type 1", "Exp Type 2",...
+    %         "Location","northeast");
+    legend("Training, Color \Delta",...
+        "Testing, No Color \Delta",...
         "Location","northeast");
     hold off;
 
+    % Save figure as image:
+    if (saveFigures == true)
+        %imwrite(getframe(gcf).cdata, strcat('dummyFigures\success-fails\',...
+        %'Subject',num2str(subjectNum(j)),'-success-fail-Fig.png'))
+        imwrite(getframe(gcf).cdata, strcat('figures\success-fails\',...
+            'Subject',num2str(subjectNum(j)),'-success-fail-Fig.png'));
+    end
 end
 
-figure;
+% ManipForce bool Fig
+% figure;
 for j = 1:numSubjects
+    figure;
     for p = 1:numExperimentTypes
         if(p == 1)
             h1 = plot(subjectData{j,p}.time,...
@@ -158,43 +173,23 @@ for j = 1:numSubjects
         end
     end
 
-    title(strcat('Subject ', num2str(subjectNum(j)), ' All Trials'));
+    title(strcat('ManipForce Boolean: Subject ', num2str(subjectNum(j)), ' All Trials'));
     xlabel("Time [sec]"); ylabel("manipForceTooHigh");
     ylim([-0.2 1.2]); yticks([0 1]);
     improvePlot_v2(false, true, 18, 1200, 800);
     % Hide/Show Figure at Runtime
     set(gcf,'Visible', plotVis);
 
-%     legend([h1(1), h2(1)],...
-%         "Exp Type 1", "Exp Type 2",...
-%         "Location","northeast");
- legend("Training, Color \Delta",...
-     "Testing, No Color \Delta",...
-     "Location","northeast");
+    %     legend([h1(1), h2(1)],...
+    %         "Exp Type 1", "Exp Type 2",...
+    %         "Location","northeast");
+    legend("Training, Color \Delta",...
+        "Testing, No Color \Delta",...
+        "Location","northeast");
     hold off;
 
 end
 
-
-% for p = 1:numExperimentTypes % Addition for each experiment type
-%     for j = 1:numSubjects
-%         figure; plot(subjectData{j,p}.time, subjectData{j,p}.trialSuccess, "b-");
-%         title(strcat('Subject ', num2str(subjectNum(j)), ' All Trials'));
-%         xlabel("Time"); ylabel("success/fail");
-%         ylim([-0.2 1.2]); yticks([0 1]);
-%         improvePlot_v2(false, true, 18, 1200,800);
-%         % Hide/Show Figure at Runtime
-%         set(gcf,'Visible', plotVis);
-%
-%         % Save figure as image:
-%         if (saveFigures == true)
-%             %imwrite(getframe(gcf).cdata, strcat('dummyFigures\success-fails\',...
-%             %'Subject',num2str(subjectNum(j)),'-success-fail-Fig.png'))
-%             imwrite(getframe(gcf).cdata, strcat('figures\success-fails\',...
-%                 'Subject',num2str(subjectNum(j)),'-success-fail-Fig.png'));
-%         end
-%     end
-% end
 disp("sucess-fail figure rendering -- done")
 
 %% Finding acutal Trial Start and End Times:
@@ -207,100 +202,135 @@ trialEndTime = cell(numSubjects, numExperimentTypes); %risingEdgeTime in sec
 firstIndexContactTime_index = zeros(numTrials, numSubjects);
 firstThumbContactTime_index = zeros(numTrials, numSubjects);
 
+% for p = 1:numExperimentTypes % Addition for each experiment type
+%     for j = 1:numSubjects
+%         % For CCE Exp Tpye 3: if (p == 3)
+% %         if (p == 3)
+% %             startTimesCandidate1 = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
+% %             startTimesCandidate2 = strfind(subjectData{j,p}.manipForceTooHigh',[1 0])' + 1;
+% %
+% %             endTimesCandidate1 = ...
+% %                 strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+% %             %^^+1 to actually get to the 1st instance of trialSuccess == 1
+% %
+% %             endTimesCandidate2 = ...
+% %                 strfind(subjectData{j,p}.manipForceTooHigh',[0 1])'+ 1;
+% %             %^^+1 to actually get to the 1st instance of manipForceTooHigh == 1
+% %
+% %             startTimes = sort([startTimesCandidate1; startTimesCandidate2]);
+% %
+% %             endTimes = sort([endTimesCandidate1; endTimesCandidate2]);
+% %
+% %             for k = 1:numTrials
+% %                 % Trial success to no success
+% %                 trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
+% %                 % Trial no success to success
+% %                 trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
+% %
+% %                 %Find first instance of contact with cube after:
+% %                 firstIndexContactTime_index = ...
+% %                     find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
+% %                     + startTimes(k)-1;
+% %                 firstThumbContactTime_index = ...
+% %                     find(subjectData{j,p}.thumbContact(startTimes(k):end)==1)...
+% %                     + startTimes(k)-1 ;
+% %
+% %                 % Set start time for analysis at the soonest simultaneous
+% %                 % contact time for both fingers:
+% %                 val = intersect(firstIndexContactTime_index,...
+% %                     firstThumbContactTime_index);
+% %                 trialStartTime_indexTemp(k,j) = val(1);
+% %             end
+% %
+% %             % Now the trial start time is at the point of initial contact
+% %             trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_indexTemp(:,j));
+% %             trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_indexTemp(:,j)); % risingEdgeTime
+% %
+% %             trialStartTime_index{j,p} = trialStartTime_indexTemp;
+% %             trialEndTime_index{j,p} = trialEndTime_indexTemp;
+% %
+% %         end
+%
+%         % For CCE Exp Tpyes 1 and 2:
+%         if (p == 1)
+%             % 1 will be the 1st instance of trialSuccess==0 for CCE because of
+%             % the design of Type 3
+%             startTimes = [1; strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1];
+%             %^^+1 to actually get to the 1st instance of trialSuccess == 0
+%             endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+%             %^^+1 to actually get to the 1st instance of trialSuccess == 1
+%         elseif (p == 2)
+%             startTimes = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
+%             %^^+1 to actually get to the 1st instance of trialSuccess == 0
+%             endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+%             %^^+1 to actually get to the 1st instance of trialSuccess == 1
+%         end
+%
+%         for k = 1:numTrials
+%             % Trial success to no success
+%             trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
+%             % Trial no success to success
+%             trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
+%
+%             % Find first instance of contact with cube after:
+%             firstIndexContactTime_index = ...
+%                 find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
+%                 + startTimes(k)-1;
+%             firstThumbContactTime_index = ...
+%                 find(subjectData{j,p}.thumbContact(startTimes(k):end)==1)...
+%                 + startTimes(k)-1 ;
+%
+%             % Set start time for analysis at the soonest simultaneous
+%             % contact time for both fingers:
+%             val = intersect(firstIndexContactTime_index,...
+%                 firstThumbContactTime_index);
+%             trialStartTime_indexTemp(k,j) = val(1);
+%         end
+%
+%         % Now the trial start time is at the point of initial contact
+%         trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_indexTemp(:,j));
+%         trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_indexTemp(:,j)); % risingEdgeTime
+%
+%         trialStartTime_index{j,p} = trialStartTime_indexTemp;
+%         trialEndTime_index{j,p} = trialEndTime_indexTemp;
+%
+%     end
+% end
+
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
-        % For CCE Exp Tpye 3: if (p == 3)
-%         if (p == 3)
-%             startTimesCandidate1 = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
-%             startTimesCandidate2 = strfind(subjectData{j,p}.manipForceTooHigh',[1 0])' + 1;
-% 
-%             endTimesCandidate1 = ...
-%                 strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
-%             %^^+1 to actually get to the 1st instance of trialSuccess == 1
-% 
-%             endTimesCandidate2 = ...
-%                 strfind(subjectData{j,p}.manipForceTooHigh',[0 1])'+ 1;
-%             %^^+1 to actually get to the 1st instance of manipForceTooHigh == 1
-% 
-%             startTimes = sort([startTimesCandidate1; startTimesCandidate2]);
-% 
-%             endTimes = sort([endTimesCandidate1; endTimesCandidate2]);
-% 
-%             for k = 1:numTrials
-%                 % Trial success to no success
-%                 trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
-%                 % Trial no success to success
-%                 trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
-% 
-%                 %Find first instance of contact with cube after:
-%                 firstIndexContactTime_index = ...
-%                     find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
-%                     + startTimes(k)-1;
-%                 firstThumbContactTime_index = ...
-%                     find(subjectData{j,p}.thumbContact(startTimes(k):end)==1)...
-%                     + startTimes(k)-1 ;
-% 
-%                 % Set start time for analysis at the soonest simultaneous
-%                 % contact time for both fingers:
-%                 val = intersect(firstIndexContactTime_index,...
-%                     firstThumbContactTime_index);
-%                 trialStartTime_indexTemp(k,j) = val(1);
-%             end
-% 
-%             % Now the trial start time is at the point of initial contact
-%             trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_indexTemp(:,j));
-%             trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_indexTemp(:,j)); % risingEdgeTime
-% 
-%             trialStartTime_index{j,p} = trialStartTime_indexTemp;
-%             trialEndTime_index{j,p} = trialEndTime_indexTemp;
-% 
-%         end
-
-        % For CCE Exp Tpyes 1 and 2:
-        if (p == 1)
-            % 1 will be the 1st instance of trialSuccess==0 for CCE because of
-            % the design of Type 3
-            startTimes = [1; strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1];
-            %^^+1 to actually get to the 1st instance of trialSuccess == 0
-            endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
-            %^^+1 to actually get to the 1st instance of trialSuccess == 1
-        elseif (p == 2)
-            startTimes = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
-            %^^+1 to actually get to the 1st instance of trialSuccess == 0
-            endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
-            %^^+1 to actually get to the 1st instance of trialSuccess == 1
-        end
+        startTimes = strfind(subjectData{j,p}.trialSuccess',[1 0])' + 1;
+        %^^+1 to actually get to the 1st instance of trialSucecess == 0
+        endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
+        %^^+1 to actually get to the 1st instance of trialSucecess == 1
 
         for k = 1:numTrials
-            % Trial success to no success
-            trialStartTime_indexTemp(k,j) = startTimes(k); % fallingEdgeTime
-            % Trial no success to success
-            trialEndTime_indexTemp(k,j) = endTimes(k); % risingEdgeTime
+            %Trial success to no success
+            trialStartTime_index{j,p}(k,j) = startTimes(k);%fallingEdgeTime
+            %Trial no success to success
+            trialEndTime_index{j,p}(k,j) = endTimes(k); %risingEdgeTime
 
-            % Find first instance of contact with cube after:
-            firstIndexContactTime_index = ...
-                find(subjectData{j,p}.indexContact(startTimes(k):end)==1)...
-                + startTimes(k)-1;
-            firstThumbContactTime_index = ...
-                find(subjectData{j,p}.thumbContact(startTimes(k):end)==1)...
-                + startTimes(k)-1 ;
+            %Find first instance of contact with cube after:
+            %  firstIndexContactTime_index(k,j) = find(subjectData{j}.indexContact(startTimes(k):end), 1, 'first') + startTimes(k)-1;
+            %  firstThumbContactTime_index(k,j) = find(subjectData{j}.thumbContact(startTimes(k):end), 1, 'first') + startTimes(k)-1 ;
 
-            % Set start time for analysis at the soonest simultaneous
-            % contact time for both fingers:
-            val = intersect(firstIndexContactTime_index,...
-                firstThumbContactTime_index);
-            trialStartTime_indexTemp(k,j) = val(1);
+            firstIndexContactTime_index = find(subjectData{j,p}.indexContact(startTimes(k):end)==1) + startTimes(k)-1;
+            firstThumbContactTime_index = find(subjectData{j,p}.thumbContact(startTimes(k):end)==1) + startTimes(k)-1 ;
+
+
+            %Set start time for analysis at the soonest contact time:
+            %         trialStartTime_index(k,j) = min(firstIndexContactTime_index(k,j), firstThumbContactTime_index(k,j));
+
+            %Set start time for analysis at the soonest simultaneous contact time for both fingers:
+            val = intersect(firstIndexContactTime_index,firstThumbContactTime_index);
+            trialStartTime_index{j,p}(k,j) = val(1);
         end
-
-        % Now the trial start time is at the point of initial contact
-        trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_indexTemp(:,j));
-        trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_indexTemp(:,j)); % risingEdgeTime
-
-        trialStartTime_index{j,p} = trialStartTime_indexTemp;
-        trialEndTime_index{j,p} = trialEndTime_indexTemp;
-
+        %No the trial start time is at the point of initial contact
+        trialStartTime{j,p} = subjectData{j,p}.time(trialStartTime_index{j,p}(:,j));
+        trialEndTime{j,p} = subjectData{j,p}.time(trialEndTime_index{j,p}(:,j)); %risingEdgeTime
     end
 end
+
 disp("find trial start and end times -- done")
 
 
@@ -574,53 +604,53 @@ disp("compute finger normal/shear force magnitudes -- done")
 
 
 % Mapping1 -- mapping1TimeIndexRows
-mapping1 = [1:10; 21:30; 11:20]; 
+mapping1 = [1:10; 21:30; 11:20];
 
 % Mapping3 -- mapping3TimeIndexRows
-mapping3 = [11:20; 1:10; 21:30]; 
+mapping3 = [11:20; 1:10; 21:30];
 
 % Mapping5 -- mapping5TimeIndexRows
-mapping5 = [21:30; 11:20; 1:10]; 
+mapping5 = [21:30; 11:20; 1:10];
 
 
 for p = 1:numExperimentTypes % Addition for each experiment type
     for j = 1:numSubjects
         % Completion Time for each Mapping
         completionTimeMapping1{j,p} = sortByMapping(completionTime{j,p}, mapping1);
-        completionTimeMapping1{j,p} = sortByMapping(completionTime{j,p}, mapping3);
+        completionTimeMapping3{j,p} = sortByMapping(completionTime{j,p}, mapping3);
         completionTimeMapping5{j,p} = sortByMapping(completionTime{j,p}, mapping5);
 
         %Index Path length for each Mapping
         indexPathLengthMapping1{j,p} = sortByMapping(indexPathLength{j,p}, mapping1);
-        indexPathLengthMapping1{j,p} = sortByMapping(indexPathLength{j,p}, mapping3);
+        indexPathLengthMapping3{j,p} = sortByMapping(indexPathLength{j,p}, mapping3);
         indexPathLengthMapping5{j,p} = sortByMapping(indexPathLength{j,p}, mapping5);
 
         %Thumb Path length for each Mapping
         thumbPathLengthMapping1{j,p} = sortByMapping(thumbPathLength{j,p}, mapping1);
-        thumbPathLengthMapping1{j,p} = sortByMapping(thumbPathLength{j,p}, mapping3);
+        thumbPathLengthMapping3{j,p} = sortByMapping(thumbPathLength{j,p}, mapping3);
         thumbPathLengthMapping5{j,p} = sortByMapping(thumbPathLength{j,p}, mapping5);
 
         %Box Path length for each Mapping
         boxPathLengthMapping1{j,p} = sortByMapping(boxPathLength{j,p}, mapping1);
-        boxPathLengthMapping1{j,p} = sortByMapping(boxPathLength{j,p}, mapping3);
+        boxPathLengthMapping3{j,p} = sortByMapping(boxPathLength{j,p}, mapping3);
         boxPathLengthMapping5{j,p} = sortByMapping(boxPathLength{j,p}, mapping5);
 
         %Index Normal and Shear Force profiles for each Mapping
         indexNormalForceMagMapping1{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping1);
-        indexNormalForceMagMapping1{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping3);
+        indexNormalForceMagMapping3{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping3);
         indexNormalForceMagMapping5{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping5);
 
         indexShearForceMagMapping1{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping1);
-        indexShearForceMagMapping1{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping3);
+        indexShearForceMagMapping3{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping3);
         indexShearForceMagMapping5{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping5);
 
         %Thumb Normal and Shear Force profiles for each Mapping
         thumbNormalForceMagMapping1{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping1);
-        thumbNormalForceMagMapping1{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping3);
+        thumbNormalForceMagMapping3{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping3);
         thumbNormalForceMagMapping5{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping5);
 
         thumbShearForceMagMapping1{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping1);
-        thumbShearForceMagMapping1{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping3);
+        thumbShearForceMagMapping3{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping3);
         thumbShearForceMagMapping5{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping5);
 
         %Mean Normal and Shear Force for each Mapping
@@ -642,19 +672,19 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         meanThumbShearForce{j,p} = meanThumbShearForceVec(:,j);
 
         meanIndexNormalForceMapping1{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping1);
-        meanIndexNormalForceMapping1{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping3);
+        meanIndexNormalForceMapping3{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping3);
         meanIndexNormalForceMapping5{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping5);
 
         meanIndexShearForceMapping1{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping1);
-        meanIndexShearForceMapping1{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping3);
+        meanIndexShearForceMapping3{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping3);
         meanIndexShearForceMapping5{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping5);
 
         meanThumbNormalForceMapping1{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping1);
-        meanThumbNormalForceMapping1{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping3);
+        meanThumbNormalForceMapping3{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping3);
         meanThumbNormalForceMapping5{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping5);
 
         meanThumbShearForceMapping1{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping1);
-        meanThumbShearForceMapping1{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping3);
+        meanThumbShearForceMapping3{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping3);
         meanThumbShearForceMapping5{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping5);
     end
     %     mappings{j,p} = mappingsVec(:,j);
@@ -687,7 +717,7 @@ markerSize = 20; %variable used in createErrorBarPlot
 
 %% Plot completionTimes
 close all;
-markerSize = 15;
+markerSize = 12;
 minY = 0.0; maxY = 5;
 
 % Cells to store parameter basic statistics
@@ -697,26 +727,14 @@ completionTimeStdStats = cell(numSubjects, numExperimentTypes); % Addition for e
 % getParamStats parameters must go in brackets due to being stored as cells
 for p = 1:numExperimentTypes
     [completionTimeMean, completionTimeStd] = ...
-        getParamStats([completionTimeMapping1{:,p}], ...
+        getParamStats(...
+        [completionTimeMapping1{:,p}], ...
+        [completionTimeMapping3{:,p}], ...
         [completionTimeMapping5{:,p}]);
-    % To plot all experiments in separate figures:
-    %     figure;
-    %     [h1] = createErrorBarPlot(completionTimeMean, completionTimeStd,...
-    %         strcat("Completion Time CCE ExpType",num2str(p)), ...
-    %         "Mapping", "Time [sec]");
-    %     ylim([minY,maxY]);
-    %     %     legend("Visible Cube", "Location", "northeast");
-    %     %     improvePlot;
-    %     improvePlot_v2(false, true, 22, 1150, 500);
-    %
-    %     % Save figure as pdf:
-    %     if (saveFigures == true)
-    %         set(gcf,'PaperOrientation','landscape');
-    %         print(gcf, 'figures\completionTime','-dpdf','-r0');
-    %     end
+
     for j = 1:numSubjects
-        completionTimeMeanStats{j,p} = completionTimeMean;
-        completionTimeStdStats{j,p} = completionTimeStd;
+        completionTimeMeanStats{j,p} = completionTimeMean(:,j);
+        completionTimeStdStats{j,p} = completionTimeStd(:,j);
     end
 end
 
@@ -724,25 +742,25 @@ jitterVal = 0.1;
 createMultiExpErrorBarPlot(completionTimeMeanStats, completionTimeStdStats,...
     "Completion Time", "Mapping", "Time [sec]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1400, 500);
+improvePlot_v2(false, true, 22, 1400, 600);
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
 %     "Location","northeast");
 
- legend("Training, Color \Delta",...
-     "Testing, No Color \Delta",...
-     "Location","northeast");
+legend("Training, Color \Delta",...
+    "Testing, No Color \Delta",...
+    "Location","northeast");
 
- % Save figure as pdf:
- if (saveFigures == true)
-     set(gcf,'PaperOrientation','landscape');
-     print(gcf, 'figures\completionTime','-dpdf','-r0');
- end
+% Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\completionTime','-dpdf','-r0');
+end
 %% Plot pathLengths
 % close all;
 markerSize = 12;
 jitterVal = 0.1;
-minY = 0.5; maxY = 6.5;
+minY = 0.5; maxY = 3;
 
 % Cells to store parameter basic statistics
 indexPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -754,66 +772,28 @@ boxPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for ea
 
 for p = 1:numExperimentTypes
     [indexPathLengthMean, indexPathLengthStd] = ...
-        getParamStats([indexPathLengthMapping1{:,p}], ...
+        getParamStats(...
+        [indexPathLengthMapping1{:,p}], ...
+        [indexPathLengthMapping3{:,p}], ...
         [indexPathLengthMapping5{:,p}]);
     [thumbPathLengthMean, thumbPathLengthStd] = ...
-        getParamStats([thumbPathLengthMapping1{:,p}], ...
+        getParamStats(...
+        [thumbPathLengthMapping1{:,p}], ...
+        [thumbPathLengthMapping3{:,p}], ...
         [thumbPathLengthMapping5{:,p}]);
     [boxPathLengthMean, boxPathLengthStd] = ...
-        getParamStats([boxPathLengthMapping1{:,p}], ...
+        getParamStats(...
+        [boxPathLengthMapping1{:,p}], ...
+        [boxPathLengthMapping3{:,p}], ...
         [boxPathLengthMapping5{:,p}]);
 
-
-    % To plot all experiments in separate figures:
-    %     % indexPathLength Plot
-    %     figure;
-    %     subplot(1,3,1)
-    %     [h3, indexPathLength, indexPathLengthStdVals] = ...
-    %         createErrorBarPlot(indexPathLengthMapping1{:,p},...
-    %         indexPathLengthMapping5{:,p},...
-    %         strcat("Index Path Length CCE ExpType",num2str(p)),...
-    %         "Mapping", "Path Length [m]"); hold on;
-    %     ylim([minY,maxY]);
-    %
-    %     % thumbPathLength Plot
-    %     subplot(1,3,2)
-    %     [h5, thumbPathLength, thumbPathLengthStdVals] = ...
-    %         createErrorBarPlot(thumbPathLengthMapping1{:,p},...
-    %         thumbPathLengthMapping5{:,p},...
-    %         strcat("Thumb Path Length CCE ExpType",num2str(p)),...
-    %         "Mapping", "Path Length [m]");
-    %     ylim([minY,maxY]);
-    %
-    %     % boxPathLength Plot
-    %     subplot(1,3,3)
-    %     [h7, boxPathLength, boxPathLengthStdVals] = ...
-    %         createErrorBarPlot(boxPathLengthMapping1{:,p},...
-    %         boxPathLengthMapping5{:,p},...
-    %         strcat("Cube Path Length CCE ExpType",num2str(p)),...
-    %         "Mapping", "Path Length [m]");
-    %
-    %     ylim([minY,maxY]);
-    %     improvePlot_v2(false, true, 14, 1500, 650); hold off;
-    %
-    %     % Save figure as pdf:
-    %     if (saveFigures == true)
-    %         set(gcf,'PaperOrientation','landscape');
-    %         print(gcf, 'figures\pathLengths','-dpdf','-r0');
-    %     end
-    %
-    %     % Save figure as pdf:
-    %     if (saveFigures == true)
-    %         set(gcf,'PaperOrientation','landscape');
-    %         print(gcf, 'figures\pathLengthsCombined','-dpdf','-r0');
-    %     end
-
     for j = 1:numSubjects
-        indexPathLengthMeanStats{j,p} = indexPathLengthMean;
-        indexPathLengthStdStats{j,p} = indexPathLengthStd;
-        thumbPathLengthMeanStats{j,p} = thumbPathLengthMean;
-        thumbPathLengthStdStats{j,p} = thumbPathLengthStd;
-        boxPathLengthMeanStats{j,p} = boxPathLengthMean;
-        boxPathLengthStdStats{j,p} = boxPathLengthStd;
+        indexPathLengthMeanStats{j,p} = indexPathLengthMean(:,j);
+        indexPathLengthStdStats{j,p} = indexPathLengthStd(:,j);
+        thumbPathLengthMeanStats{j,p} = thumbPathLengthMean(:,j);
+        thumbPathLengthStdStats{j,p} = thumbPathLengthStd(:,j);
+        boxPathLengthMeanStats{j,p} = boxPathLengthMean(:,j);
+        boxPathLengthStdStats{j,p} = boxPathLengthStd(:,j);
     end
 end
 
@@ -830,15 +810,15 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
 %     "No Color \Delta, Trial \Rightarrow",...
 %     "Location","northeast");
 
- legend("Training, Color \Delta",...
-     "Testing, No Color \Delta",...
-     "Location","northwest");
+legend("Training, Color \Delta",...
+    "Testing, No Color \Delta",...
+    "Location","northwest");
 
- % Save figure as pdf:
- if (saveFigures == true)
-     set(gcf,'PaperOrientation','landscape');
-     print(gcf, 'figures\indexPathLengths','-dpdf','-r0');
- end
+% Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\indexPathLengths','-dpdf','-r0');
+end
 
 % Thumb Plot
 figure;
@@ -851,15 +831,15 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
 %     "No Color \Delta, Trial \Rightarrow",...
 %     "Location","northeast");
 
- legend("Training, Color \Delta",...
-     "Testing, No Color \Delta",...
-     "Location","northwest");
+legend("Training, Color \Delta",...
+    "Testing, No Color \Delta",...
+    "Location","northwest");
 
- % Save figure as pdf:
- if (saveFigures == true)
-     set(gcf,'PaperOrientation','landscape');
-     print(gcf, 'figures\thumbPathLengths','-dpdf','-r0');
- end
+% Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\thumbPathLengths','-dpdf','-r0');
+end
 
 % Box Plot
 figure;
@@ -872,21 +852,21 @@ improvePlot_v2(false, true, 22, 1500, 650); hold off;
 %     "No Color \Delta, Trial \Rightarrow",...
 %     "Location","northeast");
 
- legend("Training, Color \Delta",...
-     "Testing, No Color \Delta",...
-     "Location","northwest");
+legend("Training, Color \Delta",...
+    "Testing, No Color \Delta",...
+    "Location","northwest");
 
- % Save figure as pdf:
- if (saveFigures == true)
-     set(gcf,'PaperOrientation','landscape');
-     print(gcf, 'figures\boxPathLengths','-dpdf','-r0');
- end
+% Save figure as pdf:
+if (saveFigures == true)
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf, 'figures\boxPathLengths','-dpdf','-r0');
+end
 
 
 %% Plot Normal and Shear Forces
 % close all;
 markerSize = 10;
-minY = 0; maxY = 85;
+minY = 0; maxY = 80;
 
 % Cells to store parameter basic statistics
 indexNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -901,75 +881,37 @@ thumbShearStdStats = cell(numSubjects, numExperimentTypes); % Addition for each 
 
 for p = 1:numExperimentTypes
     [indexNormalMean, indexNormalMeanStdVals] = ...
-        getParamStats([meanIndexNormalForceMapping1{:,p}], ...
+        getParamStats(...
+        [meanIndexNormalForceMapping1{:,p}], ...
+        [meanIndexNormalForceMapping3{:,p}], ...
         [meanIndexNormalForceMapping5{:,p}]);
     [indexShearMean, indexShearMeanStdVals] = ...
-        getParamStats([meanIndexShearForceMapping1{:,p}], ...
+        getParamStats(...
+        [meanIndexShearForceMapping1{:,p}], ...
+        [meanIndexShearForceMapping3{:,p}], ...
         [meanIndexShearForceMapping5{:,p}]);
 
     [thumbNormalMean, thumbNormalMeanStdVals] = ...
-        getParamStats([meanThumbNormalForceMapping1{:,p}], ...
+        getParamStats(...
+        [meanThumbNormalForceMapping1{:,p}], ...
+        [meanThumbNormalForceMapping3{:,p}], ...
         [meanThumbNormalForceMapping5{:,p}]);
     [thumbShearMean, thumbShearMeanStdVals] = ...
-        getParamStats([meanThumbShearForceMapping1{:,p}], ...
+        getParamStats(...
+        [meanThumbShearForceMapping1{:,p}], ...
+        [meanThumbShearForceMapping3{:,p}], ...
         [meanThumbShearForceMapping5{:,p}]);
 
-    % To plot all experiments in separate figures:
-    %     figure;
-    %     subplot(1,2,1)
-    %     plotMarker = "d";
-    %     [h9, indexNormalMean, indexNormalMeanStdVals] = ...
-    %         createErrorBarPlot(meanIndexNormalForceMapping1{:,p},...
-    %         meanIndexNormalForceMapping5{:,p},...
-    %         strcat("Index Forces CCE ExpType",num2str(p)),...
-    %         "Mapping", "Force [N]"); hold on;
-    %     plotMarker = "s";
-    %     [h11, indexShearMean, indexShearMeanStdVals] = ...
-    %         createErrorBarPlot(meanIndexShearForceMapping1{:,p},...
-    %         meanIndexShearForceMapping5{:,p},...
-    %         strcat("Index Forces CCE ExpType",num2str(p)),...
-    %         "Mapping", "Force [N]");
-    %     ylim([minY,maxY]);
-    %
-    %     subplot(1,2,2)
-    %     plotMarker = "d";
-    %     [h13, thumbNormalMean, thumbNormalMeanStdVals] = ...
-    %         createErrorBarPlot(meanThumbNormalForceMapping1{:,p},...
-    %         meanThumbNormalForceMapping5{:,p},...
-    %         strcat("Thumb Forces CCE ExpType",num2str(p)),...
-    %         "Mapping", "Force [N]"); hold on;
-    %     plotMarker = "s";
-    %     [h15, thumbShearMean, thumbShearMeanStdVals] = ...
-    %         createErrorBarPlot(meanThumbShearForceMapping1{:,p},...
-    %         meanThumbShearForceMapping5{:,p},...
-    %         strcat("Thumb Forces CCE ExpType",num2str(p)),...
-    %         "Mapping", "Force [N]");
-    %     ylim([minY,maxY])
-    %
-    %     improvePlot_v2(false, true, 18, 1200, 700); hold off;
-    %
-    %     %Save figure as pdf:
-    %     if (saveFigures == true)
-    %         set(gcf,'PaperOrientation','landscape');
-    %         print(gcf, 'figures\normalShearForces','-dpdf','-r0');
-    %     end
-    %
-    %     %Save figure as pdf:
-    %     if (saveFigures == true)
-    %         set(gcf,'PaperOrientation','landscape');
-    %         print(gcf, 'figures\normalShearForcesCombined','-dpdf','-r0');
-    %     end
-
     for j = 1:numSubjects
-        indexNormalMeanStats{j,p} = indexNormalMean;
-        indexNormalStdStats{j,p} = indexNormalMeanStdVals;
-        indexShearMeanStats{j,p} = indexShearMean;
-        indexShearStdStats{j,p} = indexShearMeanStdVals;
+        indexNormalMeanStats{j,p} = indexNormalMean(:,j);
+        indexNormalStdStats{j,p} = indexNormalMeanStdVals(:,j);
+        indexShearMeanStats{j,p} = indexShearMean(:,j);
+        indexShearStdStats{j,p} = indexShearMeanStdVals(:,j);
 
-        thumbNormalMeanStats{j,p} = thumbNormalMean;
-        thumbNormalStdStats{j,p} = thumbNormalMeanStdVals;
-        thumbShearMeanStats{j,p} = thumbShearMean;
-        thumbShearStdStats{j,p} = thumbShearMeanStdVals;
+        thumbNormalMeanStats{j,p} = thumbNormalMean(:,j);
+        thumbNormalStdStats{j,p} = thumbNormalMeanStdVals(:,j);
+        thumbShearMeanStats{j,p} = thumbShearMean(:,j);
+        thumbShearStdStats{j,p} = thumbShearMeanStdVals(:,j);
     end
 end
 jitterVal = 0.1;
@@ -1083,7 +1025,6 @@ for j = 1:numSubjects
                     h5 = plot(manipHighTimeEnd,...
                         ones(length(manipHighTimeEnd)),'ko'); hold on;
                 end
-
             end
 
             % Color code plot based on exp type:
@@ -1110,29 +1051,27 @@ for j = 1:numSubjects
     %         "Location","northeastoutside");
 
     if (markBoxBreaks == true)
+        %         legend([h1(1), h2(1), h4(1), h5(1)],...
+        %             "Color \Delta, Trial \Rightarrow",...
+        %             "No Color \Delta, Trial \Rightarrow",...
+        %             "Box Break Start",...
+        %             "Box Break End",...
+        %             "Location","northeast");
 
-
-%         legend([h1(1), h2(1), h4(1), h5(1)],...
-%             "Color \Delta, Trial \Rightarrow",...
-%             "No Color \Delta, Trial \Rightarrow",...
-%             "Box Break Start",...
-%             "Box Break End",...
-%             "Location","northeast");
-
-            legend([h1(1), h2(1), h4(1), h5(1)],...
-                "Training, Color \Delta",...
-     "Testing, No Color \Delta",...
-                "Box Break Start",...
-                "Box Break End",...
-                "Location","northeast");
+        legend([h1(1), h2(1), h4(1), h5(1)],...
+            "Training, Color \Delta",...
+            "Testing, No Color \Delta",...
+            "Box Break Start",...
+            "Box Break End",...
+            "Location","northeast");
     else
-%         legend([h1(1), h2(1)],...
-%             "Color \Delta, Trial \Rightarrow",...
-%             "No Color \Delta, Trial \Rightarrow",...
-%             "Location","northeast");
+        %         legend([h1(1), h2(1)],...
+        %             "Color \Delta, Trial \Rightarrow",...
+        %             "No Color \Delta, Trial \Rightarrow",...
+        %             "Location","northeast");
         legend([h1(1), h2(1)],...
             "Training, Color \Delta",...
-     "Testing, No Color \Delta",...
+            "Testing, No Color \Delta",...
             "Location","northeast");
     end
 
@@ -1167,7 +1106,7 @@ end
 figure;
 % Plot average Num Box Breaks Bar Plot with Error Bars
 createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
-    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-0.75 3.0]);
+    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-0.5 3.0]);
 
 %Save figure as pdf:
 if (saveFigures == true)
