@@ -28,12 +28,20 @@ subjectNum = [1:3];
 % Folder contatining all data:
 % dataFolders = ["..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType1"
 %                "..\CCE_Subject_Data\FingerPrint-1DoF\CCE_ExpType2"];
-dataFolders = ["..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType1"
-    "..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType2"];
+% dataFolders = ["..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType1"
+%             "..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType2"
+%             "..\CCE_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\CCE_ExpType1"
+%             "..\CCE_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\CCE_ExpType2"];
+
+% dataFolders = ["..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType1"
+%     "..\CCE_Subject_Data\Hoxels-1DoF\CCE_ExpType2"];
+
+dataFolders = ["..\CCE_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\CCE_ExpType1"
+    "..\CCE_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\CCE_ExpType2"];
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
-numExperimentTypes = length(dataFolders);
+numExperimentTypes = 2; % length(dataFolders);
 numSubjects = totalNumSubjects - numRemovedSubjects;
 % Initialize Cell Arrays of Trial Data by Experiment Type:
 subjectFiles = cell(numSubjects, numExperimentTypes);
@@ -98,22 +106,6 @@ disp("***Data Upload and Merge Complete***")
 % Selcting an entry will select the data from a particular experiment.
 % Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
-
-% %% Remove Training Trial Data
-%
-% % This will always be for CCE Exp Type1 so p=1
-% p = 1;
-% for j = 1:numSubjects
-%     % Trial # for 1st testing Trial
-%     firstTestingTrialNum = str2num(subjectFiles{j,p}(1).name([15:16]));
-%
-%     % Get 1st instance of data from testing trial:
-%     testingTrialStart = find(subjectData{j,p}.trialNum ...
-%         == firstTestingTrialNum, 1);
-%
-%     % Remove the data:
-%     subjectData{j,p}(1:testingTrialStart-1,:) = [];
-% end
 
 %% Plot Success/Fails
 plotVis = "on";
@@ -589,20 +581,6 @@ end
 disp("compute finger normal/shear force magnitudes -- done")
 
 %% Sort Subject Data by Mapping
-% mappingsVec = cell(numTrials, numSubjects);
-% mappings = cell(numSubjects, numExperimentTypes);
-%
-% for p = 1:numExperimentTypes % Addition for each experiment type
-%     for j = 1:numSubjects
-%         for k = 1:numTrials
-%             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
-%             mappingsVec{k,j} = mean(subjectData{j,p}.mapping(t_i));
-%         end
-%     end
-%     mappings{j,p} = mappingsVec(:,j);
-% end
-
-
 % Mapping1 -- mapping1TimeIndexRows
 mapping1 = [1:10; 21:30; 11:20];
 
@@ -612,53 +590,52 @@ mapping3 = [11:20; 1:10; 21:30];
 % Mapping5 -- mapping5TimeIndexRows
 mapping5 = [21:30; 11:20; 1:10];
 
-
 for p = 1:numExperimentTypes % Addition for each experiment type
+    % Completion Time for each Mapping
+    completionTimeMapping1{:,p} = sortByMapping([completionTime{:,p}], mapping1);
+    completionTimeMapping3{:,p} = sortByMapping([completionTime{:,p}], mapping3);
+    completionTimeMapping5{:,p} = sortByMapping([completionTime{:,p}], mapping5);
+
+    %Index Path length for each Mapping
+    indexPathLengthMapping1{:,p} = sortByMapping([indexPathLength{:,p}], mapping1);
+    indexPathLengthMapping3{:,p} = sortByMapping([indexPathLength{:,p}], mapping3);
+    indexPathLengthMapping5{:,p} = sortByMapping([indexPathLength{:,p}], mapping5);
+
+    %Thumb Path length for each Mapping
+    thumbPathLengthMapping1{:,p} = sortByMapping([thumbPathLength{:,p}], mapping1);
+    thumbPathLengthMapping3{:,p} = sortByMapping([thumbPathLength{:,p}], mapping3);
+    thumbPathLengthMapping5{:,p} = sortByMapping([thumbPathLength{:,p}], mapping5);
+
+    %Box Path length for each Mapping
+    boxPathLengthMapping1{:,p} = sortByMapping([boxPathLength{:,p}], mapping1);
+    boxPathLengthMapping3{:,p} = sortByMapping([boxPathLength{:,p}], mapping3);
+    boxPathLengthMapping5{:,p} = sortByMapping([boxPathLength{:,p}], mapping5);
+
+    %Index Normal and Shear Force profiles for each Mapping
+    indexNormalForceMagMapping1{:,p} = sortByMapping([indexNormalForceMag{:,p}], mapping1);
+    indexNormalForceMagMapping3{:,p} = sortByMapping([indexNormalForceMag{:,p}], mapping3);
+    indexNormalForceMagMapping5{:,p} = sortByMapping([indexNormalForceMag{:,p}], mapping5);
+
+    indexShearForceMagMapping1{:,p} = sortByMapping([indexShearForceMag{:,p}], mapping1);
+    indexShearForceMagMapping3{:,p} = sortByMapping([indexShearForceMag{:,p}], mapping3);
+    indexShearForceMagMapping5{:,p} = sortByMapping([indexShearForceMag{:,p}], mapping5);
+
+    %Thumb Normal and Shear Force profiles for each Mapping
+    thumbNormalForceMagMapping1{:,p} = sortByMapping([thumbNormalForceMag{:,p}], mapping1);
+    thumbNormalForceMagMapping3{:,p} = sortByMapping([thumbNormalForceMag{:,p}], mapping3);
+    thumbNormalForceMagMapping5{:,p} = sortByMapping([thumbNormalForceMag{:,p}], mapping5);
+
+    thumbShearForceMagMapping1{:,p} = sortByMapping([thumbShearForceMag{:,p}], mapping1);
+    thumbShearForceMagMapping3{:,p} = sortByMapping([thumbShearForceMag{:,p}], mapping3);
+    thumbShearForceMagMapping5{:,p} = sortByMapping([thumbShearForceMag{:,p}], mapping5);
+
+    %Mean Normal and Shear Force for each Mapping
+    meanIndexNormalForceVec = zeros(numTrials, numSubjects);
+    meanIndexShearForceVec = zeros(numTrials, numSubjects);
+    meanThumbNormalForceVec = zeros(numTrials, numSubjects);
+    meanThumbShearForceVec = zeros(numTrials, numSubjects);
+
     for j = 1:numSubjects
-        % Completion Time for each Mapping
-        completionTimeMapping1{j,p} = sortByMapping(completionTime{j,p}, mapping1);
-        completionTimeMapping3{j,p} = sortByMapping(completionTime{j,p}, mapping3);
-        completionTimeMapping5{j,p} = sortByMapping(completionTime{j,p}, mapping5);
-
-        %Index Path length for each Mapping
-        indexPathLengthMapping1{j,p} = sortByMapping(indexPathLength{j,p}, mapping1);
-        indexPathLengthMapping3{j,p} = sortByMapping(indexPathLength{j,p}, mapping3);
-        indexPathLengthMapping5{j,p} = sortByMapping(indexPathLength{j,p}, mapping5);
-
-        %Thumb Path length for each Mapping
-        thumbPathLengthMapping1{j,p} = sortByMapping(thumbPathLength{j,p}, mapping1);
-        thumbPathLengthMapping3{j,p} = sortByMapping(thumbPathLength{j,p}, mapping3);
-        thumbPathLengthMapping5{j,p} = sortByMapping(thumbPathLength{j,p}, mapping5);
-
-        %Box Path length for each Mapping
-        boxPathLengthMapping1{j,p} = sortByMapping(boxPathLength{j,p}, mapping1);
-        boxPathLengthMapping3{j,p} = sortByMapping(boxPathLength{j,p}, mapping3);
-        boxPathLengthMapping5{j,p} = sortByMapping(boxPathLength{j,p}, mapping5);
-
-        %Index Normal and Shear Force profiles for each Mapping
-        indexNormalForceMagMapping1{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping1);
-        indexNormalForceMagMapping3{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping3);
-        indexNormalForceMagMapping5{j,p} = sortByMapping(indexNormalForceMag{j,p}, mapping5);
-
-        indexShearForceMagMapping1{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping1);
-        indexShearForceMagMapping3{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping3);
-        indexShearForceMagMapping5{j,p} = sortByMapping(indexShearForceMag{j,p}, mapping5);
-
-        %Thumb Normal and Shear Force profiles for each Mapping
-        thumbNormalForceMagMapping1{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping1);
-        thumbNormalForceMagMapping3{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping3);
-        thumbNormalForceMagMapping5{j,p} = sortByMapping(thumbNormalForceMag{j,p}, mapping5);
-
-        thumbShearForceMagMapping1{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping1);
-        thumbShearForceMagMapping3{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping3);
-        thumbShearForceMagMapping5{j,p} = sortByMapping(thumbShearForceMag{j,p}, mapping5);
-
-        %Mean Normal and Shear Force for each Mapping
-        meanIndexNormalForceVec = zeros(numTrials, numSubjects);
-        meanIndexShearForceVec = zeros(numTrials, numSubjects);
-        meanThumbNormalForceVec = zeros(numTrials, numSubjects);
-        meanThumbShearForceVec = zeros(numTrials, numSubjects);
-
         for k = 1:numTrials
             meanIndexNormalForceVec(k,j) = mean(indexNormalForceMag{j,p}{k,1});
             meanIndexShearForceVec(k,j) = mean(indexShearForceMag{j,p}{k,1});
@@ -670,31 +647,30 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         meanIndexShearForce{j,p} = meanIndexShearForceVec(:,j);
         meanThumbNormalForce{j,p} = meanThumbNormalForceVec(:,j);
         meanThumbShearForce{j,p} = meanThumbShearForceVec(:,j);
-
-        meanIndexNormalForceMapping1{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping1);
-        meanIndexNormalForceMapping3{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping3);
-        meanIndexNormalForceMapping5{j,p} = sortByMapping(meanIndexNormalForce{j,p}, mapping5);
-
-        meanIndexShearForceMapping1{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping1);
-        meanIndexShearForceMapping3{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping3);
-        meanIndexShearForceMapping5{j,p} = sortByMapping(meanIndexShearForce{j,p}, mapping5);
-
-        meanThumbNormalForceMapping1{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping1);
-        meanThumbNormalForceMapping3{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping3);
-        meanThumbNormalForceMapping5{j,p} = sortByMapping(meanThumbNormalForce{j,p}, mapping5);
-
-        meanThumbShearForceMapping1{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping1);
-        meanThumbShearForceMapping3{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping3);
-        meanThumbShearForceMapping5{j,p} = sortByMapping(meanThumbShearForce{j,p}, mapping5);
     end
-    %     mappings{j,p} = mappingsVec(:,j);
+
+    meanIndexNormalForceMapping1{:,p} = sortByMapping([meanIndexNormalForce{:,p}], mapping1);
+    meanIndexNormalForceMapping3{:,p} = sortByMapping([meanIndexNormalForce{:,p}], mapping3);
+    meanIndexNormalForceMapping5{:,p} = sortByMapping([meanIndexNormalForce{:,p}], mapping5);
+
+    meanIndexShearForceMapping1{:,p} = sortByMapping([meanIndexShearForce{:,p}], mapping1);
+    meanIndexShearForceMapping3{:,p} = sortByMapping([meanIndexShearForce{:,p}], mapping3);
+    meanIndexShearForceMapping5{:,p} = sortByMapping([meanIndexShearForce{:,p}], mapping5);
+
+    meanThumbNormalForceMapping1{:,p} = sortByMapping([meanThumbNormalForce{:,p}], mapping1);
+    meanThumbNormalForceMapping3{:,p} = sortByMapping([meanThumbNormalForce{:,p}], mapping3);
+    meanThumbNormalForceMapping5{:,p} = sortByMapping([meanThumbNormalForce{:,p}], mapping5);
+
+    meanThumbShearForceMapping1{:,p} = sortByMapping([meanThumbShearForce{:,p}], mapping1);
+    meanThumbShearForceMapping3{:,p} = sortByMapping([meanThumbShearForce{:,p}], mapping3);
+    meanThumbShearForceMapping5{:,p} = sortByMapping([meanThumbShearForce{:,p}], mapping5);
 end
 
 disp("sort subject data by mapping group -- done")
 
 %% Plot Cosmetics:
 close all;
-saveFigures = false;
+saveFigures = true;
 % Old color scheme:
 visCubeColor = "[0 0 0]"; % Black
 % invisCubeColor = "[0.5 0.5 0.5]"; % Gray
@@ -742,7 +718,7 @@ jitterVal = 0.1;
 createMultiExpErrorBarPlot(completionTimeMeanStats, completionTimeStdStats,...
     "Completion Time", "Mapping", "Time [sec]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1400, 600);
+improvePlot_v2(false, true, 22, 1200, 600);
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
 %     "Location","northeast");
@@ -804,7 +780,7 @@ figure;
 createMultiExpErrorBarPlot(indexPathLengthMeanStats, indexPathLengthStdStats,...
     "Index Path Length", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1500, 650); hold off;
+improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
@@ -825,7 +801,7 @@ figure;
 createMultiExpErrorBarPlot(thumbPathLengthMeanStats, thumbPathLengthStdStats,...
     "Thumb Path Length", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1500, 650); hold off;
+improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
@@ -846,7 +822,7 @@ figure;
 createMultiExpErrorBarPlot(boxPathLengthMeanStats, boxPathLengthStdStats,...
     "Box Path Length", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1500, 650); hold off;
+improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
@@ -925,7 +901,7 @@ plotMarker = "s";
 createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
     "Index Forces", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1500, 650); hold off;
+improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -943,7 +919,7 @@ plotMarker = "s";
 createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
     "Thumb Forces", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1500, 650); hold off;
+improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -955,7 +931,7 @@ disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
 % close all;
-saveFigures = false;
+saveFigures = true;
 
 forceLimit = 20; % N
 
@@ -1042,7 +1018,7 @@ for j = 1:numSubjects
     end
 
     ylim([-0.02 1.4]); yticks([0 1]);
-    improvePlot_v2(false, true, 18, 1500, 700);
+    improvePlot_v2(false, true, 18, 1200, 700);
     xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
     title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
 
@@ -1086,21 +1062,18 @@ for j = 1:numSubjects
 end
 disp("Plot Manipulation Force Threshold Plots -- done")
 
-
 % Other Manip Force Thershold Metrics:
 
 for p = 1:numExperimentTypes % Addition for each experiment type
-    for j = 1:numSubjects
         % Number of box breaks for each Mapping
-        numBoxBreaksMapping1{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping1);
-        numBoxBreaksMapping3{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping3);
-        numBoxBreaksMapping5{j,p} = sortByMapping(numBoxBreaks{j,p}, mapping5);
+        numBoxBreaksMapping1{:,p} = sortByMapping([numBoxBreaks{:,p}], mapping1);
+        numBoxBreaksMapping3{:,p} = sortByMapping([numBoxBreaks{:,p}], mapping3);
+        numBoxBreaksMapping5{:,p} = sortByMapping([numBoxBreaks{:,p}], mapping5);
 
         % Amount of time box is broken in each trial for each Mapping
-        timeBoxBrokenMapping1{j,p} = sortByMapping(timeBoxBroken{j,p}, mapping1);
-        timeBoxBrokenMapping3{j,p} = sortByMapping(timeBoxBroken{j,p}, mapping3);
-        timeBoxBrokenMapping5{j,p} = sortByMapping(timeBoxBroken{j,p}, mapping5);
-    end
+        timeBoxBrokenMapping1{:,p} = sortByMapping([timeBoxBroken{:,p}], mapping1);
+        timeBoxBrokenMapping3{:,p} = sortByMapping([timeBoxBroken{:,p}], mapping3);
+        timeBoxBrokenMapping5{:,p} = sortByMapping([timeBoxBroken{:,p}], mapping5);
 end
 
 figure;

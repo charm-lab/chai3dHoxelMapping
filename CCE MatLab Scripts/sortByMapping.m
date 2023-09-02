@@ -10,7 +10,9 @@ numSubjects = evalin('base','numSubjects');
 
 % sortedVariable = parameter(mapping);
 
-sortedVariable(:,1) = parameter(mapping(1,:),1);
-
+% sortedVariable(:,1) = parameter(mapping(1,:),1);
+for j = 1:numSubjects
+    sortedVariable(:,j) = parameter(mapping(j,:),j);
+end
 
 end
