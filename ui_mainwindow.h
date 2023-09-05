@@ -220,6 +220,22 @@ public:
     QGridLayout *gridLayout_8;
     QRadioButton *hoxelStudyRadioButton;
     QRadioButton *fingerPrintStudyRadioButton;
+    QCheckBox *showFingerProxyAlgPoints;
+    QGroupBox *groupBox_9;
+    QWidget *widget;
+    QGridLayout *gridLayout_13;
+    QLabel *label_46;
+    QLCDNumber *thumbProxyPosX;
+    QLabel *label_38;
+    QLCDNumber *indexProxyPosY;
+    QLCDNumber *indexProxyPosX;
+    QLabel *label_34;
+    QLCDNumber *thumbProxyPosY;
+    QLabel *label_33;
+    QLabel *label_29;
+    QLCDNumber *thumbProxyPosZ;
+    QLabel *label_25;
+    QLCDNumber *indexProxyPosZ;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -241,7 +257,7 @@ public:
         font.setPointSize(12);
         MainWindow->setFont(font);
         QIcon icon;
-        icon.addFile(QStringLiteral("../charm_vertical_red-1.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral("../finger frame ref NEW2.jpg"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindow->setWindowIcon(icon);
         MainWindow->setAutoFillBackground(true);
         centralWidget = new QWidget(MainWindow);
@@ -484,7 +500,7 @@ public:
 
         planarCheckBox = new QCheckBox(centralWidget);
         planarCheckBox->setObjectName(QStringLiteral("planarCheckBox"));
-        planarCheckBox->setGeometry(QRect(1780, 1020, 321, 121));
+        planarCheckBox->setGeometry(QRect(1680, 1210, 321, 71));
         QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
@@ -973,7 +989,7 @@ public:
 
         showAllFramesCheckBox = new QCheckBox(centralWidget);
         showAllFramesCheckBox->setObjectName(QStringLiteral("showAllFramesCheckBox"));
-        showAllFramesCheckBox->setGeometry(QRect(1780, 1140, 321, 71));
+        showAllFramesCheckBox->setGeometry(QRect(1680, 1130, 321, 71));
         showAllFramesCheckBox->setChecked(false);
         groupBox_5 = new QGroupBox(centralWidget);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
@@ -1367,6 +1383,87 @@ public:
 
         gridLayout_8->addWidget(fingerPrintStudyRadioButton, 1, 0, 1, 1);
 
+        showFingerProxyAlgPoints = new QCheckBox(centralWidget);
+        showFingerProxyAlgPoints->setObjectName(QStringLiteral("showFingerProxyAlgPoints"));
+        showFingerProxyAlgPoints->setGeometry(QRect(1680, 1040, 281, 81));
+        showFingerProxyAlgPoints->setChecked(false);
+        groupBox_9 = new QGroupBox(centralWidget);
+        groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
+        groupBox_9->setGeometry(QRect(1630, 710, 511, 301));
+        widget = new QWidget(groupBox_9);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(20, 40, 471, 241));
+        gridLayout_13 = new QGridLayout(widget);
+        gridLayout_13->setSpacing(6);
+        gridLayout_13->setContentsMargins(11, 11, 11, 11);
+        gridLayout_13->setObjectName(QStringLiteral("gridLayout_13"));
+        gridLayout_13->setContentsMargins(0, 0, 0, 0);
+        label_46 = new QLabel(widget);
+        label_46->setObjectName(QStringLiteral("label_46"));
+
+        gridLayout_13->addWidget(label_46, 1, 2, 1, 1);
+
+        thumbProxyPosX = new QLCDNumber(widget);
+        thumbProxyPosX->setObjectName(QStringLiteral("thumbProxyPosX"));
+        thumbProxyPosX->setDigitCount(6);
+
+        gridLayout_13->addWidget(thumbProxyPosX, 5, 0, 1, 1);
+
+        label_38 = new QLabel(widget);
+        label_38->setObjectName(QStringLiteral("label_38"));
+
+        gridLayout_13->addWidget(label_38, 1, 1, 1, 1);
+
+        indexProxyPosY = new QLCDNumber(widget);
+        indexProxyPosY->setObjectName(QStringLiteral("indexProxyPosY"));
+        indexProxyPosY->setDigitCount(6);
+
+        gridLayout_13->addWidget(indexProxyPosY, 2, 1, 1, 1);
+
+        indexProxyPosX = new QLCDNumber(widget);
+        indexProxyPosX->setObjectName(QStringLiteral("indexProxyPosX"));
+        indexProxyPosX->setDigitCount(6);
+
+        gridLayout_13->addWidget(indexProxyPosX, 2, 0, 1, 1);
+
+        label_34 = new QLabel(widget);
+        label_34->setObjectName(QStringLiteral("label_34"));
+
+        gridLayout_13->addWidget(label_34, 3, 2, 1, 1);
+
+        thumbProxyPosY = new QLCDNumber(widget);
+        thumbProxyPosY->setObjectName(QStringLiteral("thumbProxyPosY"));
+        thumbProxyPosY->setDigitCount(6);
+
+        gridLayout_13->addWidget(thumbProxyPosY, 5, 1, 1, 1);
+
+        label_33 = new QLabel(widget);
+        label_33->setObjectName(QStringLiteral("label_33"));
+
+        gridLayout_13->addWidget(label_33, 3, 1, 1, 1);
+
+        label_29 = new QLabel(widget);
+        label_29->setObjectName(QStringLiteral("label_29"));
+
+        gridLayout_13->addWidget(label_29, 3, 0, 1, 1);
+
+        thumbProxyPosZ = new QLCDNumber(widget);
+        thumbProxyPosZ->setObjectName(QStringLiteral("thumbProxyPosZ"));
+        thumbProxyPosZ->setDigitCount(6);
+
+        gridLayout_13->addWidget(thumbProxyPosZ, 5, 2, 1, 1);
+
+        label_25 = new QLabel(widget);
+        label_25->setObjectName(QStringLiteral("label_25"));
+
+        gridLayout_13->addWidget(label_25, 1, 0, 1, 1);
+
+        indexProxyPosZ = new QLCDNumber(widget);
+        indexProxyPosZ->setObjectName(QStringLiteral("indexProxyPosZ"));
+        indexProxyPosZ->setDigitCount(6);
+
+        gridLayout_13->addWidget(indexProxyPosZ, 2, 2, 1, 1);
+
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -1489,6 +1586,15 @@ public:
         groupBox->setTitle(QApplication::translate("MainWindow", "Choose Study Device:", 0));
         hoxelStudyRadioButton->setText(QApplication::translate("MainWindow", "Hoxels", 0));
         fingerPrintStudyRadioButton->setText(QApplication::translate("MainWindow", "FingerPrint", 0));
+        showFingerProxyAlgPoints->setText(QApplication::translate("MainWindow", "Show Finger-Proxy\n"
+"Algorithm Points", 0));
+        groupBox_9->setTitle(QApplication::translate("MainWindow", "Finger-Proxy Algorithm Relative Positions:", 0));
+        label_46->setText(QApplication::translate("MainWindow", "Index Z", 0));
+        label_38->setText(QApplication::translate("MainWindow", "Index Y", 0));
+        label_34->setText(QApplication::translate("MainWindow", "Thumb Z", 0));
+        label_33->setText(QApplication::translate("MainWindow", "Thumb Y", 0));
+        label_29->setText(QApplication::translate("MainWindow", "Thumb X", 0));
+        label_25->setText(QApplication::translate("MainWindow", "Index X", 0));
     } // retranslateUi
 
 };

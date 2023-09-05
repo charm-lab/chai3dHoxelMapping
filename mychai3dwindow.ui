@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../My Publications/IROS 2022 Conference Paper/Presentation/Video/Finger Grasp.PNG</normaloff>../../My Publications/IROS 2022 Conference Paper/Presentation/Video/Finger Grasp.PNG</iconset>
+    <normaloff>../Updated Finger Grasp.png</normaloff>../Updated Finger Grasp.png</iconset>
   </property>
   <widget class="QOpenGLWidget" name="openGLWidget">
    <property name="enabled">

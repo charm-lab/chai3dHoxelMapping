@@ -30,7 +30,7 @@ public:
             myCHAI3DWindow->setObjectName(QStringLiteral("myCHAI3DWindow"));
         myCHAI3DWindow->resize(2560, 1419);
         QIcon icon;
-        icon.addFile(QStringLiteral("../../My Publications/IROS 2022 Conference Paper/Presentation/Video/Finger Grasp.PNG"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral("../Updated Finger Grasp.png"), QSize(), QIcon::Normal, QIcon::Off);
         myCHAI3DWindow->setWindowIcon(icon);
         openGLWidget = new QOpenGLWidget(myCHAI3DWindow);
         openGLWidget->setObjectName(QStringLiteral("openGLWidget"));

@@ -736,6 +736,37 @@ void MainWindow::UpdateGUIInfo()
         p_CommonData->adjustBox->setShowFrame(false, true);
     }
 
+    //Hide show all physical and proxy point from finger-proxy algorithm
+    // update  to show or not
+    if (ui->showFingerProxyAlgPoints->isChecked())
+    {
+        p_CommonData->showFingerProxyAlgPoints = true;
+
+        //Eigen::Vector3d indexProxyPosMat = p_CommonData->indexProxyPos;
+
+
+        ui->indexProxyPosX->display(p_CommonData->indexProxyRelPos.x());
+        ui->indexProxyPosY->display(p_CommonData->indexProxyRelPos.y());
+        ui->indexProxyPosZ->display(p_CommonData->indexProxyRelPos.z());
+
+
+        ui->thumbProxyPosX->display(p_CommonData->thumbProxyRelPos.x());
+        ui->thumbProxyPosY->display(p_CommonData->thumbProxyRelPos.y());
+        ui->thumbProxyPosZ->display(p_CommonData->thumbProxyRelPos.z());
+    }
+    else
+    {
+        p_CommonData->showFingerProxyAlgPoints = false;
+
+        ui->indexProxyPosX->display(9999);
+        ui->indexProxyPosY->display(9999);
+        ui->indexProxyPosZ->display(9999);
+
+        ui->thumbProxyPosX->display(9999);
+        ui->thumbProxyPosY->display(9999);
+        ui->thumbProxyPosZ->display(9999);
+    }
+
     //calibrate if startup process over
     if(p_CommonData->calibClock.timeoutOccurred())
     {

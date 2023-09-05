@@ -279,6 +279,20 @@ void haptics_thread::UpdateVRGraphics()
         p_CommonData->adjustBox->setShowFrame(false);
     }
 
+   if (p_CommonData->showFingerProxyAlgPoints)
+    {
+        m_tool0->setShowContactPoints(true, true, chai3d::cColorf(0,0,0)); // show proxy and device position of finger-proxy algorithm
+        m_tool1->setShowContactPoints(true, true, chai3d::cColorf(0,0,0)); // show proxy and device position of finger-proxy algorithm
+
+        p_CommonData->indexProxyRelPos = position0 - m_tool0->m_hapticPoint->getGlobalPosProxy();
+        p_CommonData->thumbProxyRelPos = position1 - m_tool1->m_hapticPoint->getGlobalPosProxy();
+    }
+    else
+   {
+        m_tool0->setShowContactPoints(false, false, chai3d::cColorf(0,0,0)); // show proxy and device position of finger-proxy algorithm
+        m_tool1->setShowContactPoints(false, false, chai3d::cColorf(0,0,0)); // show proxy and device position of finger-proxy algorithm
+   }
+
     //check for applying scaling based on whether we were touching last time
     p_CommonData->fingerTouchingLast = p_CommonData->fingerTouching;
     p_CommonData->thumbTouchingLast = p_CommonData->thumbTouching;
@@ -3656,6 +3670,7 @@ void haptics_thread::SetDynEnvironAdjust() //susana change other properties here
     mat2.setUseHapticFriction(true);
     p_CommonData->p_dynamicBox2->setMaterial(mat2);
     p_CommonData->p_dynamicBox2->setUseMaterial(true);
+    p_CommonData->p_dynamicBox2->setTransparencyLevel(0.1, true);
 
     // define material properties for box 3
     //chai3d::cMaterial mat3;

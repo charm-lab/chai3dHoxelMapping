@@ -36,7 +36,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../charm_vertical_red-1.png</normaloff>../charm_vertical_red-1.png</iconset>
+    <normaloff>../finger frame ref NEW2.jpg</normaloff>../finger frame ref NEW2.jpg</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -619,10 +619,10 @@ Trial No.</string>
    <widget class="QCheckBox" name="planarCheckBox">
     <property name="geometry">
      <rect>
-      <x>1780</x>
-      <y>1020</y>
+      <x>1680</x>
+      <y>1210</y>
       <width>321</width>
-      <height>121</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1583,8 +1583,8 @@ Effective</string>
    <widget class="QCheckBox" name="showAllFramesCheckBox">
     <property name="geometry">
      <rect>
-      <x>1780</x>
-      <y>1140</y>
+      <x>1680</x>
+      <y>1130</y>
       <width>321</width>
       <height>71</height>
      </rect>
@@ -2255,6 +2255,132 @@ Experiment</string>
         </property>
         <property name="text">
          <string>FingerPrint</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QCheckBox" name="showFingerProxyAlgPoints">
+    <property name="geometry">
+     <rect>
+      <x>1680</x>
+      <y>1040</y>
+      <width>281</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show Finger-Proxy
+Algorithm Points</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_9">
+    <property name="geometry">
+     <rect>
+      <x>1630</x>
+      <y>710</y>
+      <width>511</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Finger-Proxy Algorithm Relative Positions:</string>
+    </property>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>471</width>
+       <height>241</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_13">
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_46">
+        <property name="text">
+         <string>Index Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLCDNumber" name="thumbProxyPosX">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_38">
+        <property name="text">
+         <string>Index Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLCDNumber" name="indexProxyPosY">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLCDNumber" name="indexProxyPosX">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLabel" name="label_34">
+        <property name="text">
+         <string>Thumb Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLCDNumber" name="thumbProxyPosY">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_33">
+        <property name="text">
+         <string>Thumb Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_29">
+        <property name="text">
+         <string>Thumb X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLCDNumber" name="thumbProxyPosZ">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_25">
+        <property name="text">
+         <string>Index X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLCDNumber" name="indexProxyPosZ">
+        <property name="digitCount">
+         <number>6</number>
         </property>
        </widget>
       </item>

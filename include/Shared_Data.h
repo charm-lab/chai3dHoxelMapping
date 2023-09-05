@@ -777,6 +777,10 @@ typedef struct
     //For CCE: deciding when to remind subject of experiment conditions
     bool remindSubject;
 
+    bool showFingerProxyAlgPoints;
+    chai3d::cVector3d indexProxyRelPos;
+    chai3d::cVector3d thumbProxyRelPos;
+
     //Parameters for WHC Demo
     bool whcDemo;
     QString cubeID0;
