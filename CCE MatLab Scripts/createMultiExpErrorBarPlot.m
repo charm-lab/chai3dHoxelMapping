@@ -33,7 +33,7 @@ for p = 1:numExperimentTypes
         expTypeColor = testingMap5Color;
         i=4;j=5;k=6;
     end
-    errorbar([xAxis(i) xAxis(j) xAxis(k)],...
+    multiExpErrorBarPlot = errorbar([xAxis(i) xAxis(j) xAxis(k)],...
         meanVals{1,p}, stdVals{1,p}, plotMarker, ...
         "MarkerFaceColor", expTypeColor, ...
         "Color", expTypeColor, "MarkerSize", markerSize, "LineWidth", 2);
@@ -44,7 +44,7 @@ end
 n=numExperimentTypes;
 xlim([0.5 max(xTickVals)+2*dataSeparation]);
 xticks(xTickVals);
-tickLabels = [" ", repmat(["1", "3", "Control"], 1, n)];
+tickLabels = [" ", repmat(["Dual Tactor", "Single Tactor", "Control"], 1, n)];
 set(gca, 'xTick', xTickVals, 'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);

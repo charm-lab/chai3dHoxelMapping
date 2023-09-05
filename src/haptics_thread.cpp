@@ -1554,49 +1554,102 @@ void haptics_thread::RecordData()
 
     else if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
     {
+        //Added variables for Jasmin's Experiments
+        p_CommonData->dataRecorder.trialNo          = p_CommonData->trialNo;
+        p_CommonData->dataRecorder.cceExpType           = p_CommonData->cceExpType;
+        p_CommonData->dataRecorder.mapping               = p_CommonData->mapping;
+
+        p_CommonData->dataRecorder.indexContact     = p_CommonData->fingerTouching;//For sensor0/finger0
+        p_CommonData->dataRecorder.thumbContact     = p_CommonData->thumbTouching;//For sensor0/finger1
+
+        //        p_CommonData->dataRecorder.boxInteractionForce = p_CommonData->boxInteractionForce;
+        p_CommonData->dataRecorder.manipForceTooHigh     = p_CommonData->manipForceTooHigh; //Added variables for Jasmin's Experiments
+
+        p_CommonData->dataRecorder.trialSuccess          = p_CommonData->trialSuccess; //Added variables for Jasmin's Experiments
+
+        //        //For sensor0/finger0
+        //        p_CommonData->dataRecorder.desiredPos0      = p_CommonData->wearableDelta0->ReadDesiredPos(); // For sensor0/finger0 desired vector for index
+        //        p_CommonData->dataRecorder.strokeOut0       = p_CommonData->wearableDelta0->GetJointAngles(); //For sensor0/finger0 for Mine's experiments
+        //        p_CommonData->dataRecorder.desiredStroke0   = p_CommonData->wearableDelta0->ReadStrokeOutput(); //For sensor0/finger0
+        //        //For sensor1/finger1
+        //        p_CommonData->dataRecorder.desiredPos1      = p_CommonData->wearableDelta1->ReadDesiredPos(); //For sensor1/finger1
+        //        p_CommonData->dataRecorder.strokeOut1       = p_CommonData->wearableDelta1->GetJointAngles(); //For sensor1/finger1
+        //        p_CommonData->dataRecorder.desiredStroke1   = p_CommonData->wearableDelta1->ReadStrokeOutput(); //For sensor1/finger1
+
+        //Box positions
+        p_CommonData->dataRecorder.box1Pos          = p_CommonData->ODEBody1->getLocalPos();
+        //Position vectors of trackers
+        p_CommonData->dataRecorder.magTrackerPos0   = position0;
+        p_CommonData->dataRecorder.magTrackerPos1   = position1;
+
+
         //For sensor0/finger0
-        p_CommonData->dataRecorder.desiredPos0      = p_CommonData->wearableDelta0->ReadDesiredPos(); // desired vector for index
-        p_CommonData->dataRecorder.strokeOut0       = p_CommonData->wearableDelta0->GetJointAngles(); //for Mine's experiments
-        p_CommonData->dataRecorder.desiredStroke0   = p_CommonData->wearableDelta0->ReadStrokeOutput();
         p_CommonData->dataRecorder.VRIntForce0      = deviceForceRecord0; // last force on tool0
         p_CommonData->dataRecorder.VRIntForceGlo0   = globalForceRecord0; // last force on tool0 in global coords
-        p_CommonData->dataRecorder.indexContact     = p_CommonData->fingerTouching;
-
-        //For sensor0/finger1
-        p_CommonData->dataRecorder.desiredPos1      = p_CommonData->wearableDelta1->ReadDesiredPos();
-        p_CommonData->dataRecorder.strokeOut1       = p_CommonData->wearableDelta1->GetJointAngles();
-        p_CommonData->dataRecorder.desiredStroke1   = p_CommonData->wearableDelta1->ReadStrokeOutput();
+        //For sensor1/finger1
         p_CommonData->dataRecorder.VRIntForce1      = deviceForceRecord1; // last force on tool0
         p_CommonData->dataRecorder.VRIntForceGlo1   = globalForceRecord1; // last force on tool0 in global coords
-        p_CommonData->dataRecorder.thumbContact     = p_CommonData->thumbTouching;
+
+
+        // Box orientation:
+        p_CommonData->dataRecorder.box1LocalRotMat      = p_CommonData->ODEBody1->getLocalRot();
+        p_CommonData->dataRecorder.box1GlobalRotMat     = p_CommonData->ODEBody1->getGlobalRot();
+        //Rotation matrices of trackers
+        p_CommonData->dataRecorder.deviceRotation0  = rotation0;
+        p_CommonData->dataRecorder.deviceRotation1  = rotation1;
+
 
         //Box mass/stiffness properties
         p_CommonData->dataRecorder.box1Stiffness    = stiffness1;
         p_CommonData->dataRecorder.box1Mass         = mass1;
 
-        //Rotation matrices of trackers
-        p_CommonData->dataRecorder.deviceRotation0  = rotation0;
-        p_CommonData->dataRecorder.deviceRotation1  = rotation1;
-
-        //Position vectors of trackers
-        p_CommonData->dataRecorder.magTrackerPos0   = position0;
-        p_CommonData->dataRecorder.magTrackerPos1   = position1;
-
-        //Box positions
-        p_CommonData->dataRecorder.box1Pos          = p_CommonData->ODEBody1->getLocalPos();
         //Experiment information
         p_CommonData->dataRecorder.conditionNo          = p_CommonData->cond;
         p_CommonData->dataRecorder.strokeScale          = p_CommonData->strokeScale;
-        p_CommonData->dataRecorder.box1GlobalRotMat     = p_CommonData->ODEBody1->getGlobalRot();
-        p_CommonData->dataRecorder.box1LocalRotMat      = p_CommonData->ODEBody1->getLocalRot();
 
-        //Added variables for Jasmin's Experiments
-        p_CommonData->dataRecorder.boxInteractionForce = p_CommonData->boxInteractionForce;
-        p_CommonData->dataRecorder.manipForceTooHigh     = p_CommonData->manipForceTooHigh;
-        p_CommonData->dataRecorder.cceExpType           = p_CommonData->cceExpType;
-        p_CommonData->dataRecorder.mapping               = p_CommonData->mapping;
-        p_CommonData->dataRecorder.trialSuccess          = p_CommonData->trialSuccess;
-        p_CommonData->dataRecorder.trialNo          = p_CommonData->trialNo;
+//        //For sensor0/finger0
+//        p_CommonData->dataRecorder.desiredPos0      = p_CommonData->wearableDelta0->ReadDesiredPos(); // desired vector for index
+//        p_CommonData->dataRecorder.strokeOut0       = p_CommonData->wearableDelta0->GetJointAngles(); //for Mine's experiments
+//        p_CommonData->dataRecorder.desiredStroke0   = p_CommonData->wearableDelta0->ReadStrokeOutput();
+//        p_CommonData->dataRecorder.VRIntForce0      = deviceForceRecord0; // last force on tool0
+//        p_CommonData->dataRecorder.VRIntForceGlo0   = globalForceRecord0; // last force on tool0 in global coords
+//        p_CommonData->dataRecorder.indexContact     = p_CommonData->fingerTouching;
+
+//        //For sensor0/finger1
+//        p_CommonData->dataRecorder.desiredPos1      = p_CommonData->wearableDelta1->ReadDesiredPos();
+//        p_CommonData->dataRecorder.strokeOut1       = p_CommonData->wearableDelta1->GetJointAngles();
+//        p_CommonData->dataRecorder.desiredStroke1   = p_CommonData->wearableDelta1->ReadStrokeOutput();
+//        p_CommonData->dataRecorder.VRIntForce1      = deviceForceRecord1; // last force on tool0
+//        p_CommonData->dataRecorder.VRIntForceGlo1   = globalForceRecord1; // last force on tool0 in global coords
+//        p_CommonData->dataRecorder.thumbContact     = p_CommonData->thumbTouching;
+
+//        //Box mass/stiffness properties
+//        p_CommonData->dataRecorder.box1Stiffness    = stiffness1;
+//        p_CommonData->dataRecorder.box1Mass         = mass1;
+
+//        //Rotation matrices of trackers
+//        p_CommonData->dataRecorder.deviceRotation0  = rotation0;
+//        p_CommonData->dataRecorder.deviceRotation1  = rotation1;
+
+//        //Position vectors of trackers
+//        p_CommonData->dataRecorder.magTrackerPos0   = position0;
+//        p_CommonData->dataRecorder.magTrackerPos1   = position1;
+
+//        //Box positions
+//        p_CommonData->dataRecorder.box1Pos          = p_CommonData->ODEBody1->getLocalPos();
+//        //Experiment information
+//        p_CommonData->dataRecorder.conditionNo          = p_CommonData->cond;
+//        p_CommonData->dataRecorder.strokeScale          = p_CommonData->strokeScale;
+//        p_CommonData->dataRecorder.box1GlobalRotMat     = p_CommonData->ODEBody1->getGlobalRot();
+//        p_CommonData->dataRecorder.box1LocalRotMat      = p_CommonData->ODEBody1->getLocalRot();
+
+//        //Added variables for Jasmin's Experiments
+//        p_CommonData->dataRecorder.boxInteractionForce = p_CommonData->boxInteractionForce;
+//        p_CommonData->dataRecorder.manipForceTooHigh     = p_CommonData->manipForceTooHigh;
+//        p_CommonData->dataRecorder.cceExpType           = p_CommonData->cceExpType;
+//        p_CommonData->dataRecorder.mapping               = p_CommonData->mapping;
+//        p_CommonData->dataRecorder.trialSuccess          = p_CommonData->trialSuccess;
+//        p_CommonData->dataRecorder.trialNo          = p_CommonData->trialNo;
     }
 
 

@@ -6,13 +6,14 @@
 function sortedVariable = sortByMapping(parameter, mapping)
 
 %Pull data from workspace
-numSubjects = evalin('base','numSubjects');
-
+% numSubjects = evalin('base','numSubjects');
+j = evalin('base','j');
 % sortedVariable = parameter(mapping);
 
-% sortedVariable(:,1) = parameter(mapping(1,:),1);
-for j = 1:numSubjects
-    sortedVariable(:,j) = parameter(mapping(j,:),j);
-end
+sortedVariable(:,1) = parameter(mapping,j);
+% for j = 1:numSubjects
+%     disp(strcat("j: ", num2str(j)))
+%     sortedVariable(:,j) = parameter(mapping(j,:),j)
+% end
 
 end

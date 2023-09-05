@@ -216,7 +216,7 @@ public:
     QPushButton *SetTrialNoButton;
     QCheckBox *WHCDemoBox;
     QGroupBox *groupBox;
-    QWidget *widget;
+    QWidget *layoutWidget14;
     QGridLayout *gridLayout_8;
     QRadioButton *hoxelStudyRadioButton;
     QRadioButton *fingerPrintStudyRadioButton;
@@ -241,7 +241,7 @@ public:
         font.setPointSize(12);
         MainWindow->setFont(font);
         QIcon icon;
-        icon.addFile(QStringLiteral("../../../../Pictures/Icon.jpg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral("../charm_vertical_red-1.png"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindow->setWindowIcon(icon);
         MainWindow->setAutoFillBackground(true);
         centralWidget = new QWidget(MainWindow);
@@ -391,7 +391,7 @@ public:
         QFont font1;
         font1.setPointSize(18);
         subject_no->setFont(font1);
-        subject_no->setMaximum(99);
+        subject_no->setMaximum(999);
         subject_no->setSingleStep(1);
         subject_no->setValue(1);
 
@@ -1346,22 +1346,22 @@ public:
         groupBox->setObjectName(QStringLiteral("groupBox"));
         groupBox->setGeometry(QRect(880, 480, 321, 151));
         groupBox->setFont(font5);
-        widget = new QWidget(groupBox);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 30, 191, 111));
-        gridLayout_8 = new QGridLayout(widget);
+        layoutWidget14 = new QWidget(groupBox);
+        layoutWidget14->setObjectName(QStringLiteral("layoutWidget14"));
+        layoutWidget14->setGeometry(QRect(10, 30, 191, 111));
+        gridLayout_8 = new QGridLayout(layoutWidget14);
         gridLayout_8->setSpacing(6);
         gridLayout_8->setContentsMargins(11, 11, 11, 11);
         gridLayout_8->setObjectName(QStringLiteral("gridLayout_8"));
         gridLayout_8->setContentsMargins(0, 0, 0, 0);
-        hoxelStudyRadioButton = new QRadioButton(widget);
+        hoxelStudyRadioButton = new QRadioButton(layoutWidget14);
         hoxelStudyRadioButton->setObjectName(QStringLiteral("hoxelStudyRadioButton"));
         hoxelStudyRadioButton->setFont(font5);
         hoxelStudyRadioButton->setChecked(true);
 
         gridLayout_8->addWidget(hoxelStudyRadioButton, 0, 0, 1, 1);
 
-        fingerPrintStudyRadioButton = new QRadioButton(widget);
+        fingerPrintStudyRadioButton = new QRadioButton(layoutWidget14);
         fingerPrintStudyRadioButton->setObjectName(QStringLiteral("fingerPrintStudyRadioButton"));
         fingerPrintStudyRadioButton->setFont(font5);
 

@@ -36,7 +36,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../Pictures/Icon.jpg</normaloff>../../../../Pictures/Icon.jpg</iconset>
+    <normaloff>../charm_vertical_red-1.png</normaloff>../charm_vertical_red-1.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -310,7 +310,7 @@ Trial No.</string>
         </font>
        </property>
        <property name="maximum">
-        <number>99</number>
+        <number>999</number>
        </property>
        <property name="singleStep">
         <number>1</number>
@@ -2221,7 +2221,7 @@ Experiment</string>
     <property name="title">
      <string>Choose Study Device:</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
