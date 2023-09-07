@@ -27,15 +27,15 @@ subjectNum = [1:3];
 
 % Folder contatining all data:
 
-% dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
-%     "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
+dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
+    "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
 %
 % dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\Final Pilot\HME_ExpType1"
 %     "..\HME_Subject_Data\Hoxels-1DoF\Final Pilot\HME_ExpType2"]
 
-dataFolders = ...
-    ["..\HME_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\HME_ExpType1"
-    "..\HME_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\HME_ExpType2"]
+% dataFolders = ...
+%     ["..\HME_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\HME_ExpType1"
+%     "..\HME_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\HME_ExpType2"]
 
 
 % The number of subjects whose data will be included in the calculations and
@@ -513,17 +513,40 @@ for p = 1:numExperimentTypes % Addition for each experiment type
             %time index vector
             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
 
-            % Normal force in the finger frame is the z-component
-            indexNormalForceMagVec{k,j} = abs(subjectData{j,p}.indexForceZ(t_i));
-            % Shear force in the finger frame is the xy-components
-            indexShearForceMagVec{k,j} = subjectData{j,p}.indexForceX(t_i).^2 + ...
-                subjectData{j,p}.indexForceY(t_i).^2;
+%             % Normal force in the finger frame is the z-component
+%             indexNormalForceMagVec{k,j} = abs(subjectData{j,p}.indexForceZ(t_i));
+%             % Shear force in the finger frame is the xy-components
+%             indexShearForceMagVec{k,j} = sqrt(subjectData{j,p}.indexForceX(t_i).^2 + ...
+%                 subjectData{j,p}.indexForceY(t_i).^2);
+% 
+%             % Normal force in the finger frame is the z-component
+%             thumbNormalForceMagVec{k,j} = abs(subjectData{j,p}.thumbForceZ(t_i));
+%             % Shear force in the finger frame is the xy-components
+%             thumbShearForceMagVec{k,j} = sqrt(subjectData{j,p}.thumbForceX(t_i).^2 + ...
+%                 subjectData{j,p}.thumbForceY(t_i).^2);
 
-            % Normal force in the finger frame is the z-component
-            thumbNormalForceMagVec{k,j} = abs(subjectData{j,p}.thumbForceZ(t_i));
-            % Shear force in the finger frame is the xy-components
-            thumbShearForceMagVec{k,j} = subjectData{j,p}.thumbForceX(t_i).^2 + ...
-                subjectData{j,p}.thumbForceY(t_i).^2;
+            % Index Normal Force Magnitude
+            indexNormalForceMagVec{k,j} = sqrt(...
+                subjectData{j,p}.indexNormalForceX(t_i).^2 + ...
+                subjectData{j,p}.indexNormalForceY(t_i).^2 + ...
+                subjectData{j,p}.indexNormalForceZ(t_i).^2);
+            % Index Shear Force Magnitude
+            indexShearForceMagVec{k,j} = sqrt(...
+                subjectData{j,p}.indexShearForceX(t_i).^2 + ...
+                subjectData{j,p}.indexShearForceY(t_i).^2 + ...
+                subjectData{j,p}.indexShearForceZ(t_i).^2);
+
+            % Thumb Normal Force Magnitude
+            thumbNormalForceMagVec{k,j} = sqrt(...
+                subjectData{j,p}.thumbNormalForceX(t_i).^2 + ...
+                subjectData{j,p}.thumbNormalForceY(t_i).^2 + ...
+                subjectData{j,p}.thumbNormalForceZ(t_i).^2);
+            % Thumb Shear Force Magnitude
+            thumbShearForceMagVec{k,j} = sqrt(...
+                subjectData{j,p}.thumbShearForceX(t_i).^2 + ...
+                subjectData{j,p}.thumbShearForceY(t_i).^2 + ...
+                subjectData{j,p}.thumbShearForceZ(t_i).^2);
+
         end
         % Save data from all trials to the subject columnwise
         indexNormalForceMag{j,p} = indexNormalForceMagVec(:,j);
@@ -578,6 +601,24 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         % Mapping5 -- mapping5TimeIndexRows
         mapping5 = repmat([21:30; 11:20; 1:10], [numSubjects/3, 1]);
     end
+
+%     % Modify repmat depending on which Exp type is being processed
+%     % For numSubjjects/3 != 0
+%     if (p == 1)
+%         % Mapping1 -- mapping1TimeIndexRows
+%         mapping1 = repmat([1:10 31:40; 21:30 51:60; 11:20 41:50], [1, 1]);
+%         % Mapping3 -- mapping3TimeIndexRows
+%         mapping3 = repmat([11:20 41:50; 1:10 31:40; 21:30 51:60], [1, 1]);
+%         % Mapping5 -- mapping5TimeIndexRows
+%         mapping5 = repmat([21:30 51:60; 11:20 41:50; 1:10 31:40], [1, 1]);
+%     else % if (p == 2)
+%         % Mapping1 -- mapping1TimeIndexRows
+%         mapping1 = repmat([1:10; 21:30; 11:20], [1, 1]);
+%         % Mapping3 -- mapping3TimeIndexRows
+%         mapping3 = repmat([11:20; 1:10; 21:30], [1, 1]);
+%         % Mapping5 -- mapping5TimeIndexRows
+%         mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
+%     end
 
     % Plug in paramters to be sorted:
     for j = 1:numSubjects
@@ -830,9 +871,9 @@ if (saveFigures == true)
 end
 
 %% Plot Normal and Shear Forces
-close all;
-markerSize = 10;
-minY = 0; maxY = 70;
+% close all;
+markerSize = 7;
+minY = 0; maxY = 10;
 
 % Cells to store parameter basic statistics
 indexNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -880,7 +921,7 @@ for p = 1:numExperimentTypes
         thumbShearStdStats{j,p} = thumbShearMeanStdVals(j,:);
     end
 end
-jitterVal = 0.18;
+jitterVal = 0.1;
 % Index Plot
 figure;
 plotMarker = "d";
@@ -937,7 +978,7 @@ improvePlot_v2(false, true, 18, 1150, 650); hold off;
 %Save figure as pdf:
 if (saveFigures == true)
     set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\normal-shaerForcesCombined','-dpdf','-r0');
+    print(gcf, 'figures\normal-shearForcesCombined','-dpdf','-r0');
 end
 
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
@@ -1099,6 +1140,24 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         mapping5 = repmat([21:30; 11:20; 1:10], [numSubjects/3, 1]);
     end
 
+%     % Modify repmat depending on which Exp type is being processed
+%     % For numSubjjects/3 != 0
+%     if (p == 1)
+%         % Mapping1 -- mapping1TimeIndexRows
+%         mapping1 = repmat([1:10 31:40; 21:30 51:60; 11:20 41:50], [1, 1]);
+%         % Mapping3 -- mapping3TimeIndexRows
+%         mapping3 = repmat([11:20 41:50; 1:10 31:40; 21:30 51:60], [1, 1]);
+%         % Mapping5 -- mapping5TimeIndexRows
+%         mapping5 = repmat([21:30 51:60; 11:20 41:50; 1:10 31:40], [1, 1]);
+%     else % if (p == 2)
+%         % Mapping1 -- mapping1TimeIndexRows
+%         mapping1 = repmat([1:10; 21:30; 11:20], [1, 1]);
+%         % Mapping3 -- mapping3TimeIndexRows
+%         mapping3 = repmat([11:20; 1:10; 21:30], [1, 1]);
+%         % Mapping5 -- mapping5TimeIndexRows
+%         mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
+%     end
+
     for j = 1:numSubjects
         % disp(strcat("p: ", num2str(p)))
         % Number of box breaks for each Mapping
@@ -1116,7 +1175,7 @@ end
 figure;
 % Plot average Num Box Breaks Bar Plot with Error Bars
 createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
-    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-0.5 2.5]);
+    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-1.0 3.5]);
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -1127,7 +1186,7 @@ end
 figure;
 % Plot average time box broken Bar Plot with Error Bars
 createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
-    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]",[-0.2 0.75]);
+    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]",[-0.2 0.8]);
 
 %Save figure as pdf:
 if (saveFigures == true)
