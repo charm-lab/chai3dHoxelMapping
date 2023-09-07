@@ -72,6 +72,13 @@ typedef struct
     Eigen::Vector3d desiredPos1;
     Eigen::Vector3d desiredFor0;
     Eigen::Vector3d desiredFor1;
+    // Added for Hoxel Mapping Experiment:
+    //Local to fingers Normal Forces:
+    Eigen::Vector3d desiredNormFor0;
+    Eigen::Vector3d desiredNormFor1;
+    //Local to fingers Tangential Forces:
+    Eigen::Vector3d desiredTanFor0;
+    Eigen::Vector3d desiredTanFor1;
 
 
     double motorAngles1; //Eigen::Vector3d motorAngles1; //Eigen::Vector3d motorAngles1;
@@ -170,8 +177,8 @@ typedef struct
     bool targetSuccess;
     bool trialSuccess;
 
-    //For CrumblyCube:
-    int cceExpType;
+    //For HME:
+    int hmeExpType;
     bool manipForceTooHigh;
     chai3d::cVector3d boxInteractionForce;
 
@@ -234,7 +241,7 @@ typedef enum
     StiffnessMassExperiment,
     FingerMappingExperiment,
     HoxelMappingExperiment,
-    CrumblyCubeExperiment,
+    WireGuideExperiment,
     CubeGuidanceExperiment,
     dynamicMagnitudeExp,
 } dynamicObject_states;
@@ -583,6 +590,13 @@ typedef struct
     double strokeScale;
     Eigen::Vector3d desiredFor0;
     Eigen::Vector3d desiredFor1;
+    // Added for Hoxel Mapping Experiment:
+    //Local to fingers Normal Forces:
+    Eigen::Vector3d desiredNormFor0;
+    Eigen::Vector3d desiredNormFor1;
+    //Local to fingers Tangential Forces:
+    Eigen::Vector3d desiredTanFor0;
+    Eigen::Vector3d desiredTanFor1;
 
     double ref1;
     double ref2;
@@ -769,12 +783,12 @@ typedef struct
     double randBoxPosX;
     double randBoxPosY;
 
-    //For CrumblyCube to see if grasp force is too high
+    //For HME to see if grasp force is too high
     bool manipForceTooHigh;
-    int cceExpType;
+    int hmeExpType;
     chai3d::cVector3d boxInteractionForce;
 
-    //For CCE: deciding when to remind subject of experiment conditions
+    //For HME: deciding when to remind subject of experiment conditions
     bool remindSubject;
 
     bool showFingerProxyAlgPoints;

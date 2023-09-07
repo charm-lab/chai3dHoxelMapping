@@ -10,7 +10,7 @@
 #include <QMessageBox>
 
 #include "breaktimedialog.h"
-#include "cceExpTypeDialog.h"
+#include "hmeExpTypeDialog.h"
 #include "trialNotification.h"
 #include "endNotification.h"
 #include "mychai3dwindow.h"
@@ -418,8 +418,8 @@ void MainWindow::Initialize()
     p_CommonData->stiffness3 = 700;
 
     p_CommonData->mass1 = 0.3;
-    p_CommonData->mass2 = 0.3;
-    p_CommonData->mass3 = 0.3;
+    p_CommonData->mass2 = 0.5;
+    p_CommonData->mass3 = 0.7;
     p_CommonData->cond = 1;
     p_CommonData->direct = 1;
     p_CommonData->mapping = 1;
@@ -541,8 +541,8 @@ void MainWindow::UpdateGUIInfo()
     else
         localOutputStrokes0 = p_CommonData->wearableDelta0->ReadStrokeOutput();
 
-    localDesiredPos0 = p_CommonData->wearableDelta0->ReadDesiredPos();
-    localMotorAngles0 = p_CommonData->wearableDelta0->GetJointAngles();
+    localDesiredPos0    = p_CommonData->wearableDelta0->ReadDesiredPos();
+    localMotorAngles0   = p_CommonData->wearableDelta0->GetJointAngles();
     localForce0         = p_CommonData->desiredFor0;
 
     double localFor0_0     =  localForce0[0];
@@ -554,13 +554,19 @@ void MainWindow::UpdateGUIInfo()
     else
         localOutputStrokes1 = p_CommonData->wearableDelta1->ReadStrokeOutput();
 
-    localDesiredPos1 = p_CommonData->wearableDelta1->ReadDesiredPos();
-    localMotorAngles1 = p_CommonData->wearableDelta1->GetJointAngles();
+    localDesiredPos1    = p_CommonData->wearableDelta1->ReadDesiredPos();
+    localMotorAngles1   = p_CommonData->wearableDelta1->GetJointAngles();
     localForce1         = p_CommonData->desiredFor1;
 
     double localFor1_0     =  localForce1[0];
     double localFor1_1     =  localForce1[1];
     double localFor1_2     =  localForce1[2];
+
+    // Component-wise:
+    localNormalForce0         = p_CommonData->desiredNormFor0;
+    localNormalForce1         = p_CommonData->desiredNormFor1;
+    localTangentialForce0     = p_CommonData->desiredTanFor0;
+    localTangentialForce1     = p_CommonData->desiredTanFor1;
 
     if(p_CommonData->flagEqualTouch)
     {
@@ -598,6 +604,17 @@ void MainWindow::UpdateGUIInfo()
     ui->ForX0->display(localFor0_0);
     ui->ForY0->display(localFor0_1);
     ui->ForZ0->display(localFor0_2);
+    // Component-wise forces:
+    ui->ForNormX0->display(localNormalForce0[0]);
+    ui->ForNormY0->display(localNormalForce0[1]);
+    ui->ForNormZ0->display(localNormalForce0[2]);
+    ui->ForNormMag0->display(localNormalForce0.norm());
+    ui->ForTanX0->display(localTangentialForce0[0]);
+    ui->ForTanY0->display(localTangentialForce0[1]);
+    ui->ForTanZ0->display(localTangentialForce0[2]);
+    ui->ForTanMag0->display(localTangentialForce0.norm());
+
+
 
     //ui->StiX0->display(localStiffn0_0);
     //ui->StiY0->display(localStiffn0_1);
@@ -612,6 +629,15 @@ void MainWindow::UpdateGUIInfo()
     ui->ForX1->display(localFor1_0);
     ui->ForY1->display(localFor1_1);
     ui->ForZ1->display(localFor1_2);
+    // Component-wise forces:
+    ui->ForNormX1->display(localNormalForce1[0]);
+    ui->ForNormY1->display(localNormalForce1[1]);
+    ui->ForNormZ1->display(localNormalForce1[2]);
+    ui->ForNormMag1->display(localNormalForce1.norm());
+    ui->ForTanX1->display(localTangentialForce1[0]);
+    ui->ForTanY1->display(localTangentialForce1[1]);
+    ui->ForTanZ1->display(localTangentialForce1[2]);
+    ui->ForTanMag1->display(localTangentialForce1.norm());
 
     //ui->strokeScale_show->display(p_CommonData->strokeScale);
     ui->Act1_show->display(p_CommonData->ref1);
@@ -774,24 +800,24 @@ void MainWindow::UpdateGUIInfo()
         p_CommonData->calibClock.reset();
     }
 
-    //Set manip Boolean for CCE
+    //Set manip Boolean for HME
     if(localForce0.norm()+localForce1.norm() > FINGER_FORCE_LIMIT)
     {
         p_CommonData->manipForceTooHigh = true;
-        /* Remove CCE Type 3 functionality
-        if(p_CommonData->cceExpType == 3)
+        /* Remove HME Type 3 functionality
+        if(p_CommonData->hmeExpType == 3)
         {
             // Show user they failed the trial
             showTrialNotification();
 
-            //Save the data from CCE Exp Type3
+            //Save the data from HME Exp Type3
             if(p_CommonData->recordFlag)
             {
                 p_CommonData->dataRecordMutex.lock();
                 localDataRecorderVector = p_CommonData->dataRecorderVector;
                 p_CommonData->dataRecorderVector.clear();
                 p_CommonData->dataRecordMutex.unlock();
-                WriteDataToFile();
+                writeDataToFile();
                 p_CommonData->recordFlag = false;
             }
 
@@ -958,11 +984,11 @@ bool MainWindow::readExpStuffIn()
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
-    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if(p_CommonData->currentDynamicObjectState == WireGuideExperiment)
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
-    if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         p_CommonData->TrialType = p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(trial)).toStdString().c_str(), "type", NULL /*default*/);
     }
@@ -1217,10 +1243,10 @@ bool MainWindow::readExpStuffIn()
         }
     }
 
-    //For Jasmin's HoxelMapping Experiment
-    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    //For Jasmin's WireGuide Experiment
+    if(p_CommonData->currentDynamicObjectState == WireGuideExperiment)
     {
-        qDebug() << "Reading In HoxelMappingExperiment Protocol";
+        qDebug() << "Reading In WireGuide Protocol";
         //Training trials
         if (p_CommonData->TrialType=="training")
         {
@@ -1319,10 +1345,10 @@ bool MainWindow::readExpStuffIn()
         }
     }
 
-    //For Jasmin's CrumblyCube Experiment
-    if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+    //For Jasmin's HoxelMappingExperiment
+    if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-        qDebug() << "Reading In CrumblyCubeExperiment Protocol";
+        qDebug() << "Reading In HoxelMappingExperiment Protocol";
         //Training trials
         if (p_CommonData->TrialType=="training")
         {
@@ -1338,7 +1364,7 @@ bool MainWindow::readExpStuffIn()
                 qDebug()<<"trialBreak";
             }
 
-            //Read protocal ini file info into the experiment environment
+            //Read protocol ini file info into the experiment environment
             //for TrialMode, 1 means mass 2 means stiffness
             p_CommonData->remindSubject = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "reminder", NULL /*default*/));
             p_CommonData->TrialMode     = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mode", NULL /*default*/));
@@ -1347,7 +1373,7 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
             p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
-            p_CommonData->cceExpType	= std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "cceExpType", NULL /*default*/));
+            p_CommonData->hmeExpType	= std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "hmeExpType", NULL /*default*/));
 
             /*
             if(p_CommonData->TrialMode == 1)
@@ -1376,7 +1402,7 @@ bool MainWindow::readExpStuffIn()
                 showExpTypeMessageBox();
             }
 
-            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 1 Address of cceExpType: " << &(p_CommonData->cceExpType);
+            qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 1 Address of hmeExpType: " << &(p_CommonData->hmeExpType);
             return true;
         }
         //Testing trials
@@ -1390,7 +1416,7 @@ bool MainWindow::readExpStuffIn()
             p_CommonData->mass1         = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mass1", NULL /*default*/));
             p_CommonData->direct        = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "dir", NULL /*default*/));
             p_CommonData->mapping       = std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "mapping", NULL /*default*/));
-            p_CommonData->cceExpType	= std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "cceExpType", NULL /*default*/));
+            p_CommonData->hmeExpType	= std::stod(p_CommonData->selectedProtocolFile.GetValue((QString("trial ") + QString::number(p_CommonData->trialNo)).toStdString().c_str(), "hmeExpType", NULL /*default*/));
 
             if(p_CommonData->TrialMode == 1)
             {
@@ -1416,15 +1442,15 @@ bool MainWindow::readExpStuffIn()
                 showExpTypeMessageBox();
             }
 
-            //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 2 Address of cceExpType: " << &(p_CommonData->cceExpType);
+            //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 2 Address of hmeExpType: " << &(p_CommonData->hmeExpType);
             return true;
         }
         //Trial Break
         else if (p_CommonData->TrialType=="break"){
             p_CommonData->currentExperimentState = trialBreak;
-            p_CommonData->cceExpType = 0; // placeholder to stop code running through break transistions;
+            p_CommonData->hmeExpType = 0; // placeholder to stop code running through break transistions;
 
-            //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 3 Address of cceExpType: " << &(p_CommonData->cceExpType);
+            //qDebug() << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~mainwindow.cpp 3 Address of hmeExpType: " << &(p_CommonData->hmeExpType);
             //            if (p_CommonData->remindSubject == true)
             //            {
             //                showExpTypeMessageBox();
@@ -1438,7 +1464,7 @@ bool MainWindow::readExpStuffIn()
         //Trial Over
         else if (p_CommonData->TrialType=="end"){
             p_CommonData->currentExperimentState = endExperiment;
-            qDebug()<<"CrumblyCubeExperiment DONE!!";
+            qDebug()<<"HoxelMappingExperiment DONE!!";
             //Close the app
             showEndNotification();
             return false;
@@ -1551,16 +1577,15 @@ bool MainWindow::readExpStuffIn()
 void MainWindow::setMappingText()
 {
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-        p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-        p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+        p_CommonData->currentDynamicObjectState == WireGuideExperiment ||
+        p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-
         //Set Mapping Text
         QString mappingText = "<P><FONT COLOR='#0c88fb' FONT SIZE = 3> Mapping #";
         mappingText.append(QString::number(p_CommonData->mapping));
         mappingText.append("</P></br>\n");
-        mappingText.append("CCE Exp Type: ");
-        mappingText.append(QString::number(p_CommonData->cceExpType));
+        mappingText.append("HME Exp Type: ");
+        mappingText.append(QString::number(p_CommonData->hmeExpType));
         ui->mappingTextBox->setText(mappingText);
     }
 
@@ -1661,7 +1686,7 @@ void MainWindow::progressPickAndPlaceExperiment(bool mistake)
                 localDataRecorderVector = p_CommonData->dataRecorderVector;
                 p_CommonData->dataRecorderVector.clear();
                 p_CommonData->dataRecordMutex.unlock();
-                WriteDataToFile();
+                writeDataToFile();
                 p_CommonData->recordFlag = false;
             }
 
@@ -1893,8 +1918,8 @@ void MainWindow::handleHKeyPressed()
 
 void MainWindow::showExpTypeMessageBox()
 {
-    // Create an instance of cceExpTypeDialog
-    cceExpTypeDialog* dialog = new cceExpTypeDialog(p_CommonData->cceExpType, p_CommonData->mapping, &windowGLDisplay);
+    // Create an instance of hmeExpTypeDialog
+    hmeExpTypeDialog* dialog = new hmeExpTypeDialog(p_CommonData->hmeExpType, p_CommonData->mapping, &windowGLDisplay);
     dialog->exec();
     // Perform any necessary actions to continue using the application after the dialog is closed
     // qDebug()<<"NOW I'M CLOSED";
@@ -1917,7 +1942,7 @@ void MainWindow::showBreakTimeMessageBox()
 
 void MainWindow::showTrialNotification(QString text)
 {
-    // Create an instance of cceExpTypeDialog
+    // Create an instance of hmeExpTypeDialog
     TrialNotification* dialog = new TrialNotification(text, &windowGLDisplay);
     connect(dialog, &TrialNotification::hKeyPressed, this, &MainWindow::handleHKeyPressed);
     dialog->exec();
@@ -1971,7 +1996,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             localDataRecorderVector = p_CommonData->dataRecorderVector;
             p_CommonData->dataRecorderVector.clear();
             p_CommonData->dataRecordMutex.unlock();
-            WriteDataToFile();
+            writeDataToFile();
             p_CommonData->recordFlag = false;
         }
         //assuming this is switching between states without progressing trial
@@ -2005,7 +2030,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                         localDataRecorderVector = p_CommonData->dataRecorderVector;
                         p_CommonData->dataRecorderVector.clear();
                         p_CommonData->dataRecordMutex.unlock();
-                        WriteDataToFile();
+                        writeDataToFile();
                         p_CommonData->recordFlag=false;
                     }
 
@@ -2037,7 +2062,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                     localDataRecorderVector = p_CommonData->dataRecorderVector;
                     p_CommonData->dataRecorderVector.clear();
                     p_CommonData->dataRecordMutex.unlock();
-                    WriteDataToFile();
+                    writeDataToFile();
                     p_CommonData->recordFlag=false;
                 }
 
@@ -2164,7 +2189,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
                         localDataRecorderVector = p_CommonData->dataRecorderVector;
                         p_CommonData->dataRecorderVector.clear();
                         p_CommonData->dataRecordMutex.unlock();
-                        WriteDataToFile();
+                        writeDataToFile();
                         p_CommonData->recordFlag = false;
                     }
 
@@ -2365,7 +2390,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             //progressPickAndPlaceExperiment();
         }
 
-        if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        if (p_CommonData->currentDynamicObjectState == WireGuideExperiment)
         {
             //mistake boolean for incase the user presses "H" prematurely
             mistake = false;
@@ -2376,7 +2401,7 @@ void MainWindow::keyPressEvent(QKeyEvent *a_event)
             //progressPickAndPlaceExperiment();
         }
 
-        if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+        if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
             //mistake boolean for incase the user presses "H" prematurely
             mistake = false;
@@ -2444,43 +2469,43 @@ QString MainWindow::getSubjectDirectory()
     {
         return "./FME_Subject_Data_v2/";
     }
-    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+    if (p_CommonData->currentDynamicObjectState == WireGuideExperiment)
     {
         return  "./HME_Subject_Data/";
     }
-    if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+    if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-        QString subjectDir = "./CCE_Subject_Data/";
+        QString subjectDir = "./HME_Subject_Data/";
         if(ui->hoxelStudyRadioButton->isChecked() == true)
         {
             subjectDir = subjectDir.append("Hoxels-1DoF/");
 
-            if(p_CommonData->cceExpType == 1)
+            if(p_CommonData->hmeExpType == 1)
             {
-                subjectDir = subjectDir.append("CCE_ExpType1/");
+                subjectDir = subjectDir.append("HME_ExpType1/");
             }
-            if(p_CommonData->cceExpType == 2)
+            if(p_CommonData->hmeExpType == 2)
             {
-                subjectDir = subjectDir.append("CCE_ExpType2/");
+                subjectDir = subjectDir.append("HME_ExpType2/");
             }
         }
         else if(ui->fingerPrintStudyRadioButton->isChecked() == true)
         {
             subjectDir = subjectDir.append("FingerPrint-1DoF/");
 
-            if(p_CommonData->cceExpType == 1)
+            if(p_CommonData->hmeExpType == 1)
             {
-                subjectDir = subjectDir.append("CCE_ExpType1/");
+                subjectDir = subjectDir.append("HME_ExpType1/");
             }
-            if(p_CommonData->cceExpType == 2)
+            if(p_CommonData->hmeExpType == 2)
             {
-                subjectDir = subjectDir.append("CCE_ExpType2/");
+                subjectDir = subjectDir.append("HME_ExpType2/");
             }
         }
         // This shouldn't happen but just in case:
         else
         {
-            subjectDir = "./CCE_Subject_Data/Other/";
+            subjectDir = "./HME_Subject_Data/Other/";
         }
         //qDebug()<<subjectDir;
         return subjectDir;
@@ -2492,9 +2517,9 @@ QString MainWindow::getSubjectDirectory()
 }
 
 //Writes the experiment data to txt File in Subject Directory
-void MainWindow::WriteDataToFile()
+void MainWindow::writeDataToFile()
 {
-    qDebug()<<"WriteDataToFile()";
+    qDebug()<<"writeDataToFile()";
     p_CommonData->recordFlag = false;
 
     char trialBuffer[33];
@@ -2518,8 +2543,8 @@ void MainWindow::WriteDataToFile()
         directory = getSubjectDirectory() + "StiffnessMassExperiment" + QString::number(p_CommonData->subjectNo);
     }
     if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
+        p_CommonData->currentDynamicObjectState == WireGuideExperiment ||
         p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-        p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment ||
         p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment){
         if(p_CommonData->TrialType == "training")
         {
@@ -2563,8 +2588,8 @@ void MainWindow::WriteDataToFile()
     }
     //File names for Jasmin's Experiments
     else if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment ||
-             p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment||
+             p_CommonData->currentDynamicObjectState == WireGuideExperiment ||
+             p_CommonData->currentDynamicObjectState == HoxelMappingExperiment||
              p_CommonData->currentDynamicObjectState == CubeGuidanceExperiment )
     {
         //Sort data by trialName
@@ -2657,7 +2682,7 @@ void MainWindow::WriteDataToFile()
         //none for now
     }
     if (p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-        p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+        p_CommonData->currentDynamicObjectState == WireGuideExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
@@ -2857,14 +2882,14 @@ void MainWindow::WriteDataToFile()
              << std::endl;
     }
 
-    else if (p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+    else if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
         //These *MUST* match the order of variables saved below:
         file <<std::setprecision(9)
              << "time" << "," << " " //time in seconds
              << "trialNum" << "," << " " //trialNo
 
-             << "cceExpType" << "," << " "
+             << "hmeExpType" << "," << " "
              << "mapping" << "," << " "
 
              //Contact boolean
@@ -2897,6 +2922,12 @@ void MainWindow::WriteDataToFile()
              << "indexForceX" << "," << " " //in N
              << "indexForceY" << "," << " " //in N
              << "indexForceZ" << "," << " " //in N
+             << "indexNormalForceX" << "," << " " //in N
+             << "indexNormalForceY" << "," << " " //in N
+             << "indexNormalForceZ" << "," << " " //in N
+             << "indexShearForceX" << "," << " " //in N
+             << "indexShearForceY" << "," << " " //in N
+             << "indexShearForceZ" << "," << " " //in N
              //interaction force in global coordinates
              << "indexForceGlobalX" << "," << " " //in N
              << "indexForceGlobalY" << "," << " " //in N
@@ -2906,6 +2937,12 @@ void MainWindow::WriteDataToFile()
              << "thumbForceX" << "," << " " //in N
              << "thumbForceY" << "," << " " //in N
              << "thumbForceZ" << "," << " " //in N
+             << "thumbNormalForceX" << "," << " " //in N
+             << "thumbNormalForceY" << "," << " " //in N
+             << "thumbNormalForceZ" << "," << " " //in N
+             << "thumbShearForceX" << "," << " " //in N
+             << "thumbShearForceY" << "," << " " //in N
+             << "thumbShearForceZ" << "," << " " //in N
              //interaction force in global coordinates
              << "thumbForceGlobalX" << "," << " " //in N
              << "thumbForceGlobalY" << "," << " " //in N
@@ -3074,7 +3111,7 @@ void MainWindow::WriteDataToFile()
         }
         */
         if(p_CommonData->currentDynamicObjectState == FingerMappingExperiment ||
-            p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
+            p_CommonData->currentDynamicObjectState == WireGuideExperiment)
         {
             file <<std::setprecision(9)<< ""  //"trial = " << localDataRecorderVector[i].time << "," << " "
                  //"time = "
@@ -3272,7 +3309,7 @@ void MainWindow::WriteDataToFile()
 
                  << std::endl;
         }
-        else if(p_CommonData->currentDynamicObjectState == CrumblyCubeExperiment)
+        else if(p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
         {
             file <<std::setprecision(9)<< ""
                  //"time = "
@@ -3280,8 +3317,8 @@ void MainWindow::WriteDataToFile()
                  //Trial#
                  << localDataRecorderVector[i].trialNo << "," << " "
 
-                 //CCE Experiment Type
-                 << localDataRecorderVector[i].cceExpType << "," << " "
+                 //HME Experiment Type
+                 << localDataRecorderVector[i].hmeExpType << "," << " "
                  //mapping
                  << localDataRecorderVector[i].mapping << "," << " "
 
@@ -3318,20 +3355,32 @@ void MainWindow::WriteDataToFile()
                  // FORCES:
 
                  //Index Finger:
-                 // last force on tool0:
+                 // last force on tool0 in local coords:
                  << localDataRecorderVector[i].VRIntForce0[0]<< "," << " "
                  << localDataRecorderVector[i].VRIntForce0[1]<< "," << " "
                  << localDataRecorderVector[i].VRIntForce0[2]<< "," << " "
+                 << localDataRecorderVector[i].desiredNormFor0[0]<< "," << " "
+                 << localDataRecorderVector[i].desiredNormFor0[1]<< "," << " "
+                 << localDataRecorderVector[i].desiredNormFor0[2]<< "," << " "
+                 << localDataRecorderVector[i].desiredTanFor0[0]<< "," << " "
+                 << localDataRecorderVector[i].desiredTanFor0[1]<< "," << " "
+                 << localDataRecorderVector[i].desiredTanFor0[2]<< "," << " "
                  // last force on tool0 in global coords
                  << localDataRecorderVector[i].VRIntForceGlo0[0]<< "," << " "
                  << localDataRecorderVector[i].VRIntForceGlo0[1]<< "," << " "
                  << localDataRecorderVector[i].VRIntForceGlo0[2]<< "," << " "
 
                  // Thumb
-                 // last force on tool1:
+                 // last force on tool1 in local coords:
                  << localDataRecorderVector[i].VRIntForce1[0]<< "," << " "
                  << localDataRecorderVector[i].VRIntForce1[1]<< "," << " "
                  << localDataRecorderVector[i].VRIntForce1[2]<< "," << " "
+                 << localDataRecorderVector[i].desiredNormFor1[0]<< "," << " "
+                 << localDataRecorderVector[i].desiredNormFor1[1]<< "," << " "
+                 << localDataRecorderVector[i].desiredNormFor1[2]<< "," << " "
+                 << localDataRecorderVector[i].desiredTanFor1[0]<< "," << " "
+                 << localDataRecorderVector[i].desiredTanFor1[1]<< "," << " "
+                 << localDataRecorderVector[i].desiredTanFor1[2]<< "," << " "
                  //last force on tool1 in global coords
                  << localDataRecorderVector[i].VRIntForceGlo1[0]<< "," << " "
                  << localDataRecorderVector[i].VRIntForceGlo1[1]<< "," << " "
@@ -3430,7 +3479,7 @@ void MainWindow::RecordCDInertiaData()
     localDataRecorderVector = p_CommonData->dataRecorderVector;
     p_CommonData->dataRecorderVector.clear();
     p_CommonData->dataRecordMutex.unlock();
-    WriteDataToFile();
+    writeDataToFile();
 
     p_CommonData->fingerDisplayScale = 1.0;
     p_CommonData->sharedMutex.unlock();
@@ -3507,7 +3556,7 @@ void MainWindow::on_StiffnessExp_clicked()
     int error = p_CommonData->MineProtocolFile.LoadFile(temp.toStdString().c_str());
     //qDebug() << "error" << error << p_CommonData->MineProtocolLocation;
 
-    p_CommonData->trialNo       = -1;
+    p_CommonData->trialNo = -1;
 
     p_CommonData->environmentChange         = true;
     p_CommonData->currentDynamicObjectState = StiffnessExperiment;
@@ -3523,7 +3572,7 @@ void MainWindow::on_StiffnessExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->CrumblyCubeExp->setEnabled(false);
+    ui->WireGuideExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3563,7 +3612,7 @@ void MainWindow::on_StiffnMassCombined_clicked()
     //ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->CrumblyCubeExp->setEnabled(false);
+    ui->WireGuideExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3623,7 +3672,7 @@ void MainWindow::on_FingerMappingExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     //ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->CrumblyCubeExp->setEnabled(false);
+    ui->WireGuideExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3632,9 +3681,9 @@ void MainWindow::on_FingerMappingExp_clicked()
 }
 
 //Jasmin Hoxel Mapping Experiment
-void MainWindow::on_HoxelMappingExp_clicked()
+void MainWindow::on_WireGuideExp_clicked()
 {
-    QString protocolFolder = "./HoxelMappingProtocols/";
+    QString protocolFolder = "./WireGuideExpProtocols/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
     p_CommonData->protocolFileLocation = temp;
@@ -3678,7 +3727,7 @@ void MainWindow::on_HoxelMappingExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     //ui->HoxelMappingExp->setEnabled(false);
-    ui->CrumblyCubeExp->setEnabled(false);
+    ui->WireGuideExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3708,9 +3757,9 @@ void MainWindow::on_SetTrialNoButton_clicked()
 
 }
 
-void MainWindow::on_CrumblyCubeExp_clicked()
+void MainWindow::on_HoxelMappingExp_clicked()
 {
-    QString protocolFolder = "./CrumblyCubeProtocols/Three Mapping Pilot - v2/";
+    QString protocolFolder = "./HoxelMappingProtocols/Three Mapping Pilot - v2/";
     qDebug() << protocolFolder;
     QString temp = QFileDialog::getOpenFileName(this, tr("Choose a Protocol File"), protocolFolder); //click desired protocol ini file when file explorer opens
     p_CommonData->protocolFileLocation = temp;
@@ -3729,14 +3778,14 @@ void MainWindow::on_CrumblyCubeExp_clicked()
     }
 */
     p_CommonData->environmentChange         = true;
-    p_CommonData->currentDynamicObjectState = CrumblyCubeExperiment;
+    p_CommonData->currentDynamicObjectState = HoxelMappingExperiment;
     p_CommonData->currentExperimentState    = idleExperiment;
     p_CommonData->currentEnvironmentState   = dynamicBodies;
     p_CommonData->recordFlag                = false;
     ui->VRControl->setChecked(true);
     //ui->JakeRenderCheckBox->setChecked(true);
     ui->JakeRenderCheckBox->setChecked(false);
-    qDebug()<<"CrumblyCubeExp Button finished";
+    qDebug()<<"HoxelMappingExp Button finished";
 
     //**GUI Prompt****
     QString labelText = "<P><FONT COLOR='#000000' FONT SIZE = 5>";
@@ -3803,7 +3852,7 @@ void MainWindow::on_CubeGuidanceExp_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->CrumblyCubeExp->setEnabled(false);
+    ui->WireGuideExp->setEnabled(false);
     //ui->CubeGuidanceExp->setEnabled(false);
     ui->Manual->setEnabled(false);
 
@@ -3826,7 +3875,7 @@ void MainWindow::on_Manual_clicked()
     ui->StiffnMassCombined->setEnabled(false);
     ui->FingerMappingExp->setEnabled(false);
     ui->HoxelMappingExp->setEnabled(false);
-    ui->CrumblyCubeExp->setEnabled(false);
+    ui->WireGuideExp->setEnabled(false);
     ui->CubeGuidanceExp->setEnabled(false);
     //ui->Manual->setEnabled(false);
 

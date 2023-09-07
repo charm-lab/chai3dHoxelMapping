@@ -45,42 +45,45 @@ public:
 
     // METHODS
     void initialize();
-    void RecordData();
-    void ComputeVRDesiredDevicePos();
-    void UpdateVRGraphics();
-    void CommandSinPos(Eigen::Vector3d);
-    void CommandCircPos(Eigen::Vector3d);
+    void recordData();
+    void computeVRDesiredDevicePos();
+    void computeInteractionForces(); //new haptic rendering algorithm
+    void updateVRGraphics();
+//    void CommandSinPos(Eigen::Vector3d);
+//    void CommandCircPos(Eigen::Vector3d);
 
-    void InitializeChai3DStuff();
-    void InitFingerAndTool();
+    void initializeChai3DStuff();
+    void initFingerAndTool();
     //    void RenderPalpation();
     //    void RenderTwoFriction();
-    void RenderHump();
+//    void RenderHump();
     //    void RenderExpFriction();
-    void WriteDataToFile();
-    void InitDynamicBodies();
-    void RenderDynamicBodies();
-    void SetInitJointAngles();
-    void UpdateScaledBoxes();
-    void UpdateScaledCursors();
-    void UpdateScaledFingers();
-    void UpdateScaledTransparency();
+    void writeDataToFile();
+    void initDynamicBodies();
+    void renderDynamicBodies();
+//    void SetInitJointAngles();
+//    void UpdateScaledBoxes();
+//    void UpdateScaledCursors();
+//    void UpdateScaledFingers();
+//    void UpdateScaledTransparency();
     //    void SetDynEnvironMassExp();
     //    void SetDynEnvironSubjective();
     //    void SetDynEnvironCDExp();
     //    void SetDynEnvironInertiaExp();
-    void SetDynEnvironCDInertiaExp();
-    void SetDynEnvironStiffMassExp();
-    void SetDynEnvironFingerMappingExp();
-    void SetDynEnvironHoxelMappingExp();
-    void SetDynEnvironCrumblyCubeExp();
-    void SetDynEnvironCubeGuidanceExp();
-    void SetDynEnvironAdjust();
-    void SetManualAdjust();
+
+    void setDynEnvironCDInertiaExp();
+    void setDynEnvironStiffMassExp();
+    void setDynEnvironFingerMappingExp();
+    void setDynEnvironHoxelMappingExp();
+    void setDynEnvironWireGuideExp();
+    void setDynEnvironCubeGuidanceExp();
+    void setDynEnvironAdjust();
+    void setManualAdjust();
+
     //    void SetDynEnvironVtExp();
     //    void SetDynEnvironCDInertiaSubjective();
 
-    void DeleteDynamicBodies();
+    void deleteDynamicBodies();
 
     void rotateTissueLineDisp(double angle);
     void rotateTissueLine(double angle);
@@ -98,6 +101,8 @@ public:
 
     // Public Variables ============================================
     shared_data* p_CommonData; //create a pointer to a shared_data struct
+
+//    chai3d::cAlgorithmFingerProxy m_tool0Proxy;
 
     //Chai3D variables
     chai3d::cSpotLight* light;
@@ -241,6 +246,27 @@ public:
     Eigen::Vector3d globalForceRecord1;
     chai3d::cVector3d lastFilteredDeviceForce1;
     chai3d::cVector3d estimatedVel1;
+
+    //Added for Hoxel Mapping Experiment:
+    chai3d::cVector3d computedNormalForce0;
+    chai3d::cVector3d computedNormalForce1;
+    chai3d::cVector3d computedTangentialForce0;
+    chai3d::cVector3d computedTangentialForce1;
+
+    chai3d::cVector3d deviceComputedNormalForce0;
+    chai3d::cVector3d deviceComputedNormalForce1;
+    chai3d::cVector3d deviceComputedTangentialForce0;
+    chai3d::cVector3d deviceComputedTangentialForce1;
+
+    chai3d::cVector3d  filteredDeviceNormalForce0;
+    chai3d::cVector3d  lastFilteredDeviceNormalForce0;
+    chai3d::cVector3d  filteredDeviceNormalForce1;
+    chai3d::cVector3d  lastFilteredDeviceNormalForce1;
+
+    chai3d::cVector3d  filteredDeviceTangentialForce0;
+    chai3d::cVector3d  lastFilteredDeviceTangentialForce0;
+    chai3d::cVector3d  filteredDeviceTangentialForce1;
+    chai3d::cVector3d  lastFilteredDeviceTangentialForce1;
 
     // tracker rotation variables
     chai3d::cVector3d position0;

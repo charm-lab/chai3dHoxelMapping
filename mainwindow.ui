@@ -1633,7 +1633,38 @@ Effective</string>
       <property name="spacing">
        <number>20</number>
       </property>
-      <item row="1" column="0">
+      <item row="0" column="0" colspan="2">
+       <widget class="QPushButton" name="dynamicEnvironment">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Dynamic
+Bodies</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="CubeGuidanceExp">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>~TEST ENVIRONMENTS~
+Experiment</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QPushButton" name="FingerMappingExp">
         <property name="enabled">
          <bool>true</bool>
@@ -1650,22 +1681,8 @@ Experiment</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QPushButton" name="dynamicEnvironment">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Dynamic
-Bodies</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="HoxelMappingExp">
+      <item row="4" column="1">
+       <widget class="QPushButton" name="WireGuideExp">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -1674,12 +1691,12 @@ Bodies</string>
         </property>
         <property name="text">
          <string>Wire Guide
-Experiment</string>
+Experiment - BETA</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QPushButton" name="CrumblyCubeExp">
+       <widget class="QPushButton" name="HoxelMappingExp">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -1687,26 +1704,9 @@ Experiment</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Crumbly Cube
+         <string>Hoxel Mapping
 Experiment
 🍪🍪🍪</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="CubeGuidanceExp">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>~TEST ENVIRONMENTS~
-Experiment</string>
         </property>
        </widget>
       </item>
@@ -1794,17 +1794,52 @@ Experiment</string>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>44</y>
-       <width>451</width>
+       <width>471</width>
        <height>281</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_10">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_52">
+      <item row="7" column="1">
+       <widget class="QLCDNumber" name="ForTanY0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLCDNumber" name="ForTanX0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_61">
         <property name="text">
-         <string>Stiffness Forces:</string>
+         <string>Normal X:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLCDNumber" name="ForNormX0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_19">
+        <property name="text">
+         <string>Des Pos X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="label_73">
+        <property name="text">
+         <string>Shear Y:</string>
         </property>
        </widget>
       </item>
@@ -1812,6 +1847,41 @@ Experiment</string>
        <widget class="QLCDNumber" name="ForX0">
         <property name="digitCount">
          <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLCDNumber" name="DesX0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_52">
+        <property name="text">
+         <string>Stiffness Forces:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>Des Pos Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QLCDNumber" name="ForTanZ0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_71">
+        <property name="text">
+         <string>Normal Y:</string>
         </property>
        </widget>
       </item>
@@ -1829,71 +1899,85 @@ Experiment</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_53">
-        <property name="text">
-         <string>Mass Forces:</string>
+      <item row="9" column="2">
+       <widget class="QLCDNumber" name="DesZ0">
+        <property name="digitCount">
+         <number>6</number>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLCDNumber" name="ForX0_2">
-        <property name="digitCount">
-         <number>6</number>
+      <item row="6" column="2">
+       <widget class="QLabel" name="label_74">
+        <property name="text">
+         <string>Shear Z:</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLCDNumber" name="ForY0_2">
+       <widget class="QLCDNumber" name="ForNormY0">
         <property name="digitCount">
          <number>6</number>
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
-       <widget class="QLCDNumber" name="ForZ0_2">
-        <property name="digitCount">
-         <number>6</number>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_19">
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_53">
         <property name="text">
-         <string>Des X</string>
+         <string>Shear X:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_20">
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_72">
         <property name="text">
-         <string>Des Y</string>
+         <string>Normal Z:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
-       <widget class="QLabel" name="label_21">
-        <property name="text">
-         <string>Des Z</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLCDNumber" name="DesX0">
-        <property name="digitCount">
-         <number>6</number>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
+      <item row="9" column="1">
        <widget class="QLCDNumber" name="DesY0">
         <property name="digitCount">
          <number>6</number>
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
-       <widget class="QLCDNumber" name="DesZ0">
+      <item row="3" column="2">
+       <widget class="QLCDNumber" name="ForNormZ0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>Des Pos Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLCDNumber" name="ForNormMag0">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLabel" name="label_80">
+        <property name="text">
+         <string>Normal Mag:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="3">
+       <widget class="QLabel" name="label_81">
+        <property name="text">
+         <string>Shear Mag:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QLCDNumber" name="ForTanMag0">
         <property name="digitCount">
          <number>6</number>
         </property>
@@ -1904,9 +1988,9 @@ Experiment</string>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>340</y>
-       <width>301</width>
+       <width>311</width>
        <height>101</height>
       </rect>
      </property>
@@ -1924,7 +2008,8 @@ Experiment</string>
       <item row="0" column="1">
        <widget class="QLabel" name="label_26">
         <property name="text">
-         <string>Desired Index</string>
+         <string>Desired Index
+Pos Stroke:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1963,17 +2048,94 @@ Experiment</string>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>40</y>
-       <width>451</width>
+       <width>461</width>
        <height>281</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_14">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_57">
+      <item row="15" column="2">
+       <widget class="QLCDNumber" name="DesZ1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLCDNumber" name="ForNormZ1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_58">
         <property name="text">
-         <string>Stiffness Forces:</string>
+         <string>Shear X:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0">
+       <widget class="QLabel" name="label_64">
+        <property name="text">
+         <string>Des Pos X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_77">
+        <property name="text">
+         <string>Normal Y:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="2">
+       <widget class="QLabel" name="label_69">
+        <property name="text">
+         <string>Des Pos Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLCDNumber" name="ForY1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_76">
+        <property name="text">
+         <string>Shear Y:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLCDNumber" name="ForNormX1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLCDNumber" name="ForNormY1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="1">
+       <widget class="QLabel" name="label_67">
+        <property name="text">
+         <string>Des Pos Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QLabel" name="label_75">
+        <property name="text">
+         <string>Shear Z:</string>
         </property>
        </widget>
       </item>
@@ -1984,8 +2146,8 @@ Experiment</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLCDNumber" name="ForY1">
+      <item row="8" column="2">
+       <widget class="QLCDNumber" name="ForTanZ1">
         <property name="digitCount">
          <number>6</number>
         </property>
@@ -1998,71 +2160,78 @@ Experiment</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_58">
-        <property name="text">
-         <string>Mass Forces:</string>
+      <item row="8" column="1">
+       <widget class="QLCDNumber" name="ForTanY1">
+        <property name="digitCount">
+         <number>6</number>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLCDNumber" name="ForX1_2">
-        <property name="digitCount">
-         <number>6</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLCDNumber" name="ForY1_2">
-        <property name="digitCount">
-         <number>6</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QLCDNumber" name="ForZ1_2">
-        <property name="digitCount">
-         <number>6</number>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_64">
+       <widget class="QLabel" name="label_79">
         <property name="text">
-         <string>Des X</string>
+         <string>Normal X:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_67">
-        <property name="text">
-         <string>Des Y</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QLabel" name="label_69">
-        <property name="text">
-         <string>Des Z</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLCDNumber" name="DesX1">
-        <property name="digitCount">
-         <number>6</number>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
+      <item row="15" column="1">
        <widget class="QLCDNumber" name="DesY1">
         <property name="digitCount">
          <number>6</number>
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
-       <widget class="QLCDNumber" name="DesZ1">
+      <item row="3" column="2">
+       <widget class="QLabel" name="label_78">
+        <property name="text">
+         <string>Normal Z:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="0">
+       <widget class="QLCDNumber" name="DesX1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_57">
+        <property name="text">
+         <string>Stiffness Forces:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLCDNumber" name="ForTanX1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QLabel" name="label_82">
+        <property name="text">
+         <string>Shear Mag:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLabel" name="label_83">
+        <property name="text">
+         <string>Normal Mag:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QLCDNumber" name="ForNormMag1">
+        <property name="digitCount">
+         <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="3">
+       <widget class="QLCDNumber" name="ForTanMag1">
         <property name="digitCount">
          <number>6</number>
         </property>
@@ -2073,9 +2242,9 @@ Experiment</string>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>22</x>
+       <x>12</x>
        <y>338</y>
-       <width>301</width>
+       <width>321</width>
        <height>101</height>
       </rect>
      </property>
@@ -2084,16 +2253,6 @@ Experiment</string>
        <widget class="QLabel" name="label_59">
         <property name="text">
          <string>Thumb Pot</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_27">
-        <property name="text">
-         <string>Desired Thumb</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -2111,6 +2270,17 @@ Experiment</string>
        <widget class="QLCDNumber" name="StrokeLCD1_1">
         <property name="digitCount">
          <number>6</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_27">
+        <property name="text">
+         <string>Desired Thumb
+Pos Stroke:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -2290,7 +2460,7 @@ Algorithm Points</string>
     <property name="title">
      <string>Finger-Proxy Algorithm Relative Positions:</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>20</x>

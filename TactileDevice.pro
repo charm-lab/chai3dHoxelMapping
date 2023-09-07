@@ -34,7 +34,7 @@ SOURCES += ./External/chai3d-3.1.1/modules/OCULUS/src/OVRRenderContext.cpp
 SOURCES += ./src/Vibrotactile_thread.cpp
 SOURCES += ./src/mychai3dwindow.cpp
 SOURCES += ./src/breaktimedialog.cpp
-SOURCES += ./src/cceExpTypeDialog.cpp
+SOURCES += ./src/hmeExpTypeDialog.cpp
 SOURCES += ./src/trialNotification.cpp
 
 HEADERS  += ./include/mainwindow.h
@@ -53,7 +53,7 @@ HEADERS  += ./include/experiment_thread.h
 HEADERS  += ./include/magTracker_thread.h
 HEADERS  += ./include/mychai3dwindow.h
 HEADERS  += ./include/breaktimedialog.h
-HEADERS  += ./include/cceExpTypeDialog.h
+HEADERS  += ./include/hmeExpTypeDialog.h
 HEADERS  += ./include/trialNotification.h
 
 # Heathers Vibration

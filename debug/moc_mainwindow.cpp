@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[32];
-    char stringdata0[607];
+    char stringdata0[605];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -40,7 +40,7 @@ QT_MOC_LITERAL(7, 104, 13), // "UpdateGUIInfo"
 QT_MOC_LITERAL(8, 118, 12), // "onGUIchanged"
 QT_MOC_LITERAL(9, 131, 18), // "on_turnOff_clicked"
 QT_MOC_LITERAL(10, 150, 19), // "getSubjectDirectory"
-QT_MOC_LITERAL(11, 170, 15), // "WriteDataToFile"
+QT_MOC_LITERAL(11, 170, 15), // "writeDataToFile"
 QT_MOC_LITERAL(12, 186, 29), // "on_dynamicEnvironment_clicked"
 QT_MOC_LITERAL(13, 216, 20), // "rotateTissueLineDisp"
 QT_MOC_LITERAL(14, 237, 5), // "angle"
@@ -54,13 +54,13 @@ QT_MOC_LITERAL(21, 341, 29), // "on_StiffnMassCombined_clicked"
 QT_MOC_LITERAL(22, 371, 27), // "on_FingerMappingExp_clicked"
 QT_MOC_LITERAL(23, 399, 26), // "on_HoxelMappingExp_clicked"
 QT_MOC_LITERAL(24, 426, 27), // "on_SetTrialNoButton_clicked"
-QT_MOC_LITERAL(25, 454, 25), // "on_CrumblyCubeExp_clicked"
-QT_MOC_LITERAL(26, 480, 17), // "on_Manual_clicked"
-QT_MOC_LITERAL(27, 498, 26), // "on_CubeGuidanceExp_clicked"
-QT_MOC_LITERAL(28, 525, 28), // "on_resetCameraButton_clicked"
-QT_MOC_LITERAL(29, 554, 21), // "on_openButton_clicked"
-QT_MOC_LITERAL(30, 576, 14), // "readSerialData"
-QT_MOC_LITERAL(31, 591, 15) // "writeSerialData"
+QT_MOC_LITERAL(25, 454, 26), // "on_CubeGuidanceExp_clicked"
+QT_MOC_LITERAL(26, 481, 17), // "on_Manual_clicked"
+QT_MOC_LITERAL(27, 499, 23), // "on_WireGuideExp_clicked"
+QT_MOC_LITERAL(28, 523, 28), // "on_resetCameraButton_clicked"
+QT_MOC_LITERAL(29, 552, 21), // "on_openButton_clicked"
+QT_MOC_LITERAL(30, 574, 14), // "readSerialData"
+QT_MOC_LITERAL(31, 589, 15) // "writeSerialData"
 
     },
     "MainWindow\0handleHKeyPressed\0\0"
@@ -68,7 +68,7 @@ QT_MOC_LITERAL(31, 591, 15) // "writeSerialData"
     "progressPickAndPlaceExperiment\0mistake\0"
     "UpdateGUIInfo\0onGUIchanged\0"
     "on_turnOff_clicked\0getSubjectDirectory\0"
-    "WriteDataToFile\0on_dynamicEnvironment_clicked\0"
+    "writeDataToFile\0on_dynamicEnvironment_clicked\0"
     "rotateTissueLineDisp\0angle\0CheckFingers\0"
     "RecordCDInertiaData\0readExpStuffIn\0"
     "setRandomInitBoxPos\0param\0"
@@ -77,8 +77,8 @@ QT_MOC_LITERAL(31, 591, 15) // "writeSerialData"
     "on_FingerMappingExp_clicked\0"
     "on_HoxelMappingExp_clicked\0"
     "on_SetTrialNoButton_clicked\0"
-    "on_CrumblyCubeExp_clicked\0on_Manual_clicked\0"
-    "on_CubeGuidanceExp_clicked\0"
+    "on_CubeGuidanceExp_clicked\0on_Manual_clicked\0"
+    "on_WireGuideExp_clicked\0"
     "on_resetCameraButton_clicked\0"
     "on_openButton_clicked\0readSerialData\0"
     "writeSerialData"
@@ -175,7 +175,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 6: _t->on_turnOff_clicked(); break;
         case 7: { QString _r = _t->getSubjectDirectory();
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;
-        case 8: _t->WriteDataToFile(); break;
+        case 8: _t->writeDataToFile(); break;
         case 9: _t->on_dynamicEnvironment_clicked(); break;
         case 10: _t->rotateTissueLineDisp((*reinterpret_cast< double(*)>(_a[1]))); break;
         case 11: { bool _r = _t->CheckFingers();
@@ -189,9 +189,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 17: _t->on_FingerMappingExp_clicked(); break;
         case 18: _t->on_HoxelMappingExp_clicked(); break;
         case 19: _t->on_SetTrialNoButton_clicked(); break;
-        case 20: _t->on_CrumblyCubeExp_clicked(); break;
+        case 20: _t->on_CubeGuidanceExp_clicked(); break;
         case 21: _t->on_Manual_clicked(); break;
-        case 22: _t->on_CubeGuidanceExp_clicked(); break;
+        case 22: _t->on_WireGuideExp_clicked(); break;
         case 23: _t->on_resetCameraButton_clicked(); break;
         case 24: _t->on_openButton_clicked(); break;
         case 25: _t->readSerialData(); break;

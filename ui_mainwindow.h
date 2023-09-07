@@ -150,11 +150,11 @@ public:
     QGroupBox *groupBox_5;
     QWidget *layoutWidget7;
     QGridLayout *gridLayout_12;
-    QPushButton *FingerMappingExp;
     QPushButton *dynamicEnvironment;
-    QPushButton *HoxelMappingExp;
-    QPushButton *CrumblyCubeExp;
     QPushButton *CubeGuidanceExp;
+    QPushButton *FingerMappingExp;
+    QPushButton *WireGuideExp;
+    QPushButton *HoxelMappingExp;
     QGroupBox *groupBox_6;
     QWidget *layoutWidget8;
     QGridLayout *gridLayout;
@@ -163,20 +163,32 @@ public:
     QGroupBox *groupBox_7;
     QWidget *layoutWidget9;
     QGridLayout *gridLayout_10;
-    QLabel *label_52;
+    QLCDNumber *ForTanY0;
+    QLCDNumber *ForTanX0;
+    QLabel *label_61;
+    QLCDNumber *ForNormX0;
+    QLabel *label_19;
+    QLabel *label_73;
     QLCDNumber *ForX0;
+    QLCDNumber *DesX0;
+    QLabel *label_52;
+    QLabel *label_21;
+    QLCDNumber *ForTanZ0;
+    QLabel *label_71;
     QLCDNumber *ForY0;
     QLCDNumber *ForZ0;
-    QLabel *label_53;
-    QLCDNumber *ForX0_2;
-    QLCDNumber *ForY0_2;
-    QLCDNumber *ForZ0_2;
-    QLabel *label_19;
-    QLabel *label_20;
-    QLabel *label_21;
-    QLCDNumber *DesX0;
-    QLCDNumber *DesY0;
     QLCDNumber *DesZ0;
+    QLabel *label_74;
+    QLCDNumber *ForNormY0;
+    QLabel *label_53;
+    QLabel *label_72;
+    QLCDNumber *DesY0;
+    QLCDNumber *ForNormZ0;
+    QLabel *label_20;
+    QLCDNumber *ForNormMag0;
+    QLabel *label_80;
+    QLabel *label_81;
+    QLCDNumber *ForTanMag0;
     QWidget *layoutWidget10;
     QGridLayout *gridLayout_16;
     QLabel *label;
@@ -186,26 +198,38 @@ public:
     QGroupBox *groupBox_8;
     QWidget *layoutWidget11;
     QGridLayout *gridLayout_14;
-    QLabel *label_57;
-    QLCDNumber *ForX1;
-    QLCDNumber *ForY1;
-    QLCDNumber *ForZ1;
-    QLabel *label_58;
-    QLCDNumber *ForX1_2;
-    QLCDNumber *ForY1_2;
-    QLCDNumber *ForZ1_2;
-    QLabel *label_64;
-    QLabel *label_67;
-    QLabel *label_69;
-    QLCDNumber *DesX1;
-    QLCDNumber *DesY1;
     QLCDNumber *DesZ1;
+    QLCDNumber *ForNormZ1;
+    QLabel *label_58;
+    QLabel *label_64;
+    QLabel *label_77;
+    QLabel *label_69;
+    QLCDNumber *ForY1;
+    QLabel *label_76;
+    QLCDNumber *ForNormX1;
+    QLCDNumber *ForNormY1;
+    QLabel *label_67;
+    QLabel *label_75;
+    QLCDNumber *ForX1;
+    QLCDNumber *ForTanZ1;
+    QLCDNumber *ForZ1;
+    QLCDNumber *ForTanY1;
+    QLabel *label_79;
+    QLCDNumber *DesY1;
+    QLabel *label_78;
+    QLCDNumber *DesX1;
+    QLabel *label_57;
+    QLCDNumber *ForTanX1;
+    QLabel *label_82;
+    QLabel *label_83;
+    QLCDNumber *ForNormMag1;
+    QLCDNumber *ForTanMag1;
     QWidget *layoutWidget12;
     QGridLayout *gridLayout_15;
     QLabel *label_59;
-    QLabel *label_27;
     QLCDNumber *MotorLCD_1;
     QLCDNumber *StrokeLCD1_1;
+    QLabel *label_27;
     QWidget *layoutWidget13;
     QGridLayout *gridLayout_3;
     QLabel *label_36;
@@ -222,7 +246,7 @@ public:
     QRadioButton *fingerPrintStudyRadioButton;
     QCheckBox *showFingerProxyAlgPoints;
     QGroupBox *groupBox_9;
-    QWidget *widget;
+    QWidget *layoutWidget15;
     QGridLayout *gridLayout_13;
     QLabel *label_46;
     QLCDNumber *thumbProxyPosX;
@@ -1002,14 +1026,6 @@ public:
         gridLayout_12->setContentsMargins(11, 11, 11, 11);
         gridLayout_12->setObjectName(QStringLiteral("gridLayout_12"));
         gridLayout_12->setContentsMargins(10, 10, 10, 10);
-        FingerMappingExp = new QPushButton(layoutWidget7);
-        FingerMappingExp->setObjectName(QStringLiteral("FingerMappingExp"));
-        FingerMappingExp->setEnabled(true);
-        sizePolicy3.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
-        FingerMappingExp->setSizePolicy(sizePolicy3);
-
-        gridLayout_12->addWidget(FingerMappingExp, 1, 0, 1, 1);
-
         dynamicEnvironment = new QPushButton(layoutWidget7);
         dynamicEnvironment->setObjectName(QStringLiteral("dynamicEnvironment"));
         sizePolicy3.setHeightForWidth(dynamicEnvironment->sizePolicy().hasHeightForWidth());
@@ -1017,27 +1033,35 @@ public:
 
         gridLayout_12->addWidget(dynamicEnvironment, 0, 0, 1, 2);
 
-        HoxelMappingExp = new QPushButton(layoutWidget7);
-        HoxelMappingExp->setObjectName(QStringLiteral("HoxelMappingExp"));
-        sizePolicy3.setHeightForWidth(HoxelMappingExp->sizePolicy().hasHeightForWidth());
-        HoxelMappingExp->setSizePolicy(sizePolicy3);
-
-        gridLayout_12->addWidget(HoxelMappingExp, 1, 1, 1, 1);
-
-        CrumblyCubeExp = new QPushButton(layoutWidget7);
-        CrumblyCubeExp->setObjectName(QStringLiteral("CrumblyCubeExp"));
-        sizePolicy3.setHeightForWidth(CrumblyCubeExp->sizePolicy().hasHeightForWidth());
-        CrumblyCubeExp->setSizePolicy(sizePolicy3);
-
-        gridLayout_12->addWidget(CrumblyCubeExp, 2, 1, 1, 1);
-
         CubeGuidanceExp = new QPushButton(layoutWidget7);
         CubeGuidanceExp->setObjectName(QStringLiteral("CubeGuidanceExp"));
         CubeGuidanceExp->setEnabled(true);
         sizePolicy3.setHeightForWidth(CubeGuidanceExp->sizePolicy().hasHeightForWidth());
         CubeGuidanceExp->setSizePolicy(sizePolicy3);
 
-        gridLayout_12->addWidget(CubeGuidanceExp, 2, 0, 1, 1);
+        gridLayout_12->addWidget(CubeGuidanceExp, 4, 0, 1, 1);
+
+        FingerMappingExp = new QPushButton(layoutWidget7);
+        FingerMappingExp->setObjectName(QStringLiteral("FingerMappingExp"));
+        FingerMappingExp->setEnabled(true);
+        sizePolicy3.setHeightForWidth(FingerMappingExp->sizePolicy().hasHeightForWidth());
+        FingerMappingExp->setSizePolicy(sizePolicy3);
+
+        gridLayout_12->addWidget(FingerMappingExp, 2, 0, 1, 1);
+
+        WireGuideExp = new QPushButton(layoutWidget7);
+        WireGuideExp->setObjectName(QStringLiteral("WireGuideExp"));
+        sizePolicy3.setHeightForWidth(WireGuideExp->sizePolicy().hasHeightForWidth());
+        WireGuideExp->setSizePolicy(sizePolicy3);
+
+        gridLayout_12->addWidget(WireGuideExp, 4, 1, 1, 1);
+
+        HoxelMappingExp = new QPushButton(layoutWidget7);
+        HoxelMappingExp->setObjectName(QStringLiteral("HoxelMappingExp"));
+        sizePolicy3.setHeightForWidth(HoxelMappingExp->sizePolicy().hasHeightForWidth());
+        HoxelMappingExp->setSizePolicy(sizePolicy3);
+
+        gridLayout_12->addWidget(HoxelMappingExp, 2, 1, 1, 1);
 
         groupBox_6 = new QGroupBox(centralWidget);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
@@ -1072,22 +1096,77 @@ public:
         groupBox_7->setGeometry(QRect(880, 10, 491, 451));
         layoutWidget9 = new QWidget(groupBox_7);
         layoutWidget9->setObjectName(QStringLiteral("layoutWidget9"));
-        layoutWidget9->setGeometry(QRect(20, 44, 451, 281));
+        layoutWidget9->setGeometry(QRect(10, 44, 471, 281));
         gridLayout_10 = new QGridLayout(layoutWidget9);
         gridLayout_10->setSpacing(6);
         gridLayout_10->setContentsMargins(11, 11, 11, 11);
         gridLayout_10->setObjectName(QStringLiteral("gridLayout_10"));
         gridLayout_10->setContentsMargins(0, 0, 0, 0);
-        label_52 = new QLabel(layoutWidget9);
-        label_52->setObjectName(QStringLiteral("label_52"));
+        ForTanY0 = new QLCDNumber(layoutWidget9);
+        ForTanY0->setObjectName(QStringLiteral("ForTanY0"));
+        ForTanY0->setDigitCount(6);
 
-        gridLayout_10->addWidget(label_52, 0, 0, 1, 1);
+        gridLayout_10->addWidget(ForTanY0, 7, 1, 1, 1);
+
+        ForTanX0 = new QLCDNumber(layoutWidget9);
+        ForTanX0->setObjectName(QStringLiteral("ForTanX0"));
+        ForTanX0->setDigitCount(6);
+
+        gridLayout_10->addWidget(ForTanX0, 7, 0, 1, 1);
+
+        label_61 = new QLabel(layoutWidget9);
+        label_61->setObjectName(QStringLiteral("label_61"));
+
+        gridLayout_10->addWidget(label_61, 2, 0, 1, 1);
+
+        ForNormX0 = new QLCDNumber(layoutWidget9);
+        ForNormX0->setObjectName(QStringLiteral("ForNormX0"));
+        ForNormX0->setDigitCount(6);
+
+        gridLayout_10->addWidget(ForNormX0, 3, 0, 1, 1);
+
+        label_19 = new QLabel(layoutWidget9);
+        label_19->setObjectName(QStringLiteral("label_19"));
+
+        gridLayout_10->addWidget(label_19, 8, 0, 1, 1);
+
+        label_73 = new QLabel(layoutWidget9);
+        label_73->setObjectName(QStringLiteral("label_73"));
+
+        gridLayout_10->addWidget(label_73, 6, 1, 1, 1);
 
         ForX0 = new QLCDNumber(layoutWidget9);
         ForX0->setObjectName(QStringLiteral("ForX0"));
         ForX0->setDigitCount(6);
 
         gridLayout_10->addWidget(ForX0, 1, 0, 1, 1);
+
+        DesX0 = new QLCDNumber(layoutWidget9);
+        DesX0->setObjectName(QStringLiteral("DesX0"));
+        DesX0->setDigitCount(6);
+
+        gridLayout_10->addWidget(DesX0, 9, 0, 1, 1);
+
+        label_52 = new QLabel(layoutWidget9);
+        label_52->setObjectName(QStringLiteral("label_52"));
+
+        gridLayout_10->addWidget(label_52, 0, 0, 1, 1);
+
+        label_21 = new QLabel(layoutWidget9);
+        label_21->setObjectName(QStringLiteral("label_21"));
+
+        gridLayout_10->addWidget(label_21, 8, 2, 1, 1);
+
+        ForTanZ0 = new QLCDNumber(layoutWidget9);
+        ForTanZ0->setObjectName(QStringLiteral("ForTanZ0"));
+        ForTanZ0->setDigitCount(6);
+
+        gridLayout_10->addWidget(ForTanZ0, 7, 2, 1, 1);
+
+        label_71 = new QLabel(layoutWidget9);
+        label_71->setObjectName(QStringLiteral("label_71"));
+
+        gridLayout_10->addWidget(label_71, 2, 1, 1, 1);
 
         ForY0 = new QLCDNumber(layoutWidget9);
         ForY0->setObjectName(QStringLiteral("ForY0"));
@@ -1101,65 +1180,75 @@ public:
 
         gridLayout_10->addWidget(ForZ0, 1, 2, 1, 1);
 
+        DesZ0 = new QLCDNumber(layoutWidget9);
+        DesZ0->setObjectName(QStringLiteral("DesZ0"));
+        DesZ0->setDigitCount(6);
+
+        gridLayout_10->addWidget(DesZ0, 9, 2, 1, 1);
+
+        label_74 = new QLabel(layoutWidget9);
+        label_74->setObjectName(QStringLiteral("label_74"));
+
+        gridLayout_10->addWidget(label_74, 6, 2, 1, 1);
+
+        ForNormY0 = new QLCDNumber(layoutWidget9);
+        ForNormY0->setObjectName(QStringLiteral("ForNormY0"));
+        ForNormY0->setDigitCount(6);
+
+        gridLayout_10->addWidget(ForNormY0, 3, 1, 1, 1);
+
         label_53 = new QLabel(layoutWidget9);
         label_53->setObjectName(QStringLiteral("label_53"));
 
-        gridLayout_10->addWidget(label_53, 2, 0, 1, 1);
+        gridLayout_10->addWidget(label_53, 6, 0, 1, 1);
 
-        ForX0_2 = new QLCDNumber(layoutWidget9);
-        ForX0_2->setObjectName(QStringLiteral("ForX0_2"));
-        ForX0_2->setDigitCount(6);
+        label_72 = new QLabel(layoutWidget9);
+        label_72->setObjectName(QStringLiteral("label_72"));
 
-        gridLayout_10->addWidget(ForX0_2, 3, 0, 1, 1);
-
-        ForY0_2 = new QLCDNumber(layoutWidget9);
-        ForY0_2->setObjectName(QStringLiteral("ForY0_2"));
-        ForY0_2->setDigitCount(6);
-
-        gridLayout_10->addWidget(ForY0_2, 3, 1, 1, 1);
-
-        ForZ0_2 = new QLCDNumber(layoutWidget9);
-        ForZ0_2->setObjectName(QStringLiteral("ForZ0_2"));
-        ForZ0_2->setDigitCount(6);
-
-        gridLayout_10->addWidget(ForZ0_2, 3, 2, 1, 1);
-
-        label_19 = new QLabel(layoutWidget9);
-        label_19->setObjectName(QStringLiteral("label_19"));
-
-        gridLayout_10->addWidget(label_19, 4, 0, 1, 1);
-
-        label_20 = new QLabel(layoutWidget9);
-        label_20->setObjectName(QStringLiteral("label_20"));
-
-        gridLayout_10->addWidget(label_20, 4, 1, 1, 1);
-
-        label_21 = new QLabel(layoutWidget9);
-        label_21->setObjectName(QStringLiteral("label_21"));
-
-        gridLayout_10->addWidget(label_21, 4, 2, 1, 1);
-
-        DesX0 = new QLCDNumber(layoutWidget9);
-        DesX0->setObjectName(QStringLiteral("DesX0"));
-        DesX0->setDigitCount(6);
-
-        gridLayout_10->addWidget(DesX0, 5, 0, 1, 1);
+        gridLayout_10->addWidget(label_72, 2, 2, 1, 1);
 
         DesY0 = new QLCDNumber(layoutWidget9);
         DesY0->setObjectName(QStringLiteral("DesY0"));
         DesY0->setDigitCount(6);
 
-        gridLayout_10->addWidget(DesY0, 5, 1, 1, 1);
+        gridLayout_10->addWidget(DesY0, 9, 1, 1, 1);
 
-        DesZ0 = new QLCDNumber(layoutWidget9);
-        DesZ0->setObjectName(QStringLiteral("DesZ0"));
-        DesZ0->setDigitCount(6);
+        ForNormZ0 = new QLCDNumber(layoutWidget9);
+        ForNormZ0->setObjectName(QStringLiteral("ForNormZ0"));
+        ForNormZ0->setDigitCount(6);
 
-        gridLayout_10->addWidget(DesZ0, 5, 2, 1, 1);
+        gridLayout_10->addWidget(ForNormZ0, 3, 2, 1, 1);
+
+        label_20 = new QLabel(layoutWidget9);
+        label_20->setObjectName(QStringLiteral("label_20"));
+
+        gridLayout_10->addWidget(label_20, 8, 1, 1, 1);
+
+        ForNormMag0 = new QLCDNumber(layoutWidget9);
+        ForNormMag0->setObjectName(QStringLiteral("ForNormMag0"));
+        ForNormMag0->setDigitCount(6);
+
+        gridLayout_10->addWidget(ForNormMag0, 3, 3, 1, 1);
+
+        label_80 = new QLabel(layoutWidget9);
+        label_80->setObjectName(QStringLiteral("label_80"));
+
+        gridLayout_10->addWidget(label_80, 2, 3, 1, 1);
+
+        label_81 = new QLabel(layoutWidget9);
+        label_81->setObjectName(QStringLiteral("label_81"));
+
+        gridLayout_10->addWidget(label_81, 6, 3, 1, 1);
+
+        ForTanMag0 = new QLCDNumber(layoutWidget9);
+        ForTanMag0->setObjectName(QStringLiteral("ForTanMag0"));
+        ForTanMag0->setDigitCount(6);
+
+        gridLayout_10->addWidget(ForTanMag0, 7, 3, 1, 1);
 
         layoutWidget10 = new QWidget(groupBox_7);
         layoutWidget10->setObjectName(QStringLiteral("layoutWidget10"));
-        layoutWidget10->setGeometry(QRect(20, 340, 301, 101));
+        layoutWidget10->setGeometry(QRect(10, 340, 311, 101));
         gridLayout_16 = new QGridLayout(layoutWidget10);
         gridLayout_16->setSpacing(6);
         gridLayout_16->setContentsMargins(11, 11, 11, 11);
@@ -1194,22 +1283,43 @@ public:
         groupBox_8->setGeometry(QRect(1390, 10, 481, 451));
         layoutWidget11 = new QWidget(groupBox_8);
         layoutWidget11->setObjectName(QStringLiteral("layoutWidget11"));
-        layoutWidget11->setGeometry(QRect(20, 40, 451, 281));
+        layoutWidget11->setGeometry(QRect(10, 40, 461, 281));
         gridLayout_14 = new QGridLayout(layoutWidget11);
         gridLayout_14->setSpacing(6);
         gridLayout_14->setContentsMargins(11, 11, 11, 11);
         gridLayout_14->setObjectName(QStringLiteral("gridLayout_14"));
         gridLayout_14->setContentsMargins(0, 0, 0, 0);
-        label_57 = new QLabel(layoutWidget11);
-        label_57->setObjectName(QStringLiteral("label_57"));
+        DesZ1 = new QLCDNumber(layoutWidget11);
+        DesZ1->setObjectName(QStringLiteral("DesZ1"));
+        DesZ1->setDigitCount(6);
 
-        gridLayout_14->addWidget(label_57, 0, 0, 1, 1);
+        gridLayout_14->addWidget(DesZ1, 15, 2, 1, 1);
 
-        ForX1 = new QLCDNumber(layoutWidget11);
-        ForX1->setObjectName(QStringLiteral("ForX1"));
-        ForX1->setDigitCount(6);
+        ForNormZ1 = new QLCDNumber(layoutWidget11);
+        ForNormZ1->setObjectName(QStringLiteral("ForNormZ1"));
+        ForNormZ1->setDigitCount(6);
 
-        gridLayout_14->addWidget(ForX1, 1, 0, 1, 1);
+        gridLayout_14->addWidget(ForNormZ1, 5, 2, 1, 1);
+
+        label_58 = new QLabel(layoutWidget11);
+        label_58->setObjectName(QStringLiteral("label_58"));
+
+        gridLayout_14->addWidget(label_58, 7, 0, 1, 1);
+
+        label_64 = new QLabel(layoutWidget11);
+        label_64->setObjectName(QStringLiteral("label_64"));
+
+        gridLayout_14->addWidget(label_64, 14, 0, 1, 1);
+
+        label_77 = new QLabel(layoutWidget11);
+        label_77->setObjectName(QStringLiteral("label_77"));
+
+        gridLayout_14->addWidget(label_77, 3, 1, 1, 1);
+
+        label_69 = new QLabel(layoutWidget11);
+        label_69->setObjectName(QStringLiteral("label_69"));
+
+        gridLayout_14->addWidget(label_69, 14, 2, 1, 1);
 
         ForY1 = new QLCDNumber(layoutWidget11);
         ForY1->setObjectName(QStringLiteral("ForY1"));
@@ -1217,71 +1327,115 @@ public:
 
         gridLayout_14->addWidget(ForY1, 1, 1, 1, 1);
 
+        label_76 = new QLabel(layoutWidget11);
+        label_76->setObjectName(QStringLiteral("label_76"));
+
+        gridLayout_14->addWidget(label_76, 7, 1, 1, 1);
+
+        ForNormX1 = new QLCDNumber(layoutWidget11);
+        ForNormX1->setObjectName(QStringLiteral("ForNormX1"));
+        ForNormX1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForNormX1, 5, 0, 1, 1);
+
+        ForNormY1 = new QLCDNumber(layoutWidget11);
+        ForNormY1->setObjectName(QStringLiteral("ForNormY1"));
+        ForNormY1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForNormY1, 5, 1, 1, 1);
+
+        label_67 = new QLabel(layoutWidget11);
+        label_67->setObjectName(QStringLiteral("label_67"));
+
+        gridLayout_14->addWidget(label_67, 14, 1, 1, 1);
+
+        label_75 = new QLabel(layoutWidget11);
+        label_75->setObjectName(QStringLiteral("label_75"));
+
+        gridLayout_14->addWidget(label_75, 7, 2, 1, 1);
+
+        ForX1 = new QLCDNumber(layoutWidget11);
+        ForX1->setObjectName(QStringLiteral("ForX1"));
+        ForX1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForX1, 1, 0, 1, 1);
+
+        ForTanZ1 = new QLCDNumber(layoutWidget11);
+        ForTanZ1->setObjectName(QStringLiteral("ForTanZ1"));
+        ForTanZ1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForTanZ1, 8, 2, 1, 1);
+
         ForZ1 = new QLCDNumber(layoutWidget11);
         ForZ1->setObjectName(QStringLiteral("ForZ1"));
         ForZ1->setDigitCount(6);
 
         gridLayout_14->addWidget(ForZ1, 1, 2, 1, 1);
 
-        label_58 = new QLabel(layoutWidget11);
-        label_58->setObjectName(QStringLiteral("label_58"));
+        ForTanY1 = new QLCDNumber(layoutWidget11);
+        ForTanY1->setObjectName(QStringLiteral("ForTanY1"));
+        ForTanY1->setDigitCount(6);
 
-        gridLayout_14->addWidget(label_58, 2, 0, 1, 1);
+        gridLayout_14->addWidget(ForTanY1, 8, 1, 1, 1);
 
-        ForX1_2 = new QLCDNumber(layoutWidget11);
-        ForX1_2->setObjectName(QStringLiteral("ForX1_2"));
-        ForX1_2->setDigitCount(6);
+        label_79 = new QLabel(layoutWidget11);
+        label_79->setObjectName(QStringLiteral("label_79"));
 
-        gridLayout_14->addWidget(ForX1_2, 3, 0, 1, 1);
-
-        ForY1_2 = new QLCDNumber(layoutWidget11);
-        ForY1_2->setObjectName(QStringLiteral("ForY1_2"));
-        ForY1_2->setDigitCount(6);
-
-        gridLayout_14->addWidget(ForY1_2, 3, 1, 1, 1);
-
-        ForZ1_2 = new QLCDNumber(layoutWidget11);
-        ForZ1_2->setObjectName(QStringLiteral("ForZ1_2"));
-        ForZ1_2->setDigitCount(6);
-
-        gridLayout_14->addWidget(ForZ1_2, 3, 2, 1, 1);
-
-        label_64 = new QLabel(layoutWidget11);
-        label_64->setObjectName(QStringLiteral("label_64"));
-
-        gridLayout_14->addWidget(label_64, 4, 0, 1, 1);
-
-        label_67 = new QLabel(layoutWidget11);
-        label_67->setObjectName(QStringLiteral("label_67"));
-
-        gridLayout_14->addWidget(label_67, 4, 1, 1, 1);
-
-        label_69 = new QLabel(layoutWidget11);
-        label_69->setObjectName(QStringLiteral("label_69"));
-
-        gridLayout_14->addWidget(label_69, 4, 2, 1, 1);
-
-        DesX1 = new QLCDNumber(layoutWidget11);
-        DesX1->setObjectName(QStringLiteral("DesX1"));
-        DesX1->setDigitCount(6);
-
-        gridLayout_14->addWidget(DesX1, 5, 0, 1, 1);
+        gridLayout_14->addWidget(label_79, 3, 0, 1, 1);
 
         DesY1 = new QLCDNumber(layoutWidget11);
         DesY1->setObjectName(QStringLiteral("DesY1"));
         DesY1->setDigitCount(6);
 
-        gridLayout_14->addWidget(DesY1, 5, 1, 1, 1);
+        gridLayout_14->addWidget(DesY1, 15, 1, 1, 1);
 
-        DesZ1 = new QLCDNumber(layoutWidget11);
-        DesZ1->setObjectName(QStringLiteral("DesZ1"));
-        DesZ1->setDigitCount(6);
+        label_78 = new QLabel(layoutWidget11);
+        label_78->setObjectName(QStringLiteral("label_78"));
 
-        gridLayout_14->addWidget(DesZ1, 5, 2, 1, 1);
+        gridLayout_14->addWidget(label_78, 3, 2, 1, 1);
+
+        DesX1 = new QLCDNumber(layoutWidget11);
+        DesX1->setObjectName(QStringLiteral("DesX1"));
+        DesX1->setDigitCount(6);
+
+        gridLayout_14->addWidget(DesX1, 15, 0, 1, 1);
+
+        label_57 = new QLabel(layoutWidget11);
+        label_57->setObjectName(QStringLiteral("label_57"));
+
+        gridLayout_14->addWidget(label_57, 0, 0, 1, 1);
+
+        ForTanX1 = new QLCDNumber(layoutWidget11);
+        ForTanX1->setObjectName(QStringLiteral("ForTanX1"));
+        ForTanX1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForTanX1, 8, 0, 1, 1);
+
+        label_82 = new QLabel(layoutWidget11);
+        label_82->setObjectName(QStringLiteral("label_82"));
+
+        gridLayout_14->addWidget(label_82, 7, 3, 1, 1);
+
+        label_83 = new QLabel(layoutWidget11);
+        label_83->setObjectName(QStringLiteral("label_83"));
+
+        gridLayout_14->addWidget(label_83, 3, 3, 1, 1);
+
+        ForNormMag1 = new QLCDNumber(layoutWidget11);
+        ForNormMag1->setObjectName(QStringLiteral("ForNormMag1"));
+        ForNormMag1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForNormMag1, 5, 3, 1, 1);
+
+        ForTanMag1 = new QLCDNumber(layoutWidget11);
+        ForTanMag1->setObjectName(QStringLiteral("ForTanMag1"));
+        ForTanMag1->setDigitCount(6);
+
+        gridLayout_14->addWidget(ForTanMag1, 8, 3, 1, 1);
 
         layoutWidget12 = new QWidget(groupBox_8);
         layoutWidget12->setObjectName(QStringLiteral("layoutWidget12"));
-        layoutWidget12->setGeometry(QRect(22, 338, 301, 101));
+        layoutWidget12->setGeometry(QRect(12, 338, 321, 101));
         gridLayout_15 = new QGridLayout(layoutWidget12);
         gridLayout_15->setSpacing(6);
         gridLayout_15->setContentsMargins(11, 11, 11, 11);
@@ -1292,12 +1446,6 @@ public:
         label_59->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         gridLayout_15->addWidget(label_59, 0, 0, 1, 1);
-
-        label_27 = new QLabel(layoutWidget12);
-        label_27->setObjectName(QStringLiteral("label_27"));
-        label_27->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-
-        gridLayout_15->addWidget(label_27, 0, 1, 1, 1);
 
         MotorLCD_1 = new QLCDNumber(layoutWidget12);
         MotorLCD_1->setObjectName(QStringLiteral("MotorLCD_1"));
@@ -1310,6 +1458,12 @@ public:
         StrokeLCD1_1->setDigitCount(6);
 
         gridLayout_15->addWidget(StrokeLCD1_1, 1, 1, 1, 1);
+
+        label_27 = new QLabel(layoutWidget12);
+        label_27->setObjectName(QStringLiteral("label_27"));
+        label_27->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        gridLayout_15->addWidget(label_27, 0, 1, 1, 1);
 
         layoutWidget13 = new QWidget(centralWidget);
         layoutWidget13->setObjectName(QStringLiteral("layoutWidget13"));
@@ -1390,75 +1544,75 @@ public:
         groupBox_9 = new QGroupBox(centralWidget);
         groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
         groupBox_9->setGeometry(QRect(1630, 710, 511, 301));
-        widget = new QWidget(groupBox_9);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(20, 40, 471, 241));
-        gridLayout_13 = new QGridLayout(widget);
+        layoutWidget15 = new QWidget(groupBox_9);
+        layoutWidget15->setObjectName(QStringLiteral("layoutWidget15"));
+        layoutWidget15->setGeometry(QRect(20, 40, 471, 241));
+        gridLayout_13 = new QGridLayout(layoutWidget15);
         gridLayout_13->setSpacing(6);
         gridLayout_13->setContentsMargins(11, 11, 11, 11);
         gridLayout_13->setObjectName(QStringLiteral("gridLayout_13"));
         gridLayout_13->setContentsMargins(0, 0, 0, 0);
-        label_46 = new QLabel(widget);
+        label_46 = new QLabel(layoutWidget15);
         label_46->setObjectName(QStringLiteral("label_46"));
 
         gridLayout_13->addWidget(label_46, 1, 2, 1, 1);
 
-        thumbProxyPosX = new QLCDNumber(widget);
+        thumbProxyPosX = new QLCDNumber(layoutWidget15);
         thumbProxyPosX->setObjectName(QStringLiteral("thumbProxyPosX"));
         thumbProxyPosX->setDigitCount(6);
 
         gridLayout_13->addWidget(thumbProxyPosX, 5, 0, 1, 1);
 
-        label_38 = new QLabel(widget);
+        label_38 = new QLabel(layoutWidget15);
         label_38->setObjectName(QStringLiteral("label_38"));
 
         gridLayout_13->addWidget(label_38, 1, 1, 1, 1);
 
-        indexProxyPosY = new QLCDNumber(widget);
+        indexProxyPosY = new QLCDNumber(layoutWidget15);
         indexProxyPosY->setObjectName(QStringLiteral("indexProxyPosY"));
         indexProxyPosY->setDigitCount(6);
 
         gridLayout_13->addWidget(indexProxyPosY, 2, 1, 1, 1);
 
-        indexProxyPosX = new QLCDNumber(widget);
+        indexProxyPosX = new QLCDNumber(layoutWidget15);
         indexProxyPosX->setObjectName(QStringLiteral("indexProxyPosX"));
         indexProxyPosX->setDigitCount(6);
 
         gridLayout_13->addWidget(indexProxyPosX, 2, 0, 1, 1);
 
-        label_34 = new QLabel(widget);
+        label_34 = new QLabel(layoutWidget15);
         label_34->setObjectName(QStringLiteral("label_34"));
 
         gridLayout_13->addWidget(label_34, 3, 2, 1, 1);
 
-        thumbProxyPosY = new QLCDNumber(widget);
+        thumbProxyPosY = new QLCDNumber(layoutWidget15);
         thumbProxyPosY->setObjectName(QStringLiteral("thumbProxyPosY"));
         thumbProxyPosY->setDigitCount(6);
 
         gridLayout_13->addWidget(thumbProxyPosY, 5, 1, 1, 1);
 
-        label_33 = new QLabel(widget);
+        label_33 = new QLabel(layoutWidget15);
         label_33->setObjectName(QStringLiteral("label_33"));
 
         gridLayout_13->addWidget(label_33, 3, 1, 1, 1);
 
-        label_29 = new QLabel(widget);
+        label_29 = new QLabel(layoutWidget15);
         label_29->setObjectName(QStringLiteral("label_29"));
 
         gridLayout_13->addWidget(label_29, 3, 0, 1, 1);
 
-        thumbProxyPosZ = new QLCDNumber(widget);
+        thumbProxyPosZ = new QLCDNumber(layoutWidget15);
         thumbProxyPosZ->setObjectName(QStringLiteral("thumbProxyPosZ"));
         thumbProxyPosZ->setDigitCount(6);
 
         gridLayout_13->addWidget(thumbProxyPosZ, 5, 2, 1, 1);
 
-        label_25 = new QLabel(widget);
+        label_25 = new QLabel(layoutWidget15);
         label_25->setObjectName(QStringLiteral("label_25"));
 
         gridLayout_13->addWidget(label_25, 1, 0, 1, 1);
 
-        indexProxyPosZ = new QLCDNumber(widget);
+        indexProxyPosZ = new QLCDNumber(layoutWidget15);
         indexProxyPosZ->setObjectName(QStringLiteral("indexProxyPosZ"));
         indexProxyPosZ->setDigitCount(6);
 
@@ -1546,38 +1700,54 @@ public:
         Manual->setText(QApplication::translate("MainWindow", "Manual", 0));
         showAllFramesCheckBox->setText(QApplication::translate("MainWindow", "Show All Frames", 0));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "Experiments:", 0));
-        FingerMappingExp->setText(QApplication::translate("MainWindow", "Pick and Place\n"
-"Experiment", 0));
         dynamicEnvironment->setText(QApplication::translate("MainWindow", "Dynamic\n"
 "Bodies", 0));
-        HoxelMappingExp->setText(QApplication::translate("MainWindow", "Wire Guide\n"
-"Experiment", 0));
-        CrumblyCubeExp->setText(QApplication::translate("MainWindow", "Crumbly Cube\n"
-"Experiment\n"
-"\360\237\215\252\360\237\215\252\360\237\215\252", 0));
         CubeGuidanceExp->setText(QApplication::translate("MainWindow", "~TEST ENVIRONMENTS~\n"
 "Experiment", 0));
+        FingerMappingExp->setText(QApplication::translate("MainWindow", "Pick and Place\n"
+"Experiment", 0));
+        WireGuideExp->setText(QApplication::translate("MainWindow", "Wire Guide\n"
+"Experiment - BETA", 0));
+        HoxelMappingExp->setText(QApplication::translate("MainWindow", "Hoxel Mapping\n"
+"Experiment\n"
+"\360\237\215\252\360\237\215\252\360\237\215\252", 0));
         groupBox_6->setTitle(QApplication::translate("MainWindow", "Mine's Experiments", 0));
         StiffnessExp->setText(QApplication::translate("MainWindow", "Stiffness\n"
 "Experiment", 0));
         StiffnMassCombined->setText(QApplication::translate("MainWindow", "Stiffness-Mass\n"
 "Experiment", 0));
         groupBox_7->setTitle(QApplication::translate("MainWindow", "INDEX", 0));
+        label_61->setText(QApplication::translate("MainWindow", "Normal X:", 0));
+        label_19->setText(QApplication::translate("MainWindow", "Des Pos X", 0));
+        label_73->setText(QApplication::translate("MainWindow", "Shear Y:", 0));
         label_52->setText(QApplication::translate("MainWindow", "Stiffness Forces:", 0));
-        label_53->setText(QApplication::translate("MainWindow", "Mass Forces:", 0));
-        label_19->setText(QApplication::translate("MainWindow", "Des X", 0));
-        label_20->setText(QApplication::translate("MainWindow", "Des Y", 0));
-        label_21->setText(QApplication::translate("MainWindow", "Des Z", 0));
+        label_21->setText(QApplication::translate("MainWindow", "Des Pos Z", 0));
+        label_71->setText(QApplication::translate("MainWindow", "Normal Y:", 0));
+        label_74->setText(QApplication::translate("MainWindow", "Shear Z:", 0));
+        label_53->setText(QApplication::translate("MainWindow", "Shear X:", 0));
+        label_72->setText(QApplication::translate("MainWindow", "Normal Z:", 0));
+        label_20->setText(QApplication::translate("MainWindow", "Des Pos Y", 0));
+        label_80->setText(QApplication::translate("MainWindow", "Normal Mag:", 0));
+        label_81->setText(QApplication::translate("MainWindow", "Shear Mag:", 0));
         label->setText(QApplication::translate("MainWindow", "Index Pot", 0));
-        label_26->setText(QApplication::translate("MainWindow", "Desired Index", 0));
+        label_26->setText(QApplication::translate("MainWindow", "Desired Index\n"
+"Pos Stroke:", 0));
         groupBox_8->setTitle(QApplication::translate("MainWindow", "THUMB", 0));
+        label_58->setText(QApplication::translate("MainWindow", "Shear X:", 0));
+        label_64->setText(QApplication::translate("MainWindow", "Des Pos X", 0));
+        label_77->setText(QApplication::translate("MainWindow", "Normal Y:", 0));
+        label_69->setText(QApplication::translate("MainWindow", "Des Pos Z", 0));
+        label_76->setText(QApplication::translate("MainWindow", "Shear Y:", 0));
+        label_67->setText(QApplication::translate("MainWindow", "Des Pos Y", 0));
+        label_75->setText(QApplication::translate("MainWindow", "Shear Z:", 0));
+        label_79->setText(QApplication::translate("MainWindow", "Normal X:", 0));
+        label_78->setText(QApplication::translate("MainWindow", "Normal Z:", 0));
         label_57->setText(QApplication::translate("MainWindow", "Stiffness Forces:", 0));
-        label_58->setText(QApplication::translate("MainWindow", "Mass Forces:", 0));
-        label_64->setText(QApplication::translate("MainWindow", "Des X", 0));
-        label_67->setText(QApplication::translate("MainWindow", "Des Y", 0));
-        label_69->setText(QApplication::translate("MainWindow", "Des Z", 0));
+        label_82->setText(QApplication::translate("MainWindow", "Shear Mag:", 0));
+        label_83->setText(QApplication::translate("MainWindow", "Normal Mag:", 0));
         label_59->setText(QApplication::translate("MainWindow", "Thumb Pot", 0));
-        label_27->setText(QApplication::translate("MainWindow", "Desired Thumb", 0));
+        label_27->setText(QApplication::translate("MainWindow", "Desired Thumb\n"
+"Pos Stroke:", 0));
         label_36->setText(QApplication::translate("MainWindow", "Direction:", 0));
         label_37->setText(QApplication::translate("MainWindow", "Condtion No.:", 0));
         Condition1->setText(QApplication::translate("MainWindow", "Cond1", 0));

@@ -34,7 +34,7 @@
 //Added for message box popups:
 #include "mychai3dwindow.h"
 
-//Finger force limit in Newtons -- only for CrumblyCubeExp
+//Finger force limit in Newtons -- only for HME
 #define FINGER_FORCE_LIMIT 20
 
 using namespace chai3d;
@@ -88,6 +88,10 @@ public:
     double localMotorAngles0;
     Eigen::Vector3d localForce0;
     Eigen::Vector3d localForce1;
+    Eigen::Vector3d localNormalForce0;
+    Eigen::Vector3d localNormalForce1;
+    Eigen::Vector3d localTangentialForce0;
+    Eigen::Vector3d localTangentialForce1;
 
     double localOutputStrokes1; //Eigen::Vector3d localOutputVoltages0;
     Eigen::Vector3d localDesiredPos1;
@@ -161,7 +165,7 @@ private slots:
     //void on_loadProtocol_clicked();
     //void on_startExperiment_clicked();
     QString getSubjectDirectory();
-    void WriteDataToFile();
+    void writeDataToFile();
     //void on_setNeutral_clicked();
     //void on_setTrial_clicked();
     void on_dynamicEnvironment_clicked();
@@ -232,9 +236,9 @@ private slots:
     void on_FingerMappingExp_clicked();
     void on_HoxelMappingExp_clicked();
     void on_SetTrialNoButton_clicked();
-    void on_CrumblyCubeExp_clicked();
-    void on_Manual_clicked();
     void on_CubeGuidanceExp_clicked();
+    void on_Manual_clicked();
+    void on_WireGuideExp_clicked();
     void on_resetCameraButton_clicked();
 
     //SERIAL:
