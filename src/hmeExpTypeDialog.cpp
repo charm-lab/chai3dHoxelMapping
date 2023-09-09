@@ -67,38 +67,38 @@ QString hmeExpTypeDialog::gethmeExpTypePrompt(int expTypeVal, int mappingVal)
     // Color change Notifications:
     else if(expTypeVal == 1 && mappingVal == 1)
     {
-        message = "ʕっ• ᴥ • ʔっ\nTraining Trials with Haptics!:\n"
+        message = "ʕっ• ᴥ • ʔっ\nTraining Trials!:\n"
                   "When cube starts to break,\n"
                   "it will turn red";
     }
     else if(expTypeVal == 1 && mappingVal == 3)
     {
-        message = "¯\_( ͡❛ ͜ʖ ͡❛)_/¯\nTraining Trials with Haptics!:\n"
+        message = "¯\_( ͡❛ ͜ʖ ͡❛)_/¯\nTraining Trials!:\n"
                   "When cube starts to break,\n"
                   "it will turn red";
     }
     else if(expTypeVal == 1 && mappingVal == 5)
     {
-        message = "( ˘︹˘ )\nTraining Trials with NO Haptics:\n"
+        message = "( ˘︹˘ )\nTraining Trials:\n"
                   "When cube starts to break,\n"
                   "it will turn red";
     }
     // No color change Notifications:
     else if(expTypeVal == 2 && mappingVal == 1)
     {
-        message = "| (• ◡•)| (❍ᴥ❍ʋ)\nTesting Trials with Haptics!:\n"
+        message = "| (• ◡•)| (❍ᴥ❍ʋ)\nTesting Trials!:\n"
                   "When force limit is exceeded,\n"
                   "no cube color change.";
     }
     else if(expTypeVal == 2 && mappingVal == 3)
     {
-        message = "(ᴗᵔᴥᵔ)\nTesting Trials with Haptics!:\n"
+        message = "(ᴗᵔᴥᵔ)\nTesting Trials!:\n"
                   "When force limit is exceeded,\n"
                   "no cube color change.";
     }
     else if(expTypeVal == 2 && mappingVal == 5)
     {
-        message = "༼つ ◕_◕ ༽つ\nTesting Trials with NO Haptics!:\n"
+        message = "༼つ ◕_◕ ༽つ\nTesting Trials!:\n"
                   "When force limit is exceeded,\n"
                   "no cube color change.";
     }

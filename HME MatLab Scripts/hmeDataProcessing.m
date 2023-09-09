@@ -711,7 +711,7 @@ markerSize = 20; %variable used in createErrorBarPlot
 %% Plot completionTimes
 close all;
 markerSize = 12;
-minY = 0.5; maxY = 4;
+minY = 0; maxY = 20;
 
 % Cells to store parameter basic statistics
 completionTimeMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -751,7 +751,7 @@ if (saveFigures == true)
     print(gcf, 'figures\completionTime','-dpdf','-r0');
 end
 %% Plot pathLengths
-close all;
+% close all;
 markerSize = 12;
 jitterVal = 0.1;
 minY = 0.5; maxY = 1.75;
@@ -837,8 +837,8 @@ end
 set(gcf,'Visible', plotVis);
 % Box Plot
 figure;
-[boxP1,boxP2,boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats, boxPathLengthStdStats,...
-    "Box Path Length", "Mapping", "Path Length [m]");
+[boxP1,boxP2,boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
+    boxPathLengthStdStats, "Box Path Length", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
@@ -1096,7 +1096,8 @@ for j = 1:numSubjects
             "Testing, No Color \Delta",...
             "Box Break Start",...
             "Box Break End",...
-            "Location","northeast");
+            "Location","northoutside",...
+            "NumColumns", 4);
     else
         %         legend([h1(1), h2(1)],...
         %             "Color \Delta, Trial \Rightarrow",...
@@ -1105,7 +1106,8 @@ for j = 1:numSubjects
         legend([h1(1), h2(1)],...
             "Training, Color \Delta",...
             "Testing, No Color \Delta",...
-            "Location","northeast");
+            "Location","northoutside",...
+            "NumColumns", 2);   
     end
 
     hold off;
@@ -1175,7 +1177,7 @@ end
 figure;
 % Plot average Num Box Breaks Bar Plot with Error Bars
 createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
-    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-1.0 3.5]);
+    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-2.0 7.0]);
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -1186,7 +1188,7 @@ end
 figure;
 % Plot average time box broken Bar Plot with Error Bars
 createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
-    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]",[-0.2 0.8]);
+    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]",[-1.0 3.0]);
 
 %Save figure as pdf:
 if (saveFigures == true)
