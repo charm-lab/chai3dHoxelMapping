@@ -1,6 +1,7 @@
 %   Creates an combined and color-coded errorbar plot
 %   Also assumes subjects are sorted columnwise:
 %   in the SubjectData cell
+% Author: Jasmin E. Palmer
 
 function [combinedNSForcesPlot] = createCombinedNSForcesPlot(...
     indexNP1,indexNP2,indexNP3,...

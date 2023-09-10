@@ -1,6 +1,7 @@
 %   Creates an errorbar plot with trial data
 %   Also assumes subjects are sorted columnwise
 %   in the SubjectData cell
+% Author: Jasmin E. Palmer
 
 function [h1, h2, h3] = createMultiExpErrorBarPlot(meanVals, stdVals,...
     plotTitle, xAxisLabel, yAxisLabel)

@@ -1,6 +1,7 @@
 %   Creates an combined and color-coded errorbar plot
 %   Also assumes subjects are sorted columnwise:
 %   in the SubjectData cell
+% Author: Jasmin E. Palmer
 
 function [combinedPathLengthsPlot] = createCombinedPathLengthsPlot(...
     indexP1,indexP2,indexP3,...

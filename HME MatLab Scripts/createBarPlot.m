@@ -1,5 +1,6 @@
 % Creates bar plot with error bars
 % Also has the option to include subject averages along the error bars
+% Author: Jasmin E. Palmer
 
 function [barPlot] = createBarPlot(map1, map3, map5,...
     plotTitle, xAxisLabel, yAxisLabel, yAxisLimits)

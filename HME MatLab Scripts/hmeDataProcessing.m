@@ -1,4 +1,5 @@
-% Crumbly Cube Experiment (CCE) Data Processing
+% Hoxel Mapping Experiment (HME) Data Processing
+% Author: Jasmin E. Palmer
 clear; close all; clc;
 %% Load Data
 clear; close all; clc;
@@ -795,7 +796,9 @@ jitterVal = 0.18;
 plotMarker = "s";
 % Index Plot
 figure;
-[indexP1,indexP2,indexP3] = createMultiExpErrorBarPlot(indexPathLengthMeanStats, indexPathLengthStdStats,...
+[indexP1,indexP2,indexP3] = ...
+    createMultiExpErrorBarPlot(indexPathLengthMeanStats,...
+    indexPathLengthStdStats,...
     "Index Path Length", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 650); hold off;
@@ -816,7 +819,9 @@ end
 set(gcf,'Visible', plotVis);
 % Thumb Plot
 figure;
-[thumbP1,thumbP2,thumbP3] = createMultiExpErrorBarPlot(thumbPathLengthMeanStats, thumbPathLengthStdStats,...
+[thumbP1,thumbP2,thumbP3] = ...
+    createMultiExpErrorBarPlot(thumbPathLengthMeanStats,...
+    thumbPathLengthStdStats,...
     "Thumb Path Length", "Mapping", "Path Length [m]");
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 650); hold off;
