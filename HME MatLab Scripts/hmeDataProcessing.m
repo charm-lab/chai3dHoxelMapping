@@ -107,7 +107,7 @@ disp("***Data Upload and Merge Complete***")
 % Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
 
-%% Repair Subject 2
+%% Repair Subject 5
 % if (repairedBool == false)
 %     plotVis = "on";
 %     saveFigures = false;
