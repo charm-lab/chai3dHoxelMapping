@@ -29,14 +29,16 @@ for p = 1:numExperimentTypes
     % Color code plot based on exp type:
     if(p == 1)
         h1 = bar(p,[mean(data1(1:0.5*numVals)); mean(data3(1:0.5*numVals)); mean(data5(1:0.5*numVals)); ...
-            mean(data1(0.5*numVals+1:end)); mean(data3(0.5*numVals+1:end)); mean(data5(0.5*numVals+1:end))]); hold on;
+                    mean(data1(0.5*numVals+1:end)); mean(data3(0.5*numVals+1:end)); mean(data5(0.5*numVals+1:end))],...
+            'BarWidth', 0.8);
+        hold on;
 
         % Get the x coordinate of the bars
         for i = 1:numMappings*2 % Due to being done twice
             x1(i,:) = h1(i).XEndPoints;
         end
         errorbar(x1',[mean(data1(1:0.5*numVals)); mean(data3(1:0.5*numVals)); mean(data5(1:0.5*numVals)); ...
-            mean(data1(0.5*numVals+1:end)); mean(data3(0.5*numVals+1:end)); mean(data5(0.5*numVals+1:end))],...
+                    mean(data1(0.5*numVals+1:end)); mean(data3(0.5*numVals+1:end)); mean(data5(0.5*numVals+1:end))],...
                     [std(data1(1:0.5*numVals)); std(data3(1:0.5*numVals)); std(data5(1:0.5*numVals)); ...
                     std(data1(0.5*numVals+1:end)); std(data3(0.5*numVals+1:end)); std(data5(0.5*numVals+1:end))],...
             'ks','linestyle','none','MarkerFaceColor','k');
@@ -54,15 +56,23 @@ for p = 1:numExperimentTypes
             subjectVals1 = [map1{:,p}];
             subjectVals3 = [map3{:,p}];
             subjectVals5 = [map5{:,p}];
+            subjectMeans1_1 = mean(subjectVals1(1:10,:))';
+            subjectMeans3_1 = mean(subjectVals3(1:10,:))';
+            subjectMeans5_1 = mean(subjectVals5(1:10,:))';
+
+            subjectMeans1_2 = mean(subjectVals1(11:20,:))';
+            subjectMeans3_2 = mean(subjectVals3(11:20,:))';
+            subjectMeans5_2 = mean(subjectVals5(11:20,:))';
 
             % Add them to the bar plot
-            h3 = plot(x1', [mean(subjectVals1(1:10)); mean(subjectVals3(1:10)); mean(subjectVals5(1:10)); ...
-                mean(subjectVals1(11:20)); mean(subjectVals3(11:20)); mean(subjectVals5(11:20))]'...
-                ,"ko");
+
+             h3 = plot(x1',[subjectMeans1_1, subjectMeans3_1, subjectMeans5_1,...
+                 subjectMeans1_2, subjectMeans3_2, subjectMeans5_2]',"ko");
         end
     end
     if(p == 2)
-        h2 = bar(p,[mean(data1); mean(data3); mean(data5)]); hold on;
+        h2 = bar(p,[mean(data1); mean(data3); mean(data5)],...
+            'BarWidth', 0.8); hold on;
         % Get the x coordinate of the bars
         for i = 1:numMappings
             x2(i,:) = h2(i).XEndPoints;
@@ -82,7 +92,7 @@ for p = 1:numExperimentTypes
             subjectMeans5 = mean([map5{:,p}]);
 
             % Add them to the bar plot
-            h4 = plot(x2', [subjectMeans1; subjectMeans3; subjectMeans5]' ,"ko");
+            h4 = plot(x2',[subjectMeans1; subjectMeans3; subjectMeans5]',"ko");
         end
     end
 end

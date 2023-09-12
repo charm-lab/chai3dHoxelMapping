@@ -14,14 +14,14 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 6;
+totalNumSubjects = 9;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:4, 6:9];
+subjectNum = [1:4, 6:10];
 
 % Load data from folder
 % Folder contatining all data:
@@ -514,17 +514,17 @@ for p = 1:numExperimentTypes % Addition for each experiment type
             %time index vector
             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
 
-%             % Normal force in the finger frame is the z-component
-%             indexNormalForceMagVec{k,j} = abs(subjectData{j,p}.indexForceZ(t_i));
-%             % Shear force in the finger frame is the xy-components
-%             indexShearForceMagVec{k,j} = sqrt(subjectData{j,p}.indexForceX(t_i).^2 + ...
-%                 subjectData{j,p}.indexForceY(t_i).^2);
-% 
-%             % Normal force in the finger frame is the z-component
-%             thumbNormalForceMagVec{k,j} = abs(subjectData{j,p}.thumbForceZ(t_i));
-%             % Shear force in the finger frame is the xy-components
-%             thumbShearForceMagVec{k,j} = sqrt(subjectData{j,p}.thumbForceX(t_i).^2 + ...
-%                 subjectData{j,p}.thumbForceY(t_i).^2);
+            %             % Normal force in the finger frame is the z-component
+            %             indexNormalForceMagVec{k,j} = abs(subjectData{j,p}.indexForceZ(t_i));
+            %             % Shear force in the finger frame is the xy-components
+            %             indexShearForceMagVec{k,j} = sqrt(subjectData{j,p}.indexForceX(t_i).^2 + ...
+            %                 subjectData{j,p}.indexForceY(t_i).^2);
+            %
+            %             % Normal force in the finger frame is the z-component
+            %             thumbNormalForceMagVec{k,j} = abs(subjectData{j,p}.thumbForceZ(t_i));
+            %             % Shear force in the finger frame is the xy-components
+            %             thumbShearForceMagVec{k,j} = sqrt(subjectData{j,p}.thumbForceX(t_i).^2 + ...
+            %                 subjectData{j,p}.thumbForceY(t_i).^2);
 
             % Index Normal Force Magnitude
             indexNormalForceMagVec{k,j} = sqrt(...
@@ -603,23 +603,23 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         mapping5 = repmat([21:30; 11:20; 1:10], [numSubjects/3, 1]);
     end
 
-%     % Modify repmat depending on which Exp type is being processed
-%     % For numSubjjects/3 != 0
-%     if (p == 1)
-%         % Mapping1 -- mapping1TimeIndexRows
-%         mapping1 = repmat([1:10 31:40; 21:30 51:60; 11:20 41:50], [1, 1]);
-%         % Mapping3 -- mapping3TimeIndexRows
-%         mapping3 = repmat([11:20 41:50; 1:10 31:40; 21:30 51:60], [1, 1]);
-%         % Mapping5 -- mapping5TimeIndexRows
-%         mapping5 = repmat([21:30 51:60; 11:20 41:50; 1:10 31:40], [1, 1]);
-%     else % if (p == 2)
-%         % Mapping1 -- mapping1TimeIndexRows
-%         mapping1 = repmat([1:10; 21:30; 11:20], [1, 1]);
-%         % Mapping3 -- mapping3TimeIndexRows
-%         mapping3 = repmat([11:20; 1:10; 21:30], [1, 1]);
-%         % Mapping5 -- mapping5TimeIndexRows
-%         mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
-%     end
+    %     % Modify repmat depending on which Exp type is being processed
+    %     % For numSubjjects/3 != 0
+    %     if (p == 1)
+    %         % Mapping1 -- mapping1TimeIndexRows
+    %         mapping1 = repmat([1:10 31:40; 21:30 51:60; 11:20 41:50], [1, 1]);
+    %         % Mapping3 -- mapping3TimeIndexRows
+    %         mapping3 = repmat([11:20 41:50; 1:10 31:40; 21:30 51:60], [1, 1]);
+    %         % Mapping5 -- mapping5TimeIndexRows
+    %         mapping5 = repmat([21:30 51:60; 11:20 41:50; 1:10 31:40], [1, 1]);
+    %     else % if (p == 2)
+    %         % Mapping1 -- mapping1TimeIndexRows
+    %         mapping1 = repmat([1:10; 21:30; 11:20], [1, 1]);
+    %         % Mapping3 -- mapping3TimeIndexRows
+    %         mapping3 = repmat([11:20; 1:10; 21:30], [1, 1]);
+    %         % Mapping5 -- mapping5TimeIndexRows
+    %         mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
+    %     end
 
     % Plug in paramters to be sorted:
     for j = 1:numSubjects
@@ -751,6 +751,7 @@ if (saveFigures == true)
     set(gcf,'PaperOrientation','landscape');
     print(gcf, 'figures\completionTime','-dpdf','-r0');
 end
+
 %% Plot pathLengths
 % close all;
 markerSize = 12;
@@ -989,7 +990,7 @@ end
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
-close all;
+% close all;
 saveFigures = true;
 
 forceLimit = 20; % N
@@ -1017,22 +1018,22 @@ for j = 1:numSubjects
             else
                 % In a trial, provide me a list of the indices where the
                 % manip force threshold is exceeeded begins
-%                 if (isempty(strfind(manipVec',[0 1]) + 1))
-%                     % disp("yes")
-%                     % Case where trial starts with manip threshold is
-%                     % exceeded
-%                     manipHighStartIndex = find(manipVec == 1,1,'first');
-%                 else
-%                     manipHighStartIndex = strfind(manipVec',[0 1]) + 1;
-%                 end
+                %                 if (isempty(strfind(manipVec',[0 1]) + 1))
+                %                     % disp("yes")
+                %                     % Case where trial starts with manip threshold is
+                %                     % exceeded
+                %                     manipHighStartIndex = find(manipVec == 1,1,'first');
+                %                 else
+                %                     manipHighStartIndex = strfind(manipVec',[0 1]) + 1;
+                %                 end
 
-                 % In a trial, provide me a list of the indices where the
+                % In a trial, provide me a list of the indices where the
                 % manip force threshold is exceeeded begins
                 manipHighStartIndex = strfind(manipVec',[0 1]) + 1;
-                
-                % If force threshold exceeded at trial start, append first 
+
+                % If force threshold exceeded at trial start, append first
                 % timestamp value:
-                if (manipVec(1) == 1) 
+                if (manipVec(1) == 1)
                     % Make this an end index to store later:
                     manipHighStartIndex = [1, manipHighStartIndex];
                 end
@@ -1041,9 +1042,9 @@ for j = 1:numSubjects
                 % manip force threshold is exceeeded ends
                 manipHighEndIndex = strfind(manipVec',[1 0]);% + 1
 
-                % If force threshold exceeded at trial end, append last 
+                % If force threshold exceeded at trial end, append last
                 % timestamp value:
-                if (manipVec(end) == 1) 
+                if (manipVec(end) == 1)
                     % Make this an end index to store later:
                     manipHighEndIndex = [manipHighEndIndex, find(timeVec == timeVec(end))];
                 end
@@ -1132,7 +1133,7 @@ for j = 1:numSubjects
             "Training, Color \Delta",...
             "Testing, No Color \Delta",...
             "Location","north",...
-            "NumColumns", 2);   
+            "NumColumns", 2);
     end
 
     hold off;
@@ -1167,23 +1168,23 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         mapping5 = repmat([21:30; 11:20; 1:10], [numSubjects/3, 1]);
     end
 
-%     % Modify repmat depending on which Exp type is being processed
-%     % For numSubjjects/3 != 0
-%     if (p == 1)
-%         % Mapping1 -- mapping1TimeIndexRows
-%         mapping1 = repmat([1:10 31:40; 21:30 51:60; 11:20 41:50], [1, 1]);
-%         % Mapping3 -- mapping3TimeIndexRows
-%         mapping3 = repmat([11:20 41:50; 1:10 31:40; 21:30 51:60], [1, 1]);
-%         % Mapping5 -- mapping5TimeIndexRows
-%         mapping5 = repmat([21:30 51:60; 11:20 41:50; 1:10 31:40], [1, 1]);
-%     else % if (p == 2)
-%         % Mapping1 -- mapping1TimeIndexRows
-%         mapping1 = repmat([1:10; 21:30; 11:20], [1, 1]);
-%         % Mapping3 -- mapping3TimeIndexRows
-%         mapping3 = repmat([11:20; 1:10; 21:30], [1, 1]);
-%         % Mapping5 -- mapping5TimeIndexRows
-%         mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
-%     end
+    %     % Modify repmat depending on which Exp type is being processed
+    %     % For numSubjjects/3 != 0
+    %     if (p == 1)
+    %         % Mapping1 -- mapping1TimeIndexRows
+    %         mapping1 = repmat([1:10 31:40; 21:30 51:60; 11:20 41:50], [1, 1]);
+    %         % Mapping3 -- mapping3TimeIndexRows
+    %         mapping3 = repmat([11:20 41:50; 1:10 31:40; 21:30 51:60], [1, 1]);
+    %         % Mapping5 -- mapping5TimeIndexRows
+    %         mapping5 = repmat([21:30 51:60; 11:20 41:50; 1:10 31:40], [1, 1]);
+    %     else % if (p == 2)
+    %         % Mapping1 -- mapping1TimeIndexRows
+    %         mapping1 = repmat([1:10; 21:30; 11:20], [1, 1]);
+    %         % Mapping3 -- mapping3TimeIndexRows
+    %         mapping3 = repmat([11:20; 1:10; 21:30], [1, 1]);
+    %         % Mapping5 -- mapping5TimeIndexRows
+    %         mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
+    %     end
 
     for j = 1:numSubjects
         % disp(strcat("p: ", num2str(p)))
@@ -1222,3 +1223,60 @@ if (saveFigures == true)
 end
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
+
+%% Run ANOVA and Compare Means for Metrics of Interest:
+% Completion Time: ******************************************************
+% Run ANOVA and compare means
+[p_CompletionTime, ~ , stats_CompletionTime] = ...
+    runHMEStats(completionTimeMapping1, completionTimeMapping3,...
+    completionTimeMapping5, "Completion Time");
+
+% Path Lengths: *********************************************************
+
+% Index
+[p_indexPathLength, ~ , stats_indexPathLength] = ...
+    runHMEStats(indexPathLengthMapping1, indexPathLengthMapping3,...
+    indexPathLengthMapping5, "Index Path Length");
+
+% Thumb
+[p_thumbPathLength, ~ , stats_thumbPathLength] = ...
+    runHMEStats(thumbPathLengthMapping1, thumbPathLengthMapping3,...
+    thumbPathLengthMapping5, "Thumb Path Length");
+
+% Box
+[p_boxPathLength, ~ , stats_boxPathLength] = ...
+    runHMEStats(boxPathLengthMapping1, boxPathLengthMapping3,...
+    boxPathLengthMapping5, "Cube Path Length");
+
+% Interaction Forces: **************************************************
+
+% **Index
+% Normal
+[p_indexNormal, ~ , stats_indexNormal] = ...
+    runHMEStats(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
+    meanIndexNormalForceMapping5, "Index Normal Force");
+% Shear
+[p_indexShear, ~ , stats_indexShear] = ...
+    runHMEStats(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
+    meanIndexShearForceMapping5, "Index Shear Force");
+
+% **Thumb
+% Normal
+[p_thumbNormal, ~ , stats_thumbNormal] = ...
+    runHMEStats(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
+    meanThumbNormalForceMapping5, "Thumb Normal Force");
+% Shear
+[p_thumbShear, ~ , stats_thumbShear] = ...
+    runHMEStats(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
+    meanThumbShearForceMapping5, "Thumb Shear Force");
+
+% Number of Box Breaks: ************************************************
+[p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
+    runHMEStats(numBoxBreaksMapping1, numBoxBreaksMapping3,...
+    numBoxBreaksMapping5, "Cube Break Occurences");
+
+
+% Time Box Broken: *****************************************************
+[p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
+    runHMEStats(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
+    timeBoxBrokenMapping5, "Cube Break Occurences");
