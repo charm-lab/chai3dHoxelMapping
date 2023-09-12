@@ -73,7 +73,7 @@ if ~isnan(crossing_time)
 
     % Plot the original data
     % subplot(1, 3, 3);
-    subplot(2, 2, 3);
+    subplot(2, 2, [3 4]);
     plot(df.Time_s_, df.ZeroedForceZ_N_, 'b');
     xlabel('Time (s)');
     ylabel('Force Z (N)');
@@ -81,8 +81,8 @@ if ~isnan(crossing_time)
     grid on;
     ylim([-1 25]);
 
-    sgtitle('Force Analysis');
-    set(gcf, 'Position', [100, 100, 1200, 400]);
+    sgtitle('Force Analysis', 'fontsize', 18);
+    % set(gcf, 'Position', [100, 100, 1200, 400]);
 
     improvePlot_v2(false, true, 14, 1400, 800);
 
