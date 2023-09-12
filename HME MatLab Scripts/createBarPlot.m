@@ -3,7 +3,7 @@
 % Author: Jasmin E. Palmer
 
 function [barPlot] = createBarPlot(map1, map3, map5,...
-    plotTitle, xAxisLabel, yAxisLabel, yAxisLimits)
+    plotTitle, xAxisLabel, yAxisLabel) %, yAxisLimits
 
 numMappings = evalin('base','numMappings');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
@@ -87,7 +87,7 @@ for p = 1:numExperimentTypes
     end
 end
 
-ylim(yAxisLimits);
+% ylim(yAxisLimits);
 xticks([1:numExperimentTypes]);
 % tickLabels = ["Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow"];

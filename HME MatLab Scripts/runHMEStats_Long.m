@@ -119,7 +119,7 @@ function runHMEStats()
     %     "display", showStats)
 
      % [p_CompletionTime, ~, stats_CompletionTime] = ...
-     aov =   anova( {mappingsExp1}, yCT_Train, FactorNames=["mappings"])
+     aov = anova({mappingsExp1}, yCT_Train, FactorNames=["mappings"])
 
 
     yCT_Test = [yCT_Map1_Test; yCT_Map3_Test; yCT_Map5_Test];
@@ -130,7 +130,7 @@ function runHMEStats()
     %     anovan(yCT_Test, {mappingsExp2},...
     %     "Model","interaction", "Varnames",["mappings"],...
     %     "display", showStats)
-    aov =   anova( {mappingsExp2}, yCT_Test, FactorNames=["mappings"])
+    aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
 
     disp("Both")
     yCT = [yCT_Train; yCT_Test];
@@ -142,7 +142,7 @@ function runHMEStats()
     "Model","interaction", "Varnames",["mappings","experimentType"],...
     "display", showStats)
 
-%     yIPL = [yIPL_Map1; yIPL_Map3; yIPL_Map5];
+    %     yIPL = [yIPL_Map1; yIPL_Map3; yIPL_Map5];
 %     [p_IndexPathLength, ~, stats_IndexPathLength] = anovan(yIPL, {mappings},...
 %         "Model","interaction", "Varnames","mappings", "display",showStats);
 % 

@@ -14,14 +14,14 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 3;
+totalNumSubjects = 6;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:3];
+subjectNum = [1:4, 6:9];
 
 % Load data from folder
 % Folder contatining all data:
@@ -989,7 +989,7 @@ end
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
-% close all;
+close all;
 saveFigures = true;
 
 forceLimit = 20; % N
@@ -1005,10 +1005,11 @@ for j = 1:numSubjects
             % Get the time vector of an individual trial:
             t_i = trialStartTime_index{j,p}(k,j):trialEndTime_index{j,p}(k,j);
             timeVec = subjectData{j,p}.time(t_i);
+            manipVec = subjectData{j,p}.manipForceTooHigh(t_i);
 
             % Find times where threshold exceeded if that happened in
             % trial:
-            if (sum(subjectData{j,p}.manipForceTooHigh(t_i) == 1) == 0)
+            if (sum(manipVec == 1) == 0)
                 % (k,1) because we want the cells to remain having only 1
                 % column of data
                 timeBoxBroken{j,p}(k,1) = 0;
@@ -1016,15 +1017,36 @@ for j = 1:numSubjects
             else
                 % In a trial, provide me a list of the indices where the
                 % manip force threshold is exceeeded begins
-                if (isempty(strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[0 1]) + 1))
-                    % disp("yes")
-                    manipHighStartIndex = find(subjectData{j,p}.manipForceTooHigh(t_i) == 1,1,'first');
-                else
-                    manipHighStartIndex = strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[0 1]) + 1;
+%                 if (isempty(strfind(manipVec',[0 1]) + 1))
+%                     % disp("yes")
+%                     % Case where trial starts with manip threshold is
+%                     % exceeded
+%                     manipHighStartIndex = find(manipVec == 1,1,'first');
+%                 else
+%                     manipHighStartIndex = strfind(manipVec',[0 1]) + 1;
+%                 end
+
+                 % In a trial, provide me a list of the indices where the
+                % manip force threshold is exceeeded begins
+                manipHighStartIndex = strfind(manipVec',[0 1]) + 1;
+                
+                % If force threshold exceeded at trial start, append first 
+                % timestamp value:
+                if (manipVec(1) == 1) 
+                    % Make this an end index to store later:
+                    manipHighStartIndex = [1, manipHighStartIndex];
                 end
+
                 % In a trial, provide me a list of the indices wher the
                 % manip force threshold is exceeeded ends
-                manipHighEndIndex = strfind(subjectData{j,p}.manipForceTooHigh(t_i)',[1 0]);% + 1
+                manipHighEndIndex = strfind(manipVec',[1 0]);% + 1
+
+                % If force threshold exceeded at trial end, append last 
+                % timestamp value:
+                if (manipVec(end) == 1) 
+                    % Make this an end index to store later:
+                    manipHighEndIndex = [manipHighEndIndex, find(timeVec == timeVec(end))];
+                end
 
                 % Get the time at which the manip force excceeding starts
                 manipHighTimeStart = timeVec(manipHighStartIndex);
@@ -1067,13 +1089,11 @@ for j = 1:numSubjects
 
             % Color code plot based on exp type:
             if(p == 1)
-                h1 = plot(timeVec,...
-                    subjectData{j,p}.manipForceTooHigh(t_i), ...
+                h1 = plot(timeVec, manipVec, ...
                     "Color", testingMap1Color); hold on;
             end
             if(p == 2)
-                h2 = plot(timeVec,...
-                    subjectData{j,p}.manipForceTooHigh(t_i), ...
+                h2 = plot(timeVec,manipVec, ...
                     "Color", trainingMap1Color); hold on;
             end
         end
@@ -1082,7 +1102,7 @@ for j = 1:numSubjects
     ylim([-0.02 1.4]); yticks([0 1]);
     improvePlot_v2(false, true, 18, 1200, 700);
     xlabel("Time [sec]"); ylabel("manipForceTooHigh bool [-]");
-    title(strcat("ManipForce Thresholding Subject # ", num2str(j)))
+    title(strcat("ManipForce Thresholding Subject # ", num2str(subjectNum(j))))
 
     %     legend([h1(1), h2(1), h3(1)],...
     %         "Exp Type 1", "Exp Type 2","Exp Type 3",...
@@ -1182,7 +1202,7 @@ end
 figure;
 % Plot average Num Box Breaks Bar Plot with Error Bars
 createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
-    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]",[-2.0 7.0]);
+    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]"); %,[-2.0 7.0]
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -1193,7 +1213,7 @@ end
 figure;
 % Plot average time box broken Bar Plot with Error Bars
 createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
-    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]",[-1.0 3.0]);
+    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]"); %,[-1.0 3.0]
 
 %Save figure as pdf:
 if (saveFigures == true)

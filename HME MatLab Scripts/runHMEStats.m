@@ -110,27 +110,14 @@ function runHMEStats()
     
     %Find p-values
     %vertically concatenate columns of the same metric
-    yCT_Train = [yCT_Map1_Train; yCT_Map3_Train; yCT_Map5_Train];
     
     disp("Train")
-    % [p_CompletionTime, ~, stats_CompletionTime] = ...
-    %     anovan(yCT_Train, {mappingsExp1},...
-    %     "Model","interaction", "Varnames",["mappings"],...
-    %     "display", showStats)
-
-     % [p_CompletionTime, ~, stats_CompletionTime] = ...
-     aov =   anova( {mappingsExp1}, yCT_Train, FactorNames=["mappings"])
-
-
-    yCT_Test = [yCT_Map1_Test; yCT_Map3_Test; yCT_Map5_Test];
-
+    yCT_Train = [yCT_Map1_Train; yCT_Map3_Train; yCT_Map5_Train];
+    % aov = anova({mappingsExp1}, yCT_Train, FactorNames=["mappings"])
 
     disp("Test")
-    % [p_CompletionTime, ~, stats_CompletionTime] = ...
-    %     anovan(yCT_Test, {mappingsExp2},...
-    %     "Model","interaction", "Varnames",["mappings"],...
-    %     "display", showStats)
-    aov =   anova( {mappingsExp2}, yCT_Test, FactorNames=["mappings"])
+    yCT_Test = [yCT_Map1_Test; yCT_Map3_Test; yCT_Map5_Test];
+    % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
 
     disp("Both")
     yCT = [yCT_Train; yCT_Test];
@@ -142,34 +129,11 @@ function runHMEStats()
     "Model","interaction", "Varnames",["mappings","experimentType"],...
     "display", showStats)
 
-%     yIPL = [yIPL_Map1; yIPL_Map3; yIPL_Map5];
-%     [p_IndexPathLength, ~, stats_IndexPathLength] = anovan(yIPL, {mappings},...
-%         "Model","interaction", "Varnames","mappings", "display",showStats);
-% 
-%     yTPL = [yTPL_Map1; yTPL_Map3; yTPL_Map5];
-%     [p_ThumbPathLength, ~, stats_ThumbPathLength] = anovan(yTPL, {mappings},...
-%         "Model","interaction", "Varnames","mappings","display",showStats);
-% 
-%     yBPL = [yBPL_Map1; yBPL_Map3; yBPL_Map5];
-%     %     p_BoxPathLength = anovan(yBPL, {mappings})
-%     [p_BoxPathLength, ~, stats_BoxPathLength] = anovan(yBPL, {mappings},...
-%         "Model","interaction", "Varnames","mappings", "display",showStats);
-%     
-%     yISF = [yISF_Map1; yISF_Map3; yISF_Map5];
-%     [p_IndexShearForce, ~, stats_IndexShearForce] = anovan(yISF, {mappings},...
-%         "Model","interaction", "Varnames","mappings","display",showStats);
-% 
-%     yINF = [yINF_Map1; yINF_Map3; yINF_Map5];
-%     [p_IndexNormalForce, ~, stats_IndexNormalForce] = anovan(yINF, {mappings},...
-%         "Model","interaction", "Varnames", "mappings", "display",showStats);
-% 
-%     yTSF = [yTSF_Map1; yTSF_Map3; yTSF_Map5];
-%     [p_ThumbShearForce, ~, stats_ThumbShearForce] = anovan(yTSF, {mappings},...
-%         "Model","interaction", "Varnames", "mappings", "display",showStats);
-% 
-%     yTNF = [yTNF_Map1; yTNF_Map3; yTNF_Map5];
-%     [p_ThumbNormalForce, ~, stats_ThumbNormalForce] = anovan(yTNF, {mappings},...
-%         "Model","interaction", "Varnames", "mappings", "display",showStats);
+    if (showStats ==  "on")
+        set(gcf,figure('Name','Measured Data'));
+    
+    end
+
 
     % Compare signifcance with control group only:
     if(interactableCompare == false)
