@@ -21,7 +21,7 @@ numRemovedSubjects = 0;
 % Toggle showing individual subject data
 showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:4, 6:10];
+subjectNum = [1:4, 6:12];
 
 % Load data from folder
 % Folder contatining all data:

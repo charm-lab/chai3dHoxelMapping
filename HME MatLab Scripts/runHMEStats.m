@@ -78,9 +78,12 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
 
     disp("Both")
-    y = [y_Train; y_Test];
-    mappings = [mappingsExp1; mappingsExp2];
-    experimentType = [experimentType1; experimentType2];
+    % y = [y_Train; y_Test];
+    y = [y_Test];
+    % mappings = [mappingsExp1; mappingsExp2];
+    mappings = [mappingsExp2];
+    % experimentType = [experimentType1; experimentType2];
+    experimentType = [ experimentType2];
     group = {mappings, experimentType};
 
     [p, tbl, stats] = anovan(y, group, "Model","interaction",...
