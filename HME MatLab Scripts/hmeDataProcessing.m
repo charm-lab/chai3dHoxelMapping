@@ -18,10 +18,8 @@ totalNumSubjects = 9;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
-% Toggle showing individual subject data
-showSubjects = false;
 %showSubjects = true;
-subjectNum = [1:4, 6:12];
+subjectNum = [1:4, 6:14];
 
 % Load data from folder
 % Folder contatining all data:

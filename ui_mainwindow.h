@@ -501,7 +501,7 @@ public:
         SetTrialNo = new QSpinBox(layoutWidget2);
         SetTrialNo->setObjectName(QStringLiteral("SetTrialNo"));
         SetTrialNo->setFont(font1);
-        SetTrialNo->setMaximum(99);
+        SetTrialNo->setMaximum(999);
         SetTrialNo->setSingleStep(1);
         SetTrialNo->setValue(1);
 
