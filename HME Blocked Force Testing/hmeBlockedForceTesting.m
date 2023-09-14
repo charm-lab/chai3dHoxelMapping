@@ -98,7 +98,7 @@ if ~isnan(crossing_time)
     eqn = string("F_{actual} = " + P(1)) + "*[DC] + [" + num2str(P(2) + "]");
     text(min(dutyCycle), max(actualForce), eqn, ...
         "HorizontalAlignment", "left", "VerticalAlignment", "top", ...
-        "FontSize", 14)
+        "FontSize", 20)
 
     % Plot Details:
     xlabel('Duty Cycle [%]');
@@ -107,7 +107,7 @@ if ~isnan(crossing_time)
     % grid on;
     xlim([11 110]); xticklabels([20:10:100]);
     ylim([0 21]);
-    improvePlot_v2(false, true, 14, 1200, 600);
+    improvePlot_v2(false, true, 22, 1200, 600);
     % Save figure as pdf:
 
     set(gcf,'PaperOrientation','landscape');
