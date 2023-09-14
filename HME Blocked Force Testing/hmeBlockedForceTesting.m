@@ -1,6 +1,5 @@
 clear; close all; clc;
 
-% try
 % Load the CSV file
 df = readtable('data_20230911134955.csv');
 
@@ -28,10 +27,10 @@ if ~isnan(crossing_time)
     low_duration = 2.5;  % seconds
     num_intervals = 17;
 
-    % Initialize arrays to store average values, duty cycles, and commanded forces
-    average_values = zeros(1, num_intervals);
-    duty_cycles = zeros(1, num_intervals);
-    commanded_forces = zeros(1, num_intervals);
+    % Initialize arrays to store average forcevalues, duty cycles, and commanded forces
+    actualForce = zeros(1, num_intervals);
+    dutyCycle = zeros(1, num_intervals);
+    commandedForce = zeros(1, num_intervals);
 
     % Calculate the averages, duty cycles, and commanded forces
     for i = 1:num_intervals
@@ -40,11 +39,11 @@ if ~isnan(crossing_time)
         interval_data = df(df.Time_s_ >= start_time & df.Time_s_ < end_time, :);
         average_value = mean(interval_data.ZeroedForceZ_N_);
         % Assign duty cycle based on interval number
-        duty_cycle = 20 + (i - 1) * 5;  % Start from 20% and increase by 5% each interval
-        commanded_force = duty_cycle / 10;  % Calculate commanded force (N)
-        average_values(i) = average_value;
-        duty_cycles(i) = duty_cycle;
-        commanded_forces(i) = commanded_force;
+        dutyCylceIncrement = 20 + (i - 1) * 5;  % Start from 20% and increase by 5% each interval
+        commandedForceIncrement = dutyCylceIncrement / 10;  % Calculate commanded force (N)
+        actualForce(i) = average_value;
+        dutyCycle(i) = dutyCylceIncrement;
+        commandedForce(i) = commandedForceIncrement;
         %fprintf('Duty Cycle: %d%% - Commanded Force: %.2f N - Average Value: %.2f N\n', duty_cycle, commanded_force, average_value);
     end
 
@@ -54,7 +53,7 @@ if ~isnan(crossing_time)
     % Plot the average values vs. duty cycle
     % subplot(1, 3, 1);
     subplot(2, 2, 1);
-    plot(duty_cycles, average_values, 'bo-');
+    plot(dutyCycle, actualForce, 'bo-');
     xlabel('Duty Cycle (%)');
     ylabel('Measured Force Z (N)');
     title('Measured Force Z vs. Duty Cycle');
@@ -64,7 +63,7 @@ if ~isnan(crossing_time)
     % Plot the average values vs. commanded force
     % subplot(1, 3, 2);
     subplot(2, 2, 2);
-    plot(commanded_forces, average_values, 'bo-');
+    plot(commandedForce, actualForce, 'bo-');
     xlabel('Commanded Force (N)');
     ylabel('Measured Force Z (N)');
     title('Measured Force Z vs. Commanded Force');
@@ -86,10 +85,37 @@ if ~isnan(crossing_time)
 
     improvePlot_v2(false, true, 14, 1400, 800);
 
+    % Plot for paper:
+    figure;
+    % Duty cycles vs avg force results data:
+    plot(dutyCycle, actualForce, 'bs',"MarkerFaceColor","b"); hold on;
+    
+    % Linear fit;
+    P = polyfit(dutyCycle, actualForce,1);
+    yForceFit = P(1)*dutyCycle + P(2);
+    plot(dutyCycle, yForceFit,'r-');
+    % Add text displaying values of fit:
+    eqn = string("F_{actual} = " + P(1)) + "*[DC] + [" + num2str(P(2) + "]");
+    text(min(dutyCycle), max(actualForce), eqn, ...
+        "HorizontalAlignment", "left", "VerticalAlignment", "top", ...
+        "FontSize", 14)
+
+    % Plot Details:
+    xlabel('Duty Cycle [%]');
+    ylabel('Measured Force Z [N]');
+    title('Measured Force Z vs. Duty Cycle');
+    % grid on;
+    xlim([11 110]); xticklabels([20:10:100]);
+    ylim([0 21]);
+    improvePlot_v2(false, true, 14, 1200, 600);
+    % Save figure as pdf:
+
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf,...
+        '..\..\..\My Publications\ToH 2023 Short Paper\ToH Figures\DC_to_Force',...
+        '-dpdf','-r0');
+
+
 else
     disp('No crossing above 0.1 N found');
 end
-
-% catch ME
-%     disp(['An error occurred: ', ME.message]);
-% end

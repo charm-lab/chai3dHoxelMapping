@@ -69,26 +69,34 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     %Find p-values
     %vertically concatenate columns of the same metric
     
-    disp("Train")
-    y_Train = [y_Map1_Train; y_Map3_Train; y_Map5_Train];
-    % aov = anova({mappingsExp1}, y_Train, FactorNames=["mappings"])
+    % disp("Train")
+    % y_Train = [y_Map1_Train; y_Map3_Train; y_Map5_Train];
+    % % aov = anova({mappingsExp1}, y_Train, FactorNames=["mappings"])
 
     disp("Test")
     y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
     % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
-
-    disp("Both")
-    % y = [y_Train; y_Test];
-    y = [y_Test];
-    % mappings = [mappingsExp1; mappingsExp2];
+   
     mappings = [mappingsExp2];
-    % experimentType = [experimentType1; experimentType2];
-    experimentType = [ experimentType2];
+    experimentType = [experimentType2];
     group = {mappings, experimentType};
 
-    [p, tbl, stats] = anovan(y, group, "Model","interaction",...
-        "Varnames",["mappings","experimentType"],...
-        "display", showStats);
+    [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
+    
+
+
+    % disp("Both")
+    % % y = [y_Train; y_Test];
+    % y = [y_Test];
+    % % mappings = [mappingsExp1; mappingsExp2];
+    % mappings = [mappingsExp2];
+    % % experimentType = [experimentType1; experimentType2];
+    % experimentType = [ experimentType2];
+    % group = {mappings, experimentType};
+    % 
+    % [p, tbl, stats] = anovan(y, group, "Model","interaction",...
+    %     "Varnames",["mappings","experimentType"],...
+    %     "display", showStats);
 
     % Compare signifcance with control group only:
     if(interactableCompare == false)

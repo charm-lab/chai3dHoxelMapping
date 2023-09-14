@@ -104,7 +104,7 @@ xticks([1:numExperimentTypes]);
 tickLabels = ["Training, Color \Delta", "Testing, No Color \Delta"];
 set(gca,'xTick', [1:numExperimentTypes],'xticklabel', tickLabels); %#ok<NBRAK>
 
-improvePlot_v2(false, true, 18, 1000, 700);
+improvePlot_v2(false, true, 16, 1000, 700);
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);
 

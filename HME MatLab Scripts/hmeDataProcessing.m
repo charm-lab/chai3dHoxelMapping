@@ -14,12 +14,12 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 9;
+totalNumSubjects = 3;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %showSubjects = true;
-subjectNum = [1:4, 6:14];
+subjectNum = [1:3];%[1:4, 6:13];
 
 % Load data from folder
 % Folder contatining all data:
@@ -28,14 +28,6 @@ subjectNum = [1:4, 6:14];
 
 dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
     "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
-%
-% dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\Final Pilot\HME_ExpType1"
-%     "..\HME_Subject_Data\Hoxels-1DoF\Final Pilot\HME_ExpType2"]
-
-% dataFolders = ...
-%     ["..\HME_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\HME_ExpType1"
-%     "..\HME_Subject_Data\Hoxels-1DoF\Jasmin_Pilot\HME_ExpType2"]
-
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -97,7 +89,11 @@ for p = 1:numExperimentTypes
 
     end
 end
-repairedBool = false;
+
+% Checs for subjects whose data needed to be patched due to experiment
+% resets
+repairedBool9 = false;
+repairedBool14 = false;
 disp("***Data Upload and Merge Complete***")
 % Now each metric of interest will be represented by a cell. Within that
 % cell every row represents a subject, every column the experiment type.
@@ -105,57 +101,202 @@ disp("***Data Upload and Merge Complete***")
 % Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
 
-%% Repair Subject 7
-% if (repairedBool == false)
+%% Repair Subject Data
+close all;
+% 
+% subjectsToBeRepaired = [9 14];
+% 
+% if (repairedBool9 == false)
+%     j = 1;% j=9; % When all subjects are loaded
 %     plotVis = "on";
 %     saveFigures = false;
-%     j = 2;
-%     % Data to be mended:
-%     p=2; % because reset was in trial 38
-%     subject2Data = subjectData{j, p};
-%     % sub2ResetIndex = 69706;
-%     % sub2ResetIndex = 62181;
-%     sub2ResetIndex = 117648-5;
-%     subject2Data.time(sub2ResetIndex:end) = subject2Data.time(sub2ResetIndex:end)...
-%         + subjectData{j, p-1}.time(408116);
-%     % Plus the last trial success before failure
-%
-%
+% 
+%     % Subject 9 had 4 resets: Trials 27, 60, 82, and 93
+%     p = 1; % for the resets in Trials 27 and 60
+% 
+%     % Repair 2 - Trial 60:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 743402;
+%     % 1st index afterward with TrialNum = 60;
+%     trialNum60 = 834754;
+% 
 %     % Remove the data:
-%     subject2Data(1:sub2ResetIndex,:)=[];
-%
-%     subjectData{j,p} = subject2Data;
-%
-%     repairedBool = true;
-%     % figure;
-%     % if(p == 1)
-%     %     h1 = plot(subjectData{j,p}.time,...
-%     %         subjectData{j,p}.trialSuccess,'r'); hold on;
-%     % end
-%     % if(p == 2)
-%     %     h2 = plot(subjectData{j,p}.time,...
-%     %         subjectData{j,p}.trialSuccess,'b'); hold on;
-%     % end
-%     %
-%     % title(strcat('Subject 2 All Trials -- Repaired'));
-%     % xlabel("Time"); ylabel("success/fail");
-%     % ylim([-0.2 1.2]); yticks([0 1])
-%     % improvePlot_v2(false, true, 18, 1200,800);
-%     % %Hide/Show Figure at Runtime
-%     % set(gcf,'Visible', plotVis);
-%
-%
+%     subjectData{j,p}(trialZeroIndex:trialNum60-1,:) = [];
+%     % Now the ist instance of trialNum60 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) ...
+%         + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     % Repair 1 - Trial 27:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 312776;
+%     % 1st index afterward with TrialNum = 27;
+%     trialNum27 = 358448;
+% 
+%     % Remove the data:
+%     subjectData{j,p}(trialZeroIndex:trialNum27-1, :) = [];
+%     % Now the ist instance of trialNum27 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     p = 2;  % for the resets in Trials 82 and 93
+% 
+%     % Repair 2 - Trial 93:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 270752;
+%     % 1st index afterward with TrialNum = 93;
+%     trialNum93 = 319852;
+% 
+%     % Remove the data:
+%     subjectData{j,p}(trialZeroIndex:trialNum93, :) = [];
+%     % Now the ist instance of trialNum60 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) ...
+%         + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     % Repair 1 - Trial 82:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 98909;
+%     % 1st index afterward with TrialNum = 27;
+%     trialNum82 = 148170;
+% 
+%     % Remove the data:
+%     subjectData{j,p}(trialZeroIndex:trialNum82-1,:) = [];
+%     % Now the ist instance of trialNum27 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     % Add time offset to all data in Exp Type 2 to make continuous with Exp
+%     % Type 1:
+%     subjectData{j,2}.time(1:end) = ...
+%         subjectData{j,2}.time(1:end) + subjectData{j,1}.time(end) ...
+%         - subjectData{j,2}.time(1) ;
+% 
+%     figure;
+%     for p = 1:numExperimentTypes % Addition for each experiment type
+%         if(p == 1)
+%             h1 = plot(subjectData{j,p}.time,...
+%                 subjectData{j,p}.trialSuccess,'r'); hold on;
+%         end
+%         if(p == 2)
+%             h2 = plot(subjectData{j,p}.time,...
+%                 subjectData{j,p}.trialSuccess,'b'); hold on;
+%         end
+% 
+%         title(strcat('Subject 9 All Trials -- Repaired'));
+%         xlabel("Time"); ylabel("success/fail");
+%         ylim([-0.2 1.2]); yticks([0 1])
+%         improvePlot_v2(false, true, 18, 1200,800);
+%         %Hide/Show Figure at Runtime
+%         set(gcf,'Visible', plotVis);
+%     end
+% 
+%     repairedBool9 = true;
 % end
-% %
-% % % Start time to be used for later - just before first pick up:
-% sub2StartTimeIndex = 1;
-%
-% disp("subject2 data repair -- done")
+% disp("subject9 data repair -- done")
+% 
+% if (repairedBool14 == false)
+%     j = 1;% j=14; % When all subjects are loaded
+%     plotVis = "on";
+%     saveFigures = false;
+% 
+%     % Subject 14 had 3 resets: Trials 27, 87, and 99
+%     p = 1; % for the resets in Trials 27
+% 
+%     % Repair 1 - Trial 27:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 262615;
+%     % 1st index afterward with TrialNum = 27;
+%     trialNum27 = 292739;
+% 
+%     % Remove the data:
+%     subjectData{j,p}(trialZeroIndex:trialNum27-1, :) = [];
+%     % Now the ist instance of trialNum27 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     p = 2;  % for the resets in Trials 87 and 99
+% 
+%     % Repair 2 - Trial 99:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 257297;
+%     % 1st index afterward with TrialNum = 93;
+%     trialNum99 = 290658;
+% 
+%     % Remove the data:
+%     subjectData{j,p}(trialZeroIndex:trialNum99-1, :) = [];
+%     % Now the ist instance of trialNum9 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) ...
+%         + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     % Repair 1 - Trial 87:
+%     % 1st index with trialNum = 0 -- Found Manually
+%     trialZeroIndex = 108153;
+%     % 1st index afterward with TrialNum = 27;
+%     trialNum87 = 147827;
+% 
+%     % Remove the data:
+%     subjectData{j,p}(trialZeroIndex:trialNum87-1,:) = [];
+%     % Now the ist instance of trialNum27 will be where the first instance
+%     % of trialNumZero was before the removal
+% 
+%     % Add to the time vector to fix the offset:
+%     subjectData{j,p}.time(trialZeroIndex:end) = ...
+%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+% 
+%     % Add time offset to all data in Exp Type 2 to make continuous with Exp
+%     % Type 1:
+%     subjectData{j,2}.time(1:end) = ...
+%         subjectData{j,2}.time(1:end) + subjectData{j,1}.time(end) ...
+%         - subjectData{j,2}.time(1) ;
+% 
+%     figure;
+%     for p = 1:numExperimentTypes % Addition for each experiment type
+%         if(p == 1)
+%             h1 = plot(subjectData{j,p}.time,...
+%                 subjectData{j,p}.trialSuccess,'r'); hold on;
+%         end
+%         if(p == 2)
+%             h2 = plot(subjectData{j,p}.time,...
+%                 subjectData{j,p}.trialSuccess,'b'); hold on;
+%         end
+% 
+%         title(strcat('Subject 14 All Trials -- Repaired'));
+%         xlabel("Time"); ylabel("success/fail");
+%         ylim([-0.2 1.2]); yticks([0 1])
+%         improvePlot_v2(false, true, 18, 1200,800);
+%         %Hide/Show Figure at Runtime
+%         set(gcf,'Visible', plotVis);
+%     end
+% 
+%     repairedBool4 = true;
+% end
+% disp("subject14 data repair -- done")
 
 
 %% Plot Success/Fails
 plotVis = "on";
 saveFigures = false;
+close all;
 
 % Target Success Boolean
 % figure;
@@ -171,7 +312,6 @@ for j = 1:numSubjects
                 subjectData{j,p}.trialSuccess,'b'); hold on;
         end
     end
-
     title(strcat('Trial Success Boolean: Subject ', num2str(subjectNum(j)), ' All Trials'));
     xlabel("Time [sec]"); ylabel("");
     ylim([-0.2 1.2]); yticks([0 1]);
@@ -234,11 +374,6 @@ for p = 1:numExperimentTypes % Addition for each experiment type
         endTimes = strfind(subjectData{j,p}.trialSuccess',[0 1])'+ 1;
         %^^+1 to actually get to the 1st instance of trialSucecess == 1
 
-        % Mending messed up Pilot Subject 2:
-        %         if (j == 2)
-        %             startTimes = [sub2StartTimeIndex; startTimes];
-        %         end
-
         trialStartTime_indexTemp = zeros(numTrials(p), numSubjects); %fallingEdgeTime index
         trialEndTime_indexTemp = zeros(numTrials(p), numSubjects); %risingEdgeTime index
         firstIndexContactTime_index = zeros(numTrials(p), numSubjects);
@@ -271,7 +406,6 @@ for p = 1:numExperimentTypes % Addition for each experiment type
 end
 
 disp("find trial start and end times -- done")
-
 
 %% Completion Time Calculation
 % completion time for any subject, any trial
@@ -710,7 +844,9 @@ markerSize = 20; %variable used in createErrorBarPlot
 %% Plot completionTimes
 close all;
 markerSize = 12;
+plotMarker = "s";
 minY = 0; maxY = 20;
+jitterVal = 0.0;
 
 % Cells to store parameter basic statistics
 completionTimeMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -730,18 +866,13 @@ for p = 1:numExperimentTypes
     end
 end
 
-jitterVal = 0.1;
-createMultiExpErrorBarPlot(completionTimeMeanStats, completionTimeStdStats,...
-    "Completion Time", "Mapping", "Time [sec]");
+[h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
+    completionTimeStdStats, "Completion Time", "Mapping", "Time [sec]");
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 600);
-% legend("Color \Delta, Trial \Rightarrow",...
-%     "No Color \Delta, Trial \Rightarrow",...
-%     "Location","northeast");
-
-% legend("Training, Color \Delta",...
-%     "Testing, No Color \Delta",...
-%     "Location","northeast");
+legend([h1(1), h2(1),h3(1)],...
+    "Training 1", "Training 2", "Testing",...
+    "Location","northoutside", "NumColumns", 3);
 
 
 % Save figure as pdf:
@@ -752,7 +883,7 @@ end
 
 %% Plot pathLengths
 % close all;
-markerSize = 12;
+markerSize = 8;
 jitterVal = 0.1;
 minY = 0.5; maxY = 1.75;
 plotVis = "off";
@@ -795,20 +926,16 @@ jitterVal = 0.18;
 plotMarker = "s";
 % Index Plot
 figure;
-[indexP1,indexP2,indexP3] = ...
+[indexP1, indexP2, indexP3] = ...
     createMultiExpErrorBarPlot(indexPathLengthMeanStats,...
     indexPathLengthStdStats,...
     "Index Path Length", "Mapping", "Path Length [m]");
-ylim([minY,maxY]);
+% ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
-% legend("Color \Delta, Trial \Rightarrow",...
-%     "No Color \Delta, Trial \Rightarrow",...
-%     "Location","northeast");
-
-% legend("Training, Color \Delta",...
-%     "Testing, No Color \Delta",...
-%     "Location","northwest");
+legend([indexP1(1), indexP2(1), indexP3(1)],...
+    "Training 1", "Training 2", "Testing",...
+    "Location","northoutside", "NumColumns", 3);
 
 % Save figure as pdf:
 if (saveFigures == true)
@@ -818,12 +945,15 @@ end
 set(gcf,'Visible', plotVis);
 % Thumb Plot
 figure;
-[thumbP1,thumbP2,thumbP3] = ...
+[thumbP1, thumbP2, thumbP3] = ...
     createMultiExpErrorBarPlot(thumbPathLengthMeanStats,...
     thumbPathLengthStdStats,...
     "Thumb Path Length", "Mapping", "Path Length [m]");
-ylim([minY,maxY]);
+% ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 650); hold off;
+legend([thumbP1(1), thumbP2(1), thumbP3(1)],...
+    "Training 1", "Training 2", "Testing",...
+    "Location","northoutside", "NumColumns", 3);
 
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
@@ -841,10 +971,13 @@ end
 set(gcf,'Visible', plotVis);
 % Box Plot
 figure;
-[boxP1,boxP2,boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
+[boxP1, boxP2, boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
     boxPathLengthStdStats, "Box Path Length", "Mapping", "Path Length [m]");
-ylim([minY,maxY]);
+% ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 650); hold off;
+legend([boxP1(1), boxP2(1), boxP3(1)],...
+    "Training 1", "Training 2", "Testing",...
+    "Location","northoutside", "NumColumns", 3);
 
 % legend("Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow",...
@@ -863,10 +996,22 @@ set(gcf,'Visible', plotVis);
 
 % Combined plot:
 figure;
-createCombinedPathLengthsPlot(indexP1,indexP2,indexP3,...
+[indexTrain1, thumbTrain1, boxTrain1, ...
+    indexTrain2, thumbTrain2, boxTrain2, ...
+    indexTest, thumbTest, boxTest] = ...
+    createCombinedPathLengthsPlot(indexP1,indexP2,indexP3,...
     thumbP1,thumbP2,thumbP3, boxP1,boxP2,boxP3,...
     "Path Lengths", "Mapping", "Path Length [m]");
-improvePlot_v2(false, true, 18, 1150, 650); hold off;
+
+legend([indexTrain1(1), thumbTrain1(1), boxTrain1(1), ...
+    indexTrain2(1), thumbTrain2(1), boxTrain2(1), ...
+    indexTest(1), thumbTest(1), boxTest(1)],...
+    "Index Training1", "Thumb Training1", "Cube Training1",...
+    "Index Training2", "Thumb Training2", "Cube Training2",...
+    "Index Testing", "Thumb Testing", "Cube Testing",...
+    "Location", "northoutside", "NumColumns",3);
+
+improvePlot_v2(false, true, 16, 1000, 650); hold off;
 % improvePlot_v2(false, true, 18, 1400, 800); hold off;
 %Save figure as pdf:
 if (saveFigures == true)
@@ -876,7 +1021,7 @@ end
 
 %% Plot Normal and Shear Forces
 % close all;
-markerSize = 7;
+markerSize = 8;
 minY = 0; maxY = 10;
 
 % Cells to store parameter basic statistics
@@ -925,22 +1070,27 @@ for p = 1:numExperimentTypes
         thumbShearStdStats{j,p} = thumbShearMeanStdVals(j,:);
     end
 end
-jitterVal = 0.1;
+jitterValNum = 0.1;
 % Index Plot
 figure;
-plotMarker = "d";
+plotMarker = "s";
+jitterVal = -jitterValNum; %neg
 [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
     "Index Forces", "Mapping", "Force [N]");
 hold on;
-plotMarker = "s";
+plotMarker = "d";
+jitterVal = jitterValNum; %pos
 [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
     "Index Forces", "Mapping", "Force [N]");
 ylim([minY,maxY]);
-% legend([h1(1), h2(1)],...
-%     "Index Normal",...
-%     "Index Shear",...
-%     "Location","northeast");
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
+legend([indexNP1(1), indexSP1(1), ...
+    indexNP2(1), indexSP2(1),...
+    indexNP3(1), indexSP3(1)],...
+    "Index Normal Training 1", "Index Shear Training 1",...
+    "Index Normal Training 2", "Index Shear Training 2",...
+    "Index Normal Testing", "Index Shear Testing",...
+    "Location","northoutside", "NumColumns", 3);
+improvePlot_v2(false, true, 16, 1200, 650); hold off;
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -950,19 +1100,24 @@ end
 
 % Thumb Plot
 figure;
-plotMarker = "d";
+plotMarker = "s";
+jitterVal = -jitterValNum; %neg
 [thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
     "Thumb Forces", "Mapping", "Force [N]");
 hold on;
-plotMarker = "s";
+plotMarker = "d";
+jitterVal = jitterValNum; %pos
 [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
     "Thumb Forces", "Mapping", "Force [N]");
 ylim([minY,maxY]);
-% legend([h3(1), h4(1)],...
-%     "Thumb Normal",...
-%     "Thumb Shear",...
-%     "Location","northeast");
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
+legend([thumbNP1(1), thumbSP1(1), ...
+    thumbNP2(1), thumbSP2(1),...
+    thumbNP3(1), thumbSP3(1)],...
+    "Thumb Normal Training 1", "Thumb Shear Training 1",...
+    "Thumb Normal Training 2", "Thumb Shear Training 2",...
+    "Thumb Normal Testing", "Thumb Shear Testing",...
+    "Location","northoutside", "NumColumns", 3);
+improvePlot_v2(false, true, 16, 1200, 650); hold off;
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -970,20 +1125,20 @@ if (saveFigures == true)
     print(gcf, 'figures\thumb_Normal-ShearForces','-dpdf','-r0');
 end
 
-% Combined plot:
-figure;
-createCombinedNSForcesPlot(indexNP1,indexNP2,indexNP3,...
-    indexSP1,indexSP2,indexSP3,...
-    thumbNP1,thumbNP2,thumbNP3,...
-    thumbSP1,thumbSP2,thumbSP3,...
-    "Fingertip Forces", "Mapping", "Force [N]");
-improvePlot_v2(false, true, 18, 1150, 650); hold off;
-% improvePlot_v2(false, true, 18, 1400, 800); hold off;
-%Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\normal-shearForcesCombined','-dpdf','-r0');
-end
+% % Combined plot:
+% figure;
+% createCombinedNSForcesPlot(indexNP1,indexNP2,indexNP3,...
+%     indexSP1,indexSP2,indexSP3,...
+%     thumbNP1,thumbNP2,thumbNP3,...
+%     thumbSP1,thumbSP2,thumbSP3,...
+%     "Fingertip Forces", "Mapping", "Force [N]");
+% improvePlot_v2(false, true, 18, 1150, 650); hold off;
+% % improvePlot_v2(false, true, 18, 1400, 800); hold off;
+% %Save figure as pdf:
+% if (saveFigures == true)
+%     set(gcf,'PaperOrientation','landscape');
+%     print(gcf, 'figures\normal-shearForcesCombined','-dpdf','-r0');
+% end
 
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
@@ -1272,7 +1427,6 @@ disp("Plot Other Manipulation Force Threshold Metrics-- done")
 [p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
     runHMEStats(numBoxBreaksMapping1, numBoxBreaksMapping3,...
     numBoxBreaksMapping5, "Cube Break Occurences");
-
 
 % Time Box Broken: *****************************************************
 [p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
