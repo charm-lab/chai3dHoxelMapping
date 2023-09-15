@@ -3,7 +3,7 @@
 % Author: Jasmin E. Palmer
 
 function [barPlot] = createBarPlot(map1, map3, map5,...
-    plotTitle, xAxisLabel, yAxisLabel) %, yAxisLimits
+    plotTitle, xAxisLabel, yAxisLabel, yAxisLimits) %
 
 numMappings = evalin('base','numMappings');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
@@ -15,7 +15,7 @@ testingMap3Color = evalin('base', 'testingMap3Color');
 trainingMap5Color = evalin('base', 'trainingMap5Color');
 testingMap5Color = evalin('base', 'testingMap5Color');
 
-markSubjectAverages = true;
+markSubjectAverages = false;
 
 for p = 1:numExperimentTypes
     % Data from each mapping from all subjects reformed into one vector:
@@ -97,14 +97,14 @@ for p = 1:numExperimentTypes
     end
 end
 
-% ylim(yAxisLimits);
+ylim(yAxisLimits);
 xticks([1:numExperimentTypes]);
 % tickLabels = ["Color \Delta, Trial \Rightarrow",...
 %     "No Color \Delta, Trial \Rightarrow"];
 tickLabels = ["Training, Color \Delta", "Testing, No Color \Delta"];
 set(gca,'xTick', [1:numExperimentTypes],'xticklabel', tickLabels); %#ok<NBRAK>
 
-improvePlot_v2(false, true, 22, 1000, 700);
+improvePlot_v2(false, true, 22, 1200, 500);
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);
 
@@ -113,14 +113,14 @@ if (markSubjectAverages == true)
         "Dual Tactor", "Single Tactor", "Control",...
         "Dual Tactor", "Single Tactor", "Control",...
         "Subject Avg",...
-        "Location", "northeast",...
+        "Location", "best",...
         "NumColumns", 2, ...
     "FontSize", 18);
 else
     legend([h1(1), h1(2), h1(3), h2(1), h2(2), h2(3)],...
         "Dual Tactor", "Single Tactor", "Control",...
         "Dual Tactor", "Single Tactor", "Control",...
-        "Location", "northeast",...
+        "Location", "best",...
         "NumColumns", 2, ...
     "FontSize", 18);
 end

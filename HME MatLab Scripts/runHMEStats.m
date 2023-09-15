@@ -83,8 +83,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
     [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
     
-
-
     % disp("Both")
     % % y = [y_Train; y_Test];
     % y = [y_Test];

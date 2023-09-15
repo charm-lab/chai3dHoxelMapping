@@ -14,12 +14,12 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 15;
+totalNumSubjects = 18;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %showSubjects = true;
-subjectNum = [1:15];
+subjectNum = [1:18];
 
 % Load data from folder
 % Folder contatining all data:
@@ -1295,7 +1295,7 @@ end
 disp("Plot Manipulation Force Threshold Plots -- done")
 
 %% Other Manip Force Thershold Metrics: ************************************
-
+% close all;
 % Sort manipulation parameters by mapping:
 for p = 1:numExperimentTypes % Addition for each experiment type
     % Modify repmat depending on which Exp type is being processed
@@ -1350,36 +1350,39 @@ end
 figure;
 % Plot average Num Box Breaks Bar Plot with Error Bars
 createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
-    "Avg # of Box Breaks", "Experiment Type", "Box Breaks [~]"); %,[-2.0 7.0]
+    "Mean Occurences of Applying Excessive Force to Cube", ...
+    "Experiment Type", "Box Breaks [~]",[-2.0 4.0]); %
 
 %Save figure as pdf:
 if (saveFigures == true)
     set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\avgBoxBreaks','-dpdf','-fillpage');
+    print(gcf, 'figures\avgBoxBreaks','-dpdf','-r0');
 end
 
 figure;
 % Plot average time box broken Bar Plot with Error Bars
 createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
-    "Avg Time Box Broken", "Experiment Type", "Time Broken [sec]"); %,[-1.0 3.0]
+    "Mean Elasped Time of Applying Excessive Force to Cube", ...
+    "Experiment Type", "Time Broken [sec]",[-1.0 3.0]); %
 
 %Save figure as pdf:
 if (saveFigures == true)
     set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\avgTimeBoxBroken','-dpdf','-fillpage');
+    print(gcf, 'figures\avgTimeBoxBroken','-dpdf','-r0');
 end
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
 
 %% Run ANOVA and Compare Means for Metrics of Interest:
-% Completion Time: ******************************************************
+%% Completion Time: ******************************************************
+close all;
 % Run ANOVA and compare means
 [p_CompletionTime, ~ , stats_CompletionTime] = ...
     runHMEStats(completionTimeMapping1, completionTimeMapping3,...
     completionTimeMapping5, "Completion Time");
 
-% Path Lengths: *********************************************************
-
+%% Path Lengths: *********************************************************
+close all;
 % Index
 [p_indexPathLength, ~ , stats_indexPathLength] = ...
     runHMEStats(indexPathLengthMapping1, indexPathLengthMapping3,...
@@ -1395,9 +1398,9 @@ disp("Plot Other Manipulation Force Threshold Metrics-- done")
     runHMEStats(boxPathLengthMapping1, boxPathLengthMapping3,...
     boxPathLengthMapping5, "Cube Path Length");
 
-% Interaction Forces: **************************************************
-
-% **Index
+%% Interaction Forces: **************************************************
+%% **Index
+close all;
 % Normal
 [p_indexNormal, ~ , stats_indexNormal] = ...
     runHMEStats(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
@@ -1407,7 +1410,8 @@ disp("Plot Other Manipulation Force Threshold Metrics-- done")
     runHMEStats(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
     meanIndexShearForceMapping5, "Index Shear Force");
 
-% **Thumb
+%% **Thumb
+close all;
 % Normal
 [p_thumbNormal, ~ , stats_thumbNormal] = ...
     runHMEStats(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
@@ -1417,12 +1421,14 @@ disp("Plot Other Manipulation Force Threshold Metrics-- done")
     runHMEStats(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
     meanThumbShearForceMapping5, "Thumb Shear Force");
 
-% Number of Box Breaks: ************************************************
+%% Number of Box Breaks: ************************************************
+close all;
 [p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
     runHMEStats(numBoxBreaksMapping1, numBoxBreaksMapping3,...
     numBoxBreaksMapping5, "Cube Break Occurences");
 
-% Time Box Broken: *****************************************************
+%% Time Box Broken: *****************************************************
+close all;
 [p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
     runHMEStats(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
     timeBoxBrokenMapping5, "Cube Break Occurences");
