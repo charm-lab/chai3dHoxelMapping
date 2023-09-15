@@ -105,192 +105,192 @@ disp("***Data Upload and Merge Complete***")
 close all;
 %
 % subjectsToBeRepaired = [9 14];
-%
-% if (repairedBool9 == false)
-%     j = 1;% j=9; % When all subjects are loaded
-%     plotVis = "on";
-%     saveFigures = false;
-%
-%     % Subject 9 had 4 resets: Trials 27, 60, 82, and 93
-%     p = 1; % for the resets in Trials 27 and 60
-%
-%     % Repair 2 - Trial 60:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 743402;
-%     % 1st index afterward with TrialNum = 60;
-%     trialNum60 = 834754;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum60-1,:) = [];
-%     % Now the ist instance of trialNum60 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) ...
-%         + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     % Repair 1 - Trial 27:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 312776;
-%     % 1st index afterward with TrialNum = 27;
-%     trialNum27 = 358448;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum27-1, :) = [];
-%     % Now the ist instance of trialNum27 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     p = 2;  % for the resets in Trials 82 and 93
-%
-%     % Repair 2 - Trial 93:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 270752;
-%     % 1st index afterward with TrialNum = 93;
-%     trialNum93 = 319852;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum93, :) = [];
-%     % Now the ist instance of trialNum60 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) ...
-%         + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     % Repair 1 - Trial 82:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 98909;
-%     % 1st index afterward with TrialNum = 27;
-%     trialNum82 = 148170;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum82-1,:) = [];
-%     % Now the ist instance of trialNum27 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     % Add time offset to all data in Exp Type 2 to make continuous with Exp
-%     % Type 1:
-%     subjectData{j,2}.time(1:end) = ...
-%         subjectData{j,2}.time(1:end) + subjectData{j,1}.time(end) ...
-%         - subjectData{j,2}.time(1) ;
-%
-%     figure;
-%     for p = 1:numExperimentTypes % Addition for each experiment type
-%         if(p == 1)
-%             h1 = plot(subjectData{j,p}.time,...
-%                 subjectData{j,p}.trialSuccess,'r'); hold on;
-%         end
-%         if(p == 2)
-%             h2 = plot(subjectData{j,p}.time,...
-%                 subjectData{j,p}.trialSuccess,'b'); hold on;
-%         end
-%
-%         title(strcat('Subject 9 All Trials -- Repaired'));
-%         xlabel("Time"); ylabel("success/fail");
-%         ylim([-0.2 1.2]); yticks([0 1])
-%         improvePlot_v2(false, true, 18, 1200,800);
-%         %Hide/Show Figure at Runtime
-%         set(gcf,'Visible', plotVis);
-%     end
-%
-%     repairedBool9 = true;
-% end
-% disp("subject9 data repair -- done")
-%
-% if (repairedBool14 == false)
-%     j = 1;% j=14; % When all subjects are loaded
-%     plotVis = "on";
-%     saveFigures = false;
-%
-%     % Subject 14 had 3 resets: Trials 27, 87, and 99
-%     p = 1; % for the resets in Trials 27
-%
-%     % Repair 1 - Trial 27:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 262615;
-%     % 1st index afterward with TrialNum = 27;
-%     trialNum27 = 292739;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum27-1, :) = [];
-%     % Now the ist instance of trialNum27 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     p = 2;  % for the resets in Trials 87 and 99
-%
-%     % Repair 2 - Trial 99:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 257297;
-%     % 1st index afterward with TrialNum = 93;
-%     trialNum99 = 290658;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum99-1, :) = [];
-%     % Now the ist instance of trialNum9 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) ...
-%         + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     % Repair 1 - Trial 87:
-%     % 1st index with trialNum = 0 -- Found Manually
-%     trialZeroIndex = 108153;
-%     % 1st index afterward with TrialNum = 27;
-%     trialNum87 = 147827;
-%
-%     % Remove the data:
-%     subjectData{j,p}(trialZeroIndex:trialNum87-1,:) = [];
-%     % Now the ist instance of trialNum27 will be where the first instance
-%     % of trialNumZero was before the removal
-%
-%     % Add to the time vector to fix the offset:
-%     subjectData{j,p}.time(trialZeroIndex:end) = ...
-%         subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
-%
-%     % Add time offset to all data in Exp Type 2 to make continuous with Exp
-%     % Type 1:
-%     subjectData{j,2}.time(1:end) = ...
-%         subjectData{j,2}.time(1:end) + subjectData{j,1}.time(end) ...
-%         - subjectData{j,2}.time(1) ;
-%
-%     figure;
-%     for p = 1:numExperimentTypes % Addition for each experiment type
-%         if(p == 1)
-%             h1 = plot(subjectData{j,p}.time,...
-%                 subjectData{j,p}.trialSuccess,'r'); hold on;
-%         end
-%         if(p == 2)
-%             h2 = plot(subjectData{j,p}.time,...
-%                 subjectData{j,p}.trialSuccess,'b'); hold on;
-%         end
-%
-%         title(strcat('Subject 14 All Trials -- Repaired'));
-%         xlabel("Time"); ylabel("success/fail");
-%         ylim([-0.2 1.2]); yticks([0 1])
-%         improvePlot_v2(false, true, 18, 1200,800);
-%         %Hide/Show Figure at Runtime
-%         set(gcf,'Visible', plotVis);
-%     end
-%
-%     repairedBool4 = true;
-% end
-% disp("subject14 data repair -- done")
+
+if (repairedBool9 == false)
+    j=9; % When all subjects are loaded
+    plotVis = "on";
+    saveFigures = false;
+
+    % Subject 9 had 4 resets: Trials 27, 60, 82, and 93
+    p = 1; % for the resets in Trials 27 and 60
+
+    % Repair 2 - Trial 60:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 743402;
+    % 1st index afterward with TrialNum = 60;
+    trialNum60 = 834754;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum60-1,:) = [];
+    % Now the ist instance of trialNum60 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) ...
+        + subjectData{j,p}.time(trialZeroIndex-1);
+
+    % Repair 1 - Trial 27:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 312776;
+    % 1st index afterward with TrialNum = 27;
+    trialNum27 = 358448;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum27-1, :) = [];
+    % Now the ist instance of trialNum27 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+
+    p = 2;  % for the resets in Trials 82 and 93
+
+    % Repair 2 - Trial 93:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 270752;
+    % 1st index afterward with TrialNum = 93;
+    trialNum93 = 319852;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum93, :) = [];
+    % Now the ist instance of trialNum60 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) ...
+        + subjectData{j,p}.time(trialZeroIndex-1);
+
+    % Repair 1 - Trial 82:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 98909;
+    % 1st index afterward with TrialNum = 27;
+    trialNum82 = 148170;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum82-1,:) = [];
+    % Now the ist instance of trialNum27 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+
+    % Add time offset to all data in Exp Type 2 to make continuous with Exp
+    % Type 1:
+    subjectData{j,2}.time(1:end) = ...
+        subjectData{j,2}.time(1:end) + subjectData{j,1}.time(end) ...
+        - subjectData{j,2}.time(1) ;
+
+    figure;
+    for p = 1:numExperimentTypes % Addition for each experiment type
+        if(p == 1)
+            h1 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'r'); hold on;
+        end
+        if(p == 2)
+            h2 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'b'); hold on;
+        end
+
+        title(strcat('Subject 9 All Trials -- Repaired'));
+        xlabel("Time"); ylabel("success/fail");
+        ylim([-0.2 1.2]); yticks([0 1])
+        improvePlot_v2(false, true, 18, 1200,800);
+        %Hide/Show Figure at Runtime
+        set(gcf,'Visible', plotVis);
+    end
+
+    repairedBool9 = true;
+end
+disp("subject9 data repair -- done")
+
+if (repairedBool14 == false)
+   j=14; % When all subjects are loaded
+    plotVis = "on";
+    saveFigures = false;
+
+    % Subject 14 had 3 resets: Trials 27, 87, and 99
+    p = 1; % for the resets in Trials 27
+
+    % Repair 1 - Trial 27:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 262615;
+    % 1st index afterward with TrialNum = 27;
+    trialNum27 = 292739;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum27-1, :) = [];
+    % Now the ist instance of trialNum27 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+
+    p = 2;  % for the resets in Trials 87 and 99
+
+    % Repair 2 - Trial 99:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 257297;
+    % 1st index afterward with TrialNum = 93;
+    trialNum99 = 290658;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum99-1, :) = [];
+    % Now the ist instance of trialNum9 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) ...
+        + subjectData{j,p}.time(trialZeroIndex-1);
+
+    % Repair 1 - Trial 87:
+    % 1st index with trialNum = 0 -- Found Manually
+    trialZeroIndex = 108153;
+    % 1st index afterward with TrialNum = 27;
+    trialNum87 = 147827;
+
+    % Remove the data:
+    subjectData{j,p}(trialZeroIndex:trialNum87-1,:) = [];
+    % Now the ist instance of trialNum27 will be where the first instance
+    % of trialNumZero was before the removal
+
+    % Add to the time vector to fix the offset:
+    subjectData{j,p}.time(trialZeroIndex:end) = ...
+        subjectData{j,p}.time(trialZeroIndex:end) + subjectData{j,p}.time(trialZeroIndex-1);
+
+    % Add time offset to all data in Exp Type 2 to make continuous with Exp
+    % Type 1:
+    subjectData{j,2}.time(1:end) = ...
+        subjectData{j,2}.time(1:end) + subjectData{j,1}.time(end) ...
+        - subjectData{j,2}.time(1) ;
+
+    figure;
+    for p = 1:numExperimentTypes % Addition for each experiment type
+        if(p == 1)
+            h1 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'r'); hold on;
+        end
+        if(p == 2)
+            h2 = plot(subjectData{j,p}.time,...
+                subjectData{j,p}.trialSuccess,'b'); hold on;
+        end
+
+        title(strcat('Subject 14 All Trials -- Repaired'));
+        xlabel("Time"); ylabel("success/fail");
+        ylim([-0.2 1.2]); yticks([0 1])
+        improvePlot_v2(false, true, 18, 1200,800);
+        %Hide/Show Figure at Runtime
+        set(gcf,'Visible', plotVis);
+    end
+
+    repairedBool4 = true;
+end
+disp("subject14 data repair -- done")
 
 
 %% Plot Success/Fails
@@ -323,7 +323,7 @@ for j = 1:numSubjects
     %         "Exp Type 1", "Exp Type 2",...
     %         "Location","northeast");
     legend("Training, Color \Delta",...
-        "Testing, No Color \Delta",...
+        "Testing, No Color \Delta",... 
         "Location","northeast");
     hold off;
 end
