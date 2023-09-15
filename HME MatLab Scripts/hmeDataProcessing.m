@@ -1136,7 +1136,7 @@ disp("Plot Normal and Shear Force Error Bar Plots -- done")
 %% Manipulation Force Threshold Plotting
 % close all;
 saveFigures = true;
-
+plotVis = "off";
 forceLimit = 20; % N
 
 timeBoxBroken = cell(numSubjects, numExperimentTypes);
@@ -1288,6 +1288,9 @@ for j = 1:numSubjects
             'Subject',num2str(subjectNum(j)),...
             '_manipForceThreshold'),'-dpdf','-fillpage'); %close;
     end
+
+    % Hide/Show Figure at Runtime
+    set(gcf,'Visible', plotVis);
 end
 disp("Plot Manipulation Force Threshold Plots -- done")
 

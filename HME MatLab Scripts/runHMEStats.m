@@ -105,7 +105,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
         %Completion Time 
         comp = multcompare(stats, "CriticalValueType", "dunnett", ...
             "ControlGroup", 3, "Alpha", 0.05);
-        title(strcat(metricName," -- Control"));
+        title(strcat(metricName," -- Control -- Dunnett Test"));
         improvePlot_v2(false, true, fontSize, width, height);
 
         %Tables with Mapping 5 as Control:    
