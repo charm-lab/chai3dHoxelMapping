@@ -11,16 +11,19 @@ p = evalin('base','p');
 cols = [1:numSubjects]; %visCubeSubjectsRange
 
 if (p == 1)
-    mapping1_mean = [mean(map1(1:10,cols)); mean(map1(11:20,cols))];
-    mapping1_std = [std(map1(1:10,cols)); std(map1(11:20,cols))];
-    mapping3_mean = [mean(map3(1:10,cols)); mean(map3(11:20,cols))];
-    mapping3_std = [std(map3(1:10,cols)); std(map3(11:20,cols))];
-    mapping5_mean = [mean(map5(1:10,cols)); mean(map5(11:20,cols))];
-    mapping5_std = [std(map5(1:10,cols)); std(map5(11:20,cols))];
+    mapping1_mean = [mean(reshape(map1(1:10,cols),[],1)); mean(reshape(map1(11:20,cols),[],1))];
+    mapping1_std = [std(reshape(map1(1:10,cols),[],1)); std(reshape(map1(11:20,cols),[],1))];
+    mapping3_mean = [mean(reshape(map3(1:10,cols),[],1)); mean(reshape(map3(11:20,cols),[],1))];
+    mapping3_std = [std(reshape(map3(1:10,cols),[],1)); std(reshape(map3(11:20,cols),[],1))];
+    mapping5_mean = [mean(reshape(map5(1:10,cols),[],1)); mean(reshape(map5(11:20,cols),[],1))];
+    mapping5_std = [std(reshape(map5(1:10,cols),[],1)); std(reshape(map5(11:20,cols),[],1))];
 else
-    mapping1_mean = mean(map1(:,cols)); mapping1_std = std(map1(:,cols));
-    mapping3_mean = mean(map3(:,cols)); mapping3_std = std(map3(:,cols));
-    mapping5_mean = mean(map5(:,cols)); mapping5_std = std(map5(:,cols));
+    mapping1_mean = mean(reshape(map1(:,cols),[],1)); 
+    mapping1_std = std(reshape(map1(:,cols),[],1)); 
+    mapping3_mean = mean(reshape(map3(:,cols),[],1));  
+    mapping3_std = std(reshape(map3(:,cols),[],1));  
+    mapping5_mean = mean(reshape(map5(:,cols),[],1));  
+    mapping5_std = std(reshape(map5(:,cols),[],1));  
 end
 meanVals = [mapping1_mean', mapping3_mean',mapping5_mean'];
 stdVals = [mapping1_std', mapping3_std', mapping5_std'];

@@ -840,17 +840,18 @@ plotMarker = "s"; %variable used in createErrorBarPlot
 visPlotMarker = "s"; %variable used in createErrorBarPlot
 invisPlotMarker = "s"; %variable used in createErrorBarPlot
 markerSize = 20; %variable used in createErrorBarPlot
+alphaVal = 0.20;
 
 %% Plot completionTimes
 close all;
-markerSize = 12;
+markerSize = 10;
 plotMarker = "s";
 minY = 0; maxY = 20;
 jitterVal = 0.0;
 
 % Cells to store parameter basic statistics
-completionTimeMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-completionTimeStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+completionTimeMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+completionTimeStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
 % getParamStats parameters must go in brackets due to being stored as cells
 for p = 1:numExperimentTypes
@@ -860,20 +861,20 @@ for p = 1:numExperimentTypes
         [completionTimeMapping3{:,p}], ...
         [completionTimeMapping5{:,p}]);
 
-    for j = 1:numSubjects
-        completionTimeMeanStats{j,p} = completionTimeMean(j,:);
-        completionTimeStdStats{j,p} = completionTimeStd(j,:);
-    end
+    % for j = 1:numSubjects
+        completionTimeMeanStats{1,p} = completionTimeMean;
+        completionTimeStdStats{1,p} = completionTimeStd;
+    % end
 end
 
+yVal = 1.5;
 [h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
     completionTimeStdStats, "Completion Time", "Mapping", "Time [sec]");
 ylim([minY,maxY]);
 improvePlot_v2(false, true, 22, 1200, 600);
-legend([h1(1), h2(1),h3(1)],...
-    "Training 1", "Training 2", "Testing",...
-    "Location","northoutside", "NumColumns", 3);
-
+% legend([h1(1), h2(1),h3(1)],...
+%     "Training 1", "Training 2", "Testing",...
+%     "Location","northoutside", "NumColumns", 3);
 
 % Save figure as pdf:
 if (saveFigures == true)
@@ -882,18 +883,18 @@ if (saveFigures == true)
 end
 
 %% Plot pathLengths
-% close all;
+close all;
 markerSize = 8;
 jitterVal = 0.1;
 minY = 0.5; maxY = 1.75;
 plotVis = "off";
 % Cells to store parameter basic statistics
-indexPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-indexPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-thumbPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-thumbPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-boxPathLengthMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-boxPathLengthStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+indexPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+indexPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
+thumbPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+thumbPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
+boxPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+boxPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
 for p = 1:numExperimentTypes
     [indexPathLengthMean, indexPathLengthStd] = ...
@@ -912,14 +913,14 @@ for p = 1:numExperimentTypes
         [boxPathLengthMapping3{:,p}], ...
         [boxPathLengthMapping5{:,p}]);
 
-    for j = 1:numSubjects
-        indexPathLengthMeanStats{j,p} = indexPathLengthMean(j,:);
-        indexPathLengthStdStats{j,p} = indexPathLengthStd(j,:);
-        thumbPathLengthMeanStats{j,p} = thumbPathLengthMean(j,:);
-        thumbPathLengthStdStats{j,p} = thumbPathLengthStd(j,:);
-        boxPathLengthMeanStats{j,p} = boxPathLengthMean(j,:);
-        boxPathLengthStdStats{j,p} = boxPathLengthStd(j,:);
-    end
+    % for j = 1:numSubjects
+        indexPathLengthMeanStats{1,p} = indexPathLengthMean;
+        indexPathLengthStdStats{1,p} = indexPathLengthStd;
+        thumbPathLengthMeanStats{1,p} = thumbPathLengthMean;
+        thumbPathLengthStdStats{1,p} = thumbPathLengthStd;
+        boxPathLengthMeanStats{1,p} = boxPathLengthMean;
+        boxPathLengthStdStats{1,p} = boxPathLengthStd;
+    % end
 end
 
 jitterVal = 0.18;
@@ -990,16 +991,22 @@ figure;
     thumbP1,thumbP2,thumbP3, boxP1,boxP2,boxP3,...
     "Path Lengths", "Mapping", "Path Length [m]");
 
-improvePlot_v2(false, true, 22, 1000, 650); hold off;
+improvePlot_v2(false, true, 20, 1200, 600); hold off;
+% 
+% legend([indexTrain1(1), thumbTrain1(1), boxTrain1(1), ...
+%     indexTrain2(1), thumbTrain2(1), boxTrain2(1), ...
+%     indexTest(1), thumbTest(1), boxTest(1)],...
+%     "Index Training 1", "Thumb Training 1", "Cube Training 1",...
+%     "Index Training 2", "Thumb Training 2", "Cube Training 2",...
+%     "Index Testing", "Thumb Testing", "Cube Testing",...
+%     "Location", "northoutside", "NumColumns", 3,...
+%     "FontSize", 16);
 
-legend([indexTrain1(1), thumbTrain1(1), boxTrain1(1), ...
-    indexTrain2(1), thumbTrain2(1), boxTrain2(1), ...
-    indexTest(1), thumbTest(1), boxTest(1)],...
-    "Index Training 1", "Thumb Training 1", "Cube Training 1",...
-    "Index Training 2", "Thumb Training 2", "Cube Training 2",...
-    "Index Testing", "Thumb Testing", "Cube Testing",...
-    "Location", "northoutside", "NumColumns", 3,...
+legend([indexTest(1), thumbTest(1), boxTest(1)],...
+    "Index", "Thumb ", "Cube",...
+    "Location", "northwest", "NumColumns", 1,...
     "FontSize", 16);
+
 
 % improvePlot_v2(false, true, 18, 1400, 800); hold off;
 %Save figure as pdf:
@@ -1010,19 +1017,20 @@ end
 
 %% Plot Normal and Shear Forces
 % close all;
+alphaVal = 0.2;
 markerSize = 8;
-minY = 0; maxY = 10;
+minY = 0; maxY = 11;
 
 % Cells to store parameter basic statistics
-indexNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-indexNormalStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-indexShearMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-indexShearStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+indexNormalMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+indexNormalStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
+indexShearMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+indexShearStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
-thumbNormalMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-thumbNormalStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-thumbShearMeanStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
-thumbShearStdStats = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
+thumbNormalMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+thumbNormalStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
+thumbShearMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
+thumbShearStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
 for p = 1:numExperimentTypes
     [indexNormalMean, indexNormalMeanStdVals] = ...
@@ -1048,18 +1056,20 @@ for p = 1:numExperimentTypes
         [meanThumbShearForceMapping5{:,p}]);
 
     for j = 1:numSubjects
-        indexNormalMeanStats{j,p} = indexNormalMean(j,:);
-        indexNormalStdStats{j,p} = indexNormalMeanStdVals(j,:);
-        indexShearMeanStats{j,p} = indexShearMean(j,:);
-        indexShearStdStats{j,p} = indexShearMeanStdVals(j,:);
+        indexNormalMeanStats{1,p} = indexNormalMean;
+        indexNormalStdStats{1,p} = indexNormalMeanStdVals;
+        indexShearMeanStats{1,p} = indexShearMean;
+        indexShearStdStats{1,p} = indexShearMeanStdVals;
 
-        thumbNormalMeanStats{j,p} = thumbNormalMean(j,:);
-        thumbNormalStdStats{j,p} = thumbNormalMeanStdVals(j,:);
-        thumbShearMeanStats{j,p} = thumbShearMean(j,:);
-        thumbShearStdStats{j,p} = thumbShearMeanStdVals(j,:);
+        thumbNormalMeanStats{1,p} = thumbNormalMean;
+        thumbNormalStdStats{1,p} = thumbNormalMeanStdVals;
+        thumbShearMeanStats{1,p} = thumbShearMean;
+        thumbShearStdStats{1,p} = thumbShearMeanStdVals;
     end
 end
-jitterValNum = 0.1;
+
+alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;jitterValNum = 0.1;
+yVal = 0.5;
 % Index Plot
 figure;
 plotMarker = "s";
@@ -1072,14 +1082,18 @@ jitterVal = jitterValNum; %pos
 [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
     "Index Forces", "Mapping", "Force [N]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
-legend([indexNP1(1), indexSP1(1), ...
-    indexNP2(1), indexSP2(1),...
-    indexNP3(1), indexSP3(1)],...
-    "Index Normal Training 1", "Index Shear Training 1",...
-    "Index Normal Training 2", "Index Shear Training 2",...
-    "Index Normal Testing", "Index Shear Testing",...
-    "Location","northoutside", "NumColumns", 3, ...
+improvePlot_v2(false, true, 22, 1200, 600); hold off;
+% legend([indexNP1(1), indexSP1(1), ...
+%     indexNP2(1), indexSP2(1),...
+%     indexNP3(1), indexSP3(1)],...
+%     "Index Normal Training 1", "Index Shear Training 1",...
+%     "Index Normal Training 2", "Index Shear Training 2",...
+%     "Index Normal Testing", "Index Shear Testing",...
+%     "Location","northoutside", "NumColumns", 3, ...
+%     "FontSize", 18);
+legend([indexNP1(1), indexSP1(1)], ...
+    "Normal Force", "Shear Force",...
+    "Location","northwest", "NumColumns", 1, ...
     "FontSize", 18);
 
 %Save figure as pdf:
@@ -1100,15 +1114,20 @@ jitterVal = jitterValNum; %pos
 [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
     "Thumb Forces", "Mapping", "Force [N]");
 ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
-legend([thumbNP1(1), thumbSP1(1), ...
-    thumbNP2(1), thumbSP2(1),...
-    thumbNP3(1), thumbSP3(1)],...
-    "Thumb Normal Training 1", "Thumb Shear Training 1",...
-    "Thumb Normal Training 2", "Thumb Shear Training 2",...
-    "Thumb Normal Testing", "Thumb Shear Testing",...
-    "Location","northoutside", "NumColumns", 3, ...
+improvePlot_v2(false, true, 22, 1200, 600); hold off;
+% legend([thumbNP1(1), thumbSP1(1), ...
+%     thumbNP2(1), thumbSP2(1),...
+%     thumbNP3(1), thumbSP3(1)],...
+%     "Thumb Normal Training 1", "Thumb Shear Training 1",...
+%     "Thumb Normal Training 2", "Thumb Shear Training 2",...
+%     "Thumb Normal Testing", "Thumb Shear Testing",...
+%     "Location","northoutside", "NumColumns", 3, ...
+%     "FontSize", 18);
+legend([thumbNP1(1), thumbSP1(1)], ...
+    "Normal Force", "Shear Force",...
+    "Location","northwest", "NumColumns", 1, ...
     "FontSize", 18);
+
 
 %Save figure as pdf:
 if (saveFigures == true)
@@ -1431,4 +1450,70 @@ close all;
 close all;
 [p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
     runHMEStats(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
-    timeBoxBrokenMapping5, "Cube Break Occurences");
+    timeBoxBrokenMapping5, "Cube Break Time");
+%% Run Freidman Tests on Qualitative Survey Results
+close all; clc;
+% ONly done for training therefore: p =2:
+% Mapping1 -- mapping1TimeIndexRows
+mapping1 = [1, 4, 7, 10, 13, 16
+            3, 6, 9, 12, 15, 18
+            2, 5, 8, 11, 14, 17];
+% Mapping3 -- mapping3TimeIndexRows
+mapping3 = [2, 5, 8, 11, 14, 17
+            1, 4, 7, 10, 13, 16
+            3, 6, 9, 12, 15, 18];
+% Mapping5 -- mapping5TimeIndexRows
+mapping5 = [3, 6, 9, 12, 15, 18
+            2, 5, 8, 11, 14, 17
+            1, 4, 7, 10, 13, 16];
+
+
+% Each row is a subject as noted in the code:
+% Col1: Tasks 71-80
+% Col2: Tasks 82-91
+% Col3: Tasks 93-102
+responses =[2	1	2
+            3	4	3
+            5	3	3
+            3	3	1
+            1	2	2
+            2	1	1
+            3	2	2
+            4	4	3
+            1	2	1
+            3	2	4
+            1	2	3
+            1	2	2
+            3	3	4
+            1	4	2
+            1	2	2
+            3	2	2
+            4	4	4
+            4	3	2];
+
+for i=1:size(responses,2)
+    responsesMappingMat1(:,i) = responses(mapping1(i,:),i);
+    responsesMappingMat3(:,i) = responses(mapping3(i,:),i);
+    responsesMappingMat5(:,i) = responses(mapping5(i,:),i);
+end
+
+% Form back into one column vector
+responsesMapping1 = reshape(responsesMappingMat1,[],1);
+responsesMapping3 = reshape(responsesMappingMat3,[],1);
+responsesMapping5 = reshape(responsesMappingMat5,[],1);
+
+% Mapping# by column
+% Rating of each Subject by row 
+sortedRatings = [ responsesMapping1 responsesMapping3 responsesMapping5 ];
+            
+[p,tbl,stats] = friedman(sortedRatings, 1) 
+% The ratings are not significant
+figure; errorbar(mean(sortedRatings), std(sortedRatings), "bs",...
+    "MarkerFaceColor","b", "MarkerSize",10);
+title("Ratings Mean and Standard Deviation - Friedman Test");
+xlabel("Mapping"); ylabel("Rating");
+xlim([0,4]); 
+
+tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
+set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels)
+improvePlot;

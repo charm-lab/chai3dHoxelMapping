@@ -14,14 +14,39 @@ numMappings = evalin('base','numMappings');
 plotMarker = evalin('base','plotMarker');
 markerSize = evalin('base', 'markerSize');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
-
+minY =  evalin('base', 'minY');
+maxY =  evalin('base', 'maxY');
+alphaVal = evalin('base', 'alphaVal');
+yVal = evalin('base', 'yVal');
 dataSeparation = 0.3;
+ minX = 0.5;
 
 % Get the x-axis values including a buffer on the first and last indices:
 % Set to even itnerval for now
 xTickVals = [0:3*numMappings];
 
 xAxis = xTickVals(2:end);
+
+% Shade only the backgrounds of training data
+xT = 0.5*(xAxis(6)+xAxis(7)); % X-vlaue of test-train border
+% x = [minX      xT  xT  minX];
+% y = [minY minY  maxY  maxY];
+% patch(x,y,'r','alpha');
+v = [minX minY; xT minY; xT maxY; minX maxY];
+f = [1 2 3 4];
+shadeColor = [0.5 0.5 0.5];
+
+patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
+    'EdgeColor',num2str(shadeColor),...
+    'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
+
+
+% Section labels:
+textYCoord = maxY-yVal;
+text(0.5*(xAxis(3)+xAxis(4)), textYCoord,...
+    "Training", "HorizontalAlignment","center", "FontSize", 20)
+text(xAxis(8), textYCoord,...
+    "Testing", "HorizontalAlignment","center", "FontSize", 20)
 
 % Subjects Plots
 for p = 1:numExperimentTypes
@@ -45,7 +70,7 @@ for p = 1:numExperimentTypes
         hold on;
     end
     if(p == 2)
-        expTypeColor = testingMap5Color;
+        expTypeColor = trainingMap5Color;
         i=4;j=5;k=6;
 
         h3 = errorbar([xAxis(7) xAxis(8) xAxis(9)]+jitterVal,...
@@ -58,25 +83,19 @@ end
 
 % Separation lines:
 % Between training 1 and training 2
-xline(0.5*(xAxis(3)+xAxis(4)));
+%xline(0.5*(xAxis(3)+xAxis(4)));
 % Between training 2 and testing
-xline(0.5*(xAxis(6)+xAxis(7)));
+% xline(0.5*(xAxis(6)+xAxis(7)));
 
-%Plot Details
+
+% Plot Details
 n=numExperimentTypes+1; % for the duplicate p = 1
-xlim([0.5 max(xTickVals)+2*dataSeparation]);
+xlim([minX max(xTickVals)+2*dataSeparation]);
 xticks(xTickVals);
 tickLabels = [" ", repmat(["Dual Tactor", "Single Tactor", "Control"], 1, n)];
 set(gca, 'xTick', xTickVals, 'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);
-
-% legend([h1(1), h2(1), h3(1)],...
-%     "Training 1, Color \Delta",...
-%     "Training 2, Color \Delta",...
-%     "Testing, No Color \Delta",...
-%     "Location","northoutside",...
-%     "NumColumns", 3);
 
 hold off;
 

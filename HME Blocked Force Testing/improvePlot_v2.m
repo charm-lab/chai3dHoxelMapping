@@ -14,7 +14,7 @@ function [] = improvePlot_v2(fullScreenBool, customSizeBool, fontSize, width, he
     marker_outline = 'matching'; % could be 'black' or 'matching'
     box_thickness = 1;
     axis_tick_font_size = fontSize;
-    axis_label_font_size = fontSize-2;
+    axis_label_font_size = fontSize;%-2;
     legend_font_size = fontSize;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

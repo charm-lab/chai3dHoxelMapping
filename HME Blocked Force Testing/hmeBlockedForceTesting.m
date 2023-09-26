@@ -38,10 +38,12 @@ if ~isnan(crossing_time)
         end_time = start_time + interval_duration;
         interval_data = df(df.Time_s_ >= start_time & df.Time_s_ < end_time, :);
         average_value = mean(interval_data.ZeroedForceZ_N_);
+        std_value = std(interval_data.ZeroedForceZ_N_);
         % Assign duty cycle based on interval number
         dutyCylceIncrement = 20 + (i - 1) * 5;  % Start from 20% and increase by 5% each interval
         commandedForceIncrement = dutyCylceIncrement / 10;  % Calculate commanded force (N)
         actualForce(i) = average_value;
+        stdForce(i) = std_value;
         dutyCycle(i) = dutyCylceIncrement;
         commandedForce(i) = commandedForceIncrement;
         %fprintf('Duty Cycle: %d%% - Commanded Force: %.2f N - Average Value: %.2f N\n', duty_cycle, commanded_force, average_value);
@@ -115,6 +117,37 @@ if ~isnan(crossing_time)
         '..\..\..\My Publications\ToH 2023 Short Paper\ToH Figures\DC_to_Force',...
         '-dpdf','-r0');
 
+
+    % Plot for paper w/ std:
+    figure;
+    % Duty cycles vs avg force results data:
+    errorbar(dutyCycle, actualForce, stdForce, 'bs', ...
+        "MarkerSize",12, "MarkerFaceColor","b"); hold on;
+    
+    % Linear fit;
+    P = polyfit(dutyCycle, actualForce,1);
+    yForceFit = P(1)*dutyCycle + P(2);
+    plot(dutyCycle, yForceFit,'r-');
+    % Add text displaying values of fit:
+    eqn = string("F_{actual} = " + P(1)) + "*[DC] + [" + num2str(P(2) + "]");
+    text(min(dutyCycle), max(actualForce), eqn, ...
+        "HorizontalAlignment", "left", "VerticalAlignment", "top", ...
+        "FontSize", 22)
+
+    % Plot Details:
+    xlabel('Duty Cycle [%]');
+    ylabel('Measured Force Z [N]');
+    title('Measured Force Z vs. Duty Cycle');
+    % grid on;
+    xlim([11 110]); xticklabels([20:10:100]);
+    ylim([-0.5 23]);
+    improvePlot_v2(false, true, 22, 1200, 600);
+    % Save figure as pdf:
+
+    set(gcf,'PaperOrientation','landscape');
+    print(gcf,...
+        '..\..\..\My Publications\ToH 2023 Short Paper\ToH Figures\DC_to_Force_w_ErrorBars',...
+        '-dpdf','-r0');
 
 else
     disp('No crossing above 0.1 N found');

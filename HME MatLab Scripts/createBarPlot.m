@@ -105,7 +105,8 @@ tickLabels = ["Training, Color \Delta", "Testing, No Color \Delta"];
 set(gca,'xTick', [1:numExperimentTypes],'xticklabel', tickLabels); %#ok<NBRAK>
 
 improvePlot_v2(false, true, 22, 1200, 500);
-xlabel(xAxisLabel); ylabel(yAxisLabel);
+% xlabel(xAxisLabel); 
+ylabel(yAxisLabel);
 title(plotTitle);
 
 if (markSubjectAverages == true)
