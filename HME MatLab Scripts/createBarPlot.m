@@ -17,10 +17,10 @@ testingMap5Color = evalin('base', 'testingMap5Color');
 
 saveFigures = evalin('base', 'saveFigures');
 subjectNum = evalin('base', 'subjectNum');
+alphaVal = evalin('base', 'alphaVal');
+yVal = evalin('base', 'yVal');
 
-plotType = evalin('base', 'plotType');
 showInidividualSubjects = evalin('base', 'showInidividualSubjects');
-
 
 if (showInidividualSubjects == false)
     %Calculate for all subjects
@@ -46,6 +46,8 @@ if (showInidividualSubjects == false)
             for i = 1:numMappings*2 % Due to being done twice
                 x1(i,:) = h1(i).XEndPoints;
             end
+
+            % Plot the errorbars:
             errorbar(x1',[mean(data1(1:0.5*numVals)); mean(data3(1:0.5*numVals)); mean(data5(1:0.5*numVals)); ...
                 mean(data1(0.5*numVals+1:end)); mean(data3(0.5*numVals+1:end)); mean(data5(0.5*numVals+1:end))],...
                 [std(data1(1:0.5*numVals)); std(data3(1:0.5*numVals)); std(data5(1:0.5*numVals)); ...
@@ -90,9 +92,9 @@ if (showInidividualSubjects == false)
                 [std(data1); std(data3); std(data5)],...
                 'ks','linestyle','none','MarkerFaceColor','k');
             % Color the bars:
-            h2(1).FaceColor = str2num(testingMap1Color);
-            h2(2).FaceColor = str2num(testingMap3Color);
-            h2(3).FaceColor = str2num(testingMap5Color);
+            h2(1).FaceColor = str2num(trainingMap1Color);
+            h2(2).FaceColor = str2num(trainingMap3Color);
+            h2(3).FaceColor = str2num(trainingMap5Color);
 
             if (markSubjectAverages == true)
                 % Get the mean for each subject over their trials by in a mapping:
@@ -106,7 +108,29 @@ if (showInidividualSubjects == false)
         end
     end
 
-    ylim(yAxisLimits);
+    % Plot the shading:
+    % Shade only the backgrounds of training data
+    xT = 0.5*(x1(end)+x2(1)); % X-vlaue of test-train border
+
+    minX = min(xlim); minY = min(yticks); maxY = max(yticks);
+    v = [minX minY; xT minY; xT maxY; minX maxY];
+    f = [1 2 3 4];
+    shadeColor = [0.5 0.5 0.5];
+
+    patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
+        'EdgeColor',num2str(shadeColor),...
+        'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
+
+    % Section labels:
+    textYCoord = maxY-yVal;
+    text(0.5*(x1(3)+x1(4)), textYCoord,...
+        "Training", "HorizontalAlignment","center", "FontSize", 20);
+    text(x2(2), textYCoord,...
+        "Testing", "HorizontalAlignment","center", "FontSize", 20);
+    hold on;
+
+
+    % ylim(yAxisLimits);
     xticks([1:numExperimentTypes]);
     % tickLabels = ["Color \Delta, Trial \Rightarrow",...
     %     "No Color \Delta, Trial \Rightarrow"];
@@ -119,19 +143,17 @@ if (showInidividualSubjects == false)
     title(plotTitle);
 
     if (markSubjectAverages == true)
-        legend([h1(1), h1(2), h1(3), h2(1), h2(2), h2(3), h3(1)],...
-            "Dual Tactor", "Single Tactor", "Control",...
+        legend([h1(1), h1(2), h1(3), h3(1)],...
             "Dual Tactor", "Single Tactor", "Control",...
             "Subject Avg",...
-            "Location", "best",...
-            "NumColumns", 2, ...
+            "Location", "southoutside",...
+            "NumColumns", 4, ...
             "FontSize", 18);
     else
-        legend([h1(1), h1(2), h1(3), h2(1), h2(2), h2(3)],...
-            "Dual Tactor", "Single Tactor", "Control",...
+        legend([h1(1), h1(2), h1(3)],...
             "Dual Tactor", "Single Tactor", "Control",...
             "Location", "best",...
-            "NumColumns", 2, ...
+            "NumColumns", 3, ...
             "FontSize", 18);
     end
     hold off;
@@ -195,6 +217,37 @@ else
             end
         end
 
+
+        % Plot the shading:
+        % Shade only the backgrounds of training data
+        xT = 0.5*(x1(end)+x2(1)); % X-vlaue of test-train border
+
+        minX = min(xlim); minY = min(yticks); maxY = max(yticks);
+        v = [minX minY; xT minY; xT maxY; minX maxY];
+        f = [1 2 3 4];
+        shadeColor = [0.5 0.5 0.5];
+
+        patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
+            'EdgeColor',num2str(shadeColor),...
+            'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
+
+        % Section labels:
+        textYCoord = maxY-yVal;
+        text(0.5*(x1(3)+x1(4)), textYCoord,...
+            "Training", "HorizontalAlignment","center", "FontSize", 20);
+        text(x2(2), textYCoord,...
+            "Testing", "HorizontalAlignment","center", "FontSize", 20);
+        hold on;
+
+        % Put training data on top of patch
+        uistack(h1(1),'top');
+        uistack(h1(2),'top');
+        uistack(h1(3),'top');
+        uistack(h1(4),'top');
+        uistack(h1(5),'top');
+        uistack(h1(6),'top');
+
+
         % ylim(yAxisLimits);
         xticks([1:numExperimentTypes]);
         % tickLabels = ["Color \Delta, Trial \Rightarrow",...
@@ -221,6 +274,7 @@ else
 
         hold off;
 
+        plotType = evalin('base', 'plotType');
 
         if(plotType == 1)
             % Save figure as pdf:
@@ -229,8 +283,8 @@ else
                 print(gcf,...
                     strcat('figures\Individual Subject Figures\avgBoxBreaksFigures\',...
                     'Subject',num2str(subjectNum(j)),...
-                    '_avgBoxBreaks'),'-dpdf','-fillpage'); %close;
-                disp('saved')
+                    '_avgBoxBreaks-barPlot'),'-dpdf','-fillpage'); %close;
+                % disp('saved')
             end
         else % (plotType = 2)
             % Save figure as pdf:
@@ -239,7 +293,7 @@ else
                 print(gcf,...
                     strcat('figures\Individual Subject Figures\avgTimeBoxBrokenFigures\',...
                     'Subject',num2str(subjectNum(j)),...
-                    '_avgTimeBoxBroken'),'-dpdf','-fillpage'); %close;
+                    '_avgTimeBoxBroken-barPlot'),'-dpdf','-fillpage'); %close;
             end
         end
     end

@@ -29,7 +29,6 @@ alphaVal = evalin('base', 'alphaVal');
 showInidividualSubjects = evalin('base', 'showInidividualSubjects');
 
 dataSeparation = 0.3;
-
 numCols = 3;
 
 %Create the vectors for x-values on which the data will lie:
@@ -54,40 +53,7 @@ vec8 = 2*numMappings+(1:numMappings)+2*dataSeparation;
 % Box Testing
 vec9 = 2*numMappings+(1:numMappings)+jitterVal+2*dataSeparation;
 
-
-% Shade only the backgrounds of training data
-xT = 0.5*(vec6(end)+ vec7(1)); % X-vlaue of test-train border
-minX = 0;
-
-if (showInidividualSubjects == false)
-    %Calculate means and standard deviations for all subjects
-
-    minY = 0;
-    maxY = 3.25;
-else
-    %Calculate means and standard deviations for each subject individually
-    minY = 0;
-    maxY = 5.5;
-end
-
-
-v = [minX minY; xT minY; xT maxY; minX maxY];
-f = [1 2 3 4];
-shadeColor = [0.5 0.5 0.5];
-
-patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
-    'EdgeColor',num2str(shadeColor),...
-    'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
-
-% Section labels:
-textYCoord = maxY-0.25;
-text(0.5*(vec3(end)+vec4(1)), textYCoord,...
-    "Training", "HorizontalAlignment","center", "FontSize", 20)
-text(vec8(2), textYCoord,...
-    "Testing", "HorizontalAlignment","center", "FontSize", 20)
-
 % Data:
-
 % Index training1
 h1 = errorbar(vec1, ...
     indexP1.YData, indexP1.YNegativeDelta, indexP1.YPositiveDelta, ...
@@ -163,7 +129,34 @@ xTickVals = ...
 %Plot Details
 n=numCols;
 minX = (max(xTickVals)+2*dataSeparation)-vec9(end);
+minY = min(ylim); maxY = max(ylim);
+
+% Shade only the backgrounds of training data
+xT = 0.5*(vec6(end)+ vec7(1)); % X-vlaue of test-train border
+
+v = [minX minY; xT minY; xT maxY; minX maxY];
+f = [1 2 3 4];
+shadeColor = [0.5 0.5 0.5];
+
+patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
+    'EdgeColor',num2str(shadeColor),...
+    'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
+
+% Section labels:
+textYCoord = maxY-0.25;
+text(0.5*(vec3(end)+vec4(1)), textYCoord,...
+    "Training", "HorizontalAlignment","center", "FontSize", 20)
+text(vec8(2), textYCoord,...
+    "Testing", "HorizontalAlignment","center", "FontSize", 20)
 xlim([minX max(xTickVals)+2*dataSeparation]);
+
+% Put training data on top of patch
+uistack(h1(1),'top');
+uistack(h2(1),'top');
+uistack(h3(1),'top');
+uistack(h4(1),'top');
+uistack(h5(1),'top');
+uistack(h6(1),'top');
 
 tickLabels = [" ", repmat(["Dual Tactor", "Single Tactor", "Control"], 1, n)];
 xticks(xTickVals);
@@ -173,6 +166,8 @@ xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);
 
 ylim([minY maxY])
+
+improvePlot_v2(false, true, 22, 1200, 600);
 hold off;
 
 end

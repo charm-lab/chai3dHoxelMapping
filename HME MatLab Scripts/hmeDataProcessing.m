@@ -102,7 +102,6 @@ disp("***Data Upload and Merge Complete***")
 % Selcting an entry will select the data from a particular experiment.
 % Therefore within cell:
 % metric{subjectNumber, expType}(trialNumA:trialNumB, 1)
-
 %% Repair Subject Data
 close all;
 %
@@ -408,7 +407,6 @@ for p = 1:numExperimentTypes % Addition for each experiment type
 end
 
 disp("find trial start and end times -- done")
-
 %% Completion Time Calculation
 % completion time for any subject, any trial
 completionTime = cell(numSubjects, numExperimentTypes); % Addition for each experiment type
@@ -598,9 +596,6 @@ for p = 1:numExperimentTypes % Addition for each experiment type
                 set(gcf,'Visible', plotVis);
             end
         end
-
-
-
 
         %Save figure as pdf:
         if (saveFigures == true)
@@ -848,9 +843,8 @@ alphaVal = 0.20;
 close all;
 markerSize = 10;
 plotMarker = "s";
-minY = 0; maxY = 20;
+% minY = 0; maxY = 20;
 jitterVal = 0.0;
-
 % Cells to store parameter basic statistics
 completionTimeMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
 completionTimeStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
@@ -875,8 +869,8 @@ if (showInidividualSubjects == false)
     yVal = 1.5;
     [h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
         completionTimeStdStats, "Completion Time", "Mapping", "Time [sec]");
-    ylim([minY,maxY]);
-    improvePlot_v2(false, true, 22, 1200, 600);
+    % ylim([minY,maxY]);
+    improvePlot_v2(false, true, 20, 1200, 600);
     % legend([h1(1), h2(1),h3(1)],...
     %     "Training 1", "Training 2", "Testing",...
     %     "Location","northoutside", "NumColumns", 3);
@@ -904,15 +898,15 @@ else
             completionTimeStdStats{1,p} = completionTimeStd;
 
         end
-        minY = 0; maxY = 25;
+        % minY = 0; maxY = 25;
         yVal = 1.5;
         [h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
             completionTimeStdStats,...
             strcat("Completion Time -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Time [sec]");
 
-        ylim([minY,maxY]);
-        improvePlot_v2(false, true, 22, 1200, 600);
+        % ylim([minY,maxY]);
+        improvePlot_v2(false, true, 20, 1200, 600);
         % legend([h1(1), h2(1),h3(1)],...
         %     "Training 1", "Training 2", "Testing",...
         %     "Location","northoutside", "NumColumns", 3);
@@ -928,12 +922,11 @@ else
     end
 end
 
-
 %% Plot pathLengths
 close all;
 markerSize = 8;
 jitterVal = 0.1;
-minY = 0.5; maxY = 1.75;
+% minY = 0.5; maxY = 1.75;
 plotVis = "off";
 % Cells to store parameter basic statistics
 indexPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
@@ -943,10 +936,8 @@ thumbPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each exper
 boxPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
 boxPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
-
 if (showInidividualSubjects == false)
     disp("Plotting Averaged Subjects: ")
-
     for p = 1:numExperimentTypes
         [indexPathLengthMean, indexPathLengthStd] = ...
             getParamStats(...
@@ -1020,7 +1011,8 @@ if (showInidividualSubjects == false)
     [boxP1, boxP2, boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
         boxPathLengthStdStats, "Box Path Length", "Mapping", "Path Length [m]");
     % ylim([minY,maxY]);
-    improvePlot_v2(false, true, 22, 1200, 650); hold off;
+    improvePlot_v2(false, true, 22, 1200, 650);
+    hold off;
     legend([boxP1(1), boxP2(1), boxP3(1)],...
         "Training 1", "Training 2", "Testing",...
         "Location","northoutside", "NumColumns", 3,...
@@ -1058,7 +1050,7 @@ if (showInidividualSubjects == false)
         "Location", "northwest", "NumColumns", 1,...
         "FontSize", 16);
 
-    % improvePlot_v2(false, true, 18, 1400, 800); hold off;
+    improvePlot_v2(false, true, 18, 1400, 800); hold off;
     %Save figure as pdf:
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
@@ -1068,9 +1060,9 @@ if (showInidividualSubjects == false)
 else
     close all;
     disp("Plotting Individual Subjects: ")
-
+    yVal = 0.1;
     for j = 1:numSubjects
-        figure;
+        % figure;
         for p = 1:numExperimentTypes
             [indexPathLengthMean, indexPathLengthStd] = ...
                 getParamStats(...
@@ -1120,7 +1112,7 @@ else
             print(gcf,...
                 strcat('figures\Individual Subject Figures\indexPathLengthsFigures\',...
                 'Subject',num2str(subjectNum(j)),...
-                '_indexPathLengths'),'-dpdf','-fillpage'); %close;
+                '_indexPathLengths'),'-dpdf','-r0'); %close;
         end
         set(gcf,'Visible', plotVis);
 
@@ -1143,7 +1135,7 @@ else
             print(gcf,...
                 strcat('figures\Individual Subject Figures\thumbPathLengthsFigures\',...
                 'Subject',num2str(subjectNum(j)),...
-                '_thumbPathLengths'),'-dpdf','-fillpage'); %close;
+                '_thumbPathLengths'),'-dpdf','-r0'); %close;
         end
         set(gcf,'Visible', plotVis);
 
@@ -1166,7 +1158,7 @@ else
             print(gcf,...
                 strcat('figures\Individual Subject Figures\boxPathLengthsFigures\',...
                 'Subject',num2str(subjectNum(j)),...
-                '_boxPathLengths'),'-dpdf','-fillpage'); %close;
+                '_boxPathLengths'),'-dpdf','-r0'); %close;
         end
         set(gcf,'Visible', plotVis);
 
@@ -1181,10 +1173,9 @@ else
             "Mapping", "Path Length [m]");
 
         improvePlot_v2(false, true, 20, 1200, 600); hold off;
-
         legend([indexTest(1), thumbTest(1), boxTest(1)],...
             "Index", "Thumb ", "Cube",...
-            "Location", "south", "NumColumns", 3,...
+            "Location", "northoutside", "NumColumns", 3,...
             "FontSize", 16);
 
         % Save figure as pdf:
@@ -1193,17 +1184,16 @@ else
             print(gcf,...
                 strcat('figures\Individual Subject Figures\combinedPathLengthsFigures\',...
                 'Subject',num2str(subjectNum(j)),...
-                '_combinedPathLengths'),'-dpdf','-fillpage'); %close;
+                '_combinedPathLengths'),'-dpdf','-r0'); %close;
         end
-
     end
 end
 
 %% Plot Normal and Shear Forces
-% close all;
+close all;
 alphaVal = 0.2;
 markerSize = 8;
-minY = 0; maxY = 11;
+% minY = 0; maxY = 11;
 
 % Cells to store parameter basic statistics
 indexNormalMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
@@ -1242,7 +1232,6 @@ if (showInidividualSubjects == false)
             [meanThumbShearForceMapping3{:,p}], ...
             [meanThumbShearForceMapping5{:,p}]);
 
-        % for j = 1:numSubjects
         indexNormalMeanStats{1,p} = indexNormalMean;
         indexNormalStdStats{1,p} = indexNormalMeanStdVals;
         indexShearMeanStats{1,p} = indexShearMean;
@@ -1252,7 +1241,7 @@ if (showInidividualSubjects == false)
         thumbNormalStdStats{1,p} = thumbNormalMeanStdVals;
         thumbShearMeanStats{1,p} = thumbShearMean;
         thumbShearStdStats{1,p} = thumbShearMeanStdVals;
-        % end
+
     end
 
     alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;
@@ -1261,15 +1250,15 @@ if (showInidividualSubjects == false)
     % Index Plot
     figure;
     plotMarker = "s";
-    jitterVal = -jitterValNum; %neg
+    jitterVal = -jitterValNum; % neg
     [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
         "Index Forces", "Mapping", "Force [N]");
     hold on;
     plotMarker = "d";
-    jitterVal = jitterValNum; %pos
+    jitterVal = jitterValNum; % pos
     [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
         "Index Forces", "Mapping", "Force [N]");
-    ylim([minY,maxY]);
+    % ylim([minY,maxY]);
     improvePlot_v2(false, true, 22, 1200, 600); hold off;
     % legend([indexNP1(1), indexSP1(1), ...
     %     indexNP2(1), indexSP2(1),...
@@ -1301,7 +1290,7 @@ if (showInidividualSubjects == false)
     jitterVal = jitterValNum; %pos
     [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
         "Thumb Forces", "Mapping", "Force [N]");
-    ylim([minY,maxY]);
+    % ylim([minY,maxY]);
     improvePlot_v2(false, true, 22, 1200, 600); hold off;
     % legend([thumbNP1(1), thumbSP1(1), ...
     %     thumbNP2(1), thumbSP2(1),...
@@ -1315,7 +1304,6 @@ if (showInidividualSubjects == false)
         "Normal Force", "Shear Force",...
         "Location","northwest", "NumColumns", 1, ...
         "FontSize", 18);
-
 
     %Save figure as pdf:
     if (saveFigures == true)
@@ -1339,13 +1327,12 @@ if (showInidividualSubjects == false)
     % end
 
 else
-
     close all;
     disp("Plotting Individual Subjects: ")
 
-    minY = 0; maxY = 20;
+    % minY = 0; maxY = 20;
     for j = 1:numSubjects
-        figure;
+        % figure;
         alphaVal = 0.2;
 
         for p = 1:numExperimentTypes
@@ -1371,7 +1358,6 @@ else
                 [meanThumbShearForceMapping3{j,p}], ...
                 [meanThumbShearForceMapping5{j,p}]);
 
-
             indexNormalMeanStats{1,p} = indexNormalMean;
             indexNormalStdStats{1,p} = indexNormalMeanStdVals;
             indexShearMeanStats{1,p} = indexShearMean;
@@ -1381,7 +1367,6 @@ else
             thumbNormalStdStats{1,p} = thumbNormalMeanStdVals;
             thumbShearMeanStats{1,p} = thumbShearMean;
             thumbShearStdStats{1,p} = thumbShearMeanStdVals;
-
         end
 
         alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;
@@ -1390,17 +1375,17 @@ else
         % Index Plot
         figure;
         plotMarker = "s";
-        jitterVal = -jitterValNum; %neg
+        jitterVal = -jitterValNum; % neg
         [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
             strcat("Index Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
         hold on;
         plotMarker = "d";
-        jitterVal = jitterValNum; %pos
+        jitterVal = jitterValNum; % pos
         [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
             strcat("Index Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
-        ylim([minY,maxY]);
+        % ylim([minY,maxY]);
         improvePlot_v2(false, true, 22, 1200, 600); hold off;
         legend([indexNP1(1), indexSP1(1)], ...
             "Normal Force", "Shear Force",...
@@ -1419,17 +1404,17 @@ else
         % Thumb Plot
         figure;
         plotMarker = "s";
-        jitterVal = -jitterValNum; %neg
+        jitterVal = -jitterValNum; % neg
         [thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
             strcat("Thumb Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
         hold on;
         plotMarker = "d";
-        jitterVal = jitterValNum; %pos
+        jitterVal = jitterValNum; % pos
         [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
             strcat("Thumb Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
-        ylim([minY,maxY]);
+        % ylim([minY,maxY]);
         improvePlot_v2(false, true, 22, 1200, 600); hold off;
         legend([thumbNP1(1), thumbSP1(1)], ...
             "Normal Force", "Shear Force",...
@@ -1612,7 +1597,8 @@ disp("Plot Manipulation Force Threshold Plots -- done")
 
 %% Other Manip Force Thershold Metrics: ************************************
 close all;
-
+alphaVal = 0.2;
+yVal = 0.5;
 % Sort manipulation parameters by mapping:
 for p = 1:numExperimentTypes % Addition for each experiment type
     % Modify repmat depending on which Exp type is being processed
@@ -1649,10 +1635,83 @@ for p = 1:numExperimentTypes % Addition for each experiment type
     %     % Mapping5 -- mapping5TimeIndexRows
     %     mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
     % end
+
+    for j = 1:numSubjects
+        % disp(strcat("p: ", num2str(p)))
+        % Number of box breaks for each Mapping
+        numBoxBreaksMapping1{j,p} = sortByMapping([numBoxBreaks{:,p}], mapping1(j,:));
+        numBoxBreaksMapping3{j,p} = sortByMapping([numBoxBreaks{:,p}], mapping3(j,:));
+        numBoxBreaksMapping5{j,p} = sortByMapping([numBoxBreaks{:,p}], mapping5(j,:));
+
+        % Amount of time box is broken in each trial for each Mapping
+        timeBoxBrokenMapping1{j,p} = sortByMapping([timeBoxBroken{:,p}], mapping1(j,:));
+        timeBoxBrokenMapping3{j,p} = sortByMapping([timeBoxBroken{:,p}], mapping3(j,:));
+        timeBoxBrokenMapping5{j,p} = sortByMapping([timeBoxBroken{:,p}], mapping5(j,:));
+    end
+
+
 end
+
+% Plotting:
 if (showInidividualSubjects == false)
     disp("Plotting Averaged Subjects: ")
 
+    % getParamStats parameters must go in brackets due to being stored as cells
+    for p = 1:numExperimentTypes
+        % Number of Box Breaks
+        [numBoxBreaksMean, numBoxBreaksStd] = ...
+            getParamStats(...
+            [numBoxBreaksMapping1{:,p}], ...
+            [numBoxBreaksMapping3{:,p}], ...
+            [numBoxBreaksMapping5{:,p}]);
+
+        numBoxBreaksMeanStats{1,p} = numBoxBreaksMean;
+        numBoxBreaksStdStats{1,p} = numBoxBreaksStd;
+
+        % Time box broken:
+        [timeBoxBrokenMean,timeBoxBrokenStd] = ...
+            getParamStats(...
+            [timeBoxBrokenMapping1{:,p}], ...
+            [timeBoxBrokenMapping3{:,p}], ...
+            [timeBoxBrokenMapping5{:,p}]);
+
+        timeBoxBrokenMeanStats{1,p} = timeBoxBrokenMean;
+        timeBoxBrokenStdStats{1,p} = timeBoxBrokenStd;
+    end
+
+    % Error Bar
+    % Number of Box Breaks
+    figure;
+    % minY = -2.0; maxY = 5;
+    yVal = 0.5;
+    createMultiExpErrorBarPlot(numBoxBreaksMeanStats,...
+        numBoxBreaksStdStats,...
+        "Mean Occurences of Applying Excessive Force to Cube",...
+        "Mapping", "Time [sec]");
+    improvePlot_v2(false, true, 22, 1200, 600);
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\avgBoxBreaks-errorbar','-dpdf','-r0');
+    end
+
+    % Time box broken:
+    figure;
+    % minY = -2.0; maxY = 5;
+    yVal = 0.5;
+    createMultiExpErrorBarPlot(timeBoxBrokenMeanStats,...
+        timeBoxBrokenStdStats,...
+        "Mean Elapsed Time of Applying Excessive Force to Cube",...
+        "Mapping", "Time [sec]");
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\avgTimeBoxBroken-errorbar','-dpdf','-r0');
+    end
+
+    % Bar Plots:
     figure;
     % Plot average Num Box Breaks Bar Plot with Error Bars
     createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
@@ -1662,7 +1721,7 @@ if (showInidividualSubjects == false)
     %Save figure as pdf:
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\avgBoxBreaks','-dpdf','-r0');
+        print(gcf, 'figures\avgBoxBreaks-barPlot','-dpdf','-r0');
     end
 
     figure;
@@ -1674,53 +1733,115 @@ if (showInidividualSubjects == false)
     %Save figure as pdf:
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\avgTimeBoxBroken','-dpdf','-r0');
+        print(gcf, 'figures\avgTimeBoxBroken-barPlot','-dpdf','-r0');
     end
 
 else
     disp("Plotting Individual Subjects: ")
 
+    for j=1:numSubjects
+        % getParamStats parameters must go in brackets due to being stored as cells
+        for p = 1:numExperimentTypes
+            % Number of Box Breaks
+            [numBoxBreaksMean, numBoxBreaksStd] = ...
+                getParamStats(...
+                [numBoxBreaksMapping1{j,p}], ...
+                [numBoxBreaksMapping3{j,p}], ...
+                [numBoxBreaksMapping5{j,p}]);
+
+            numBoxBreaksMeanStats{1,p} = numBoxBreaksMean;
+            numBoxBreaksStdStats{1,p} = numBoxBreaksStd;
+
+            % Time box broken:
+            [timeBoxBrokenMean,timeBoxBrokenStd] = ...
+                getParamStats(...
+                [timeBoxBrokenMapping1{j,p}], ...
+                [timeBoxBrokenMapping3{j,p}], ...
+                [timeBoxBrokenMapping5{j,p}]);
+
+            timeBoxBrokenMeanStats{1,p} = timeBoxBrokenMean;
+            timeBoxBrokenStdStats{1,p} = timeBoxBrokenStd;
+        end
+
+        % Error Bar
+        % Number of Box Breaks
+        figure;
+        % minY = -2.0; maxY = 5;
+        yVal = 0.5;
+        createMultiExpErrorBarPlot(numBoxBreaksMeanStats,...
+            numBoxBreaksStdStats,...
+            strcat("Mean Occurences of Applying Excessive Force to Cube -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Time [sec]");
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\avgBoxBreaksFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_avgBoxBreaks-errorbar'),'-dpdf','-r0'); %close;
+        end
+
+        % Time box broken:
+        figure;
+        % minY = -2.0; maxY = 5;
+        yVal = 0.5;
+        createMultiExpErrorBarPlot(timeBoxBrokenMeanStats,...
+            timeBoxBrokenStdStats,...
+            strcat("Mean Elapsed Time of Applying Excessive Force to Cube -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Time [sec]");
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\avgTimeBoxBrokenFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_avgTimeBoxBroken-errorbar'),'-dpdf','-r0'); %close;
+        end
+    end
+
+    % Bar Plots:
     % Plot average Num Box Breaks Bar Plot with Error Bars
+    % Saving occurs within the createBarPlot function when plotting
+    % individual subjects
     plotType = 1;
     createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
         "Mean Occurences of Applying Excessive Force to Cube",...
-        "Experiment Type", "Box Breaks [~]",[-2.0 4.0]); %
+        "Experiment Type", "Box Breaks [~]",[-2.0 4.0]);
 
     plotType = 2;
     % Plot average time box broken Bar Plot with Error Bars
     createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
         "Mean Elasped Time of Applying Excessive Force to Cube", ...
-        "Experiment Type", "Time Broken [sec]",[-1.0 3.0]); %
-
-
+        "Experiment Type", "Time Broken [sec]",[-1.0 3.0]);
 end
-
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
 
-%% Run ANOVA and Compare Means for Metrics of Interest:
+%% Run 1-Way ANOVA and Compare Means for Metrics of Interest:
 %% Completion Time: ******************************************************
 close all;
-% Run ANOVA and compare means
+% Run 1-way ANOVA and compare means
 [p_CompletionTime, ~ , stats_CompletionTime] = ...
-    runHMEStats(completionTimeMapping1, completionTimeMapping3,...
+    runHMEANOVA1(completionTimeMapping1, completionTimeMapping3,...
     completionTimeMapping5, "Completion Time");
 
 %% Path Lengths: *********************************************************
 close all;
 % Index
 [p_indexPathLength, ~ , stats_indexPathLength] = ...
-    runHMEStats(indexPathLengthMapping1, indexPathLengthMapping3,...
+    runHMEANOVA1(indexPathLengthMapping1, indexPathLengthMapping3,...
     indexPathLengthMapping5, "Index Path Length");
 
 % Thumb
 [p_thumbPathLength, ~ , stats_thumbPathLength] = ...
-    runHMEStats(thumbPathLengthMapping1, thumbPathLengthMapping3,...
+    runHMEANOVA1(thumbPathLengthMapping1, thumbPathLengthMapping3,...
     thumbPathLengthMapping5, "Thumb Path Length");
 
 % Box
 [p_boxPathLength, ~ , stats_boxPathLength] = ...
-    runHMEStats(boxPathLengthMapping1, boxPathLengthMapping3,...
+    runHMEANOVA1(boxPathLengthMapping1, boxPathLengthMapping3,...
     boxPathLengthMapping5, "Cube Path Length");
 
 %% Interaction Forces: **************************************************
@@ -1728,34 +1849,34 @@ close all;
 close all;
 % Normal
 [p_indexNormal, ~ , stats_indexNormal] = ...
-    runHMEStats(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
+    runHMEANOVA1(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
     meanIndexNormalForceMapping5, "Index Normal Force");
 % Shear
 [p_indexShear, ~ , stats_indexShear] = ...
-    runHMEStats(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
+    runHMEANOVA1(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
     meanIndexShearForceMapping5, "Index Shear Force");
 
 %% **Thumb
 close all;
 % Normal
 [p_thumbNormal, ~ , stats_thumbNormal] = ...
-    runHMEStats(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
+    runHMEANOVA1(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
     meanThumbNormalForceMapping5, "Thumb Normal Force");
 % Shear
 [p_thumbShear, ~ , stats_thumbShear] = ...
-    runHMEStats(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
+    runHMEANOVA1(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
     meanThumbShearForceMapping5, "Thumb Shear Force");
 
 %% Number of Box Breaks: ************************************************
 close all;
 [p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
-    runHMEStats(numBoxBreaksMapping1, numBoxBreaksMapping3,...
+    runHMEANOVA1(numBoxBreaksMapping1, numBoxBreaksMapping3,...
     numBoxBreaksMapping5, "Cube Break Occurences");
 
 %% Time Box Broken: *****************************************************
 close all;
 [p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
-    runHMEStats(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
+    runHMEANOVA1(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
     timeBoxBrokenMapping5, "Cube Break Time");
 %% Run Freidman Tests on Qualitative Survey Results
 close all; clc;
@@ -1823,3 +1944,63 @@ xlim([0,4]);
 tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels)
 improvePlot;
+
+%% Run 2-Way ANOVA and Compare Means for Metrics of Interest:
+%% Completion Time: ******************************************************
+close all;
+% Run 1-way ANOVA and compare means
+[p_CompletionTime, ~ , stats_CompletionTime] = ...
+    runHMEANOVAN(completionTimeMapping1, completionTimeMapping3,...
+    completionTimeMapping5, "Completion Time");
+
+%% Path Lengths: *********************************************************
+close all;
+% Index
+[p_indexPathLength, ~ , stats_indexPathLength] = ...
+    runHMEANOVAN(indexPathLengthMapping1, indexPathLengthMapping3,...
+    indexPathLengthMapping5, "Index Path Length");
+
+% Thumb
+[p_thumbPathLength, ~ , stats_thumbPathLength] = ...
+    runHMEANOVAN(thumbPathLengthMapping1, thumbPathLengthMapping3,...
+    thumbPathLengthMapping5, "Thumb Path Length");
+
+% Box
+[p_boxPathLength, ~ , stats_boxPathLength] = ...
+    runHMEANOVAN(boxPathLengthMapping1, boxPathLengthMapping3,...
+    boxPathLengthMapping5, "Cube Path Length");
+
+%% Interaction Forces: **************************************************
+%% **Index
+close all;
+% Normal
+[p_indexNormal, ~ , stats_indexNormal] = ...
+    runHMEANOVAN(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
+    meanIndexNormalForceMapping5, "Index Normal Force");
+% Shear
+[p_indexShear, ~ , stats_indexShear] = ...
+    runHMEANOVAN(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
+    meanIndexShearForceMapping5, "Index Shear Force");
+
+%% **Thumb
+close all;
+% Normal
+[p_thumbNormal, ~ , stats_thumbNormal] = ...
+    runHMEANOVAN(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
+    meanThumbNormalForceMapping5, "Thumb Normal Force");
+% Shear
+[p_thumbShear, ~ , stats_thumbShear] = ...
+    runHMEANOVAN(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
+    meanThumbShearForceMapping5, "Thumb Shear Force");
+
+%% Number of Box Breaks: ************************************************
+close all;
+[p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
+    runHMEANOVAN(numBoxBreaksMapping1, numBoxBreaksMapping3,...
+    numBoxBreaksMapping5, "Cube Break Occurences");
+
+%% Time Box Broken: *****************************************************
+close all;
+[p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
+    runHMEANOVAN(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
+    timeBoxBrokenMapping5, "Cube Break Time");

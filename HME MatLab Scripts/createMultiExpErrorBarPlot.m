@@ -14,8 +14,8 @@ numMappings = evalin('base','numMappings');
 plotMarker = evalin('base','plotMarker');
 markerSize = evalin('base', 'markerSize');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
-minY =  evalin('base', 'minY');
-maxY =  evalin('base', 'maxY');
+% minY =  evalin('base', 'minY');
+% maxY =  evalin('base', 'maxY');
 alphaVal = evalin('base', 'alphaVal');
 yVal = evalin('base', 'yVal');
 dataSeparation = 0.3;
@@ -26,27 +26,6 @@ minX = 0.5;
 xTickVals = [0:3*numMappings];
 
 xAxis = xTickVals(2:end);
-
-% Shade only the backgrounds of training data
-xT = 0.5*(xAxis(6)+xAxis(7)); % X-vlaue of test-train border
-% x = [minX      xT  xT  minX];
-% y = [minY minY  maxY  maxY];
-% patch(x,y,'r','alpha');
-v = [minX minY; xT minY; xT maxY; minX maxY];
-f = [1 2 3 4];
-shadeColor = [0.5 0.5 0.5];
-
-patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
-    'EdgeColor',num2str(shadeColor),...
-    'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
-
-
-% Section labels:
-textYCoord = maxY-yVal;
-text(0.5*(xAxis(3)+xAxis(4)), textYCoord,...
-    "Training", "HorizontalAlignment","center", "FontSize", 20)
-text(xAxis(8), textYCoord,...
-    "Testing", "HorizontalAlignment","center", "FontSize", 20)
 
 % Subjects Plots
 for p = 1:numExperimentTypes
@@ -81,12 +60,30 @@ for p = 1:numExperimentTypes
     end
 end
 
-% Separation lines:
-% Between training 1 and training 2
-%xline(0.5*(xAxis(3)+xAxis(4)));
-% Between training 2 and testing
-% xline(0.5*(xAxis(6)+xAxis(7)));
+% Shade only the backgrounds of training data
+xT = 0.5*(xAxis(6)+xAxis(7))+jitterVal; % X-vlaue of test-train border
+minY = min(ylim); maxY = max(ylim);
+v = [minX minY; xT minY; xT maxY; minX maxY];
+f = [1 2 3 4];
+shadeColor = [0.5 0.5 0.5];
 
+patch('Faces',f,'Vertices',v,'FaceColor',num2str(shadeColor),...
+    'EdgeColor',num2str(shadeColor),...
+    'EdgeAlpha',alphaVal,'FaceAlpha',alphaVal); hold on;
+
+% Section labels:
+textYCoord = maxY-yVal;
+text(0.5*(xAxis(3)+xAxis(4)), textYCoord,...
+    "Training", "HorizontalAlignment","center", "FontSize", 20)
+text(xAxis(8), textYCoord,...
+    "Testing", "HorizontalAlignment","center", "FontSize", 20)
+% Reset axes so patch doesn't move them
+ylim([minY maxY]);
+
+
+% Put training data on top of patch
+uistack(h1(1),'top');
+uistack(h2(1),'top');
 
 % Plot Details
 n=numExperimentTypes+1; % for the duplicate p = 1
@@ -95,9 +92,7 @@ xticks(xTickVals);
 tickLabels = [" ", repmat(["Dual Tactor", "Single Tactor", "Control"], 1, n)];
 set(gca, 'xTick', xTickVals, 'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
-title(plotTitle);
-
-hold off;
+title(plotTitle); hold off;
 
 end
 
