@@ -2475,7 +2475,8 @@ QString MainWindow::getSubjectDirectory()
     }
     if (p_CommonData->currentDynamicObjectState == HoxelMappingExperiment)
     {
-        QString subjectDir = "./HME_Subject_Data/";
+//        QString subjectDir = "./HME_Subject_Data/";
+        QString subjectDir = "./HME_Subject_Data-JasminTest/";
         if(ui->hoxelStudyRadioButton->isChecked() == true)
         {
             subjectDir = subjectDir.append("Hoxels-1DoF/");

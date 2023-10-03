@@ -5,6 +5,8 @@ clear; close all; clc;
 clear; close all; clc;
 %#ok<*NOPTS>
 
+showInidividualSubjects = false;
+
 % Number of mappings tested
 numMappings = 3;
 % Number of trials per mapping in each exp type
@@ -208,7 +210,7 @@ end
 disp("subject9 data repair -- done")
 
 if (repairedBool14 == false)
-   j=14; % When all subjects are loaded
+    j=14; % When all subjects are loaded
     plotVis = "on";
     saveFigures = false;
 
@@ -323,7 +325,7 @@ for j = 1:numSubjects
     %         "Exp Type 1", "Exp Type 2",...
     %         "Location","northeast");
     legend("Training, Color \Delta",...
-        "Testing, No Color \Delta",... 
+        "Testing, No Color \Delta",...
         "Location","northeast");
     hold off;
 end
@@ -853,34 +855,79 @@ jitterVal = 0.0;
 completionTimeMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
 completionTimeStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
-% getParamStats parameters must go in brackets due to being stored as cells
-for p = 1:numExperimentTypes
-    [completionTimeMean, completionTimeStd] = ...
-        getParamStats(...
-        [completionTimeMapping1{:,p}], ...
-        [completionTimeMapping3{:,p}], ...
-        [completionTimeMapping5{:,p}]);
+if (showInidividualSubjects == false)
+    disp("Plotting Averaged Subjects: ")
 
-    % for j = 1:numSubjects
+    % getParamStats parameters must go in brackets due to being stored as cells
+    for p = 1:numExperimentTypes
+        [completionTimeMean, completionTimeStd] = ...
+            getParamStats(...
+            [completionTimeMapping1{:,p}], ...
+            [completionTimeMapping3{:,p}], ...
+            [completionTimeMapping5{:,p}]);
+
+        % for j = 1:numSubjects
         completionTimeMeanStats{1,p} = completionTimeMean;
         completionTimeStdStats{1,p} = completionTimeStd;
-    % end
+        % end
+    end
+
+    yVal = 1.5;
+    [h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
+        completionTimeStdStats, "Completion Time", "Mapping", "Time [sec]");
+    ylim([minY,maxY]);
+    improvePlot_v2(false, true, 22, 1200, 600);
+    % legend([h1(1), h2(1),h3(1)],...
+    %     "Training 1", "Training 2", "Testing",...
+    %     "Location","northoutside", "NumColumns", 3);
+
+    % Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\completionTime','-dpdf','-r0');
+    end
+
+else
+    disp("Plotting Individual Subjects: ")
+
+    for j = 1:numSubjects
+        figure;
+        % getParamStats parameters must go in brackets due to being stored as cells
+        for p = 1:numExperimentTypes
+            [completionTimeMean, completionTimeStd] = ...
+                getParamStats(...
+                [completionTimeMapping1{j,p}], ...
+                [completionTimeMapping3{j,p}], ...
+                [completionTimeMapping5{j,p}]);
+
+            completionTimeMeanStats{1,p} = completionTimeMean;
+            completionTimeStdStats{1,p} = completionTimeStd;
+
+        end
+        minY = 0; maxY = 25;
+        yVal = 1.5;
+        [h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
+            completionTimeStdStats,...
+            strcat("Completion Time -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Time [sec]");
+
+        ylim([minY,maxY]);
+        improvePlot_v2(false, true, 22, 1200, 600);
+        % legend([h1(1), h2(1),h3(1)],...
+        %     "Training 1", "Training 2", "Testing",...
+        %     "Location","northoutside", "NumColumns", 3);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\completionTimeFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_completionTime'),'-dpdf','-fillpage'); %close;
+        end
+    end
 end
 
-yVal = 1.5;
-[h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
-    completionTimeStdStats, "Completion Time", "Mapping", "Time [sec]");
-ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 600);
-% legend([h1(1), h2(1),h3(1)],...
-%     "Training 1", "Training 2", "Testing",...
-%     "Location","northoutside", "NumColumns", 3);
-
-% Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\completionTime','-dpdf','-r0');
-end
 
 %% Plot pathLengths
 close all;
@@ -896,123 +943,260 @@ thumbPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each exper
 boxPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
 boxPathLengthStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
-for p = 1:numExperimentTypes
-    [indexPathLengthMean, indexPathLengthStd] = ...
-        getParamStats(...
-        [indexPathLengthMapping1{:,p}], ...
-        [indexPathLengthMapping3{:,p}], ...
-        [indexPathLengthMapping5{:,p}]);
-    [thumbPathLengthMean, thumbPathLengthStd] = ...
-        getParamStats(...
-        [thumbPathLengthMapping1{:,p}], ...
-        [thumbPathLengthMapping3{:,p}], ...
-        [thumbPathLengthMapping5{:,p}]);
-    [boxPathLengthMean, boxPathLengthStd] = ...
-        getParamStats(...
-        [boxPathLengthMapping1{:,p}], ...
-        [boxPathLengthMapping3{:,p}], ...
-        [boxPathLengthMapping5{:,p}]);
 
-    % for j = 1:numSubjects
+if (showInidividualSubjects == false)
+    disp("Plotting Averaged Subjects: ")
+
+    for p = 1:numExperimentTypes
+        [indexPathLengthMean, indexPathLengthStd] = ...
+            getParamStats(...
+            [indexPathLengthMapping1{:,p}], ...
+            [indexPathLengthMapping3{:,p}], ...
+            [indexPathLengthMapping5{:,p}]);
+        [thumbPathLengthMean, thumbPathLengthStd] = ...
+            getParamStats(...
+            [thumbPathLengthMapping1{:,p}], ...
+            [thumbPathLengthMapping3{:,p}], ...
+            [thumbPathLengthMapping5{:,p}]);
+        [boxPathLengthMean, boxPathLengthStd] = ...
+            getParamStats(...
+            [boxPathLengthMapping1{:,p}], ...
+            [boxPathLengthMapping3{:,p}], ...
+            [boxPathLengthMapping5{:,p}]);
+
+        % for j = 1:numSubjects
         indexPathLengthMeanStats{1,p} = indexPathLengthMean;
         indexPathLengthStdStats{1,p} = indexPathLengthStd;
         thumbPathLengthMeanStats{1,p} = thumbPathLengthMean;
         thumbPathLengthStdStats{1,p} = thumbPathLengthStd;
         boxPathLengthMeanStats{1,p} = boxPathLengthMean;
         boxPathLengthStdStats{1,p} = boxPathLengthStd;
-    % end
-end
+        % end
+    end
 
-jitterVal = 0.18;
-plotMarker = "s";
-% Index Plot
-figure;
-[indexP1, indexP2, indexP3] = ...
-    createMultiExpErrorBarPlot(indexPathLengthMeanStats,...
-    indexPathLengthStdStats,...
-    "Index Path Length", "Mapping", "Path Length [m]");
-% ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
+    jitterVal = 0.18;
+    plotMarker = "s";
+    % Index Plot
+    figure;
+    [indexP1, indexP2, indexP3] = ...
+        createMultiExpErrorBarPlot(indexPathLengthMeanStats,...
+        indexPathLengthStdStats,...
+        "Index Path Length", "Mapping", "Path Length [m]");
+    % ylim([minY,maxY]);
+    improvePlot_v2(false, true, 22, 1200, 650); hold off;
 
-legend([indexP1(1), indexP2(1), indexP3(1)],...
-    "Training 1", "Training 2", "Testing",...
-    "Location","northoutside", "NumColumns", 3);
+    legend([indexP1(1), indexP2(1), indexP3(1)],...
+        "Training 1", "Training 2", "Testing",...
+        "Location","northoutside", "NumColumns", 3);
 
-% Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\indexPathLengths','-dpdf','-r0');
-end
-set(gcf,'Visible', plotVis);
+    % Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\indexPathLengths','-dpdf','-r0');
+    end
+    set(gcf,'Visible', plotVis);
 
-% Thumb Plot
-figure;
-[thumbP1, thumbP2, thumbP3] = ...
-    createMultiExpErrorBarPlot(thumbPathLengthMeanStats,...
-    thumbPathLengthStdStats,...
-    "Thumb Path Length", "Mapping", "Path Length [m]");
-% ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
-legend([thumbP1(1), thumbP2(1), thumbP3(1)],...
-    "Training 1", "Training 2", "Testing",...
-    "Location","northoutside", "NumColumns", 3);
+    % Thumb Plot
+    figure;
+    [thumbP1, thumbP2, thumbP3] = ...
+        createMultiExpErrorBarPlot(thumbPathLengthMeanStats,...
+        thumbPathLengthStdStats,...
+        "Thumb Path Length", "Mapping", "Path Length [m]");
+    % ylim([minY,maxY]);
+    improvePlot_v2(false, true, 22, 1200, 650); hold off;
+    legend([thumbP1(1), thumbP2(1), thumbP3(1)],...
+        "Training 1", "Training 2", "Testing",...
+        "Location","northoutside", "NumColumns", 3);
 
-% Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\thumbPathLengths','-dpdf','-r0');
-end
-set(gcf,'Visible', plotVis);
+    % Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\thumbPathLengths','-dpdf','-r0');
+    end
+    set(gcf,'Visible', plotVis);
 
-% Box Plot
-figure;
-[boxP1, boxP2, boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
-    boxPathLengthStdStats, "Box Path Length", "Mapping", "Path Length [m]");
-% ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 650); hold off;
-legend([boxP1(1), boxP2(1), boxP3(1)],...
-    "Training 1", "Training 2", "Testing",...
-    "Location","northoutside", "NumColumns", 3,...
-    "FontSize", 16);
+    % Box Plot
+    figure;
+    [boxP1, boxP2, boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
+        boxPathLengthStdStats, "Box Path Length", "Mapping", "Path Length [m]");
+    % ylim([minY,maxY]);
+    improvePlot_v2(false, true, 22, 1200, 650); hold off;
+    legend([boxP1(1), boxP2(1), boxP3(1)],...
+        "Training 1", "Training 2", "Testing",...
+        "Location","northoutside", "NumColumns", 3,...
+        "FontSize", 16);
 
-% Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\boxPathLengths','-dpdf','-r0');
-end
-set(gcf,'Visible', plotVis);
+    % Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\boxPathLengths','-dpdf','-r0');
+    end
+    set(gcf,'Visible', plotVis);
 
-% Combined plot:
-figure;
-[indexTrain1, thumbTrain1, boxTrain1, ...
-    indexTrain2, thumbTrain2, boxTrain2, ...
-    indexTest, thumbTest, boxTest] = ...
-    createCombinedPathLengthsPlot(indexP1,indexP2,indexP3,...
-    thumbP1,thumbP2,thumbP3, boxP1,boxP2,boxP3,...
-    "Path Lengths", "Mapping", "Path Length [m]");
+    % Combined plot:
+    figure;
+    [indexTrain1, thumbTrain1, boxTrain1, ...
+        indexTrain2, thumbTrain2, boxTrain2, ...
+        indexTest, thumbTest, boxTest] = ...
+        createCombinedPathLengthsPlot(indexP1,indexP2,indexP3,...
+        thumbP1,thumbP2,thumbP3, boxP1,boxP2,boxP3,...
+        "Path Lengths", "Mapping", "Path Length [m]");
 
-improvePlot_v2(false, true, 20, 1200, 600); hold off;
-% 
-% legend([indexTrain1(1), thumbTrain1(1), boxTrain1(1), ...
-%     indexTrain2(1), thumbTrain2(1), boxTrain2(1), ...
-%     indexTest(1), thumbTest(1), boxTest(1)],...
-%     "Index Training 1", "Thumb Training 1", "Cube Training 1",...
-%     "Index Training 2", "Thumb Training 2", "Cube Training 2",...
-%     "Index Testing", "Thumb Testing", "Cube Testing",...
-%     "Location", "northoutside", "NumColumns", 3,...
-%     "FontSize", 16);
+    improvePlot_v2(false, true, 20, 1200, 600); hold off;
+    %
+    % legend([indexTrain1(1), thumbTrain1(1), boxTrain1(1), ...
+    %     indexTrain2(1), thumbTrain2(1), boxTrain2(1), ...
+    %     indexTest(1), thumbTest(1), boxTest(1)],...
+    %     "Index Training 1", "Thumb Training 1", "Cube Training 1",...
+    %     "Index Training 2", "Thumb Training 2", "Cube Training 2",...
+    %     "Index Testing", "Thumb Testing", "Cube Testing",...
+    %     "Location", "northoutside", "NumColumns", 3,...
+    %     "FontSize", 16);
 
-legend([indexTest(1), thumbTest(1), boxTest(1)],...
-    "Index", "Thumb ", "Cube",...
-    "Location", "northwest", "NumColumns", 1,...
-    "FontSize", 16);
+    legend([indexTest(1), thumbTest(1), boxTest(1)],...
+        "Index", "Thumb ", "Cube",...
+        "Location", "northwest", "NumColumns", 1,...
+        "FontSize", 16);
 
+    % improvePlot_v2(false, true, 18, 1400, 800); hold off;
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\pathLengthsCombined','-dpdf','-r0');
+    end
 
-% improvePlot_v2(false, true, 18, 1400, 800); hold off;
-%Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\pathLengthsCombined','-dpdf','-r0');
+else
+    close all;
+    disp("Plotting Individual Subjects: ")
+
+    for j = 1:numSubjects
+        figure;
+        for p = 1:numExperimentTypes
+            [indexPathLengthMean, indexPathLengthStd] = ...
+                getParamStats(...
+                [indexPathLengthMapping1{j,p}], ...
+                [indexPathLengthMapping3{j,p}], ...
+                [indexPathLengthMapping5{j,p}]);
+            [thumbPathLengthMean, thumbPathLengthStd] = ...
+                getParamStats(...
+                [thumbPathLengthMapping1{j,p}], ...
+                [thumbPathLengthMapping3{j,p}], ...
+                [thumbPathLengthMapping5{j,p}]);
+            [boxPathLengthMean, boxPathLengthStd] = ...
+                getParamStats(...
+                [boxPathLengthMapping1{j,p}], ...
+                [boxPathLengthMapping3{j,p}], ...
+                [boxPathLengthMapping5{j,p}]);
+
+            % for j = 1:numSubjects
+            indexPathLengthMeanStats{1,p} = indexPathLengthMean;
+            indexPathLengthStdStats{1,p} = indexPathLengthStd;
+            thumbPathLengthMeanStats{1,p} = thumbPathLengthMean;
+            thumbPathLengthStdStats{1,p} = thumbPathLengthStd;
+            boxPathLengthMeanStats{1,p} = boxPathLengthMean;
+            boxPathLengthStdStats{1,p} = boxPathLengthStd;
+            % end
+        end
+
+        jitterVal = 0.18;
+        plotMarker = "s";
+        % Index Plot
+        figure;
+        [indexP1, indexP2, indexP3] = ...
+            createMultiExpErrorBarPlot(indexPathLengthMeanStats,...
+            indexPathLengthStdStats,...
+            strcat("Index Path Length -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Path Length [m]");
+        % ylim([minY,maxY]);
+        improvePlot_v2(false, true, 22, 1200, 650); hold off;
+
+        legend([indexP1(1), indexP2(1), indexP3(1)],...
+            "Training 1", "Training 2", "Testing",...
+            "Location","northoutside", "NumColumns", 3);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\indexPathLengthsFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_indexPathLengths'),'-dpdf','-fillpage'); %close;
+        end
+        set(gcf,'Visible', plotVis);
+
+        % Thumb Plot
+        figure;
+        [thumbP1, thumbP2, thumbP3] = ...
+            createMultiExpErrorBarPlot(thumbPathLengthMeanStats,...
+            thumbPathLengthStdStats,...
+            strcat("Thumb Path Length -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Path Length [m]");
+        % ylim([minY,maxY]);
+        improvePlot_v2(false, true, 22, 1200, 650); hold off;
+        legend([thumbP1(1), thumbP2(1), thumbP3(1)],...
+            "Training 1", "Training 2", "Testing",...
+            "Location","northoutside", "NumColumns", 3);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\thumbPathLengthsFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_thumbPathLengths'),'-dpdf','-fillpage'); %close;
+        end
+        set(gcf,'Visible', plotVis);
+
+        % Box Plot
+        figure;
+        [boxP1, boxP2, boxP3] = createMultiExpErrorBarPlot(boxPathLengthMeanStats,...
+            boxPathLengthStdStats,...
+            strcat("Box Path Length -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Path Length [m]");
+        % ylim([minY,maxY]);
+        improvePlot_v2(false, true, 22, 1200, 650); hold off;
+        legend([boxP1(1), boxP2(1), boxP3(1)],...
+            "Training 1", "Training 2", "Testing",...
+            "Location","northoutside", "NumColumns", 3,...
+            "FontSize", 16);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\boxPathLengthsFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_boxPathLengths'),'-dpdf','-fillpage'); %close;
+        end
+        set(gcf,'Visible', plotVis);
+
+        % Combined plot:
+        figure;
+        [indexTrain1, thumbTrain1, boxTrain1, ...
+            indexTrain2, thumbTrain2, boxTrain2, ...
+            indexTest, thumbTest, boxTest] = ...
+            createCombinedPathLengthsPlot(indexP1,indexP2,indexP3,...
+            thumbP1,thumbP2,thumbP3, boxP1,boxP2,boxP3,...
+            strcat("Path Lengths -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Path Length [m]");
+
+        improvePlot_v2(false, true, 20, 1200, 600); hold off;
+
+        legend([indexTest(1), thumbTest(1), boxTest(1)],...
+            "Index", "Thumb ", "Cube",...
+            "Location", "south", "NumColumns", 3,...
+            "FontSize", 16);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\combinedPathLengthsFigures\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_combinedPathLengths'),'-dpdf','-fillpage'); %close;
+        end
+
+    end
 end
 
 %% Plot Normal and Shear Forces
@@ -1032,30 +1216,33 @@ thumbNormalStdStats = cell(1, numExperimentTypes); % Addition for each experimen
 thumbShearMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
 thumbShearStdStats = cell(1, numExperimentTypes); % Addition for each experiment type
 
-for p = 1:numExperimentTypes
-    [indexNormalMean, indexNormalMeanStdVals] = ...
-        getParamStats(...
-        [meanIndexNormalForceMapping1{:,p}], ...
-        [meanIndexNormalForceMapping3{:,p}], ...
-        [meanIndexNormalForceMapping5{:,p}]);
-    [indexShearMean, indexShearMeanStdVals] = ...
-        getParamStats(...
-        [meanIndexShearForceMapping1{:,p}], ...
-        [meanIndexShearForceMapping3{:,p}], ...
-        [meanIndexShearForceMapping5{:,p}]);
+if (showInidividualSubjects == false)
+    disp("Plotting Averaged Subjects: ")
 
-    [thumbNormalMean, thumbNormalMeanStdVals] = ...
-        getParamStats(...
-        [meanThumbNormalForceMapping1{:,p}], ...
-        [meanThumbNormalForceMapping3{:,p}], ...
-        [meanThumbNormalForceMapping5{:,p}]);
-    [thumbShearMean, thumbShearMeanStdVals] = ...
-        getParamStats(...
-        [meanThumbShearForceMapping1{:,p}], ...
-        [meanThumbShearForceMapping3{:,p}], ...
-        [meanThumbShearForceMapping5{:,p}]);
+    for p = 1:numExperimentTypes
+        [indexNormalMean, indexNormalMeanStdVals] = ...
+            getParamStats(...
+            [meanIndexNormalForceMapping1{:,p}], ...
+            [meanIndexNormalForceMapping3{:,p}], ...
+            [meanIndexNormalForceMapping5{:,p}]);
+        [indexShearMean, indexShearMeanStdVals] = ...
+            getParamStats(...
+            [meanIndexShearForceMapping1{:,p}], ...
+            [meanIndexShearForceMapping3{:,p}], ...
+            [meanIndexShearForceMapping5{:,p}]);
 
-    for j = 1:numSubjects
+        [thumbNormalMean, thumbNormalMeanStdVals] = ...
+            getParamStats(...
+            [meanThumbNormalForceMapping1{:,p}], ...
+            [meanThumbNormalForceMapping3{:,p}], ...
+            [meanThumbNormalForceMapping5{:,p}]);
+        [thumbShearMean, thumbShearMeanStdVals] = ...
+            getParamStats(...
+            [meanThumbShearForceMapping1{:,p}], ...
+            [meanThumbShearForceMapping3{:,p}], ...
+            [meanThumbShearForceMapping5{:,p}]);
+
+        % for j = 1:numSubjects
         indexNormalMeanStats{1,p} = indexNormalMean;
         indexNormalStdStats{1,p} = indexNormalMeanStdVals;
         indexShearMeanStats{1,p} = indexShearMean;
@@ -1065,90 +1252,200 @@ for p = 1:numExperimentTypes
         thumbNormalStdStats{1,p} = thumbNormalMeanStdVals;
         thumbShearMeanStats{1,p} = thumbShearMean;
         thumbShearStdStats{1,p} = thumbShearMeanStdVals;
+        % end
+    end
+
+    alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;
+    jitterValNum = 0.1;
+    yVal = 0.5;
+    % Index Plot
+    figure;
+    plotMarker = "s";
+    jitterVal = -jitterValNum; %neg
+    [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
+        "Index Forces", "Mapping", "Force [N]");
+    hold on;
+    plotMarker = "d";
+    jitterVal = jitterValNum; %pos
+    [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
+        "Index Forces", "Mapping", "Force [N]");
+    ylim([minY,maxY]);
+    improvePlot_v2(false, true, 22, 1200, 600); hold off;
+    % legend([indexNP1(1), indexSP1(1), ...
+    %     indexNP2(1), indexSP2(1),...
+    %     indexNP3(1), indexSP3(1)],...
+    %     "Index Normal Training 1", "Index Shear Training 1",...
+    %     "Index Normal Training 2", "Index Shear Training 2",...
+    %     "Index Normal Testing", "Index Shear Testing",...
+    %     "Location","northoutside", "NumColumns", 3, ...
+    %     "FontSize", 18);
+    legend([indexNP1(1), indexSP1(1)], ...
+        "Normal Force", "Shear Force",...
+        "Location","northwest", "NumColumns", 1, ...
+        "FontSize", 18);
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\index_Normal-ShearForces','-dpdf','-r0');
+    end
+
+    % Thumb Plot
+    figure;
+    plotMarker = "s";
+    jitterVal = -jitterValNum; %neg
+    [thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
+        "Thumb Forces", "Mapping", "Force [N]");
+    hold on;
+    plotMarker = "d";
+    jitterVal = jitterValNum; %pos
+    [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
+        "Thumb Forces", "Mapping", "Force [N]");
+    ylim([minY,maxY]);
+    improvePlot_v2(false, true, 22, 1200, 600); hold off;
+    % legend([thumbNP1(1), thumbSP1(1), ...
+    %     thumbNP2(1), thumbSP2(1),...
+    %     thumbNP3(1), thumbSP3(1)],...
+    %     "Thumb Normal Training 1", "Thumb Shear Training 1",...
+    %     "Thumb Normal Training 2", "Thumb Shear Training 2",...
+    %     "Thumb Normal Testing", "Thumb Shear Testing",...
+    %     "Location","northoutside", "NumColumns", 3, ...
+    %     "FontSize", 18);
+    legend([thumbNP1(1), thumbSP1(1)], ...
+        "Normal Force", "Shear Force",...
+        "Location","northwest", "NumColumns", 1, ...
+        "FontSize", 18);
+
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\thumb_Normal-ShearForces','-dpdf','-r0');
+    end
+
+    % % Combined plot:
+    % figure;
+    % createCombinedNSForcesPlot(indexNP1,indexNP2,indexNP3,...
+    %     indexSP1,indexSP2,indexSP3,...
+    %     thumbNP1,thumbNP2,thumbNP3,...
+    %     thumbSP1,thumbSP2,thumbSP3,...
+    %     "Fingertip Forces", "Mapping", "Force [N]");
+    % improvePlot_v2(false, true, 18, 1150, 650); hold off;
+    % % improvePlot_v2(false, true, 18, 1400, 800); hold off;
+    % %Save figure as pdf:
+    % if (saveFigures == true)
+    %     set(gcf,'PaperOrientation','landscape');
+    %     print(gcf, 'figures\normal-shearForcesCombined','-dpdf','-r0');
+    % end
+
+else
+
+    close all;
+    disp("Plotting Individual Subjects: ")
+
+    minY = 0; maxY = 20;
+    for j = 1:numSubjects
+        figure;
+        alphaVal = 0.2;
+
+        for p = 1:numExperimentTypes
+            [indexNormalMean, indexNormalMeanStdVals] = ...
+                getParamStats(...
+                [meanIndexNormalForceMapping1{j,p}], ...
+                [meanIndexNormalForceMapping3{j,p}], ...
+                [meanIndexNormalForceMapping5{j,p}]);
+            [indexShearMean, indexShearMeanStdVals] = ...
+                getParamStats(...
+                [meanIndexShearForceMapping1{j,p}], ...
+                [meanIndexShearForceMapping3{j,p}], ...
+                [meanIndexShearForceMapping5{j,p}]);
+
+            [thumbNormalMean, thumbNormalMeanStdVals] = ...
+                getParamStats(...
+                [meanThumbNormalForceMapping1{j,p}], ...
+                [meanThumbNormalForceMapping3{j,p}], ...
+                [meanThumbNormalForceMapping5{j,p}]);
+            [thumbShearMean, thumbShearMeanStdVals] = ...
+                getParamStats(...
+                [meanThumbShearForceMapping1{j,p}], ...
+                [meanThumbShearForceMapping3{j,p}], ...
+                [meanThumbShearForceMapping5{j,p}]);
+
+
+            indexNormalMeanStats{1,p} = indexNormalMean;
+            indexNormalStdStats{1,p} = indexNormalMeanStdVals;
+            indexShearMeanStats{1,p} = indexShearMean;
+            indexShearStdStats{1,p} = indexShearMeanStdVals;
+
+            thumbNormalMeanStats{1,p} = thumbNormalMean;
+            thumbNormalStdStats{1,p} = thumbNormalMeanStdVals;
+            thumbShearMeanStats{1,p} = thumbShearMean;
+            thumbShearStdStats{1,p} = thumbShearMeanStdVals;
+
+        end
+
+        alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;
+        jitterValNum = 0.1;
+        yVal = 0.5;
+        % Index Plot
+        figure;
+        plotMarker = "s";
+        jitterVal = -jitterValNum; %neg
+        [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
+            strcat("Index Forces -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Force [N]");
+        hold on;
+        plotMarker = "d";
+        jitterVal = jitterValNum; %pos
+        [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
+            strcat("Index Forces -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Force [N]");
+        ylim([minY,maxY]);
+        improvePlot_v2(false, true, 22, 1200, 600); hold off;
+        legend([indexNP1(1), indexSP1(1)], ...
+            "Normal Force", "Shear Force",...
+            "Location","northwest", "NumColumns", 1, ...
+            "FontSize", 18);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\index_Normal-ShearForces\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_index_Normal-ShearForces'),'-dpdf','-fillpage'); %close;
+        end
+
+        % Thumb Plot
+        figure;
+        plotMarker = "s";
+        jitterVal = -jitterValNum; %neg
+        [thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
+            strcat("Thumb Forces -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Force [N]");
+        hold on;
+        plotMarker = "d";
+        jitterVal = jitterValNum; %pos
+        [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
+            strcat("Thumb Forces -- Subject #",num2str(subjectNum(j))),...
+            "Mapping", "Force [N]");
+        ylim([minY,maxY]);
+        improvePlot_v2(false, true, 22, 1200, 600); hold off;
+        legend([thumbNP1(1), thumbSP1(1)], ...
+            "Normal Force", "Shear Force",...
+            "Location","northwest", "NumColumns", 1, ...
+            "FontSize", 18);
+
+        % Save figure as pdf:
+        if (saveFigures == true)
+            set(gcf,'PaperOrientation','landscape');
+            print(gcf,...
+                strcat('figures\Individual Subject Figures\thumb_Normal-ShearForces\',...
+                'Subject',num2str(subjectNum(j)),...
+                '_thumb_Normal-ShearForces'),'-dpdf','-fillpage'); %close;
+        end
     end
 end
-
-alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;jitterValNum = 0.1;
-yVal = 0.5;
-% Index Plot
-figure;
-plotMarker = "s";
-jitterVal = -jitterValNum; %neg
-[indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
-    "Index Forces", "Mapping", "Force [N]");
-hold on;
-plotMarker = "d";
-jitterVal = jitterValNum; %pos
-[indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
-    "Index Forces", "Mapping", "Force [N]");
-ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 600); hold off;
-% legend([indexNP1(1), indexSP1(1), ...
-%     indexNP2(1), indexSP2(1),...
-%     indexNP3(1), indexSP3(1)],...
-%     "Index Normal Training 1", "Index Shear Training 1",...
-%     "Index Normal Training 2", "Index Shear Training 2",...
-%     "Index Normal Testing", "Index Shear Testing",...
-%     "Location","northoutside", "NumColumns", 3, ...
-%     "FontSize", 18);
-legend([indexNP1(1), indexSP1(1)], ...
-    "Normal Force", "Shear Force",...
-    "Location","northwest", "NumColumns", 1, ...
-    "FontSize", 18);
-
-%Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\index_Normal-ShearForces','-dpdf','-r0');
-end
-
-% Thumb Plot
-figure;
-plotMarker = "s";
-jitterVal = -jitterValNum; %neg
-[thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
-    "Thumb Forces", "Mapping", "Force [N]");
-hold on;
-plotMarker = "d";
-jitterVal = jitterValNum; %pos
-[thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
-    "Thumb Forces", "Mapping", "Force [N]");
-ylim([minY,maxY]);
-improvePlot_v2(false, true, 22, 1200, 600); hold off;
-% legend([thumbNP1(1), thumbSP1(1), ...
-%     thumbNP2(1), thumbSP2(1),...
-%     thumbNP3(1), thumbSP3(1)],...
-%     "Thumb Normal Training 1", "Thumb Shear Training 1",...
-%     "Thumb Normal Training 2", "Thumb Shear Training 2",...
-%     "Thumb Normal Testing", "Thumb Shear Testing",...
-%     "Location","northoutside", "NumColumns", 3, ...
-%     "FontSize", 18);
-legend([thumbNP1(1), thumbSP1(1)], ...
-    "Normal Force", "Shear Force",...
-    "Location","northwest", "NumColumns", 1, ...
-    "FontSize", 18);
-
-
-%Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\thumb_Normal-ShearForces','-dpdf','-r0');
-end
-
-% % Combined plot:
-% figure;
-% createCombinedNSForcesPlot(indexNP1,indexNP2,indexNP3,...
-%     indexSP1,indexSP2,indexSP3,...
-%     thumbNP1,thumbNP2,thumbNP3,...
-%     thumbSP1,thumbSP2,thumbSP3,...
-%     "Fingertip Forces", "Mapping", "Force [N]");
-% improvePlot_v2(false, true, 18, 1150, 650); hold off;
-% % improvePlot_v2(false, true, 18, 1400, 800); hold off;
-% %Save figure as pdf:
-% if (saveFigures == true)
-%     set(gcf,'PaperOrientation','landscape');
-%     print(gcf, 'figures\normal-shearForcesCombined','-dpdf','-r0');
-% end
 
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
@@ -1303,7 +1600,7 @@ for j = 1:numSubjects
 
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
-        print(gcf, strcat('figures\manipForceThresholdFigures\',...
+        print(gcf, strcat('figures\Individual Subject Figures\manipForceThresholdFigures\',...
             'Subject',num2str(subjectNum(j)),...
             '_manipForceThreshold'),'-dpdf','-fillpage'); %close;
     end
@@ -1314,7 +1611,8 @@ end
 disp("Plot Manipulation Force Threshold Plots -- done")
 
 %% Other Manip Force Thershold Metrics: ************************************
-% close all;
+close all;
+
 % Sort manipulation parameters by mapping:
 for p = 1:numExperimentTypes % Addition for each experiment type
     % Modify repmat depending on which Exp type is being processed
@@ -1351,44 +1649,52 @@ for p = 1:numExperimentTypes % Addition for each experiment type
     %     % Mapping5 -- mapping5TimeIndexRows
     %     mapping5 = repmat([21:30; 11:20; 1:10], [1, 1]);
     % end
+end
+if (showInidividualSubjects == false)
+    disp("Plotting Averaged Subjects: ")
 
-    for j = 1:numSubjects
-        % disp(strcat("p: ", num2str(p)))
-        % Number of box breaks for each Mapping
-        numBoxBreaksMapping1{j,p} = sortByMapping([numBoxBreaks{:,p}], mapping1(j,:));
-        numBoxBreaksMapping3{j,p} = sortByMapping([numBoxBreaks{:,p}], mapping3(j,:));
-        numBoxBreaksMapping5{j,p} = sortByMapping([numBoxBreaks{:,p}], mapping5(j,:));
+    figure;
+    % Plot average Num Box Breaks Bar Plot with Error Bars
+    createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
+        "Mean Occurences of Applying Excessive Force to Cube", ...
+        "Experiment Type", "Box Breaks [~]",[-2.0 4.0]); %
 
-        % Amount of time box is broken in each trial for each Mapping
-        timeBoxBrokenMapping1{j,p} = sortByMapping([timeBoxBroken{:,p}], mapping1(j,:));
-        timeBoxBrokenMapping3{j,p} = sortByMapping([timeBoxBroken{:,p}], mapping3(j,:));
-        timeBoxBrokenMapping5{j,p} = sortByMapping([timeBoxBroken{:,p}], mapping5(j,:));
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\avgBoxBreaks','-dpdf','-r0');
     end
+
+    figure;
+    % Plot average time box broken Bar Plot with Error Bars
+    createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
+        "Mean Elasped Time of Applying Excessive Force to Cube", ...
+        "Experiment Type", "Time Broken [sec]",[-1.0 3.0]); %
+
+    %Save figure as pdf:
+    if (saveFigures == true)
+        set(gcf,'PaperOrientation','landscape');
+        print(gcf, 'figures\avgTimeBoxBroken','-dpdf','-r0');
+    end
+
+else
+    disp("Plotting Individual Subjects: ")
+
+    % Plot average Num Box Breaks Bar Plot with Error Bars
+    plotType = 1;
+    createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
+        "Mean Occurences of Applying Excessive Force to Cube",...
+        "Experiment Type", "Box Breaks [~]",[-2.0 4.0]); %
+
+    plotType = 2;
+    % Plot average time box broken Bar Plot with Error Bars
+    createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
+        "Mean Elasped Time of Applying Excessive Force to Cube", ...
+        "Experiment Type", "Time Broken [sec]",[-1.0 3.0]); %
+
+
 end
 
-figure;
-% Plot average Num Box Breaks Bar Plot with Error Bars
-createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
-    "Mean Occurences of Applying Excessive Force to Cube", ...
-    "Experiment Type", "Box Breaks [~]",[-2.0 4.0]); %
-
-%Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\avgBoxBreaks','-dpdf','-r0');
-end
-
-figure;
-% Plot average time box broken Bar Plot with Error Bars
-createBarPlot(timeBoxBrokenMapping1, timeBoxBrokenMapping3, timeBoxBrokenMapping5, ...
-    "Mean Elasped Time of Applying Excessive Force to Cube", ...
-    "Experiment Type", "Time Broken [sec]",[-1.0 3.0]); %
-
-%Save figure as pdf:
-if (saveFigures == true)
-    set(gcf,'PaperOrientation','landscape');
-    print(gcf, 'figures\avgTimeBoxBroken','-dpdf','-r0');
-end
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
 
@@ -1456,16 +1762,16 @@ close all; clc;
 % ONly done for training therefore: p =2:
 % Mapping1 -- mapping1TimeIndexRows
 mapping1 = [1, 4, 7, 10, 13, 16
-            3, 6, 9, 12, 15, 18
-            2, 5, 8, 11, 14, 17];
+    3, 6, 9, 12, 15, 18
+    2, 5, 8, 11, 14, 17];
 % Mapping3 -- mapping3TimeIndexRows
 mapping3 = [2, 5, 8, 11, 14, 17
-            1, 4, 7, 10, 13, 16
-            3, 6, 9, 12, 15, 18];
+    1, 4, 7, 10, 13, 16
+    3, 6, 9, 12, 15, 18];
 % Mapping5 -- mapping5TimeIndexRows
 mapping5 = [3, 6, 9, 12, 15, 18
-            2, 5, 8, 11, 14, 17
-            1, 4, 7, 10, 13, 16];
+    2, 5, 8, 11, 14, 17
+    1, 4, 7, 10, 13, 16];
 
 
 % Each row is a subject as noted in the code:
@@ -1473,23 +1779,23 @@ mapping5 = [3, 6, 9, 12, 15, 18
 % Col2: Tasks 82-91
 % Col3: Tasks 93-102
 responses =[2	1	2
-            3	4	3
-            5	3	3
-            3	3	1
-            1	2	2
-            2	1	1
-            3	2	2
-            4	4	3
-            1	2	1
-            3	2	4
-            1	2	3
-            1	2	2
-            3	3	4
-            1	4	2
-            1	2	2
-            3	2	2
-            4	4	4
-            4	3	2];
+    3	4	3
+    5	3	3
+    3	3	1
+    1	2	2
+    2	1	1
+    3	2	2
+    4	4	3
+    1	2	1
+    3	2	4
+    1	2	3
+    1	2	2
+    3	3	4
+    1	4	2
+    1	2	2
+    3	2	2
+    4	4	4
+    4	3	2];
 
 for i=1:size(responses,2)
     responsesMappingMat1(:,i) = responses(mapping1(i,:),i);
@@ -1503,16 +1809,16 @@ responsesMapping3 = reshape(responsesMappingMat3,[],1);
 responsesMapping5 = reshape(responsesMappingMat5,[],1);
 
 % Mapping# by column
-% Rating of each Subject by row 
+% Rating of each Subject by row
 sortedRatings = [ responsesMapping1 responsesMapping3 responsesMapping5 ];
-            
-[p,tbl,stats] = friedman(sortedRatings, 1) 
+
+[p,tbl,stats] = friedman(sortedRatings, 1)
 % The ratings are not significant
 figure; errorbar(mean(sortedRatings), std(sortedRatings), "bs",...
     "MarkerFaceColor","b", "MarkerSize",10);
 title("Ratings Mean and Standard Deviation - Friedman Test");
 xlabel("Mapping"); ylabel("Rating");
-xlim([0,4]); 
+xlim([0,4]);
 
 tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels)

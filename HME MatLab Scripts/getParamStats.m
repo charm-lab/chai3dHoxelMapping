@@ -7,8 +7,15 @@ function [meanVals, stdVals] = getParamStats(map1, map3, map5)
 % map5
 numSubjects = evalin('base','numSubjects');
 p = evalin('base','p');
-%Calculate means and standard deviations for each subject
-cols = [1:numSubjects]; %visCubeSubjectsRange
+showInidividualSubjects = evalin('base','showInidividualSubjects');
+
+if (showInidividualSubjects == false)
+    %Calculate means and standard deviations for all subjects
+    cols = [1:numSubjects];
+else
+    %Calculate means and standard deviations for each subject individually
+    cols = 1;
+end
 
 if (p == 1)
     mapping1_mean = [mean(reshape(map1(1:10,cols),[],1)); mean(reshape(map1(11:20,cols),[],1))];

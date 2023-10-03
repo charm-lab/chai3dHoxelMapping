@@ -26,6 +26,7 @@ numMappings = evalin('base','numMappings');
 markerSize = evalin('base', 'markerSize');
 
 alphaVal = evalin('base', 'alphaVal');
+showInidividualSubjects = evalin('base', 'showInidividualSubjects');
 
 dataSeparation = 0.3;
 
@@ -56,9 +57,20 @@ vec9 = 2*numMappings+(1:numMappings)+jitterVal+2*dataSeparation;
 
 % Shade only the backgrounds of training data
 xT = 0.5*(vec6(end)+ vec7(1)); % X-vlaue of test-train border
-minY = 0;
-maxY = 3.25;
 minX = 0;
+
+if (showInidividualSubjects == false)
+    %Calculate means and standard deviations for all subjects
+
+    minY = 0;
+    maxY = 3.25;
+else
+    %Calculate means and standard deviations for each subject individually
+    minY = 0;
+    maxY = 5.5;
+end
+
+
 v = [minX minY; xT minY; xT maxY; minX maxY];
 f = [1 2 3 4];
 shadeColor = [0.5 0.5 0.5];

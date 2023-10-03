@@ -19,7 +19,7 @@ maxY =  evalin('base', 'maxY');
 alphaVal = evalin('base', 'alphaVal');
 yVal = evalin('base', 'yVal');
 dataSeparation = 0.3;
- minX = 0.5;
+minX = 0.5;
 
 % Get the x-axis values including a buffer on the first and last indices:
 % Set to even itnerval for now
