@@ -78,8 +78,8 @@ text(0.5*(xAxis(3)+xAxis(4)), textYCoord,...
 text(xAxis(8), textYCoord,...
     "Testing", "HorizontalAlignment","center", "FontSize", 20)
 % Reset axes so patch doesn't move them
+xlim([minX max(xlim)]);
 ylim([minY maxY]);
-
 
 % Put training data on top of patch
 uistack(h1(1),'top');

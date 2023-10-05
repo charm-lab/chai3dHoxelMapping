@@ -1772,6 +1772,7 @@ else
             numBoxBreaksStdStats,...
             strcat("Mean Occurences of Applying Excessive Force to Cube -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Time [sec]");
+    improvePlot_v2(false, true, 20, 1200, 600);
 
         % Save figure as pdf:
         if (saveFigures == true)
@@ -1790,6 +1791,7 @@ else
             timeBoxBrokenStdStats,...
             strcat("Mean Elapsed Time of Applying Excessive Force to Cube -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Time [sec]");
+    improvePlot_v2(false, true, 20, 1200, 600);
 
         % Save figure as pdf:
         if (saveFigures == true)
@@ -1809,6 +1811,7 @@ else
     createBarPlot(numBoxBreaksMapping1, numBoxBreaksMapping3, numBoxBreaksMapping5, ...
         "Mean Occurences of Applying Excessive Force to Cube",...
         "Experiment Type", "Box Breaks [~]",[-2.0 4.0]);
+     
 
     plotType = 2;
     % Plot average time box broken Bar Plot with Error Bars

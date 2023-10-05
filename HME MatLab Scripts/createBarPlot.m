@@ -183,7 +183,7 @@ else
                 for i = 1:numMappings*2 % Due to being done twice
                     x1(i,:) = h1(i).XEndPoints;
                 end
-                errorbar(x1',[mean(data1(1:0.5*numVals)); mean(data3(1:0.5*numVals)); mean(data5(1:0.5*numVals)); ...
+                e1 = errorbar(x1',[mean(data1(1:0.5*numVals)); mean(data3(1:0.5*numVals)); mean(data5(1:0.5*numVals)); ...
                     mean(data1(0.5*numVals+1:end)); mean(data3(0.5*numVals+1:end)); mean(data5(0.5*numVals+1:end))],...
                     [std(data1(1:0.5*numVals)); std(data3(1:0.5*numVals)); std(data5(1:0.5*numVals)); ...
                     std(data1(0.5*numVals+1:end)); std(data3(0.5*numVals+1:end)); std(data5(0.5*numVals+1:end))],...
@@ -204,7 +204,7 @@ else
                 for i = 1:numMappings
                     x2(i,:) = h2(i).XEndPoints;
                 end
-                errorbar(x2',[mean(data1); mean(data3); mean(data5)],...
+                e2 = errorbar(x2',[mean(data1); mean(data3); mean(data5)],...
                     [std(data1); std(data3); std(data5)],...
                     'ks','linestyle','none','MarkerFaceColor','k');
                 % Color the bars:
@@ -238,6 +238,10 @@ else
         text(x2(2), textYCoord,...
             "Testing", "HorizontalAlignment","center", "FontSize", 20);
         hold on;
+        
+        % Reset axes so patch doesn't move them
+        xlim([minX max(xlim)]);
+        ylim([minY maxY]);
 
         % Put training data on top of patch
         uistack(h1(1),'top');
@@ -246,7 +250,7 @@ else
         uistack(h1(4),'top');
         uistack(h1(5),'top');
         uistack(h1(6),'top');
-
+        uistack(e1,'top');
 
         % ylim(yAxisLimits);
         xticks([1:numExperimentTypes]);
@@ -255,7 +259,7 @@ else
         tickLabels = ["Training, Color \Delta", "Testing, No Color \Delta"];
         set(gca,'xTick', [1:numExperimentTypes],'xticklabel', tickLabels); %#ok<NBRAK>
 
-        improvePlot_v2(false, true, 20, 1200, 900);
+        improvePlot_v2(false, true, 20, 1200, 700);
         % xlabel(xAxisLabel);
         ylabel(yAxisLabel);
         title(strcat(plotTitle, "Subject #", num2str(subjectNum(j))));

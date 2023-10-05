@@ -26,7 +26,7 @@ function [] = improvePlot_v2(fullScreenBool, customSizeBool, fontSize, width, he
     % Make the figure bigger
     if (customSize == true)
         set(hFig, 'rend', 'painters', 'Units', 'pixels', 'pos', ...
-            [100 100 plot_width_in_px plot_height_in_px]);
+            [50 50 plot_width_in_px plot_height_in_px]);
     end
     %     fullscreen
     if(fullScreen == true)

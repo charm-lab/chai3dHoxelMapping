@@ -150,6 +150,10 @@ text(vec8(2), textYCoord,...
     "Testing", "HorizontalAlignment","center", "FontSize", 20)
 xlim([minX max(xTickVals)+2*dataSeparation]);
 
+% Reset axes so patch doesn't move them
+xlim([minX max(xlim)]);
+ylim([minY maxY]);
+
 % Put training data on top of patch
 uistack(h1(1),'top');
 uistack(h2(1),'top');
