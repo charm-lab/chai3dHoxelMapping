@@ -5,7 +5,7 @@ clear; close all; clc;
 clear; close all; clc;
 %#ok<*NOPTS>
 
-showInidividualSubjects = false;
+showInidividualSubjects = true;
 
 % Number of mappings tested
 numMappings = 3;
@@ -16,20 +16,24 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 18;
+totalNumSubjects = 3%18;
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %showSubjects = true;
-subjectNum = [1:18];
+subjectNum = [1:3]%[1:18];
 
 % Load data from folder
 % Folder contatining all data:
 
 % Folder contatining all data:
 
-dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
-    "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
+% dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
+%     "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
+
+dataFolders = ["..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType1"
+    "..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType2"];
+
 
 % The number of subjects whose data will be included in the calculations and
 % analysis
@@ -92,10 +96,15 @@ for p = 1:numExperimentTypes
     end
 end
 
-% Checs for subjects whose data needed to be patched due to experiment
+% Checks for subjects whose data needed to be patched due to experiment
 % resets
 repairedBool9 = false;
 repairedBool14 = false;
+
+% Ignore subjects for test data
+repairedBool9 = true;
+repairedBool14 = true;
+
 disp("***Data Upload and Merge Complete***")
 % Now each metric of interest will be represented by a cell. Within that
 % cell every row represents a subject, every column the experiment type.
@@ -814,7 +823,7 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Cosmetics:
 % close all;
-saveFigures = true;
+saveFigures = false;
 % Old color scheme:
 visCubeColor = "[0 0 0]"; % Black
 % invisCubeColor = "[0.5 0.5 0.5]"; % Gray
@@ -1244,93 +1253,79 @@ if (showInidividualSubjects == false)
 
     end
 
-    alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;
     jitterValNum = 0.1;
     yVal = 0.5;
     % Index Plot
     figure;
     plotMarker = "s";
     jitterVal = -jitterValNum; % neg
-    [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
+    [indexNP1,indexNP2,indexNP3] = createMultiExpNSForceErrorBarPlot(...
+        indexNormalMeanStats, indexNormalStdStats,...
         "Index Forces", "Mapping", "Force [N]");
     hold on;
     plotMarker = "d";
     jitterVal = jitterValNum; % pos
-    [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
+    [indexSP1,indexSP2,indexSP3] = createMultiExpNSForceErrorBarPlot(...
+        indexShearMeanStats, indexShearStdStats,...
         "Index Forces", "Mapping", "Force [N]");
-    % ylim([minY,maxY]);
-    improvePlot_v2(false, true, 22, 1200, 600); hold off;
-    % legend([indexNP1(1), indexSP1(1), ...
-    %     indexNP2(1), indexSP2(1),...
-    %     indexNP3(1), indexSP3(1)],...
-    %     "Index Normal Training 1", "Index Shear Training 1",...
-    %     "Index Normal Training 2", "Index Shear Training 2",...
-    %     "Index Normal Testing", "Index Shear Testing",...
-    %     "Location","northoutside", "NumColumns", 3, ...
-    %     "FontSize", 18);
-    legend([indexNP1(1), indexSP1(1)], ...
-        "Normal Force", "Shear Force",...
-        "Location","northwest", "NumColumns", 1, ...
-        "FontSize", 18);
 
-    %Save figure as pdf:
+    % Shade the background 
+    shadePlotBackground(indexSP2.XData(3), indexNP3.XData(1));    
+
+    % Put training data on top of patch
+    uistack(indexNP1(1),'top');
+    uistack(indexNP2(1),'top');
+    uistack(indexSP1(1),'top');
+    uistack(indexSP2(1),'top');
+
+    improvePlot_v2(false, true, 20, 1200, 600); hold off;
+    legend([indexNP1(1), indexSP1(1)], ...
+        "Normal Force", "Shear Force", "Location","northwest",...
+        "NumColumns", 1, "FontSize", 18);
+
+    % Save figure as pdf:
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
-        print(gcf, 'figures\index_Normal-ShearForces','-dpdf','-r0');
+        print(gcf,'figures\index_Normal-ShearForces','-dpdf','-r0');
     end
 
     % Thumb Plot
     figure;
     plotMarker = "s";
-    jitterVal = -jitterValNum; %neg
-    [thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
+    jitterVal = -jitterValNum; % neg
+    [thumbNP1,thumbNP2,thumbNP3] = createMultiExpNSForceErrorBarPlot(...
+        thumbNormalMeanStats, thumbNormalStdStats,...
         "Thumb Forces", "Mapping", "Force [N]");
     hold on;
     plotMarker = "d";
-    jitterVal = jitterValNum; %pos
-    [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
+    jitterVal = jitterValNum; % pos
+    [thumbSP1,thumbSP2,thumbSP3] = createMultiExpNSForceErrorBarPlot(...
+        thumbShearMeanStats, thumbShearStdStats,...
         "Thumb Forces", "Mapping", "Force [N]");
-    % ylim([minY,maxY]);
-    improvePlot_v2(false, true, 22, 1200, 600); hold off;
-    % legend([thumbNP1(1), thumbSP1(1), ...
-    %     thumbNP2(1), thumbSP2(1),...
-    %     thumbNP3(1), thumbSP3(1)],...
-    %     "Thumb Normal Training 1", "Thumb Shear Training 1",...
-    %     "Thumb Normal Training 2", "Thumb Shear Training 2",...
-    %     "Thumb Normal Testing", "Thumb Shear Testing",...
-    %     "Location","northoutside", "NumColumns", 3, ...
-    %     "FontSize", 18);
-    legend([thumbNP1(1), thumbSP1(1)], ...
-        "Normal Force", "Shear Force",...
-        "Location","northwest", "NumColumns", 1, ...
-        "FontSize", 18);
+    
+    % Shade the background 
+    shadePlotBackground(thumbSP2.XData(3), thumbNP3.XData(1));    
 
-    %Save figure as pdf:
+    % Put training data on top of patch
+    uistack(thumbNP1(1),'top');
+    uistack(thumbNP2(1),'top');
+    uistack(thumbSP1(1),'top');
+    uistack(thumbSP2(1),'top');
+
+    improvePlot_v2(false, true, 20, 1200, 600); hold off;
+    legend([thumbNP1(1), thumbSP1(1)], ...
+        "Normal Force", "Shear Force", "Location","northwest",...
+        "NumColumns", 1, "FontSize", 18);
+
+    % Save figure as pdf:
     if (saveFigures == true)
         set(gcf,'PaperOrientation','landscape');
         print(gcf, 'figures\thumb_Normal-ShearForces','-dpdf','-r0');
     end
 
-    % % Combined plot:
-    % figure;
-    % createCombinedNSForcesPlot(indexNP1,indexNP2,indexNP3,...
-    %     indexSP1,indexSP2,indexSP3,...
-    %     thumbNP1,thumbNP2,thumbNP3,...
-    %     thumbSP1,thumbSP2,thumbSP3,...
-    %     "Fingertip Forces", "Mapping", "Force [N]");
-    % improvePlot_v2(false, true, 18, 1150, 650); hold off;
-    % % improvePlot_v2(false, true, 18, 1400, 800); hold off;
-    % %Save figure as pdf:
-    % if (saveFigures == true)
-    %     set(gcf,'PaperOrientation','landscape');
-    %     print(gcf, 'figures\normal-shearForcesCombined','-dpdf','-r0');
-    % end
-
 else
     close all;
     disp("Plotting Individual Subjects: ")
-
-    % minY = 0; maxY = 20;
     for j = 1:numSubjects
         % figure;
         alphaVal = 0.2;
@@ -1369,27 +1364,37 @@ else
             thumbShearStdStats{1,p} = thumbShearMeanStdVals;
         end
 
-        alphaVal = 0.5*alphaVal; % halving due to additive effect of combing plots;
         jitterValNum = 0.1;
         yVal = 0.5;
         % Index Plot
         figure;
         plotMarker = "s";
         jitterVal = -jitterValNum; % neg
-        [indexNP1,indexNP2,indexNP3] = createMultiExpErrorBarPlot(indexNormalMeanStats, indexNormalStdStats,...
+        [indexNP1,indexNP2,indexNP3] = createMultiExpNSForceErrorBarPlot(...
+            indexNormalMeanStats, indexNormalStdStats,...
             strcat("Index Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
         hold on;
         plotMarker = "d";
         jitterVal = jitterValNum; % pos
-        [indexSP1,indexSP2,indexSP3] = createMultiExpErrorBarPlot(indexShearMeanStats, indexShearStdStats,...
+        [indexSP1,indexSP2,indexSP3] = createMultiExpNSForceErrorBarPlot(...
+            indexShearMeanStats, indexShearStdStats,...
             strcat("Index Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
-        % ylim([minY,maxY]);
-        improvePlot_v2(false, true, 22, 1200, 600); hold off;
+        
+        % Shade the background
+        shadePlotBackground(indexSP2.XData(3), indexNP3.XData(1));
+
+        % Put training data on top of patch
+        uistack(indexNP1(1),'top');
+        uistack(indexNP2(1),'top');
+        uistack(indexSP1(1),'top');
+        uistack(indexSP2(1),'top');
+
+        improvePlot_v2(false, true, 20, 1200, 600); hold off;
         legend([indexNP1(1), indexSP1(1)], ...
             "Normal Force", "Shear Force",...
-            "Location","northwest", "NumColumns", 1, ...
+            "Location","northoutside", "NumColumns", 2, ...
             "FontSize", 18);
 
         % Save figure as pdf:
@@ -1398,27 +1403,38 @@ else
             print(gcf,...
                 strcat('figures\Individual Subject Figures\index_Normal-ShearForces\',...
                 'Subject',num2str(subjectNum(j)),...
-                '_index_Normal-ShearForces'),'-dpdf','-fillpage'); %close;
+                '_index_Normal-ShearForces'),'-dpdf','-fillpage'); % close;
         end
 
         % Thumb Plot
         figure;
         plotMarker = "s";
         jitterVal = -jitterValNum; % neg
-        [thumbNP1,thumbNP2,thumbNP3] = createMultiExpErrorBarPlot(thumbNormalMeanStats, thumbNormalStdStats,...
+        [thumbNP1,thumbNP2,thumbNP3] = createMultiExpNSForceErrorBarPlot(...
+            thumbNormalMeanStats, thumbNormalStdStats,...
             strcat("Thumb Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
         hold on;
         plotMarker = "d";
         jitterVal = jitterValNum; % pos
-        [thumbSP1,thumbSP2,thumbSP3] = createMultiExpErrorBarPlot(thumbShearMeanStats, thumbShearStdStats,...
+        [thumbSP1,thumbSP2,thumbSP3] = createMultiExpNSForceErrorBarPlot(...
+            thumbShearMeanStats, thumbShearStdStats,...
             strcat("Thumb Forces -- Subject #",num2str(subjectNum(j))),...
             "Mapping", "Force [N]");
-        % ylim([minY,maxY]);
-        improvePlot_v2(false, true, 22, 1200, 600); hold off;
+        
+        % Shade the background
+        shadePlotBackground(thumbSP2.XData(3), thumbNP3.XData(1));
+
+        % Put training data on top of patch
+        uistack(thumbNP1(1),'top');
+        uistack(thumbNP2(1),'top');
+        uistack(thumbSP1(1),'top');
+        uistack(thumbSP2(1),'top');
+
+        improvePlot_v2(false, true, 20, 1200, 600); hold off;
         legend([thumbNP1(1), thumbSP1(1)], ...
             "Normal Force", "Shear Force",...
-            "Location","northwest", "NumColumns", 1, ...
+            "Location","northoutside", "NumColumns", 2, ...
             "FontSize", 18);
 
         % Save figure as pdf:
@@ -1427,7 +1443,7 @@ else
             print(gcf,...
                 strcat('figures\Individual Subject Figures\thumb_Normal-ShearForces\',...
                 'Subject',num2str(subjectNum(j)),...
-                '_thumb_Normal-ShearForces'),'-dpdf','-fillpage'); %close;
+                '_thumb_Normal-ShearForces'),'-dpdf','-fillpage'); % close;
         end
     end
 end
@@ -1435,8 +1451,8 @@ end
 disp("Plot Normal and Shear Force Error Bar Plots -- done")
 
 %% Manipulation Force Threshold Plotting
-% close all;
-saveFigures = true;
+close all;
+% saveFigures = true;
 plotVis = "off";
 forceLimit = 20; % N
 
@@ -1597,6 +1613,7 @@ disp("Plot Manipulation Force Threshold Plots -- done")
 
 %% Other Manip Force Thershold Metrics: ************************************
 close all;
+plotMarker = "s";
 alphaVal = 0.2;
 yVal = 0.5;
 % Sort manipulation parameters by mapping:
@@ -1950,7 +1967,7 @@ improvePlot;
 
 %% Run 2-Way ANOVA and Compare Means for Metrics of Interest:
 %% Completion Time: ******************************************************
-close all;
+% close all;
 % Run 1-way ANOVA and compare means
 [p_CompletionTime, ~ , stats_CompletionTime] = ...
     runHMEANOVAN(completionTimeMapping1, completionTimeMapping3,...

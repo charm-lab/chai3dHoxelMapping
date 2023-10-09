@@ -35,7 +35,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
         end
     end
 
-    %Create matirx of strings naming the subjects for only one of the 
+    % Create matirx of strings naming the subjects for only one of the 
     % mappings, to be duplicated later:
     for j = 1:numSubjects
         for i =1:numTrialsPerMapping(p)
@@ -71,8 +71,9 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
     % n-way anova with n = 2:
     [p, tbl, stats] = anovan(y_Test, group, "Model","interaction",...
-        "Varnames",["Mappings","Subject"],...
+        "Varnames", ["Mappings", "Subjects"],...
         "display", showStats);
+
 
     % Compare signifcance with control group only:
     if(interactableCompare == false)

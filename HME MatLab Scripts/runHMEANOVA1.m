@@ -5,6 +5,7 @@ function [p, tbl, stats] = runHMEANOVA1(map1, map3, map5, metricName)
 numMappings = evalin('base','numMappings');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
 numSubjects =  evalin('base', 'numSubjects');
+subjectNum = evalin('base','subjectNum');
 numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
 % Statistcal Tests v3 -- 1-way and 2-Way ANOVA
@@ -48,14 +49,27 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
         end
     end
 
-    %Convert matrix of subject results to column vectors
-    p=1;
-    %CompletionTime Mapping 1 - Training
-    y_Map1_Train = reshape([map1{:,p}],[],1);
-    %CompletionTime Mapping 3 - Training
-    y_Map3_Train  = reshape([map3{:,p}],[],1);
-    %CompletionTime Mapping 5 - Training
-    y_Map5_Train  = reshape([map5{:,p}],[],1);
+
+    % Create matirx of strings naming the subjects for only one of the 
+    % mappings, to be duplicated later:
+    for j = 1:numSubjects
+        for i =1:numTrialsPerMapping(p)
+            subjects1Mapping{i,j} = strcat('Subject #', num2str(subjectNum(j)));
+        end
+    end
+
+    subjects1Mapping = reshape(subjects1Mapping,[],1);
+
+    subjectsAllMappings = repmat(subjects1Mapping, 3,1);
+
+    % %Convert matrix of subject results to column vectors
+    % p=1;
+    % %CompletionTime Mapping 1 - Training
+    % y_Map1_Train = reshape([map1{:,p}],[],1);
+    % %CompletionTime Mapping 3 - Training
+    % y_Map3_Train  = reshape([map3{:,p}],[],1);
+    % %CompletionTime Mapping 5 - Training
+    % y_Map5_Train  = reshape([map5{:,p}],[],1);
 
     p=2;
     %CompletionTime Mapping 1 - Testing
@@ -80,8 +94,11 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     experimentType = [experimentType2];
     group = {mappings, experimentType};
 
-    % 1-way anova:
+    % 1-way anova - Mappings:
     [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
+
+     % 1-way anova - Subjects:
+    [p, tbl, stats] = anova1(y_Test, subjectsAllMappings, "display", showStats);
     
     % disp("Both")
     % % y = [y_Train; y_Test];
