@@ -95,7 +95,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     group = {mappings, experimentType};
 
     % 1-way anova - Mappings:
-    [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
+    % [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
 
      % 1-way anova - Subjects:
     [p, tbl, stats] = anova1(y_Test, subjectsAllMappings, "display", showStats);

@@ -15,8 +15,8 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % fontSize = 10; width = 1700; height = 1000;
     fontSize = 10; width = 700; height = 400;
 
-    % interactableCompare = true;
-    interactableCompare = false;
+    interactableCompare = true;
+    % interactableCompare = false;
 
     for p = 1:numExperimentTypes
         if (p == 2)
@@ -70,7 +70,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     group = {mappings, subjectsAllMappings};
 
     % n-way anova with n = 2:
-    [p, tbl, stats] = anovan(y_Test, group, "Model","interaction",...
+    [p, ~, stats] = anovan(y_Test, group, "Model","full",...
         "Varnames", ["Mappings", "Subjects"],...
         "display", showStats);
 
@@ -78,27 +78,32 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % Compare signifcance with control group only:
     if(interactableCompare == false)
         % close all;
-        figure;
-        %Completion Time 
+        figure; 
         comp = multcompare(stats, "CriticalValueType", "dunnett", ...
             "ControlGroup", 3, "Alpha", 0.05);
         title(strcat(metricName," -- Control -- Dunnett Test"));
         improvePlot_v2(false, true, fontSize, width, height);
 
-        %Tables with Mapping 5 as Control:    
+        % Tables with Mapping 5 as Control:    
         tbl = array2table(comp,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"]);
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
 
     % Interactable comparison with any group:
     else    
         % close all;
         figure;
-        comp = multcompare(stats);
+        [comp,m,~,gnames] = multcompare(stats);
         title(strcat(metricName," -- Interactable"));
         improvePlot_v2(false, true, fontSize, width, height);
 
         %Tables with Variable Control:    
         tbl = array2table(comp,"VariableNames", ...
         ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"]);
+        tbl.("Group A")=gnames(tbl.("Group A"));
+        tbl.("Group B")=gnames(tbl.("Group B")) % Keep w/o ;
+
+
+        tbl2 = array2table(m,"RowNames",gnames, ...
+            "VariableNames",["Mean","Standard Error"])
     end   
 end
