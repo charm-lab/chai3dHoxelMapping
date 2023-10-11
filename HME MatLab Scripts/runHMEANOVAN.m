@@ -38,14 +38,14 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % Create matirx of strings naming the subjects for only one of the 
     % mappings, to be duplicated later:
     for j = 1:numSubjects
-        for i =1:numTrialsPerMapping(p)
+        for i = 1:numTrialsPerMapping(p)
             subjects1Mapping{i,j} = strcat('Subject #', num2str(subjectNum(j)));
         end
     end
 
     subjects1Mapping = reshape(subjects1Mapping,[],1);
 
-    subjectsAllMappings = repmat(subjects1Mapping, 3,1);
+    subjectsAllMappings = repmat(subjects1Mapping,3,1);
     
 
     %Convert matrix of subject results to column vectors
@@ -70,7 +70,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     group = {mappings, subjectsAllMappings};
 
     % n-way anova with n = 2:
-    [p, ~, stats] = anovan(y_Test, group, "Model","full",...
+    [~, ~, stats] = anovan(y_Test, group, "Model","full",...
         "Varnames", ["Mappings", "Subjects"],...
         "display", showStats);
 
