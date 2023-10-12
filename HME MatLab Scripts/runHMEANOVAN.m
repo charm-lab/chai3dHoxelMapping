@@ -47,7 +47,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
     subjectsAllMappings = repmat(subjects1Mapping,3,1);
     
-
     %Convert matrix of subject results to column vectors
     p=2;
     %CompletionTime Mapping 1 - Testingans
@@ -57,7 +56,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     %CompletionTime Mapping 5 - Testing
     y_Map5_Test  = reshape([map5{:,p}],[],1);
 
-    
     %Find p-values
     %vertically concatenate columns of the same metric
    
@@ -73,7 +71,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     [~, ~, stats] = anovan(y_Test, group, "Model","full",...
         "Varnames", ["Mappings", "Subjects"],...
         "display", showStats);
-
 
     % Compare signifcance with control group only:
     if(interactableCompare == false)

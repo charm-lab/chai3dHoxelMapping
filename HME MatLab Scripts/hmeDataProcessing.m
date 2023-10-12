@@ -16,23 +16,23 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 18;%3
+totalNumSubjects = 3;%18
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %showSubjects = true;
-subjectNum = [1:18];%[1:3]
+subjectNum = [1:3];%[1:18]
 
 % Load data from folder
 % Folder contatining all data:
 
 % Folder contatining all data:
 
-dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
-    "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
+% dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
+%     "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
 
-% dataFolders = ["..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType1"
-%     "..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType2"];
+dataFolders = ["..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType1"
+    "..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType2"];
 
 
 % The number of subjects whose data will be included in the calculations and
@@ -98,12 +98,12 @@ end
 
 % Checks for subjects whose data needed to be patched due to experiment
 % resets
-repairedBool9 = false;
-repairedBool14 = false;
+% repairedBool9 = false;
+% repairedBool14 = false;
 
 % Ignore subjects for test data
-% repairedBool9 = true;
-% repairedBool14 = true;
+repairedBool9 = true;
+repairedBool14 = true;
 
 disp("***Data Upload and Merge Complete***")
 % Now each metric of interest will be represented by a cell. Within that
@@ -1936,135 +1936,9 @@ end
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
 
-%% Run 1-Way ANOVA and Compare Means for Metrics of Interest:
-%% Completion Time: ******************************************************
-close all;
-% Run 1-way ANOVA and compare means
-[p_CompletionTime, ~ , stats_CompletionTime] = ...
-    runHMEANOVA1(completionTimeMapping1, completionTimeMapping3,...
-    completionTimeMapping5, "Completion Time");
-
-%% Path Lengths: *********************************************************
-close all;
-% Index
-[p_indexPathLength, ~ , stats_indexPathLength] = ...
-    runHMEANOVA1(indexPathLengthMapping1, indexPathLengthMapping3,...
-    indexPathLengthMapping5, "Index Path Length");
-
-% Thumb
-[p_thumbPathLength, ~ , stats_thumbPathLength] = ...
-    runHMEANOVA1(thumbPathLengthMapping1, thumbPathLengthMapping3,...
-    thumbPathLengthMapping5, "Thumb Path Length");
-
-% Box
-[p_boxPathLength, ~ , stats_boxPathLength] = ...
-    runHMEANOVA1(boxPathLengthMapping1, boxPathLengthMapping3,...
-    boxPathLengthMapping5, "Cube Path Length");
-
-%% Interaction Forces: **************************************************
-%% **Index
-close all;
-% Normal
-[p_indexNormal, ~ , stats_indexNormal] = ...
-    runHMEANOVA1(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
-    meanIndexNormalForceMapping5, "Index Normal Force");
-% Shear
-[p_indexShear, ~ , stats_indexShear] = ...
-    runHMEANOVA1(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
-    meanIndexShearForceMapping5, "Index Shear Force");
-
-%% **Thumb
-close all;
-% Normal
-[p_thumbNormal, ~ , stats_thumbNormal] = ...
-    runHMEANOVA1(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
-    meanThumbNormalForceMapping5, "Thumb Normal Force");
-% Shear
-[p_thumbShear, ~ , stats_thumbShear] = ...
-    runHMEANOVA1(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
-    meanThumbShearForceMapping5, "Thumb Shear Force");
-
-%% Number of Box Breaks: ************************************************
-close all;
-[p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
-    runHMEANOVA1(numBoxBreaksMapping1, numBoxBreaksMapping3,...
-    numBoxBreaksMapping5, "Cube Break Occurences");
-
-%% Time Box Broken: *****************************************************
-close all;
-[p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
-    runHMEANOVA1(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
-    timeBoxBrokenMapping5, "Cube Break Time");
-%% Run Freidman Tests on Qualitative Survey Results
-close all; clc;
-% ONly done for training therefore: p =2:
-% Mapping1 -- mapping1TimeIndexRows
-mapping1 = [1, 4, 7, 10, 13, 16
-    3, 6, 9, 12, 15, 18
-    2, 5, 8, 11, 14, 17];
-% Mapping3 -- mapping3TimeIndexRows
-mapping3 = [2, 5, 8, 11, 14, 17
-    1, 4, 7, 10, 13, 16
-    3, 6, 9, 12, 15, 18];
-% Mapping5 -- mapping5TimeIndexRows
-mapping5 = [3, 6, 9, 12, 15, 18
-    2, 5, 8, 11, 14, 17
-    1, 4, 7, 10, 13, 16];
-
-
-% Each row is a subject as noted in the code:
-% Col1: Tasks 71-80
-% Col2: Tasks 82-91
-% Col3: Tasks 93-102
-responses =[2	1	2
-    3	4	3
-    5	3	3
-    3	3	1
-    1	2	2
-    2	1	1
-    3	2	2
-    4	4	3
-    1	2	1
-    3	2	4
-    1	2	3
-    1	2	2
-    3	3	4
-    1	4	2
-    1	2	2
-    3	2	2
-    4	4	4
-    4	3	2];
-
-for i=1:size(responses,2)
-    responsesMappingMat1(:,i) = responses(mapping1(i,:),i);
-    responsesMappingMat3(:,i) = responses(mapping3(i,:),i);
-    responsesMappingMat5(:,i) = responses(mapping5(i,:),i);
-end
-
-% Form back into one column vector
-responsesMapping1 = reshape(responsesMappingMat1,[],1);
-responsesMapping3 = reshape(responsesMappingMat3,[],1);
-responsesMapping5 = reshape(responsesMappingMat5,[],1);
-
-% Mapping# by column
-% Rating of each Subject by row
-sortedRatings = [ responsesMapping1 responsesMapping3 responsesMapping5 ];
-
-[p,tbl,stats] = friedman(sortedRatings, 1)
-% The ratings are not significant
-figure; errorbar(mean(sortedRatings), std(sortedRatings), "bs",...
-    "MarkerFaceColor","b", "MarkerSize",10);
-title("Ratings Mean and Standard Deviation - Friedman Test");
-xlabel("Mapping"); ylabel("Rating");
-xlim([0,4]);
-
-tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
-set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels)
-improvePlot;
-
 %% Run 2-Way ANOVA and Compare Means for Metrics of Interest:
 %% Completion Time: ******************************************************
-close all;
+% close all;
 % Run 2-way ANOVA and compare means
 [p_CompletionTime, ~ , stats_CompletionTime] = ...
     runHMEANOVAN(completionTimeMapping1, completionTimeMapping3,...
