@@ -16,23 +16,23 @@ numTrials = [numMappings*numTrialsPerMapping(1),...
     numMappings*numTrialsPerMapping(2)];
 % Initialization of the total number of subjects that were run in
 % the experiment
-totalNumSubjects = 3;%18
+totalNumSubjects = 18;%3
 % Initialization of number of subjects removed due to errors
 numRemovedSubjects = 0;
 
 %showSubjects = true;
-subjectNum = [1:3];%[1:18]
+subjectNum = [1:18];%[1:3]
 
 % Load data from folder
 % Folder contatining all data:
 
 % Folder contatining all data:
 
-% dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
-%     "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
-
-dataFolders = ["..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType1"
-    "..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType2"];
+dataFolders = ["..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType1"
+    "..\HME_Subject_Data\Hoxels-1DoF\HME_ExpType2"];
+% 
+% dataFolders = ["..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType1"
+%     "..\HME_Subject_Data-JasminTest\Hoxels-1DoF\HME_ExpType2"];
 
 
 % The number of subjects whose data will be included in the calculations and
@@ -98,12 +98,12 @@ end
 
 % Checks for subjects whose data needed to be patched due to experiment
 % resets
-% repairedBool9 = false;
-% repairedBool14 = false;
+repairedBool9 = false;
+repairedBool14 = false;
 
 % Ignore subjects for test data
-repairedBool9 = true;
-repairedBool14 = true;
+% repairedBool9 = true;
+% repairedBool14 = true;
 
 disp("***Data Upload and Merge Complete***")
 % Now each metric of interest will be represented by a cell. Within that

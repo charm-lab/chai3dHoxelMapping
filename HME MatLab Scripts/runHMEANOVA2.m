@@ -1,6 +1,6 @@
 % Hoxel Mapping Experiments (HME) Anova Analysis
 % Author: Jasmin E. Palmer
-function [p, tbl, stats] = runHMEANOVA1(map1, map3, map5, metricName)
+function [p2, tbl, stats] = runHMEANOVA2(map1, map3, map5, metricName)
 
 numMappings = evalin('base','numMappings');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
@@ -8,18 +8,16 @@ numSubjects =  evalin('base', 'numSubjects');
 subjectNum = evalin('base','subjectNum');
 numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
-% Statistcal Tests v3 -- 1-way and 2-Way ANOVA
+% Statistcal Tests v3 -- 2-Way ANOVA
     % p = anovan(y, group)
     showStats = "on";
     format long; % close all;
     % fontSize = 10; width = 1700; height = 1000;
     fontSize = 10; width = 700; height = 400;
 
-    interactableCompare = true;
-    % interactableCompare = false;
 
     for p = 1:numExperimentTypes
-        if  (p == 2)
+        if (p == 2)
             % Groups:
             % Mapping groups
             mappingsExp2(1:...
@@ -38,44 +36,51 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % Create matirx of strings naming the subjects for only one of the 
     % mappings, to be duplicated later:
     for j = 1:numSubjects
-        for i =1:numTrialsPerMapping(p)
+        for i = 1:numTrialsPerMapping(p)
             subjects1Mapping{i,j} = strcat('Subject #', num2str(subjectNum(j)));
         end
     end
 
-    subjects1Mapping = reshape(subjects1Mapping, [], 1);
+    subjects1Mapping = reshape(subjects1Mapping,[],1);
 
-    subjectsAllMappings = repmat(subjects1Mapping, 3, 1);
-
-    % %Convert matrix of subject results to column vectors
+    % subjectsAllMappings = repmat(subjects1Mapping,3,1);
+    
+    %Convert matrix of subject results to column vectors
     p=2;
-    %CompletionTime Mapping 1 - Testing
+    %CompletionTime Mapping 1 - Testingans
     y_Map1_Test = reshape([map1{:,p}],[],1);
     %CompletionTime Mapping 3 - Testing
     y_Map3_Test  = reshape([map3{:,p}],[],1);
     %CompletionTime Mapping 5 - Testing
     y_Map5_Test  = reshape([map5{:,p}],[],1);
-    
+
     %Find p-values
     %vertically concatenate columns of the same metric
-
+   
     disp("Test")
-    y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
+    % y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
+    y_Test = [y_Map1_Test, y_Map3_Test, y_Map5_Test];
+    % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
    
     mappings = [mappingsExp2];
     % experimentType = [experimentType2];
-    group = {mappings, subjectsAllMappings};
+    % group = {mappings, subjectsAllMappings};
 
-    % 1-way anova - Mappings:
-    % [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
-    [p, tbl, stats] = kruskalwallis(y_Test, mappingsExp2, "on");
+    % 2-Way anova:
+    [p2, ~, stats] = anova2(y_Test, numSubjects,"on");
 
-    % 1-way anova - Subjects:
-    % [p, tbl, stats] = anova1(y_Test, subjectsAllMappings, "display", showStats);
+    % n-way anova with n = 2:
+    % [~, ~, stats] = anovan(y_Test, group, "Model","full",...
+    %     "Varnames", ["Mappings", "Subjects"],...
+    %     "display", showStats);
+
+    % Friedman
+    % [~, ~, stats] = friedman(y_Test, numSubjects,"on");
 
 
-    % Interactable comparison with any group:  
-    % close all;
+    % Multiplpe comparison if p is small enough:
+    if (p2 < 0.05)
+  
     figure;
     [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...
         "dunn-sidak", "Alpha", 0.05);
@@ -84,9 +89,16 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
     %Tables with Variable Control:
     tbl = array2table(comp,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","p-value"]);
+    tbl.("Group A")=gnames(tbl.("Group A"));
+    tbl.("Group B")=gnames(tbl.("Group B")) % Keep w/o ;
 
-    tbl2 = array2table(m,"RowNames",{'Mapping1', 'Mapping3', 'Control'}, ...
+
+    tbl2 = array2table(m,"RowNames", {'Mapping1', 'Mapping3', 'Control'}, ...
         "VariableNames",["Mean","Standard Error"])
- 
+    else
+        disp(strcat("p > 0.05 -- NO MULTCOMP for ", metricName))
+        disp(strcat("p = ", num2str(p2(1))))
+        tbl = "~";
+    end
 end
