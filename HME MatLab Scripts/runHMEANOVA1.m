@@ -67,8 +67,8 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     group = {mappings, subjectsAllMappings};
 
     % 1-way anova - Mappings:
-    % [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
-    [p, tbl, stats] = kruskalwallis(y_Test, mappingsExp2, "on");
+    [p, tbl, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
+    % [p, tbl, stats] = kruskalwallis(y_Test, mappingsExp2, "on");
 
     % 1-way anova - Subjects:
     % [p, tbl, stats] = anova1(y_Test, subjectsAllMappings, "display", showStats);
@@ -77,16 +77,15 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % Interactable comparison with any group:  
     % close all;
     figure;
-    [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...
+    [results,means,~,gnames] = multcompare(stats, "CriticalValueType",...
         "dunn-sidak", "Alpha", 0.05);
     title(strcat(metricName," -- Interactable"));
     improvePlot_v2(false, true, fontSize, width, height);
 
     %Tables with Variable Control:
-    tbl = array2table(comp,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"])
+    tbl = array2table([results,means],"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value","Mean","Standard Error"]);
+    tbl.("Group A")=gnames(tbl.("Group A"));
+    tbl.("Group B")=gnames(tbl.("Group B"))
 
-    tbl2 = array2table(m,"RowNames",{'Mapping1', 'Mapping3', 'Control'}, ...
-        "VariableNames",["Mean","Standard Error"])
- 
 end

@@ -1936,9 +1936,55 @@ end
 
 disp("Plot Other Manipulation Force Threshold Metrics-- done")
 
+%% Export Data to be Used in R
+% CompletionTime
+exportHMETestData(completionTimeMapping1, completionTimeMapping3,...
+    completionTimeMapping5, "Completion Time");
+
+%Path Lengths: *********************************************************
+% Index
+exportHMETestData(indexPathLengthMapping1, indexPathLengthMapping3,...
+    indexPathLengthMapping5, "Index Path Length");
+
+% Thumb
+exportHMETestData(thumbPathLengthMapping1, thumbPathLengthMapping3,...
+    thumbPathLengthMapping5, "Thumb Path Length");
+
+% Box
+exportHMETestData(boxPathLengthMapping1, boxPathLengthMapping3,...
+    boxPathLengthMapping5, "Cube Path Length");
+
+% Interaction Forces: **************************************************
+% **Index
+close all;
+% Normal
+exportHMETestData(meanIndexNormalForceMapping1, meanIndexNormalForceMapping3,...
+    meanIndexNormalForceMapping5, "Index Normal Force");
+% Shear
+exportHMETestData(meanIndexShearForceMapping1, meanIndexShearForceMapping3,...
+    meanIndexShearForceMapping5, "Index Shear Force");
+
+% **Thumb
+close all;
+% Normal
+exportHMETestData(meanThumbNormalForceMapping1, meanThumbNormalForceMapping3,...
+    meanThumbNormalForceMapping5, "Thumb Normal Force");
+% Shear
+exportHMETestData(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
+    meanThumbShearForceMapping5, "Thumb Shear Force");
+
+% Number of Box Breaks: ************************************************
+exportHMETestData(numBoxBreaksMapping1, numBoxBreaksMapping3,...
+    numBoxBreaksMapping5, "Cube Break Occurences");
+
+% Time Box Broken: *****************************************************
+exportHMETestData(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
+    timeBoxBrokenMapping5, "Cube Break Time");
+
+
 %% Run 2-Way ANOVA and Compare Means for Metrics of Interest:
 %% Completion Time: ******************************************************
-% close all;
+close all;
 % Run 2-way ANOVA and compare means
 [p_CompletionTime, ~ , stats_CompletionTime] = ...
     runHMEANOVAN(completionTimeMapping1, completionTimeMapping3,...

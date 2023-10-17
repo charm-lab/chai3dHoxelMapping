@@ -1,0 +1,55 @@
+---
+title: "HMEAnalysis"
+author: "Jasmin E. Palmer"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library("knitr")
+library("tidyverse")
+library("readxl")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+### Load the data set 
+```{r}
+# load the data set here
+completionTime <- read_excel("./HMEData-for-R/Completion Time.xlsx")
+```
+
+
+### Perform the Kruskal-Wallis Test
+```{r}
+
+# Assuming "Factor1" and "Factor2" are your two factors, and "Value" is the data to be analyzed.
+result1 <- kruskal.test(SubjectData ~ Mappings, data = completionTime)
+result2 <- kruskal.test(SubjectData ~ SubjectNum, data = completionTime)
+#result_interaction <- kruskal.test(SubjectData ~ Mappings * SubjectNum, data = completionTime)
+```
+
+### Results of the Kruskal-Wallis Test
+```{r}
+
+summ1 <- summary(result1)
+summ2 <- summary(result2)
+#summary(result_interaction)
+
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r completionTime, echo=FALSE}
+plot(completionTime)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

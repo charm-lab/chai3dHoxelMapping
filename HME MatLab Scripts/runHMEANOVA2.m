@@ -79,7 +79,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
 
     % Multiplpe comparison if p is small enough:
-    if (p2 < 0.05)
+    if (p2(1) < 0.05)
   
     figure;
     [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...

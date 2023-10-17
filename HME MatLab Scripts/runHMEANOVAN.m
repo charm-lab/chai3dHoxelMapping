@@ -74,23 +74,29 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
     
     % Multiplpe comparison if p is small enough:
-    if (p2 < 0.05)
+    if (p2(1) < 0.05)
   
     figure;
-    [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...
+    [results,means,~,gnames] = multcompare(stats, "CriticalValueType",...
         "dunn-sidak", "Alpha", 0.05);
     title(strcat(metricName," -- Interactable"));
     improvePlot_v2(false, true, fontSize, width, height);
 
-    %Tables with Variable Control:
-    tbl = array2table(comp,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"]);
+    % %Tables with Variable Control:
+    % tbl = array2table(results,"VariableNames", ...
+    %     ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value"]);
+    % tbl.("Group A")=gnames(tbl.("Group A"));
+    % tbl.("Group B")=gnames(tbl.("Group B")) % Keep w/o ;
+    % 
+    % 
+    % tbl2 = array2table(means,"RowNames",gnames, ...
+    %     "VariableNames",["Mean","Standard Error"])
+
+    tbl = array2table([results,means],"VariableNames", ...
+        ["Group A","Group B","Lower Limit","A-B","Upper Limit","P-value","Mean","Standard Error"]);
     tbl.("Group A")=gnames(tbl.("Group A"));
-    tbl.("Group B")=gnames(tbl.("Group B")) % Keep w/o ;
+    tbl.("Group B")=gnames(tbl.("Group B"))
 
-
-    tbl2 = array2table(m,"RowNames",gnames, ...
-        "VariableNames",["Mean","Standard Error"])
     else
         disp(strcat("p > 0.05 -- NO MULTCOMP for ", metricName))
         disp(strcat("p = ", num2str(p2(1))))
