@@ -6,9 +6,13 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
+
 library("knitr")
 library("tidyverse")
 library("readxl")
+library("PMCMRplus")
+library("lattice")
+
 ```
 
 ## R Markdown
@@ -25,20 +29,56 @@ completionTime <- read_excel("./HMEData-for-R/Completion Time.xlsx")
 ```
 
 
-### Perform the Kruskal-Wallis Test
-```{r}
 
-# Assuming "Factor1" and "Factor2" are your two factors, and "Value" is the data to be analyzed.
-result1 <- kruskal.test(SubjectData ~ Mappings, data = completionTime)
-result2 <- kruskal.test(SubjectData ~ SubjectNum, data = completionTime)
-#result_interaction <- kruskal.test(SubjectData ~ Mappings * SubjectNum, data = completionTime)
+```{r}
+### Order levels of the factor; otherwise R will alphabetize them
+completionTime$SubjectNum = factor(completionTime$SubjectNum, levels = unique(completionTime$SubjectNum))
+### Create a new variable which is the Mappings as an ordered factor
+completionTime$Mappings = factor(completionTime$Mappings, levels = unique(completionTime$Mappings))
+
+
+completionTime$SubjectData = as.numeric(completionTime$SubjectData)
+
+###  Check the data frame
+str(completionTime)
+
+summary(completionTime)
 ```
 
-### Results of the Kruskal-Wallis Test
+
+### Summarize the data: Treating Subject Data as Factors
+```{r}
+XT = xtabs(~ SubjectNum + SubjectData, data = completionTime)
+
+prop.table(XT, margin = 1)
+```
+
+### Make Bar Plots by Mapping
+```{r}
+histogram(~ SubjectData | SubjectNum,
+          data = completionTime,
+          #layout = c(0,30),
+          col = "blue")
+
+```
+
+### Perform the Friedman Rank Sum Test
+```{r}
+# fResult <- friedman.test(y = completionTime, groups = completionTime$Mappings, blocks = completionTime$SubjectNum)
+
+#friedman.test(formula = SubjectData ~ Mappings | SubjectNum, data = completionTime)
+head(completionTime)
+
+leveneTest(completionTime, SubjectData)
+#friedman.test(SubjectData ~ Mappings | SubjectNum, data = completionTime)
+
+
+```
+
+### Results of the Friedman Rank Sum Test
 ```{r}
 
-summ1 <- summary(result1)
-summ2 <- summary(result2)
+summ1 <- summary(fResult)
 #summary(result_interaction)
 
 ```

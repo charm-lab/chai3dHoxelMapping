@@ -9,14 +9,20 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 for p = 1:numExperimentTypes
     if (p == 2)
         % Groups:
-        % Mapping groups
+        % % Mapping groups
+        % mappingsExp2(1:...
+        %     numSubjects*numTrialsPerMapping(p), 1) = {'Mapping1'};
+        % mappingsExp2(numSubjects*numTrialsPerMapping(p) + 1:...
+        %     2*numSubjects*numTrialsPerMapping(p), 1) = {'Mapping3'};
+        % mappingsExp2(2*numSubjects*numTrialsPerMapping(p)+1:...
+        %     3*numSubjects*numTrialsPerMapping(p),1) = {'Control'};
+                % Mapping groups
         mappingsExp2(1:...
-            numSubjects*numTrialsPerMapping(p), 1) = {'Mapping1'};
+            numSubjects*numTrialsPerMapping(p), 1) = {1};
         mappingsExp2(numSubjects*numTrialsPerMapping(p) + 1:...
-            2*numSubjects*numTrialsPerMapping(p), 1) = {'Mapping3'};
+            2*numSubjects*numTrialsPerMapping(p), 1) = {3};
         mappingsExp2(2*numSubjects*numTrialsPerMapping(p)+1:...
-            3*numSubjects*numTrialsPerMapping(p),1) = {'Control'};
-
+            3*numSubjects*numTrialsPerMapping(p),1) = {5};
     end
 end
 
@@ -24,11 +30,19 @@ end
 % mappings, to be duplicated later:
 for j = 1:numSubjects
     for i = 1:numTrialsPerMapping(p)
-        subjects1Mapping{i,j} = strcat('Subject', num2str(subjectNum(j)));
+        subjects1Mapping{i,j} = j;%strcat('Subject', num2str(subjectNum(j)));
     end
 end
 
+for j = 1:numSubjects
+    % for i = 1:numTrialsPerMapping(p)
+        subjectNumber{j,1} = strcat('Subject', num2str(subjectNum(j)));
+    % end
+end
+
 mappings = mappingsExp2;
+
+% mappings = {'Mapping1', 'Mapping3', 'Control'};
 
 subjects1Mapping = reshape(subjects1Mapping,[],1);
 
@@ -43,13 +57,22 @@ map3Test  = reshape([map3{:,p}],[],1);
 %CompletionTime Mapping 5 - Testing
 map5Test  = reshape([map5{:,p}],[],1);
 
+
+% Split the vectors into subject-wise vectors:
+% map1Subjects = splitBySubject(map1Test)
+
+
 a = num2cell(map1Test);
 b = num2cell(map3Test);
 c = num2cell(map5Test);
 
 data = [a;b;c];
 
+% data = [{map1{:,p}}; {map3{:,p}}; {map5{:,p}}]';
+
 combinedCell = [subjectsAllMappings mappings data];
+
+% combinedCell = [subjectNumber data];
 
 myTable = array2table(combinedCell);
 % myTable.Properties.VariableNames = ["SubjectNum","Mapping1","Mapping3","Control"];

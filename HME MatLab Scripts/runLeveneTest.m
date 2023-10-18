@@ -1,6 +1,6 @@
-% Hoxel Mapping Experiments (HME) Anova Analysis
+% Hoxel Mapping Experiments (HME) Levene Test of Variance Homogeneity
 % Author: Jasmin E. Palmer
-function [p2, tbl, stats] = runHMEANOVA2(map1, map3, map5, metricName)
+function [p2, stats] = runLeveneTest(map1, map3, map5, metricName)
 
 numMappings = evalin('base','numMappings');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
@@ -15,7 +15,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % fontSize = 10; width = 1700; height = 1000;
     fontSize = 10; width = 700; height = 400;
 
-
     for p = 1:numExperimentTypes
         if (p == 2)
             % Groups:
@@ -26,10 +25,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
                 2*numSubjects*numTrialsPerMapping(p), 1) = {'3'};
             mappingsExp2(2*numSubjects*numTrialsPerMapping(p)+1:...
                 3*numSubjects*numTrialsPerMapping(p),1) = {'5'};
-
-            % Experiment Type condition
-            experimentType2(1:3*numSubjects*numTrialsPerMapping(p), 1) = ...
-                {'testing'};
         end
     end
 
@@ -58,47 +53,38 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     %vertically concatenate columns of the same metric
    
     disp("Test")
-    % y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
-    y_Test = [y_Map1_Test, y_Map3_Test, y_Map5_Test];
-    % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
+    y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
    
     mappings = [mappingsExp2];
-    % experimentType = [experimentType2];
-    % group = {mappings, subjectsAllMappings};
 
-    % 2-Way anova:
-    % [p2, ~, stats] = anova2(y_Test, numSubjects,"on");
+    [p2, stats] = vartestn(y_Test, mappings, 'TestType','LeveneAbsolute')
 
-    % n-way anova with n = 2:
-    % [~, ~, stats] = anovan(y_Test, group, "Model","full",...
-    %     "Varnames", ["Mappings", "Subjects"],...
-    %     "display", showStats);
-
-    % Friedman
-    [p2, ~, stats] = friedman(y_Test, numSubjects,"on");
 
 
     % Multiplpe comparison if p is small enough:
     if (p2(1) < 0.05)
-  
-    figure;
-    [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...
-        "dunn-sidak", "Alpha", 0.05);
-    title(strcat(metricName," -- Interactable"));
-    improvePlot_v2(false, true, fontSize, width, height);
 
-    %Tables with Variable Control:
-    tbl = array2table(comp,"VariableNames", ...
-        ["Group A","Group B","Lower Limit","A-B","Upper Limit","p-value"]);
-    tbl.("Group A")=gnames(tbl.("Group A"));
-    tbl.("Group B")=gnames(tbl.("Group B")) % Keep w/o ;
-
-
-    tbl2 = array2table(m,"RowNames", {'Mapping1', 'Mapping3', 'Control'}, ...
-        "VariableNames",["Mean","Standard Error"])
-    else
-        disp(strcat("p > 0.05 -- NO MULTCOMP for ", metricName))
+        disp(strcat("~~~p < 0.05 --  EQUAL VAR for ", metricName))
         disp(strcat("p = ", num2str(p2(1))))
-        tbl = "~";
+
+    % figure;
+    % [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...
+    %     "dunn-sidak", "Alpha", 0.05);
+    % title(strcat(metricName," -- Interactable"));
+    % improvePlot_v2(false, true, fontSize, width, height);
+    % 
+    % %Tables with Variable Control:
+    % tbl = array2table(comp,"VariableNames", ...
+    %     ["Group A","Group B","Lower Limit","A-B","Upper Limit","p-value"]);
+    % tbl.("Group A")=gnames(tbl.("Group A"));
+    % tbl.("Group B")=gnames(tbl.("Group B")) % Keep w/o ;
+    % 
+    % 
+    % tbl2 = array2table(m,"RowNames", {'Mapping1', 'Mapping3', 'Control'}, ...
+    %     "VariableNames",["Mean","Standard Error"])
+    else
+        disp(strcat("p > 0.05 -- NOT EQUAL VAR for ", metricName))
+        disp(strcat("p = ", num2str(p2(1))))
+        % tbl = "~";
     end
 end
