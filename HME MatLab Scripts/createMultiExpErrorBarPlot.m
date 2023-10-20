@@ -1,4 +1,4 @@
-%   Creates an errorbar plot with trial data
+%   Creates an errorbar plot with trial data for BOTH HME Exp Types
 %   Also assumes subjects are sorted columnwise
 %   in the SubjectData cell
 % Author: Jasmin E. Palmer

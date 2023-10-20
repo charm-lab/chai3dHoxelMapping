@@ -1,34 +1,38 @@
-%   Creates an errorbar plot with trial data
+%   Creates an errorbar plot with traiing trial data ONLY
 %   Also assumes subjects are sorted columnwise
 %   in the SubjectData cell
+% Author: Jasmin E. Palmer
 
-% function [visCubeErrorBarPlot, cubeMeanVals, cubeStdVals ] = ...
-%     createErrorBarPlot(map1, map2, map3, map4, map5,...
-%     plotTitle, xAxisLabel, yAxisLabel)
-
-function [errorBarPlot] = createErrorBarPlot(meanVals, stdVals,...
+function [h] = createErrorBarPlot(meanVals, stdVals,...
     plotTitle, xAxisLabel, yAxisLabel)
 
 % Pull variables from workspace
-visCubeColor = evalin('base','visCubeColor');
+trainingMap5Color = evalin('base','trainingMap5Color');
 jitterVal = evalin('base','jitterVal');
 numMappings = evalin('base','numMappings');
 plotMarker = evalin('base','plotMarker');
-markerSize = evalin('base', 'markerSize'); 
+markerSize = evalin('base', 'markerSize');
+numExperimentTypes = evalin('base', 'numExperimentTypes');
+minY =  evalin('base', 'minY');
+maxY =  evalin('base', 'maxY');
 
-%Vis Cube Subjects Plots
-errorBarPlot = errorbar((1:numMappings)-jitterVal,...
-    meanVals, stdVals, plotMarker, ...
-    "MarkerFaceColor", str2num(visCubeColor), ...
-    "Color", str2num(visCubeColor), "MarkerSize", markerSize, "LineWidth", 2);
+xAxis = (1:numMappings)-jitterVal;
+
+
+
+% Plots for trainig data only:
+p = 2;
+h = errorbar(xAxis, meanVals{1,p}, stdVals{1,p}, plotMarker, ...
+    "MarkerFaceColor", trainingMap5Color, ...
+    "Color", trainingMap5Color, "MarkerSize", markerSize, "LineWidth", 2);
 hold on;
 
-%Plot Details
-% xlim([0 6]); tickLabels = ["1", "2", "3", "4", "Control"];
-% xticks(0:6); set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
-xlim([0 numExperimentTypes]);
-xticks([1 numExperimentTypes]);
-tickLabels = ["1", "3", "Control"];
+ylim([minY maxY])
+
+% Plot Details
+xlim([0.5 numMappings+0.5]);
+xticks(1:numMappings);
+tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
 title(plotTitle);

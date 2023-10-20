@@ -122,7 +122,7 @@ if ~isnan(crossing_time)
     figure;
     % Duty cycles vs avg force results data:
     errorbar(dutyCycle, actualForce, stdForce, 'bs', ...
-        "MarkerSize",12, "MarkerFaceColor","b"); hold on;
+        "MarkerSize",8, "MarkerFaceColor","b"); hold on;
     
     % Linear fit;
     P = polyfit(dutyCycle, actualForce,1);
@@ -132,7 +132,7 @@ if ~isnan(crossing_time)
     eqn = string("F_{actual} = " + P(1)) + "*[DC] + [" + num2str(P(2) + "]");
     text(min(dutyCycle), max(actualForce), eqn, ...
         "HorizontalAlignment", "left", "VerticalAlignment", "top", ...
-        "FontSize", 22)
+        "FontSize", 14)
 
     % Plot Details:
     xlabel('Duty Cycle [%]');
@@ -141,7 +141,7 @@ if ~isnan(crossing_time)
     % grid on;
     xlim([11 110]); xticklabels([20:10:100]);
     ylim([-0.5 23]);
-    improvePlot_v2(false, true, 22, 1200, 600);
+    improvePlot_v2(false, true, 16, 500, 450);
     % Save figure as pdf:
 
     set(gcf,'PaperOrientation','landscape');

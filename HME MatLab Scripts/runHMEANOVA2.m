@@ -15,7 +15,6 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % fontSize = 10; width = 1700; height = 1000;
     fontSize = 10; width = 700; height = 400;
 
-
     for p = 1:numExperimentTypes
         if (p == 2)
             % Groups:
@@ -32,6 +31,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
                 {'testing'};
         end
     end
+    mappings = [mappingsExp2];
 
     % Create matirx of strings naming the subjects for only one of the 
     % mappings, to be duplicated later:
@@ -44,25 +44,26 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     subjects1Mapping = reshape(subjects1Mapping,[],1);
 
     % subjectsAllMappings = repmat(subjects1Mapping,3,1);
-    
-    %Convert matrix of subject results to column vectors
-    p=2;
-    %CompletionTime Mapping 1 - Testingans
-    y_Map1_Test = reshape([map1{:,p}],[],1);
-    %CompletionTime Mapping 3 - Testing
-    y_Map3_Test  = reshape([map3{:,p}],[],1);
-    %CompletionTime Mapping 5 - Testing
-    y_Map5_Test  = reshape([map5{:,p}],[],1);
+    if (metricName == "Total Cube Break Occurences")
+        y_Test = [map1; map3; map5]';
+    else
+        %Convert matrix of subject results to column vectors
+        p=2;
+        %CompletionTime Mapping 1 - Testingans
+        y_Map1_Test = reshape([map1{:,p}],[],1);
+        %CompletionTime Mapping 3 - Testing
+        y_Map3_Test  = reshape([map3{:,p}],[],1);
+        %CompletionTime Mapping 5 - Testing
+        y_Map5_Test  = reshape([map5{:,p}],[],1);
 
-    %Find p-values
-    %vertically concatenate columns of the same metric
-   
-    disp("Test")
-    % y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
-    y_Test = [y_Map1_Test, y_Map3_Test, y_Map5_Test];
-    % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
-   
-    mappings = [mappingsExp2];
+        %Find p-values
+        %vertically concatenate columns of the same metric
+
+        disp("Test")
+        % y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
+        y_Test = [y_Map1_Test, y_Map3_Test, y_Map5_Test];
+        % aov = anova({mappingsExp2}, yCT_Test, FactorNames=["mappings"])
+    
     % experimentType = [experimentType2];
     % group = {mappings, subjectsAllMappings};
 
@@ -73,7 +74,7 @@ numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
     % [~, ~, stats] = anovan(y_Test, group, "Model","full",...
     %     "Varnames", ["Mappings", "Subjects"],...
     %     "display", showStats);
-
+end
     % Friedman
     [p2, ~, stats] = friedman(y_Test, numSubjects,"on");
 
