@@ -18,8 +18,6 @@ maxY =  evalin('base', 'maxY');
 
 xAxis = (1:numMappings)-jitterVal;
 
-
-
 % Plots for trainig data only:
 p = 2;
 h = errorbar(xAxis, meanVals{1,p}, stdVals{1,p}, plotMarker, ...
@@ -35,7 +33,7 @@ xticks(1:numMappings);
 tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
-title(plotTitle);
+% title(plotTitle);
 hold off;
 
 end

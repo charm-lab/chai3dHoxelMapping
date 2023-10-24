@@ -129,15 +129,15 @@ if ~isnan(crossing_time)
     yForceFit = P(1)*dutyCycle + P(2);
     plot(dutyCycle, yForceFit,'r-');
     % Add text displaying values of fit:
-    eqn = string("F_{actual} = " + P(1)) + "*[DC] + [" + num2str(P(2) + "]");
+    eqn = string("F = " + P(1)) + "*DC" + num2str(P(2));
     text(min(dutyCycle), max(actualForce), eqn, ...
         "HorizontalAlignment", "left", "VerticalAlignment", "top", ...
         "FontSize", 14)
 
     % Plot Details:
-    xlabel('Duty Cycle [%]');
+    xlabel('Duty Cycle (DC) [%]');
     ylabel('Measured Force Z [N]');
-    title('Measured Force Z vs. Duty Cycle');
+    % title('Measured Force Z vs. Duty Cycle');
     % grid on;
     xlim([11 110]); xticklabels([20:10:100]);
     ylim([-0.5 23]);

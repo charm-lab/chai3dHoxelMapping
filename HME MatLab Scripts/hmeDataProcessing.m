@@ -881,7 +881,8 @@ if (showInidividualSubjects == false)
     % [h1, h2, h3] = createMultiExpErrorBarPlot(completionTimeMeanStats,...
     %     completionTimeStdStats, "Completion Time", "Mapping", "Time [sec]");
     [h1] = createErrorBarPlot(completionTimeMeanStats,...
-        completionTimeCiStats, "Completion Time", "Mapping", "Time [sec]");
+        completionTimeCiStats, "Completion Time", "Mapping",...
+        "Completion Time [sec]");
     % ylim([minY,maxY]);
     improvePlot_v2(false, true, 20, 700, 400);
     % legend([h1(1), h2(1),h3(1)],...
@@ -945,7 +946,7 @@ end
 close all;
 markerSize = 8;
 jitterVal = 0.1;
-% minY = 0.5; maxY = 1.75;
+minY = 1.0; maxY = 1.5;
 plotVis = "off";
 % Cells to store parameter basic statistics
 indexPathLengthMeanStats = cell(1, numExperimentTypes); % Addition for each experiment type
@@ -1306,7 +1307,7 @@ if (showInidividualSubjects == false)
     %     "Index Forces", "Mapping", "Force [N]");
     [indexNP3] = createNSForceErrorBarPlot(...
         indexNormalMeanStats, indexNormalCiStats,...
-        "Index Forces", "Mapping", "Force [N]");
+        "Index Forces", "Mapping", "Index Finger Force [N]");
     hold on;
     plotMarker = "d";
     jitterVal = jitterValNum; % pos
@@ -1315,7 +1316,7 @@ if (showInidividualSubjects == false)
     %     "Index Forces", "Mapping", "Force [N]");
     [indexSP3] = createNSForceErrorBarPlot(...
         indexShearMeanStats, indexShearCiStats,...
-        "Index Forces", "Mapping", "Force [N]");
+        "Index Forces", "Mapping", "Index Finger Force [N]");
 
     % % Shade the background
     % shadePlotBackground(indexSP2.XData(3), indexNP3.XData(1));
@@ -1346,7 +1347,7 @@ if (showInidividualSubjects == false)
     %     "Thumb Forces", "Mapping", "Force [N]");
     [thumbNP3] = createNSForceErrorBarPlot(...
         thumbNormalMeanStats, thumbNormalCiStats,...
-        "Thumb Forces", "Mapping", "Force [N]");
+        "Thumb Forces", "Mapping", "Thumb Force [N]");
     hold on;
     plotMarker = "d";
     jitterVal = jitterValNum; % pos
@@ -1355,7 +1356,7 @@ if (showInidividualSubjects == false)
     %     "Thumb Forces", "Mapping", "Force [N]");
     [thumbSP3] = createNSForceErrorBarPlot(...
         thumbShearMeanStats, thumbShearCiStats,...
-        "Thumb Forces", "Mapping", "Force [N]");
+        "Thumb Forces", "Mapping", "Thumb Force [N]");
 
     % % Shade the background
     % shadePlotBackground(thumbSP2.XData(3), thumbNP3.XData(1));
@@ -1758,12 +1759,28 @@ end
  X = reordercats(X,{'Dual Tactor','Single Tactor','Control'});
  b=bar(X,[totalBoxBreaksMapping1; totalBoxBreaksMapping3; totalBoxBreaksMapping5], 'b');
  title("Individual Subjects - Total Cube Breaks"); improvePlot;
+
+ close all;
  figure;
- b=bar(X,[sum(totalBoxBreaksMapping1); sum(totalBoxBreaksMapping3); sum(totalBoxBreaksMapping5)], 'b');
- title("All Subject Sum - Total Cube Breaks"); improvePlot;
-
-
- 
+ b=bar(X,[sum(totalBoxBreaksMapping1);
+     sum(totalBoxBreaksMapping3); ...
+     sum(totalBoxBreaksMapping5)], 0.3, 'b');
+ % title("All Subject Sum - Total Cube Breaks");
+ % Display vaule at tips of bars
+ xlabel("Mapping"); ylabel({"Excessive Force","Occurences"});
+ xtips1 = b(1).XEndPoints;
+ ytips1 = b(1).YEndPoints;
+ labels1 = string(b(1).YData);
+ text(xtips1,ytips1,labels1,'HorizontalAlignment','center', 'fontsize',14,...
+     'VerticalAlignment','bottom')
+ ylim([0 130])
+ yticks(0:20:130)
+ improvePlot_v2(false, true, 20, 700, 400);
+ % Save figure as pdf:
+ if (saveFigures == true)
+     set(gcf,'PaperOrientation','landscape');
+     print(gcf, 'figures\totalBoxBreaks','-dpdf','-r0');
+ end
 
 
 % Plotting:
@@ -1807,7 +1824,7 @@ if (showInidividualSubjects == false)
     createErrorBarPlot(numBoxBreaksMeanStats,...
         numBoxBreaksCiStats,...
         {"Mean Occurences of","Applying Excessive Force to Cube"},...
-        "Mapping", "Occurences [~]");
+        "Mapping", {"Mean Excessive Force","Occurences [~]"});
     improvePlot_v2(false, true, 20, 700, 400);
 
     % Save figure as pdf:
@@ -1827,7 +1844,7 @@ if (showInidividualSubjects == false)
     createErrorBarPlot(timeBoxBrokenMeanStats,...
         timeBoxBrokenCiStats,...
         {"Mean Elapsed Time of","Applying Excessive Force to Cube"},...
-        "Mapping", "Time [sec]");
+        "Mapping", {"Mean Elapsed Time of","Excessive Force [sec]"});
     improvePlot_v2(false, true, 20, 700, 400);
 
     % Save figure as pdf:
@@ -2008,7 +2025,7 @@ exportHMETestData(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
 %% Shapiro-Wilk Normality Tests:
 alpha = 0.05
 
-[H, pValue, W] = swtest(reshape([meanThumbShearForceMapping5{:,p}],[],1), alpha)
+[H, pValue, W] = swtest(reshape([meanIndexShearForceMapping1{:,p}],[],1), alpha)
 
 
 %% Levene Test
@@ -2056,18 +2073,22 @@ close all;
     runLeveneTest(meanThumbShearForceMapping1, meanThumbShearForceMapping3,...
     meanThumbShearForceMapping5, "Thumb Shear Force");
 
-%% Number of Box Breaks: ************************************************
+%% Mean Number of Box Breaks: ************************************************
 close all;
 [p_numBoxBreaks, stats_numBoxBreaks] = ...
     runLeveneTest(numBoxBreaksMapping1, numBoxBreaksMapping3,...
-    numBoxBreaksMapping5, "Cube Break Occurences");
+    numBoxBreaksMapping5, "Mean Cube Break Occurences");
 
 %% Time Box Broken: *****************************************************
 close all;
 [p_timeBoxBroken, stats_timeBoxBroken] = ...
     runLeveneTest(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
-    timeBoxBrokenMapping5, "Cube Break Time");
-
+    timeBoxBrokenMapping5, "Mean Cube Break Time");
+%% Total Number of Box Breaks: ************************************************
+close all;
+[p_totalBoxBreaks, stats_totalBoxBreaks] = ...
+    runLeveneTest(totalBoxBreaksMapping1, totalBoxBreaksMapping3,...
+    totalBoxBreaksMapping5, "Total Cube Break Occurences");
 
 %% Run 2-Way ANOVA and Compare Means for Metrics of Interest:
 %% Completion Time: ******************************************************
@@ -2118,7 +2139,7 @@ close all;
     meanThumbShearForceMapping5, "Thumb Shear Force");
 
 %% Mean Number of Box Breaks: ************************************************
-close all;
+% close all;
 [p_numBoxBreaks, ~ , stats_numBoxBreaks] = ...
     runHMEANOVA2(numBoxBreaksMapping1, numBoxBreaksMapping3,...
     numBoxBreaksMapping5, "Mean Cube Break Occurences");
@@ -2126,11 +2147,11 @@ close all;
 %% Total Number of Box Breaks: ************************************************
 close all;
 [p_totalBoxBreaks, ~ , stats_totalBoxBreaks] = ...
-    runHMEANOVA2(totalBoxBreaksMapping1, totalBoxBreaksMapping3,...
+    runHMEANOVA1(totalBoxBreaksMapping1, totalBoxBreaksMapping3,...
     totalBoxBreaksMapping5, "Total Cube Break Occurences");
 
 %% Time Box Broken: *****************************************************
-close all;
+% close all;
 [p_timeBoxBroken, ~ , stats_timeBoxBroken] = ...
     runHMEANOVA2(timeBoxBrokenMapping1, timeBoxBrokenMapping3,...
     timeBoxBrokenMapping5, "Cube Break Elapsed Time");

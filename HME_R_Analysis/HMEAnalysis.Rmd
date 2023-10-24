@@ -62,25 +62,39 @@ histogram(~ SubjectData | SubjectNum,
 
 ```
 
-### Perform the Friedman Rank Sum Test
+### Perform the Two-Way ANOVA Test
 ```{r}
-# fResult <- friedman.test(y = completionTime, groups = completionTime$Mappings, blocks = completionTime$SubjectNum)
 
-#friedman.test(formula = SubjectData ~ Mappings | SubjectNum, data = completionTime)
 head(completionTime)
 
-leveneTest(completionTime, SubjectData)
-#friedman.test(SubjectData ~ Mappings | SubjectNum, data = completionTime)
+# Perform a two-way ANOVA with interaction effects
+form <- SubjectData ~ Mappings * SubjectNum
+model <- aov(formula = form, data = completionTime)
 
+# Print a summary of the ANOVA results
+summary(model)
 
 ```
 
-### Results of the Friedman Rank Sum Test
-```{r}
+### Tukey's test
+```{r} 
+# table with factors, means and standard deviation
+data_summary <- group_by(completionTime, Mappings, SubjectData) %>%
+  summarise(mean=mean(SubjectData), sd=sd(SubjectData)) %>%
+  arrange(desc(mean))
 
-summ1 <- summary(fResult)
-#summary(result_interaction)
 
+tukey <- TukeyHSD(model)
+#print(tukey)
+# creating the compact letter display
+tukey.cld <- multcompLetters4(model, tukey)
+print(tukey.cld)
+
+
+# adding the compact letter display to the table with means and sd
+cld <- as.data.frame.list(tukey.cld$`Mappings:SubjectNum`)
+data_summary$Tukey <- cld$Letters
+print(data_summary)
 ```
 
 

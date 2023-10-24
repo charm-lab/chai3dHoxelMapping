@@ -42,7 +42,7 @@ xticks(1:numMappings);
 tickLabels = ["Dual Tactor", "Single Tactor", "Control"];
 set(gca,'xTick', [1:numMappings],'xticklabel', tickLabels); %#ok<NBRAK>
 xlabel(xAxisLabel); ylabel(yAxisLabel);
-title(plotTitle);
+% title(plotTitle);
 hold off;
 
 
