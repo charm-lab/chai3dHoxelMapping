@@ -89,10 +89,12 @@ magF1_prev = 0.0
 # pwm_pump3 = pwmio.PWMOut(board.D4, frequency=8000, duty_cycle=0)
 # pwm_pump4 = pwmio.PWMOut(board.D5, frequency=8000, duty_cycle=0)
 
+
 def get_voltage(pin):
     V_ref = 3.3
     resolution = 65535
     return (pin.value * V_ref) / (resolution)
+
 
 # Outputs pressure in PSI, input is 3.3V scale voltage measured at pressure ADC
 def get_pressure(V):
@@ -107,8 +109,10 @@ def get_pressure(V):
 
     return 6.89476 * ((V_out - (0.1 * V_sup)) * (P_max - P_min) / (0.8 * V_sup) + P_min)
 
+
 def duty2bits(duty):
     return int(duty * 65535 / 100)
+
 
 def pumps_on(d):
     pwm_pump1.duty_cycle = d
@@ -119,6 +123,7 @@ def pumps_on(d):
     pwm_pump6.duty_cycle = d
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
+
 
 # Everything is off and air id released from the line
 def exhaust0():
@@ -132,6 +137,7 @@ def exhaust0():
     valve3.value = False
     valve4.value = False
 
+
 def exhaust1():
     pwm_pump5.duty_cycle = 0
     pwm_pump6.duty_cycle = 0
@@ -143,6 +149,7 @@ def exhaust1():
     valve7.value = False
     valve8.value = False
 
+
 # calculate pump speed depending on commanded force
 def get_pump_Speed(force):
     # a = min_pump_speed
@@ -152,13 +159,14 @@ def get_pump_Speed(force):
     # return ((b-a)*(force-minVal) / (maxVal-minVal)) + a
 
     # pump_speed cannot exceed 100
-    force = 10*force
+    force = 10 * force
     if force >= max_pump_speed:
         pump_Speed = max_pump_speed
     else:
         pump_Speed = force
 
     return pump_Speed
+
 
 # ------ Hoxel 0 ------
 def x0_pos(d):
@@ -167,11 +175,13 @@ def x0_pos(d):
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = 0
 
+
 def x0_neg(d):
     pwm_pump1.duty_cycle = 0
     pwm_pump2.duty_cycle = 0
     pwm_pump3.duty_cycle = d
     pwm_pump4.duty_cycle = d
+
 
 def y0_pos(d):
     pwm_pump1.duty_cycle = 0
@@ -179,17 +189,20 @@ def y0_pos(d):
     pwm_pump3.duty_cycle = d
     pwm_pump4.duty_cycle = 0
 
+
 def y0_neg(d):
     pwm_pump1.duty_cycle = d
     pwm_pump2.duty_cycle = 0
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = d
 
+
 def z0(d):
     pwm_pump1.duty_cycle = d
     pwm_pump2.duty_cycle = d
     pwm_pump3.duty_cycle = d
     pwm_pump4.duty_cycle = d
+
 
 # Turn off Hoxel0
 def hoxel0Off():
@@ -198,13 +211,14 @@ def hoxel0Off():
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = 0
 
-# ------ Hoxel 1 ------
 
+# ------ Hoxel 1 ------
 def x1_pos(d):
     pwm_pump5.duty_cycle = 0
     pwm_pump6.duty_cycle = 0
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
+
 
 def x1_neg(d):
     pwm_pump5.duty_cycle = d
@@ -212,11 +226,13 @@ def x1_neg(d):
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = 0
 
+
 def y1_pos(d):
     pwm_pump5.duty_cycle = 0
     pwm_pump6.duty_cycle = d
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = 0
+
 
 def y1_neg(d):
     pwm_pump5.duty_cycle = d
@@ -224,11 +240,13 @@ def y1_neg(d):
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = d
 
+
 def z1(d):
     pwm_pump5.duty_cycle = d
     pwm_pump6.duty_cycle = d
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
+
 
 # Turn off Hoxel1
 def hoxel1Off():
@@ -237,6 +255,7 @@ def hoxel1Off():
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = 0
 
+
 # ------ Actuation ------
 def moveHoxel0(current_val0, prev_val0):
     # if extending, use positive axes| if contracting, use negative axes
@@ -244,6 +263,8 @@ def moveHoxel0(current_val0, prev_val0):
         exhaust0()
     else:
         z0(duty2bits(get_pump_Speed(current_val0)))
+
+
 #         if current_val0 >= prev_val0:
 #            EXTEND
 #             z0_neg(duty2bits(get_pump_Speed(current_val0)))
@@ -251,12 +272,15 @@ def moveHoxel0(current_val0, prev_val0):
 #            CONTRACT
 #             z0_pos(duty2bits(get_pump_Speed(current_val0)))
 
+
 def moveHoxel1(current_val1, prev_val1):
     # if extending, use positive axes | if contracting, use negative axes
     if current_val1 <= min_force:
         exhaust1()
     else:
         z1(duty2bits(get_pump_Speed(current_val1)))
+
+
 #         if current_val1 >= prev_val1:
 #            EXTEND
 #             z1_neg(duty2bits(get_pump_Speed(current_val1)))
@@ -286,7 +310,7 @@ time.sleep(3)
 while True:
     if supervisor.runtime.serial_bytes_available:
         data = input()
-        data_list = data.split(' ')
+        data_list = data.split(" ")
         print(data_list)
         # Set current values for each device direction
         X0 = float(data_list[0])

@@ -212,7 +212,6 @@ QString MainWindow::mapFingersToDevices()
         ui->serialWrite2->setText("New: " + device1X + " | " + device1Y + " | " + device1Z + "N\r\nMag: " + dev1Mag + "N\r\nShear: " + dev1Shear +"N\r\n"); //device 1 //device 1_prev
 
         deviceData = device0X + " " + device0Y + " " + device0Z + " " + dev0Mag + " " + dev0Shear + " " + device1X + " " + device1Y + " " + device1Z + " " + dev1Mag + " " + dev1Shear +"\r\n";
-
     }
     //    qDebug()<<deviceData;
     return deviceData;

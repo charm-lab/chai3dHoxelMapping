@@ -225,8 +225,8 @@ def hoxel1Off():
     pwm_pump8.duty_cycle = 0
 
 # ------ Actuation ------
-# ------ 3-Dof ------
-kZ = 0.1
+# ------ 3-DoF ------
+kZ = 1.0
 scale = 4.0
 def moveHoxel0(X0, Y0, Z0, magF0, shear0):
     if magF0 <= min_force:
