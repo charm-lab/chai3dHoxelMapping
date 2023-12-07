@@ -1,11 +1,12 @@
-# Jasmin's ~Official~ 1-DoF Hoxel Control Code for CHAI3D Interactions -- Version 2
+# Jasmin's ~Official~ 3-DoF Hoxel Control Code -- Version 3
 # Write your code here :-)
 import board
 import time
 import pwmio
 from digitalio import DigitalInOut, Direction
+import supervisor
 from analogio import AnalogIn
-import usb_cdc
+
 
 # Define Presure Input
 pres_1 = AnalogIn(board.A8)
@@ -90,7 +91,6 @@ def get_voltage(pin):
     resolution = 65535
     return (pin.value * V_ref) / (resolution)
 
-
 # Outputs pressure in PSI, input is 3.3V scale voltage measured at pressure ADC
 def get_pressure(V):
     V_sup = 5
@@ -104,10 +104,8 @@ def get_pressure(V):
 
     return 6.89476 * ((V_out - (0.1 * V_sup)) * (P_max - P_min) / (0.8 * V_sup) + P_min)
 
-
 def duty2bits(duty):
     return int(duty * 65535 / 100)
-
 
 def pumps_on(d):
     pwm_pump1.duty_cycle = d
@@ -119,31 +117,18 @@ def pumps_on(d):
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
 
-
 # Everything is off and air id released from the line
-def exhaust0():
+def exhaustHoxel0():
     pwm_pump1.duty_cycle = 0
     pwm_pump2.duty_cycle = 0
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = 0
 
-    valve1.value = False
-    valve2.value = False
-    valve3.value = False
-    valve4.value = False
-
-
-def exhaust1():
+def exhaustHoxel1():
     pwm_pump5.duty_cycle = 0
     pwm_pump6.duty_cycle = 0
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = 0
-
-    valve5.value = False
-    valve6.value = False
-    valve7.value = False
-    valve8.value = False
-
 
 # calculate pump speed depending on commanded force
 def get_pump_Speed(force):
@@ -154,14 +139,13 @@ def get_pump_Speed(force):
     # return ((b-a)*(force-minVal) / (maxVal-minVal)) + a
 
     # pump_speed cannot exceed 100
-    force = 10 * force
+    force = 15 * abs(force)
     if force >= max_pump_speed:
         pump_Speed = max_pump_speed
     else:
         pump_Speed = force
 
     return pump_Speed
-
 
 # ------ Hoxel 0 ------
 def x0_pos(d):
@@ -170,13 +154,11 @@ def x0_pos(d):
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = 0
 
-
 def x0_neg(d):
     pwm_pump1.duty_cycle = 0
     pwm_pump2.duty_cycle = 0
     pwm_pump3.duty_cycle = d
     pwm_pump4.duty_cycle = d
-
 
 def y0_pos(d):
     pwm_pump1.duty_cycle = 0
@@ -184,20 +166,17 @@ def y0_pos(d):
     pwm_pump3.duty_cycle = d
     pwm_pump4.duty_cycle = 0
 
-
 def y0_neg(d):
     pwm_pump1.duty_cycle = d
     pwm_pump2.duty_cycle = 0
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = d
 
-
 def z0(d):
     pwm_pump1.duty_cycle = d
     pwm_pump2.duty_cycle = d
     pwm_pump3.duty_cycle = d
     pwm_pump4.duty_cycle = d
-
 
 # Turn off Hoxel0
 def hoxel0Off():
@@ -206,14 +185,13 @@ def hoxel0Off():
     pwm_pump3.duty_cycle = 0
     pwm_pump4.duty_cycle = 0
 
-
 # ------ Hoxel 1 ------
+
 def x1_pos(d):
     pwm_pump5.duty_cycle = 0
     pwm_pump6.duty_cycle = 0
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
-
 
 def x1_neg(d):
     pwm_pump5.duty_cycle = d
@@ -221,13 +199,11 @@ def x1_neg(d):
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = 0
 
-
 def y1_pos(d):
     pwm_pump5.duty_cycle = 0
     pwm_pump6.duty_cycle = d
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = 0
-
 
 def y1_neg(d):
     pwm_pump5.duty_cycle = d
@@ -235,13 +211,11 @@ def y1_neg(d):
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = d
 
-
 def z1(d):
     pwm_pump5.duty_cycle = d
     pwm_pump6.duty_cycle = d
     pwm_pump7.duty_cycle = d
     pwm_pump8.duty_cycle = d
-
 
 # Turn off Hoxel1
 def hoxel1Off():
@@ -250,29 +224,107 @@ def hoxel1Off():
     pwm_pump7.duty_cycle = 0
     pwm_pump8.duty_cycle = 0
 
-
 # ------ Actuation ------
-def moveHoxel0(current_val0, prev_val0):
-    # if extending, use positive axes| if contracting, use negative axes
-    if current_val0 <= min_force:
-        exhaust0()
+# ------ 3-DoF ------
+kZ = 1.0
+scale = 4.0
+def moveHoxel0(X0, Y0, Z0, magF0, shear0):
+    if magF0 <= min_force:
+        exhaustHoxel0()
     else:
-        z0(duty2bits(get_pump_Speed(current_val0)))
+        if abs(Z0) >= scale * shear0:  # Normal force only
+            pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+            pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+            pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+            pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+        else:
+            if abs(X0) >= scale * abs(Y0):  # X is dominant -> Move X
+                if X0 >= 0.0:
+                    x0_pos(duty2bits(get_pump_Speed(X0)))
+                else:
+                    x0_neg(duty2bits(get_pump_Speed(X0)))
+            elif abs(Y0) >= scale * abs(X0):  # Y is dominant -> Move Y
+                if Y0 >= 0.0:
+                    y0_pos(duty2bits(get_pump_Speed(Y0)))
+                else:
+                    y0_neg(duty2bits(get_pump_Speed(Y0)))
+            else:
+                if X0 >= 0.0 and Y0 >= 0.0:
+                    pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                elif X0 >= 0.0 and Y0 < 0.0:
+                    pwm_pump1.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                elif X0 < 0.0 and Y0 >= 0.0:
+                    pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                else:
+                    pwm_pump1.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump2.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump3.duty_cycle = duty2bits(kZ*get_pump_Speed(Z0))
+                    pwm_pump4.duty_cycle = duty2bits(get_pump_Speed(magF0))
+                    + duty2bits(kZ*get_pump_Speed(Z0))
 
-
-def moveHoxel1(current_val1, prev_val1):
-    # if extending, use positive axes | if contracting, use negative axes
-    if current_val1 <= min_force:
-        exhaust1()
+def moveHoxel1(X1, Y1, Z1, magF1, shear1):
+    if magF1 <= min_force:
+        exhaustHoxel1()
     else:
-        z1(duty2bits(get_pump_Speed(current_val1)))
-
+        if abs(Z1) >= scale * shear1:  # Normal force only
+            pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+            pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+            pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+            pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+        else:
+            if abs(X1) >= scale * abs(Y1):  # X is dominant -> Move X
+                if X1 >= 0.0:
+                    x1_pos(duty2bits(get_pump_Speed(X1)))
+                else:
+                    x1_neg(duty2bits(get_pump_Speed(X1)))
+            elif abs(Y1) >= scale * abs(X1):  # Y is dominant -> Move Y
+                if Y1 >= 0.0:
+                    y1_pos(duty2bits(get_pump_Speed(Y1)))
+                else:
+                    y1_neg(duty2bits(get_pump_Speed(Y1)))
+            else:
+                if X1 >= 0.0 and Y1 >= 0.0:
+                    pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                elif X1 >= 0.0 and Y1 < 0.0:
+                    pwm_pump5.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                elif X1 < 0.0 and Y1 >= 0.0:
+                    pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                else:
+                    pwm_pump5.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump6.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump7.duty_cycle = duty2bits(kZ*get_pump_Speed(Z1))
+                    pwm_pump8.duty_cycle = duty2bits(get_pump_Speed(magF1))
+                    + duty2bits(kZ*get_pump_Speed(Z1))
 
 enable_LS.value = False
 enable_LS.value = True
 # Everything off
-exhaust0()
-exhaust1()
+exhaustHoxel0()
+exhaustHoxel1()
 
 # Set initial frequency
 i = min_freq
@@ -285,33 +337,14 @@ time.sleep(3)
 # valve0c.value = True
 # valve1c.value = True
 
-# SERIAL: ~~~~~~~~~~~~~~~~~~~~~~~~
+# Choose rendering scheme for hoxels
 
-# main
-buffer = ""
-serial = usb_cdc.console
-
-
-def read_serial(serial):
-    text = ""
-    available = serial.in_waiting
-    while available:
-        raw = serial.readline(available)
-        text = raw.decode("utf-8")
-        available = serial.in_waiting
-    return text
-
-
+# Serial Comms
 while True:
-    buffer += read_serial(serial)
-    if buffer.endswith("\n"):
-        # strip line end
-        data = buffer[:-1]
-        print(data)
-        # clear buffer
-        buffer = ""
-        # handle input
+    if supervisor.runtime.serial_bytes_available:
+        data = input()
         data_list = data.split(" ")
+        print(data_list)
         # Set current values for each device direction
         X0 = float(data_list[0])
         Y0 = float(data_list[1])
@@ -325,9 +358,9 @@ while True:
         shear1 = float(data_list[9])
 
         # Hoxel 0:
-        moveHoxel0(magF0, magF0_prev)
+        moveHoxel0(X0, Y0, Z0, magF0, shear0)
         # Hoxel 1:
-        moveHoxel1(magF1, magF1_prev)
+        moveHoxel1(X1, Y1, Z1, magF1, shear1)
 
         # Set prev values for each device direction
         X0_prev = X0

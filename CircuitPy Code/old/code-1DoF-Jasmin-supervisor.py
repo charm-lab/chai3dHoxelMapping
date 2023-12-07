@@ -1,11 +1,11 @@
-# Jasmin's ~Official~ 1-DoF Hoxel Control Code for CHAI3D Interactions -- Version 2
+# Jasmin's ~Official~ 1-DoF Hoxel Control Code
 # Write your code here :-)
 import board
 import time
 import pwmio
 from digitalio import DigitalInOut, Direction
+import supervisor
 from analogio import AnalogIn
-import usb_cdc
 
 # Define Presure Input
 pres_1 = AnalogIn(board.A8)
@@ -83,6 +83,11 @@ X1_prev = min_force
 Y1_prev = min_force
 Z1_prev = min_force
 magF1_prev = 0.0
+
+# pwm_pump1 = pwmio.PWMOut(board.D2, frequency=8000, duty_cycle=0)
+# pwm_pump2 = pwmio.PWMOut(board.D3, frequency=8000, duty_cycle=0)
+# pwm_pump3 = pwmio.PWMOut(board.D4, frequency=8000, duty_cycle=0)
+# pwm_pump4 = pwmio.PWMOut(board.D5, frequency=8000, duty_cycle=0)
 
 
 def get_voltage(pin):
@@ -260,12 +265,28 @@ def moveHoxel0(current_val0, prev_val0):
         z0(duty2bits(get_pump_Speed(current_val0)))
 
 
+#         if current_val0 >= prev_val0:
+#            EXTEND
+#             z0_neg(duty2bits(get_pump_Speed(current_val0)))
+#         else:
+#            CONTRACT
+#             z0_pos(duty2bits(get_pump_Speed(current_val0)))
+
+
 def moveHoxel1(current_val1, prev_val1):
     # if extending, use positive axes | if contracting, use negative axes
     if current_val1 <= min_force:
         exhaust1()
     else:
         z1(duty2bits(get_pump_Speed(current_val1)))
+
+
+#         if current_val1 >= prev_val1:
+#            EXTEND
+#             z1_neg(duty2bits(get_pump_Speed(current_val1)))
+#         else:
+#            CONTRACT
+#             z1_pos(duty2bits(get_pump_Speed(current_val1)))
 
 
 enable_LS.value = False
@@ -285,33 +306,12 @@ time.sleep(3)
 # valve0c.value = True
 # valve1c.value = True
 
-# SERIAL: ~~~~~~~~~~~~~~~~~~~~~~~~
-
-# main
-buffer = ""
-serial = usb_cdc.console
-
-
-def read_serial(serial):
-    text = ""
-    available = serial.in_waiting
-    while available:
-        raw = serial.readline(available)
-        text = raw.decode("utf-8")
-        available = serial.in_waiting
-    return text
-
-
+# Serial Comms
 while True:
-    buffer += read_serial(serial)
-    if buffer.endswith("\n"):
-        # strip line end
-        data = buffer[:-1]
-        print(data)
-        # clear buffer
-        buffer = ""
-        # handle input
+    if supervisor.runtime.serial_bytes_available:
+        data = input()
         data_list = data.split(" ")
+        print(data_list)
         # Set current values for each device direction
         X0 = float(data_list[0])
         Y0 = float(data_list[1])
