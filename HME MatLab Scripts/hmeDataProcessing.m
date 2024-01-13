@@ -823,20 +823,20 @@ disp("sort subject data by mapping group -- done")
 
 %% Plot Cosmetics:
 % close all;
-saveFigures = true;
+saveFigures = false;
 % Old color scheme:
 visCubeColor = "[0 0 0]"; % Black
 % invisCubeColor = "[0.5 0.5 0.5]"; % Gray
 %New Color Scheme:
 % Reds:
-trainingMap1Color = "[0.8 0 0]"; % Dark
-testingMap1Color = "[1 0.7 0.8]"; % Light
+testingMap1Color = "[0.8 0 0]"; % Dark
+trainingMap1Color = "[1 0.7 0.8]"; % Light
 % Greens:
-trainingMap3Color = "[0.3 0.6 0.1]"; % Dark
-testingMap3Color = "[0.7 0.8 0.5]"; % Light
+testingMap3Color = "[0.3 0.6 0.1]"; % Dark
+trainingMap3Color = "[0.7 0.8 0.5]"; % Light
 % Blues:
-trainingMap5Color = "[0.2 0.2 0.7]"; % Dark
-testingMap5Color = "[0.7 0.8 0.9]"; % Light
+testingMap5Color = "[0.2 0.2 0.7]"; % Dark
+trainingMap5Color = "[0.7 0.8 0.9]"; % Light
 % Blues:
 boxTrainingColor = "[0.2 0.2 0.7]"; % Dark
 boxTestingColor = "[0.7 0.8 0.9]"; % Light
@@ -847,6 +847,7 @@ visPlotMarker = "s"; %variable used in createErrorBarPlot
 invisPlotMarker = "s"; %variable used in createErrorBarPlot
 markerSize = 10; %variable used in createErrorBarPlot
 alphaVal = 0.20;
+disp("Set/Reset plot cosmetics -- done")
 
 %% Plot completionTimes
 close all;
@@ -1757,31 +1758,49 @@ end
  figure;
  X = categorical({'Dual Tactor','Single Tactor','Control'});
  X = reordercats(X,{'Dual Tactor','Single Tactor','Control'});
- b=bar(X,[totalBoxBreaksMapping1; totalBoxBreaksMapping3; totalBoxBreaksMapping5], 'b');
+ b1=bar(X,[totalBoxBreaksMapping1; totalBoxBreaksMapping3; totalBoxBreaksMapping5], 'b');
  title("Individual Subjects - Total Cube Breaks"); improvePlot;
 
  close all;
  figure;
- b=bar(X,[sum(totalBoxBreaksMapping1);
-     sum(totalBoxBreaksMapping3); ...
-     sum(totalBoxBreaksMapping5)], 0.3, 'b');
+ % Single color bar plot:
+ % b=bar(X,[sum(totalBoxBreaksMapping1);
+ %     sum(totalBoxBreaksMapping3); ...
+ %     sum(totalBoxBreaksMapping5)], 0.3, 'b');
+ % xlabel("Mapping"); ylabel({"Excessive Force","Occurences"});
+ % xtips1 = b(1).XEndPoints; % ytips1 = b(1).YEndPoints;
+ % labels1 = string(b(1).YData);
+ % text(xtips1,ytips1,labels1,'HorizontalAlignment','center', 'fontsize',14,...
+ %     'VerticalAlignment','bottom')
+ % ylim([0 130]); yticks(0:20:130)
+ 
+ % Multi-color bar plot:
+ b1 = bar(X(1),sum(totalBoxBreaksMapping1),0.3,'FaceColor',testingMap1Color); 
+ hold on;
+ b2 = bar(X(2),sum(totalBoxBreaksMapping3),0.3,'FaceColor',testingMap3Color);
+ b3 = bar(X(3),sum(totalBoxBreaksMapping5),0.3,'FaceColor',testingMap5Color);
  % title("All Subject Sum - Total Cube Breaks");
  % Display vaule at tips of bars
  xlabel("Mapping"); ylabel({"Excessive Force","Occurences"});
- xtips1 = b(1).XEndPoints;
- ytips1 = b(1).YEndPoints;
- labels1 = string(b(1).YData);
+ xtips1 = b1(1).XEndPoints; ytips1 = b1(1).YEndPoints;
+ xtips2 = b2(1).XEndPoints; ytips2 = b2(1).YEndPoints;
+ xtips3 = b3(1).XEndPoints; ytips3 = b3(1).YEndPoints;
+ labels1 = string(b1(1).YData);
+ labels2 = string(b2(1).YData);
+ labels3 = string(b3(1).YData);
  text(xtips1,ytips1,labels1,'HorizontalAlignment','center', 'fontsize',14,...
      'VerticalAlignment','bottom')
- ylim([0 130])
- yticks(0:20:130)
- improvePlot_v2(false, true, 20, 700, 400);
+ text(xtips2,ytips2,labels2,'HorizontalAlignment','center', 'fontsize',14,...
+     'VerticalAlignment','bottom')
+ text(xtips3,ytips3,labels3,'HorizontalAlignment','center', 'fontsize',14,...
+     'VerticalAlignment','bottom')
+ ylim([0 130]);  yticks(0:20:130);
+ improvePlot_v2(false, true, 20, 700, 400); hold off;
  % Save figure as pdf:
  if (saveFigures == true)
      set(gcf,'PaperOrientation','landscape');
      print(gcf, 'figures\totalBoxBreaks','-dpdf','-r0');
  end
-
 
 % Plotting:
 if (showInidividualSubjects == false)
@@ -1821,6 +1840,7 @@ if (showInidividualSubjects == false)
     %     numBoxBreaksStdStats,...
     %     "Mean Occurences of Applying Excessive Force to Cube",...
     %     "Mapping", "Time [sec]");
+    jitterVal = 0.0;
     createErrorBarPlot(numBoxBreaksMeanStats,...
         numBoxBreaksCiStats,...
         {"Mean Occurences of","Applying Excessive Force to Cube"},...
@@ -1973,7 +1993,7 @@ else
         "Experiment Type", "Time Broken [sec]",[-1.0 3.0]);
 end
 
-disp("Plot Other Manipulation Force Threshold Metrics-- done")
+disp("Plot Other Manipulation Force Threshold Metrics -- done")
 
 %% Export Data to be Used in R
 % CompletionTime

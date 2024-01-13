@@ -1,4 +1,4 @@
-% Creates bar plot with error bars
+% Creates bar plot with error barstrainingMap1Color
 % Also has the option to include subject averages along the error bars
 % Author: Jasmin E. Palmer
 
@@ -23,7 +23,7 @@ yVal = evalin('base', 'yVal');
 showInidividualSubjects = evalin('base', 'showInidividualSubjects');
 
 if (showInidividualSubjects == false)
-    %Calculate for all subjects
+    % Calculate for all subjects
 
     markSubjectAverages = true;
     for p = 1:numExperimentTypes
@@ -92,9 +92,9 @@ if (showInidividualSubjects == false)
                 [std(data1); std(data3); std(data5)],...
                 'ks','linestyle','none','MarkerFaceColor','k');
             % Color the bars:
-            h2(1).FaceColor = str2num(trainingMap1Color);
-            h2(2).FaceColor = str2num(trainingMap3Color);
-            h2(3).FaceColor = str2num(trainingMap5Color);
+            h2(1).FaceColor = str2num(testingMap1Color);
+            h2(2).FaceColor = str2num(testingMap3Color);
+            h2(3).FaceColor = str2num(testingMap5Color);
 
             if (markSubjectAverages == true)
                 % Get the mean for each subject over their trials by in a mapping:
@@ -159,7 +159,7 @@ if (showInidividualSubjects == false)
     hold off;
 
 else
-    %Calculate for each subject individually
+    % Calculate for each subject individually
 
     for j = 1:numSubjects
         figure;
@@ -208,9 +208,9 @@ else
                     [std(data1); std(data3); std(data5)],...
                     'ks','linestyle','none','MarkerFaceColor','k');
                 % Color the bars:
-                h2(1).FaceColor = str2num(trainingMap1Color);
-                h2(2).FaceColor = str2num(trainingMap3Color);
-                h2(3).FaceColor = str2num(trainingMap5Color);
+                h2(1).FaceColor = str2num(testingMap1Color);
+                h2(2).FaceColor = str2num(testingMap3Color);
+                h2(3).FaceColor = str2num(testingMap5Color);
                 % h2(1).FaceColor = str2num(testingMap1Color);
                 % h2(2).FaceColor = str2num(testingMap3Color);
                 % h2(3).FaceColor = str2num(testingMap5Color);
