@@ -1,6 +1,6 @@
 % Hoxel Mapping Experiments (HME) Anova Analysis
 % Author: Jasmin E. Palmer
-function [p, tbl, stats] = runHMEANOVA1(map1, map3, map5, metricName)
+function [p2, tbl2, stats] = runHMEANOVA1(map1, map3, map5, metricName)
 
 numMappings = evalin('base','numMappings');
 numExperimentTypes = evalin('base', 'numExperimentTypes');
@@ -8,7 +8,7 @@ numSubjects =  evalin('base', 'numSubjects');
 subjectNum = evalin('base','subjectNum');
 numTrialsPerMapping =  evalin('base', 'numTrialsPerMapping');
 
-% Statistcal Tests v3 -- 1-way and 2-Way ANOVA
+% Statistcal Tests v3 -- 1-way ANOVA
 % p = anovan(y, group)
 showStats = "on";
 format long; % close all;
@@ -32,7 +32,7 @@ if (metricName == "Total Cube Break Occurences")
     mappings = [mappingsExp2];
 
     % 1-way anova - Mappings:
-    [p, ~, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
+    [p2, tbl2, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
 
 else
     % Groups:
@@ -61,15 +61,15 @@ else
     %vertically concatenate columns of the same metric
 
     disp("Test")
-    % y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
-    y_Test = [y_Map1_Test, y_Map3_Test, y_Map5_Test];
+    y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
+    % y_Test = [y_Map1_Test, y_Map3_Test, y_Map5_Test];
 
     mappings = [mappingsExp2];
     % experimentType = [experimentType2];
-    group = {mappings, subjectsAllMappings};
+    % group = {mappings, subjectsAllMappings};
 
     % 1-way anova - Mappings:
-    [p, ~, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
+    [p2, tbl2, stats] = anova1(y_Test, mappingsExp2, "display", showStats);
 
 % Create matirx of strings naming the subjects for only one of the
 % mappings, to be duplicated later:
@@ -84,6 +84,8 @@ subjects1Mapping = reshape(subjects1Mapping,[],1);
 subjectsAllMappings = repmat(subjects1Mapping,3,1);
 
 end
+% return Fstat
+Fstat = tbl2{2,5}
 
 % [p, tbl, stats] = kruskalwallis(y_Test, mappingsExp2, "on");
 

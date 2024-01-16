@@ -26,7 +26,7 @@ if (metricName == "Total Cube Break Occurences")
     y_Test = [map1; map3; map5]';
 
     % 2-Way anova:
-    [p2, ~, stats] = anova2(y_Test, 18, "on");
+    [p2, ~, stats] = anova2(y_Test, numSubjects, "on");
 else
     % Groups:
     % Mapping groups
