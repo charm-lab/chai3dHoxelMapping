@@ -36,6 +36,4 @@ text(8, textYCoord,...
 xlim([minX max(xlim)]);
 ylim([minY maxY]);
 
-
-
 end

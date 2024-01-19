@@ -22,6 +22,8 @@ yVal = evalin('base', 'yVal');
 dataSeparation = 0.3;
 minX = 0.5;
 
+isShearPlot = evalin('base', 'isShearPlot');
+
 % Get the x-axis values including a buffer on the first and last indices:
 % Set to even itnerval for now
 xTickVals = [0:numMappings];
@@ -35,36 +37,48 @@ xAxis = xTickVals(2:end);
 %     "MarkerFaceColor", testingMap5Color, ...
 %     "Color", testingMap5Color, "MarkerSize", markerSize, "LineWidth", 2);
 % hold on;
-% 
+%
 % ylim([minY maxY])
 
 p = 2;
 
 % Create dummy points in black color to be cut off intentionally so legend
 % icons appear in correct color
-h = errorbar(0, 0, 0, 0, plotMarker, "MarkerFaceColor","k", ...
-    "Color", "k", "MarkerSize", markerSize, "LineWidth", 2);
+if (isShearPlot == true)
+    h = errorbar(0, 0, 0, 0, plotMarker, "MarkerFaceColor","w", ...
+        "Color", "k", "MarkerSize", markerSize, "LineWidth", 2);
+else
+    h = errorbar(0, 0, 0, 0, plotMarker, "MarkerFaceColor","k", ...
+        "Color", "k", "MarkerSize", markerSize, "LineWidth", 2);
+end
 
 hold on;
 % Plot the actual data:
-%h = 
+%h =
 errorbar(xAxis, meanVals{1,p}, barVals{1,p}, plotMarker, ...
-    "MarkerFaceColor", testingMap1Color, ...
-    "Color", testingMap5Color, "MarkerSize", markerSize, "LineWidth", 2);
+    "MarkerFaceColor", testingMap1Color, "Color", testingMap5Color, ...
+    "MarkerSize", markerSize, "LineWidth", 2);
 
 ylim([minY maxY])
-  
+
 % Make this a Multi-Color plot
 colors = [testingMap1Color testingMap3Color testingMap5Color];
+
+% Make shear splot markers open face
 for i = 1:numMappings
- errorbar(xAxis(i), meanVals{1,p}(i), barVals{1,p}(i), plotMarker, ...
-        "MarkerFaceColor", colors(i), ...
-        "Color", colors(i), "MarkerSize", markerSize, "LineWidth", 2);
-hold on;
-    ylim([minY maxY])
+    if (isShearPlot == true)
+        errorbar(xAxis(i), meanVals{1,p}(i), barVals{1,p}(i), plotMarker, ...
+            "MarkerFaceColor", "w", "Color", colors(i), ...
+            "MarkerSize", markerSize, "LineWidth", 2);
+        hold on;
+    else
+        errorbar(xAxis(i), meanVals{1,p}(i), barVals{1,p}(i), plotMarker, ...
+            "MarkerFaceColor", colors(i), "Color", colors(i), ...
+            "MarkerSize", markerSize, "LineWidth", 2);
+        hold on;
+    end
 end
-
-
+ylim([minY maxY]);
 
 
 % Plot Details

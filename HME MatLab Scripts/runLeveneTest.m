@@ -47,7 +47,7 @@ else
     %Find p-values
     %vertically concatenate columns of the same metric
 
-    disp("Test")
+    % disp("Test")
     y_Test = [y_Map1_Test; y_Map3_Test; y_Map5_Test];
 end
 
@@ -68,15 +68,14 @@ subjects1Mapping = reshape(subjects1Mapping,[],1);
 
 
 % Test: 
-[p2, stats] = vartestn(y_Test, mappings, 'TestType','LeveneAbsolute')
-
+[p2, stats] = vartestn(y_Test, mappings, 'TestType','LeveneAbsolute');
 
 
 % Multiplpe comparison if p is small enough:
 if (p2(1) < 0.05)
-
-    disp(strcat("~~~p < 0.05 --  EQUAL VAR for ", metricName))
     disp(strcat("p = ", num2str(p2(1))))
+    disp(strcat("~~~p < 0.05 --  EQUAL VAR for ", metricName))
+    
 
     % figure;
     % [comp,m,~,gnames] = multcompare(stats, "CriticalValueType",...
@@ -94,8 +93,8 @@ if (p2(1) < 0.05)
     % tbl2 = array2table(m,"RowNames", {'Mapping1', 'Mapping3', 'Control'}, ...
     %     "VariableNames",["Mean","Standard Error"])
 else
-    disp(strcat("p > 0.05 -- NOT EQUAL VAR for ", metricName))
     disp(strcat("p = ", num2str(p2(1))))
+    disp(strcat("p > 0.05 -- NOT EQUAL VAR for ", metricName))
     % tbl = "~";
 end
 end
